@@ -158,7 +158,7 @@ public class AdminDlg extends BaseDialog {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Administration Benutzerstammdaten");
 
-        buttonOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/button_ok.gif"))); // NOI18N
+        buttonOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/framework/resources/icons/button_ok.gif"))); // NOI18N
         buttonOK.setText("Speichern");
         buttonOK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,7 +170,7 @@ public class AdminDlg extends BaseDialog {
             buttonOK.setEnabled(false);
         }
 
-        buttonNewUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/bookmark.png"))); // NOI18N
+        buttonNewUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/framework/resources/icons/bookmark.png"))); // NOI18N
         buttonNewUser.setText("Neu");
         buttonNewUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -182,7 +182,7 @@ public class AdminDlg extends BaseDialog {
             buttonNewUser.setEnabled(false);
         }
 
-        buttonCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
+        buttonCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
         buttonCancel.setText("Schließen");
         buttonCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -190,7 +190,7 @@ public class AdminDlg extends BaseDialog {
             }
         });
 
-        buttonRead.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/button_read.gif"))); // NOI18N
+        buttonRead.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/framework/resources/icons/button_read.gif"))); // NOI18N
         buttonRead.setText("Aktualisieren");
         buttonRead.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -198,14 +198,14 @@ public class AdminDlg extends BaseDialog {
             }
         });
 
-        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/help.png"))); // NOI18N
+        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/framework/resources/icons/help.png"))); // NOI18N
         jBHelp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBHelpActionPerformed(evt);
             }
         });
 
-        buttonChangePwd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/unlock.png"))); // NOI18N
+        buttonChangePwd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/framework/resources/icons/unlock.png"))); // NOI18N
         buttonChangePwd.setText("Passwort ändern");
         buttonChangePwd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -348,7 +348,7 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     java.awt.EventQueue.invokeLater(new Runnable() {
 
         public void run() {
-            new HelpWin(root, "/at/momm/UserManagement/resources/Help/","AdminDlg").setVisible(true);
+            new HelpWin(root, "/at/redeye/UserManagement/resources/Help/","AdminDlg").setVisible(true);
         }
     });
 }//GEN-LAST:event_jBHelpActionPerformed

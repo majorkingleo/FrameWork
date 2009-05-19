@@ -91,18 +91,18 @@ public class LoginDlg extends BaseDialog {
         fieldPwd.setFont(new java.awt.Font("Tahoma", 0, 14));
 
         buttonOK.setFont(new java.awt.Font("Tahoma", 0, 14));
-        buttonOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/button_ok.gif"))); // NOI18N
+        buttonOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/framework/resources/icons/button_ok.gif"))); // NOI18N
         buttonOK.setText("OK");
         buttonOK.setActionCommand("buttonOK");
         buttonOK.setPreferredSize(new java.awt.Dimension(120, 32));
 
         buttonCancel.setFont(new java.awt.Font("Tahoma", 0, 14));
-        buttonCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
+        buttonCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
         buttonCancel.setText("Schließen");
         buttonCancel.setActionCommand("buttonCancel");
         buttonCancel.setPreferredSize(new java.awt.Dimension(120, 31));
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/UserManagement/resources/redeye15b.png"))); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/UserManagement/resources/redeye15b.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

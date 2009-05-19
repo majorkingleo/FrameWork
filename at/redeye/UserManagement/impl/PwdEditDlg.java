@@ -77,7 +77,7 @@ public class PwdEditDlg extends BaseDialog {
 		jLabel1.setText("    Passwort ändern");
 
 		buttonHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/momm/FrameWork/framework/resources/icons/help.png"))); // NOI18N
+				"/at/redeye/FrameWork/framework/resources/icons/help.png"))); // NOI18N
 		buttonHelp.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				buttonHelpActionPerformed(evt);
@@ -85,11 +85,11 @@ public class PwdEditDlg extends BaseDialog {
 		});
 
 		buttonOK.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/momm/FrameWork/framework/resources/icons/button_ok.gif"))); // NOI18N
+				"/at/redeye/FrameWork/framework/resources/icons/button_ok.gif"))); // NOI18N
 		buttonOK.setText("Speichern");
 
 		buttonCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/momm/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
+				"/at/redeye/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
 		buttonCancel.setText("Schließen");
 		buttonCancel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -277,7 +277,7 @@ public class PwdEditDlg extends BaseDialog {
 
 			public void run() {
 
-				new HelpWin(root, "/at/momm/UserManagement/resources/Help/",
+				new HelpWin(root, "/at/redeye/UserManagement/resources/Help/",
 						"PwdEditDlg").setVisible(true);
 			}
 		});
