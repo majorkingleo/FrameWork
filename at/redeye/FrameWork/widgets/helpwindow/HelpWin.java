@@ -41,7 +41,6 @@ public class HelpWin extends BaseDialog {
         loadHelp( ModuleName );
     }
     
-    // "/at/momm/Application/resources/Help/"
     protected void loadHelp( final String ModuleName )
     {               
         new AutoMBox(ModuleName) {
@@ -87,7 +86,7 @@ public class HelpWin extends BaseDialog {
         jHelp.setEditable(false);
         jScrollPane1.setViewportView(jHelp);
 
-        jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
+        jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
         jBClose.setText("Schließen");
         jBClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,7 +109,7 @@ public class HelpWin extends BaseDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                 .addGap(12, 12, 12)
                 .addComponent(jBClose)
                 .addContainerGap())

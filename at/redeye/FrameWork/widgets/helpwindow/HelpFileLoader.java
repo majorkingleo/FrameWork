@@ -169,7 +169,7 @@ public class HelpFileLoader {
         
         try
         {        
-            System.out.println( hfl.loadHelp( "/at/momm/Application/resources/Help/", "MainWin" ) );
+            System.out.println( hfl.loadHelp( "/at/redeye/Application/resources/Help/", "MainWin" ) );
         } catch( IOException ex ) {
             System.out.println(ex);
             ex.printStackTrace();

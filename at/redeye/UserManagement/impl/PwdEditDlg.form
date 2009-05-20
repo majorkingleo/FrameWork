@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.6" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="resizable" type="boolean" value="false"/>
@@ -74,7 +74,7 @@
                   <Component id="labelCtlPwd" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="fieldCtlPwd" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="46" max="32767" attributes="0"/>
+              <EmptySpace pref="39" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="buttonCancel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="buttonOK" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -97,7 +97,7 @@
     <Component class="javax.swing.JButton" name="buttonHelp">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/help.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/help.png"/>
         </Property>
       </Properties>
       <Events>
@@ -107,7 +107,7 @@
     <Component class="javax.swing.JButton" name="buttonOK">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/button_ok.gif"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/button_ok.gif"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Speichern"/>
       </Properties>
@@ -118,7 +118,7 @@
     <Component class="javax.swing.JButton" name="buttonCancel">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/fileclose.gif"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/fileclose.gif"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Schlie&#xdf;en"/>
       </Properties>

@@ -59,7 +59,7 @@
                   <Component id="jLabel1" min="-2" pref="55" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="324" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="317" max="32767" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="buttonOK" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -107,7 +107,7 @@
     <Component class="javax.swing.JButton" name="buttonOK">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/button_ok.gif"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/button_ok.gif"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Speichern"/>
       </Properties>
@@ -121,7 +121,7 @@
     <Component class="javax.swing.JButton" name="buttonNewUser">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/bookmark.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/bookmark.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Neu"/>
       </Properties>
@@ -135,7 +135,7 @@
     <Component class="javax.swing.JButton" name="buttonCancel">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/fileclose.gif"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/fileclose.gif"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Schlie&#xdf;en"/>
       </Properties>
@@ -146,7 +146,7 @@
     <Component class="javax.swing.JButton" name="buttonRead">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/button_read.gif"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/reload.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Aktualisieren"/>
       </Properties>
@@ -157,7 +157,7 @@
     <Component class="javax.swing.JButton" name="jBHelp">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/help.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/help.png"/>
         </Property>
       </Properties>
       <Events>
@@ -167,7 +167,7 @@
     <Component class="javax.swing.JButton" name="buttonChangePwd">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/at/redeye/FrameWork/framework/resources/icons/unlock.png"/>
+          <Image iconType="3" name="/at/redeye/FrameWork/base/resources/icons/unlock.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Passwort &#xe4;ndern"/>
       </Properties>

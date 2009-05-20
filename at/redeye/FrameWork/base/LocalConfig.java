@@ -94,7 +94,7 @@ public class LocalConfig extends BaseDialog {
         jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLTitle.setText("Lokale Einstellungen");
 
-        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/help.png"))); // NOI18N
+        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
         jBHelp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBHelpActionPerformed(evt);
@@ -114,7 +114,7 @@ public class LocalConfig extends BaseDialog {
         ));
         jScrollPane1.setViewportView(jTContent);
 
-        jBSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/button_ok.gif"))); // NOI18N
+        jBSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/button_ok.gif"))); // NOI18N
         jBSave.setText("Speichern");
         jBSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -122,7 +122,7 @@ public class LocalConfig extends BaseDialog {
             }
         });
 
-        jBCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
+        jBCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
         jBCancel.setText("Schließen");
         jBCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -156,7 +156,7 @@ public class LocalConfig extends BaseDialog {
                     .addComponent(jBHelp)
                     .addComponent(jLTitle))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBSave)
@@ -176,7 +176,7 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
             HelpWinHook hook = new ConfigParamHook(root,"LOCALSETTINGSHOOOK", false,
                     LocalConfigDefinitions.help_search_path);
             
-            new HelpWin(root, "/at/momm/FrameWork/framework/resources/Help/","LocalConfig",hook).setVisible(true);
+            new HelpWin(root, "/at/redeye/FrameWork/base/resources/Help/","LocalConfig",hook).setVisible(true);
         }
     });
 }//GEN-LAST:event_jBHelpActionPerformed

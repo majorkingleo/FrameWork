@@ -221,7 +221,7 @@ public class ConnectionDialog extends BaseDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        JBSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/button_ok.gif"))); // NOI18N
+        JBSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/button_ok.gif"))); // NOI18N
         JBSave.setText("Speichern");
         JBSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -229,7 +229,7 @@ public class ConnectionDialog extends BaseDialog {
             }
         });
 
-        JBTest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/wizard.gif"))); // NOI18N
+        JBTest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/wizard.gif"))); // NOI18N
         JBTest.setText("Test");
         JBTest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -237,7 +237,7 @@ public class ConnectionDialog extends BaseDialog {
             }
         });
 
-        JBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/fileclose.gif"))); // NOI18N
+        JBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
         JBClose.setText("Schließen");
         JBClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -273,7 +273,7 @@ public class ConnectionDialog extends BaseDialog {
 
         JTPort.setText("jTextField1");
 
-        JBManage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/momm/FrameWork/framework/resources/icons/bookmark.png"))); // NOI18N
+        JBManage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/bookmark.png"))); // NOI18N
         JBManage.setText("Einrichten");
         JBManage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -348,7 +348,7 @@ public class ConnectionDialog extends BaseDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLInstance)
                     .addComponent(JTInstance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
