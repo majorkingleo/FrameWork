@@ -400,7 +400,19 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
 			e.printStackTrace();
 		}
 
-	}                                             
+	}                              
+    
+    @Override
+    protected boolean canClose() {
+        int ret = checkSave(tm);
+
+        if (ret == 1) {
+            buttonOKActionPerformed(null);
+        } else if (ret == -1) {
+            return false;
+        }
+        return true;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCancel;
