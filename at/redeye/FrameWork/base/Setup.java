@@ -21,6 +21,10 @@ public abstract class Setup {
     static public String DBUser = "DBUser";
     static public String DBPasswd = "DBPasswd";
     static public String DBDatabase = "DBDatabase";
+    static public String H1IPAddress = "H1IPAddress";
+    static public String H1Port = "H1Port";
+    static public String H1LTSAP = "H1LTSAP";
+    static public String H1RTSAP = "H1RTSAP";
     
     static public String WindowX = "WindowX";
     static public String WindowY = "WindowY";
