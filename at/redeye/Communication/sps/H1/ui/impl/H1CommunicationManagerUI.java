@@ -20,6 +20,7 @@ import at.redeye.Communication.sps.H1.comm.impl.ConnectionPhase;
 import at.redeye.Communication.sps.H1.comm.impl.H1ConnectionDefinition;
 import at.redeye.Communication.sps.H1.comm.impl.H1ReceiverThread;
 import at.redeye.Communication.sps.H1.comm.impl.H1TCPHandling;
+import at.redeye.Communication.sps.H1.widgets.H1StatusDisplay;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
@@ -77,8 +78,9 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
         textareaFromSPS = new javax.swing.JTextArea();
         labelTitle = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        h1StatusDisplay1 = new at.redeye.Communication.sps.H1.widgets.H1StatusDisplay();
         jSeparator1 = new javax.swing.JSeparator();
+        h1StatusDisplay1 = new at.redeye.Communication.sps.H1.widgets.H1StatusDisplay();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
@@ -91,7 +93,7 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
             }
         });
 
-        labelToSPS.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        labelToSPS.setFont(new java.awt.Font("Tahoma", 0, 12));
         labelToSPS.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelToSPS.setText("An SPS (String)");
 
@@ -114,19 +116,19 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
         labelLTSAP.setFont(new java.awt.Font("Tahoma", 0, 12));
         labelLTSAP.setText("L-TSAP");
 
-        fieldIPaddress.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        fieldIPaddress.setFont(new java.awt.Font("Tahoma", 1, 12));
         fieldIPaddress.setText(root.getSetup().getConfig(Setup.H1IPAddress, ""));
 
-        fieldPort.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        fieldPort.setFont(new java.awt.Font("Tahoma", 1, 12));
         fieldPort.setText(root.getSetup().getConfig(Setup.H1Port, ""));
 
-        fieldLTSAP.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        fieldLTSAP.setFont(new java.awt.Font("Tahoma", 1, 12));
         fieldLTSAP.setText(root.getSetup().getConfig(Setup.H1LTSAP, ""));
 
-        fieldRTSAP.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        fieldRTSAP.setFont(new java.awt.Font("Tahoma", 1, 12));
         fieldRTSAP.setText(root.getSetup().getConfig(Setup.H1RTSAP, ""));
 
-        buttonConnect.setFont(new java.awt.Font("Tahoma", 0, 12));
+        buttonConnect.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         buttonConnect.setText("Verbinden");
         buttonConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -152,7 +154,13 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12));
         jLabel1.setText("Status");
 
-        h1StatusDisplay1.setNewPhase(h1comm.getConnectionPhase());
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/button_cancel.gif"))); // NOI18N
+        jButton1.setText("Schließen");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonClose(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -162,14 +170,14 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(labelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(labelRTSAP, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                             .addComponent(labelLTSAP, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                             .addComponent(labelPort, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                             .addComponent(labelSPSIP, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                            .addComponent(jLabel1)
-                            .addComponent(labelFromSPS, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -180,14 +188,17 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
                                     .addComponent(fieldRTSAP, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addComponent(buttonConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(h1StatusDisplay1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
+                            .addComponent(h1StatusDisplay1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(labelFromSPS, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                        .addGap(6, 6, 6)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
+                    .addComponent(buttonTransmit, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(labelToSPS, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
-                    .addComponent(buttonTransmit, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -212,26 +223,26 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelRTSAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fieldRTSAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(h1StatusDisplay1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(29, 29, 29)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(h1StatusDisplay1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labelToSPS)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(buttonTransmit)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(buttonTransmit))
+                    .addComponent(labelToSPS))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelFromSPS))
-                .addGap(59, 59, 59))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -279,6 +290,10 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
     	
 }//GEN-LAST:event_buttonConnectActionPerformed
 
+    private void buttonClose(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClose
+        close();
+    }//GEN-LAST:event_buttonClose
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonConnect;
@@ -288,6 +303,7 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
     private javax.swing.JTextField fieldPort;
     private javax.swing.JTextField fieldRTSAP;
     private at.redeye.Communication.sps.H1.widgets.H1StatusDisplay h1StatusDisplay1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -303,7 +319,6 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
     private javax.swing.JTextArea textareaToSPS;
     // End of variables declaration//GEN-END:variables
 
-  
 
     public void actionMessageOutbound() {
         

@@ -19,22 +19,25 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
-              <Component id="fieldStatus" min="-2" pref="206" max="-2" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Component id="fieldErrorInfo" alignment="0" max="32767" attributes="1"/>
+                  <Component id="fieldStatus" alignment="0" pref="206" max="32767" attributes="1"/>
+              </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="fieldStatusLight" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="4" pref="4" max="4" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="fieldStatus" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="fieldStatusLight" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
+              <EmptySpace pref="17" max="32767" attributes="0"/>
+              <Component id="fieldErrorInfo" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -57,6 +60,17 @@
           <Font name="Tahoma" size="12" style="0"/>
         </Property>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="fieldErrorInfo">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Tahoma" size="12" style="0"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fieldErrorInfoActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

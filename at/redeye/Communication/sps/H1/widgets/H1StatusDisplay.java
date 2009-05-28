@@ -10,7 +10,6 @@
  */
 package at.redeye.Communication.sps.H1.widgets;
 
-import at.redeye.Communication.sps.H1.comm.IH1CommListener;
 import at.redeye.Communication.sps.H1.comm.impl.ConnectionPhase;
 import java.awt.Color;
 
@@ -18,7 +17,7 @@ import java.awt.Color;
  *
  * @author mmattl
  */
-public class H1StatusDisplay extends javax.swing.JPanel implements IH1CommListener {
+public class H1StatusDisplay extends javax.swing.JPanel  {
 
     /**
 	 * 
@@ -64,52 +63,59 @@ public class H1StatusDisplay extends javax.swing.JPanel implements IH1CommListen
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
         fieldStatus = new javax.swing.JTextField();
         fieldStatusLight = new javax.swing.JTextField();
+        fieldErrorInfo = new javax.swing.JTextField();
 
         setName("H1StatusDisplay"); // NOI18N
 
         fieldStatus.setColumns(20);
         fieldStatus.setEditable(false);
-        fieldStatus.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        fieldStatus.setFont(new java.awt.Font("Tahoma", 0, 12));
 
         fieldStatusLight.setColumns(2);
         fieldStatusLight.setEditable(false);
-        fieldStatusLight.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        fieldStatusLight.setFont(new java.awt.Font("Tahoma", 0, 12));
+
+        fieldErrorInfo.setEditable(false);
+        fieldErrorInfo.setFont(new java.awt.Font("Tahoma", 0, 12));
+        fieldErrorInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fieldErrorInfoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(fieldStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(fieldErrorInfo, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fieldStatus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(fieldStatusLight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(fieldStatusLight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(4, 4, 4)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fieldStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fieldStatusLight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(fieldStatusLight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addComponent(fieldErrorInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fieldErrorInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldErrorInfoActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_fieldErrorInfoActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField fieldErrorInfo;
     private javax.swing.JTextField fieldStatus;
     private javax.swing.JTextField fieldStatusLight;
     // End of variables declaration//GEN-END:variables
 
-    public void actionConnectionPhaseChanged(ConnectionPhase newPhase) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void actionMessageInbound(byte[] data) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void actionMessageOutbound() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }
