@@ -34,6 +34,8 @@ public class H1TCPHandling implements IH1Communication {
 
 	private static H1TCPHandling _myInstance;
 
+    private String message = "";
+
 	private Vector<IH1CommListener> allListener = new Vector<IH1CommListener>();
 
 	private H1TCPHandling(H1ConnectionDefinition conndef, Logger logger) {
@@ -59,6 +61,7 @@ public class H1TCPHandling implements IH1Communication {
 
 	private int handleH1Request(ConnectionPhase currentPhase) {
 
+        
 		switch (currentPhase) {
 
 		case DisConnectionAttempt:
@@ -71,44 +74,47 @@ public class H1TCPHandling implements IH1Communication {
 				if (s != null)
 					s.close();
 			} catch (IOException ioe) {
-				logger.error("Failed to close H1: " + ioe.getMessage());
+                message = ioe.getMessage();
+				logger.error("Failed to close H1: " + message);
 				return (-1);
 			}
 			phase = ConnectionPhase.Disconnected;
-			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null);
+			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null, message);
 			// STOP
 			break;
 
 		case Disconnected:
-
+            message = " --- ";
 			phase = ConnectionPhase.TCPConnectionAttempt;
-			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null);
+			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null, message);
 			return handleH1Request(phase);
 
 		case TCPConnectionAttempt:
+
+            message = " --- ";
 			try {
 				connectTCP(conndef);
 				phase = ConnectionPhase.TCPConnected;
 
 			} catch (UnknownHostException uhe) {
 				phase = ConnectionPhase.DisConnectionAttempt;
-
-				logger.error(uhe.getMessage());
+                message = uhe.getMessage();
+				logger.error(message);
 
 			} catch (IOException ioe) {
 				phase = ConnectionPhase.DisConnectionAttempt;
-
-				logger.error(ioe.getMessage());
+                message = ioe.getMessage();
+				logger.error(message);
 
 			}
-			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null);
+			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null, message);
 			logger.info("TCP ready");
 
 			return handleH1Request(phase);
 
 		case TCPConnected:
 			phase = ConnectionPhase.H1ConnectionAttempt;
-			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null);
+			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null, message);
 			return handleH1Request(phase);
 
 		case H1ConnectionAttempt:
@@ -119,14 +125,16 @@ public class H1TCPHandling implements IH1Communication {
 			} catch (IOException ioe) {
 
 				phase = ConnectionPhase.DisConnectionAttempt;
-				logger.error(ioe.getMessage());
+                message = ioe.getMessage();
+				logger.error(message);
 
 			} catch (H1ConnectionException e) {
 				phase = ConnectionPhase.DisConnectionAttempt;
-				logger.error(e.getMessage());
+                message = e.getMessage();
+				logger.error(message);
 
 			}
-			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null);
+			updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null, message);
 			return handleH1Request(phase);
 
 		case H1Connected:
@@ -285,7 +293,7 @@ public class H1TCPHandling implements IH1Communication {
 		logger.info("Receive (" + len + "): " + str.toString());
 		bb.trimToSize();
 		byte[] arr = bb.toArray();
-		updateListener(UpdateReason.INBOUND_MESSAGE, arr);
+		updateListener(UpdateReason.INBOUND_MESSAGE, arr, null);
 		return arr;
 	}
 
@@ -382,12 +390,12 @@ public class H1TCPHandling implements IH1Communication {
 	}
 
 	@Override
-	public void updateListener(UpdateReason reason, byte[] data) {
+	public void updateListener(UpdateReason reason, byte[] data, String message) {
 		for (IH1CommListener listener : allListener) {
 
 			switch (reason) {
 			case CONNECTION_PHASE_CHANGED:
-				listener.actionConnectionPhaseChanged(phase);
+				listener.actionConnectionPhaseChanged(phase, message);
 				break;
 			case OUTBOUND_MESSAGE:
 				listener.actionMessageOutbound();

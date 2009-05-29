@@ -17,13 +17,14 @@ import java.awt.Color;
  *
  * @author mmattl
  */
-public class H1StatusDisplay extends javax.swing.JPanel  {
+public class H1StatusDisplay extends javax.swing.JPanel {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	/** Creates new form H1StatusDisplay */
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    /** Creates new form H1StatusDisplay */
     public H1StatusDisplay() {
         initComponents();
     }
@@ -40,13 +41,14 @@ public class H1StatusDisplay extends javax.swing.JPanel  {
         switch (phase) {
             case Disconnected: // FT
             case DisConnectionAttempt:
-            case TCPConnectionAttempt: // FT
+
             default:
                 fieldStatusLight.setBackground(Color.RED);
                 break;
 
             case TCPConnected: // FT
             case H1ConnectionAttempt: // FT
+            case TCPConnectionAttempt: // FT
                 fieldStatusLight.setBackground(Color.ORANGE);
                 break;
             case H1Connected:
@@ -54,6 +56,14 @@ public class H1StatusDisplay extends javax.swing.JPanel  {
                 break;
 
         }
+    }
+
+    public void setErrorInfo(String message) {
+
+        if (message == null) {
+            message = "";
+        }
+        fieldErrorInfo.setText(message);
     }
 
     /** This method is called from within the constructor to
@@ -79,23 +89,17 @@ public class H1StatusDisplay extends javax.swing.JPanel  {
         fieldStatusLight.setFont(new java.awt.Font("Tahoma", 0, 12));
 
         fieldErrorInfo.setEditable(false);
-        fieldErrorInfo.setFont(new java.awt.Font("Tahoma", 0, 12));
-        fieldErrorInfo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fieldErrorInfoActionPerformed(evt);
-            }
-        });
+        fieldErrorInfo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(fieldErrorInfo, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(fieldStatus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
+                .addComponent(fieldStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(fieldStatusLight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(fieldErrorInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -108,14 +112,9 @@ public class H1StatusDisplay extends javax.swing.JPanel  {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fieldErrorInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldErrorInfoActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_fieldErrorInfoActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField fieldErrorInfo;
     private javax.swing.JTextField fieldStatus;
     private javax.swing.JTextField fieldStatusLight;
     // End of variables declaration//GEN-END:variables
-
 }

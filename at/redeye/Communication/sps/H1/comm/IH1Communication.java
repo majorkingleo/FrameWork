@@ -26,7 +26,7 @@ public interface IH1Communication {
 	
 	public void addListener (IH1CommListener listener);
 	public void removeListener (IH1CommListener listener);
-	public void updateListener (UpdateReason reason, byte [] data);
+	public void updateListener (UpdateReason reason, byte [] data, String message);
 	
 	
 	public final static int tsap_port = 102;
