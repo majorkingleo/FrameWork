@@ -10,7 +10,7 @@
  */
 package at.redeye.UserManagement.impl;
 
-import at.redeye.FrameWork.utilities.ExtKeyListener;
+import at.redeye.UserManagement.impl.ExtKeyListener;
 import java.sql.SQLException;
 import java.util.HashMap;
 
