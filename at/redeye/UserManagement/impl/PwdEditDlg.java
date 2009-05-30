@@ -11,6 +11,7 @@
 
 package at.redeye.UserManagement.impl;
 
+import at.redeye.FrameWork.utilities.ExtKeyListener;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
