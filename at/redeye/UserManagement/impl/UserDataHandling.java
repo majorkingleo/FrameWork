@@ -34,6 +34,8 @@ public class UserDataHandling implements UserManagementInterface {
 
 	private Root root;
 
+    private String logoPath = "";
+
 	private Vector<UserManagementListener> registeredListener;
 
 	public UserDataHandling(Root root) {
@@ -192,5 +194,16 @@ public class UserDataHandling implements UserManagementInterface {
 		}
 
 	}
+
+    public void setLogo(String logoPath) {
+        this.logoPath = logoPath;
+    }
+
+    
+    public String getLogo() {
+        return logoPath;
+    }
+
+
 
 }

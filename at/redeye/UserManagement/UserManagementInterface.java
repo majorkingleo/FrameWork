@@ -35,7 +35,10 @@ public interface UserManagementInterface {
 			throws InvalidLoginException, SQLException,
 			UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
 			WrongBindFileFormatException, CloneNotSupportedException, UserLockedException;
-	
+
+    public void setLogo (String logoPath);
+
+    public String getLogo ();
 
 	public void addUMListener(UserManagementListener listener);
 
