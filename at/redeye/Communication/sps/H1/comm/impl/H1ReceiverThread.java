@@ -10,45 +10,46 @@ import org.apache.log4j.Logger;
 
 import at.redeye.Communication.sps.H1.comm.IH1Communication;
 
-
-
 /**
  * @author Mario Mattl
  * 
  */
 public class H1ReceiverThread extends Thread {
 
-	IH1Communication h1comm;
-	private Logger logger = null;
+    IH1Communication h1comm;
+    private Logger logger = null;
 
-	public H1ReceiverThread(IH1Communication h1comm, Logger logger) {
-		this.h1comm = h1comm;
-		this.logger = logger;
-	}
+    public H1ReceiverThread(IH1Communication h1comm, Logger logger) {
+        this.h1comm = h1comm;
+        this.logger = logger;
+    }
 
-	public void run() {
+    @Override
+    public void run() {
 
-		while (true) {
-			if (h1comm.getConnectionPhase() != ConnectionPhase.H1Connected) {
-				return;
-			}
-			try {
+        while (true) {
+            if (h1comm.getConnectionPhase() != ConnectionPhase.H1Connected) {
+                return;
+            }
+            try {
 
-				h1comm.receive(0);
-				h1comm.transmitH1Answer();
+                h1comm.receive(0);
+                h1comm.transmitH1Answer();
 
-				sleep(300);
-				
-			} catch (SocketTimeoutException ste) {
-				logger.info("Receive from socket: " + ste.getMessage());
+                sleep(300);
 
-			} catch (IOException e) {
-				logger.error("Receive from socket: " + e.getMessage());
-			} catch (InterruptedException e) {
-				logger.error("Failed to sleep: " + e.getMessage());
-			}
-		}
+            } catch (SocketTimeoutException ste) {
+                logger.info("Receive from socket: " + ste.getMessage());
 
-	}
+            } catch (IOException e) {
+                logger.error("Receive from socket: " + e.getMessage());
+            } catch (InterruptedException e) {
+                logger.error("Failed to sleep: " + e.getMessage());
+            } catch (H1ConnectionException hce) {
+                logger.error("Receive: " + hce.getMessage());
+            }
 
+        }
+
+    }
 }

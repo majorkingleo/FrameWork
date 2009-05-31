@@ -40,7 +40,7 @@ public class H1StatusDisplay extends javax.swing.JPanel {
 
         switch (phase) {
             case Disconnected: // FT
-            case DisConnectionAttempt:
+            case DisConnectionAttempt: // FT
 
             default:
                 fieldStatusLight.setBackground(Color.RED);
