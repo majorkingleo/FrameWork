@@ -35,22 +35,16 @@ public class TestServer {
 				for (int i = 0; i < len; i++) {
 					System.out.print(String.format("%02x ", (byte) buffer[i]));
 				}
-				int i = 4;
-				while (!client.isClosed() && client.isConnected()) {
-					buffer[5] = (byte) 0xd0; // CODE_CC vorgaukeln
-					if (++i % 5 == 0) {
-						out.write(buffer);
+				
 
-						i = 0;
-					}
-					Thread.sleep(500);
+				buffer[5] = (byte) 0xd0; // CODE_CC vorgaukeln
+				
+				out.write(buffer);
+				out.flush();
 
-				}
+			
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
