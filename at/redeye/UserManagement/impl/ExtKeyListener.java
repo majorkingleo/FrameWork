@@ -1,10 +1,9 @@
 package at.redeye.UserManagement.impl;
 
-import at.redeye.UserManagement.impl.*;
-import at.redeye.FrameWork.base.BaseDialog;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import at.redeye.FrameWork.base.BaseDialog;
 
 public class ExtKeyListener implements KeyListener {
 
