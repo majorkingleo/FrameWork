@@ -32,6 +32,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMTypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
+import javax.swing.JComponent;
 
 /**
  * 
@@ -248,4 +249,9 @@ public abstract class Transaction {
 			TableBindingNotRegisteredException {
 		return sequence.getNewSequenceValue(seqName, this);
 	}
+
+    public abstract String getGUIFilterWhereStmt (Vector <? extends JComponent> fromFilter, Vector<? extends JComponent> toFilter);
+
+
+
 }

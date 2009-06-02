@@ -8,6 +8,8 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamExcep
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 
 import java.util.Date;
+import java.util.Vector;
+import javax.swing.JComponent;
 import org.joda.time.DateMidnight;
 
 /**
@@ -150,5 +152,10 @@ public class OracleTransaction extends Transaction {
 		return getPeriodStmt(column, DBDateTime.getStdString(dm_from),
 				DBDateTime.getStdString(dm_to));
 	}
+
+    @Override
+    public String getGUIFilterWhereStmt(Vector<? extends JComponent> fromFilter, Vector<? extends JComponent> toFilter) {
+        return "";
+    }
 
 }

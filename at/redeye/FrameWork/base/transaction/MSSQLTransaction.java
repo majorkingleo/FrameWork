@@ -12,6 +12,8 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseExceptio
 
 import java.util.Date;
 
+import java.util.Vector;
+import javax.swing.JComponent;
 import org.joda.time.DateMidnight;
 
 /**
@@ -158,5 +160,11 @@ public class MSSQLTransaction extends Transaction {
 		return getPeriodStmt(column, DBDateTime.getStdString(dm_from),
 				DBDateTime.getStdString(dm_to));
 	}
+
+    @Override
+    public String getGUIFilterWhereStmt(Vector<? extends JComponent> fromFilter, Vector<? extends JComponent> toFilter) {
+
+        return "";
+    }
 
 }

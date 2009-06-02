@@ -11,6 +11,8 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamExcep
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 
 import java.util.Date;
+import java.util.Vector;
+import javax.swing.JComponent;
 import org.joda.time.DateMidnight;
 
 /**
@@ -172,6 +174,22 @@ public class MySQLTransaction extends Transaction {
 		str.append(markColumn(column2));		
 
 		return str.toString();
+    }
+
+    @Override
+    public String getGUIFilterWhereStmt(Vector<? extends JComponent> fromFilter, Vector<? extends JComponent> toFilter) {
+
+        StringBuilder str = new StringBuilder();
+
+
+        if (fromFilter != null || toFilter != null) {
+             str.append(" WHERE ");
+             for (int i = 0; i < fromFilter.size(); i++) {
+                 
+             }
+        }
+
+        return "";
     }
 
 }
