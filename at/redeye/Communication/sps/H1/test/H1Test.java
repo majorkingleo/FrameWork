@@ -1,5 +1,6 @@
 package at.redeye.Communication.sps.H1.test;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -8,6 +9,9 @@ import at.redeye.Communication.sps.H1.comm.IH1Communication;
 import at.redeye.Communication.sps.H1.comm.impl.H1ConnectionDefinition;
 import at.redeye.Communication.sps.H1.comm.impl.H1ReceiverThread;
 import at.redeye.Communication.sps.H1.comm.impl.H1TCPHandling;
+import at.redeye.Communication.sps.H1.ui.impl.H1CommunicationManagerUI;
+import at.redeye.FrameWork.base.LocalRoot;
+import at.redeye.FrameWork.base.Root;
 
 public class H1Test {
 
@@ -30,6 +34,14 @@ public class H1Test {
 
 		H1ReceiverThread poller = new H1ReceiverThread(h1comm, logger);
 		poller.start();
+		
+		java.awt.EventQueue.invokeLater(new Runnable() {
+
+		Root root  = new LocalRoot ("H1 Testprogramm");
+        public void run() {
+                new H1CommunicationManagerUI(root).setVisible(true);
+            }
+        });
 
 	}
 
