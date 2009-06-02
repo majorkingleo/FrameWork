@@ -85,11 +85,12 @@ public class H1TCPHandling implements IH1Communication {
                 return handleH1Request(phase);
 
             case TCPConnectionAttempt:
-
+            	logger.info("Attempting TCP connection...");
                 message = " --- ";
                 try {
                     connectTCP(conndef);
                     phase = ConnectionPhase.TCPConnected;
+                    logger.info("TCP ready");
 
                 } catch (UnknownHostException uhe) {
                     phase = ConnectionPhase.DisConnectionAttempt;
@@ -103,7 +104,7 @@ public class H1TCPHandling implements IH1Communication {
 
                 }
                 updateListener(UpdateReason.CONNECTION_PHASE_CHANGED, null, message);
-                logger.info("TCP ready");
+                
 
                 return handleH1Request(phase);
 
