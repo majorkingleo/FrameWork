@@ -11,10 +11,7 @@ import com.sun.corba.se.impl.ior.ByteBuffer;
  */
 public class OSIConnectionFrame {
 
-	protected final static byte CODE_CR = (byte) 0xe0;
-	protected final static byte CODE_CC = (byte) 0xd0;
-	protected final static byte CODE_DT = (byte) 0xf0;
-	protected final static byte CODE_DR = (byte) 0x80;
+	
 
 
 	protected final static byte PARA_TPDU = (byte) 0xc0;
@@ -91,4 +88,8 @@ public class OSIConnectionFrame {
 		
 		
 	}
+
+    public Byte getCode () {
+        return code;
+    }
 }

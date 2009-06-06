@@ -34,6 +34,11 @@ public interface IH1Communication {
     public void removeListener(IH1CommListener listener);
 
     public void updateListener(UpdateReason reason, byte[] data, String message);
+    
     public final static int tsap_port = 102;
     public final static int MAX_SO_TIMEOUT = 2000; // 2 seconds wait max. at read
+    public final static byte CODE_CR = (byte) 0xe0;
+    public final static byte CODE_CC = (byte) 0xd0;
+    public final static byte CODE_DT = (byte) 0xf0;
+    public final static byte CODE_DR = (byte) 0x80;
 }

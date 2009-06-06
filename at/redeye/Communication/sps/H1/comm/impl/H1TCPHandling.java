@@ -166,7 +166,7 @@ public class H1TCPHandling implements IH1Communication {
 
         OSIConnectionFrame ocf = new OSIConnectionFrame();
 
-        ocf.code = OSIConnectionFrame.CODE_CR;
+        ocf.code = IH1Communication.CODE_CR;
 
         ocf.tp_class = 0;
 
@@ -235,7 +235,7 @@ public class H1TCPHandling implements IH1Communication {
         OSIConnectionFrame recframe = new OSIConnectionFrame();
         recframe.initializeByBytes(response);
 
-        if (recframe.code != OSIConnectionFrame.CODE_CC) {
+        if (recframe.code != IH1Communication.CODE_CC) {
             throw new H1ConnectionException(
                     "H1 partner response: Did not receive CODE_CC in code field! [" + String.format("%02x", recframe.code) + "]");
         }
@@ -299,7 +299,7 @@ public class H1TCPHandling implements IH1Communication {
         }
         OSIDataFrame odf = new OSIDataFrame();
 
-        odf.code = (byte) OSIConnectionFrame.CODE_DT;
+        odf.code = (byte) IH1Communication.CODE_DT;
         odf.last = (byte) OSIConnectionFrame.IS_LAST;
 
         ByteBuffer bb = odf.toByteBuffer();

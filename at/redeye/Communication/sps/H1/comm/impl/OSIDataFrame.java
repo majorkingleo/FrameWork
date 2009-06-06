@@ -12,8 +12,8 @@ import com.sun.corba.se.impl.ior.ByteBuffer;
 public class OSIDataFrame {
 
 	OSIHeader osiheader = new OSIHeader();
-	Byte code;
-	Byte last;
+	Byte code = (byte)0x0;
+	Byte last = (byte)0x0;
 
 	public ByteBuffer toByteBuffer() {
 
