@@ -56,6 +56,9 @@ public class H1StatusDisplay extends javax.swing.JPanel {
                 break;
 
         }
+        // force redraw without thread
+        fieldStatus.paint(fieldStatus.getGraphics());
+        fieldStatusLight.paint(fieldStatusLight.getGraphics());
     }
 
     public void setErrorInfo(String message) {
