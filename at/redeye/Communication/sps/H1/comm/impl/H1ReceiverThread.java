@@ -39,7 +39,7 @@ public class H1ReceiverThread extends Thread {
                 sleep(300);
 
             } catch (SocketTimeoutException ste) {
-                logger.info("Receive from socket: " + ste.getMessage());
+                logger.trace("Receive from socket: " + ste.getMessage());
 
             } catch (IOException e) {
                 logger.error("Receive from socket: " + e.getMessage());
