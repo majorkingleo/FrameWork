@@ -38,4 +38,20 @@ public class OSIDataFrame {
 
 	}
 
+    public void initializeByBytes (byte [] in) {
+
+		osiheader.tpkt_len[0] = in[2] ;
+		osiheader.tpkt_len[1] = in[3];
+		osiheader.headlen = in[4];
+
+		code = in[5];
+        last = in [6];
+
+    }
+
+    public Byte getCode () {
+        return code;
+    }
+    
+
 }
