@@ -12,6 +12,7 @@ package at.redeye.Communication.sps.H1.widgets;
 
 import at.redeye.Communication.sps.H1.comm.impl.ConnectionPhase;
 import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  *
@@ -57,8 +58,14 @@ public class H1StatusDisplay extends javax.swing.JPanel {
 
         }
         // force redraw without thread
-        fieldStatus.paint(fieldStatus.getGraphics());
-        fieldStatusLight.paint(fieldStatusLight.getGraphics());
+        Graphics graphics = fieldStatus.getGraphics();
+        if (graphics != null) {
+            fieldStatus.paint(graphics);
+        }
+        graphics = fieldStatusLight.getGraphics();
+        if (graphics != null) {
+            fieldStatusLight.paint(graphics);
+        }
     }
 
     public void setErrorInfo(String message) {
