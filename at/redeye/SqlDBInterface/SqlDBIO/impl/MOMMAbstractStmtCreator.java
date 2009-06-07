@@ -30,7 +30,6 @@ public abstract class MOMMAbstractStmtCreator implements
 	public MOMMAbstractStmtCreator(MOMMTypeRegistrationInterface registration) {
 		super();
 		this.registration_ = registration;
-		logger.setLevel(Level.TRACE);
 	}
 
 	protected String markColumnName(String columnName) {
