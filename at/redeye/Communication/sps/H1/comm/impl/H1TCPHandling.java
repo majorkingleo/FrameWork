@@ -67,6 +67,7 @@ public class H1TCPHandling implements IH1Communication {
                     }
                     if (s != null) {
                         s.close();
+                        logger.info("Socket status is "+(s.isClosed() ? "CLOSED" : "OPEN"));
                     }
                 } catch (IOException ioe) {
                     message = ioe.getMessage();
@@ -335,9 +336,11 @@ public class H1TCPHandling implements IH1Communication {
 
         }
         logger.info("Transmit (" + bb.size() + "): " + str.toString());
-
-        out.write(bb.toArray());
+        byte [] data = bb.toArray();
+        out.write(data);
         out.flush();
+        
+        updateListener(UpdateReason.OUTBOUND_MESSAGE, data, null);
 
     }
 
@@ -395,7 +398,7 @@ public class H1TCPHandling implements IH1Communication {
                     listener.actionConnectionPhaseChanged(phase, message);
                     break;
                 case OUTBOUND_MESSAGE:
-                    listener.actionMessageOutbound();
+                    listener.actionMessageOutbound(data);
                     break;
                 case INBOUND_MESSAGE:
                     listener.actionMessageInbound(data);
