@@ -17,6 +17,7 @@ import at.redeye.Communication.sps.H1.comm.IH1Communication;
 import at.redeye.Communication.sps.H1.comm.UpdateReason;
 
 import com.sun.corba.se.impl.ior.ByteBuffer;
+import java.net.InetSocketAddress;
 
 public class H1TCPHandling implements IH1Communication {
 
@@ -145,10 +146,12 @@ public class H1TCPHandling implements IH1Communication {
     private void connectTCP(H1ConnectionDefinition conndef)
             throws UnknownHostException, IOException {
 
-        s = new Socket(conndef.getHostname(), conndef.getPort());
+        // s = new Socket(conndef.getHostname(), conndef.getPort());
+        s = new Socket();        
         s.setSoTimeout(MAX_SO_TIMEOUT);
         s.setTrafficClass(0);
-
+        s.connect(new InetSocketAddress(conndef.getHostname(), conndef.getPort()));
+        
         logger.info("Socket: " + s.getInetAddress().toString() + ": " + s.getPort());
         if (s != null) {
 
