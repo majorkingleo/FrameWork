@@ -5,7 +5,6 @@
 
 package at.redeye.FrameWork.base.bindtypes;
 
-import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
 import com.mysql.jdbc.Blob;
 import java.sql.SQLException;
@@ -18,11 +17,12 @@ import java.util.logging.Logger;
  */
 public class DBBlob extends DBValue {
 
-    Blob value;
+    public byte[] value;
     
     public DBBlob(String name)
     {
-        super(name);
+        super(name);        
+        value = new byte[0];
     }
     
     @Override
@@ -32,7 +32,13 @@ public class DBBlob extends DBValue {
 
     @Override
     public void loadFromDB(Object obj) {
-       value = (Blob)obj;
+        try {
+            Blob blob = (Blob)obj;
+            value = blob.getBytes(0,0);
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBBlob.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -49,14 +55,18 @@ public class DBBlob extends DBValue {
     public void loadFromCopy(Object obj) {
         try {
             Blob blob = (Blob) obj;
-            value.setBytes(0, blob.getBytes(0, 0));
+            byte[] bb = blob.getBytes(0, 0);
+            value = new byte[bb.length];
+            
+            System.arraycopy(bb, 0, value, 0, bb.length);
+            
         } catch (SQLException ex) {
             Logger.getLogger(DBBlob.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     @Override
-    public Object getValue() {
+    public byte[] getValue() {
         return value;
     }
 

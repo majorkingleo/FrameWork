@@ -6,8 +6,11 @@
 
 package at.redeye.FrameWork.base.imagestorage;
 
+import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.imagestorage.bindtypes.DBImage;
+import at.redeye.FrameWork.utilities.ReadFile;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import java.awt.Color;
 import java.awt.Component;
@@ -194,23 +197,44 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     if( retval != 0 )    
       return;
     
-    File[] files = fc.getSelectedFiles();
+    final File[] files = fc.getSelectedFiles();
     
-    Vector<JPanel> data = new Vector<JPanel>();
+    final Vector<JPanel> data = new Vector<JPanel>();
     
-    for( int i = 0; i < files.length; i++ )
-    {
-        System.out.println("file: " + files[i].getName() );
-        ImageIcon icon = ImageUtils.loadImageIcon(files[i].getAbsolutePath());
+    new AutoMBox(this.getTitle()){            
+
+                   @Override
+    public void do_stuff() throws Exception {
+                                          
+            for (int i = 0; i < files.length; i++) 
+            {
+                System.out.println("file: " + files[i].getName());
+                ImageIcon icon = ImageUtils.loadImageIcon(files[i].getAbsolutePath());
+
+                JPanel panel = new JPanel();
+
+                panel.add(new JLabel(icon));
+
+                data.add(panel);
+
+                DBImage image = new DBImage();
+
+                byte[] bytes = ReadFile.getBytesFromFile(files[i]);
+
+                image.image.value = bytes;
+                
+                image.id.loadFromCopy(getTransaction().getNewSequenceValue(image.getName()));
+                
+                getTransaction().insertValues(image);
+                getTransaction().commit();
+            }
+        }
+    };
         
-        JPanel panel = new JPanel();
-        
-        panel.add( new JLabel(icon));        
-        
-        data.add(panel);        
-    }
     
     imageList.setListData(data);
+
+
     
 }//GEN-LAST:event_jBLoadActionPerformed
 
