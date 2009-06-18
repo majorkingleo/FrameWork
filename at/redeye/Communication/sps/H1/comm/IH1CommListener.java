@@ -7,6 +7,6 @@ public interface IH1CommListener {
 	
 	public void actionConnectionPhaseChanged(ConnectionPhase newPhase, String message);
 	public void actionMessageInbound (byte [] data);
-	public void actionMessageOutbound();
+	public void actionMessageOutbound(byte [] data);
 
 }
