@@ -390,7 +390,14 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
     private javax.swing.JTextArea textareaToSPS;
     // End of variables declaration//GEN-END:variables
 
-    public void actionMessageOutbound() {
+    public void actionMessageOutbound(byte [] data) {
+    
+    	textareaToSPS.setText("");
+    	StringBuilder str = new StringBuilder();
+        for (int i = 0; i < data.length; i++) {
+            str.append(String.format("%02x ", data[i]));
+        }
+        textareaToSPS.setText(str.toString());
     }
 
     public void actionConnectionPhaseChanged(ConnectionPhase newPhase, String message) {
