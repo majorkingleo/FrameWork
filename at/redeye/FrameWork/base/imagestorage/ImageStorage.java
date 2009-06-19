@@ -201,13 +201,12 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     
     final Vector<JPanel> data = new Vector<JPanel>();
     
-    new AutoMBox(this.getTitle()){            
+    new AutoMBox(this.getTitle()) {
 
-                   @Override
-    public void do_stuff() throws Exception {
-                                          
-            for (int i = 0; i < files.length; i++) 
-            {
+        @Override
+        public void do_stuff() throws Exception {
+
+            for (int i = 0; i < files.length; i++) {
                 System.out.println("file: " + files[i].getName());
                 ImageIcon icon = ImageUtils.loadImageIcon(files[i].getAbsolutePath());
 
@@ -222,20 +221,18 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
                 byte[] bytes = ReadFile.getBytesFromFile(files[i]);
 
                 image.image.value = bytes;
-                
+
                 image.id.loadFromCopy(getTransaction().getNewSequenceValue(image.getName()));
-                
+                image.file_name.loadFromString(files[i].getName());
+                image.hist.setAnHist(root.getUserName());
+
                 getTransaction().insertValues(image);
                 getTransaction().commit();
             }
         }
     };
-        
-    
+     
     imageList.setListData(data);
-
-
-    
 }//GEN-LAST:event_jBLoadActionPerformed
 
 
