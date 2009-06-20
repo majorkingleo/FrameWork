@@ -12,6 +12,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
 import javax.swing.JOptionPane;
@@ -188,8 +189,9 @@ public class BaseDialog extends javax.swing.JFrame  {
      * @return
      * @throws java.sql.SQLException
      * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
+     * @throws IOException 
      */
-    public int getNewSequenceValue(String seqName) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException
+    public int getNewSequenceValue(String seqName) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException
     {
         if( seq_transaction == null )
             seq_transaction = getNewTransaction();

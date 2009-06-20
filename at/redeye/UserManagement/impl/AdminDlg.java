@@ -6,6 +6,7 @@
 
 package at.redeye.UserManagement.impl;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Set;
@@ -326,6 +327,8 @@ public class AdminDlg extends BaseDialog {
 				logger.error(ex);
 			} catch (TableBindingNotRegisteredException ex) {
 				logger.error(ex);
+			} catch (IOException ex) {
+				logger.error(ex);
 			}
 
 		}
@@ -388,16 +391,18 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
 			pbEntries.add(newPb);
 			oldPbs.add(newPb.getCopy());
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedDBDataTypeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (WrongBindFileFormatException e) {
-			e.printStackTrace();
-		} catch (TableBindingNotRegisteredException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			
+			logger.error(ex);
+		} catch (UnsupportedDBDataTypeException ex) {
+			
+			logger.error(ex);
+		} catch (WrongBindFileFormatException ex) {
+			logger.error(ex);
+		} catch (TableBindingNotRegisteredException ex) {
+			logger.error(ex);
+		} catch (IOException ex) {
+			logger.error(ex);
 		}
 
 	}                              

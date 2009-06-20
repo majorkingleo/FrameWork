@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtCreatorInterface;
@@ -26,6 +25,11 @@ public abstract class MOMMAbstractStmtCreator implements
 			.getLogger(MOMMAbstractStmtCreator.class.getSimpleName());
 
 	protected MOMMTypeRegistrationInterface registration_;
+	
+	/**
+	 * Allows to identify a BLOB
+	 */
+	protected static final String BLOB_IDENTIFIER = "###BLOB###";
 
 	public MOMMAbstractStmtCreator(MOMMTypeRegistrationInterface registration) {
 		super();
@@ -136,7 +140,7 @@ public abstract class MOMMAbstractStmtCreator implements
 				str.append("'");
 			}
 			if (data instanceof Date) {
-				str.append(toDateString((Date)data));
+				str.append(toDateString((Date) data));
 			} else {
 				str.append(data);
 			}
@@ -182,7 +186,9 @@ public abstract class MOMMAbstractStmtCreator implements
 			if (ele instanceof String && ele.toString().isEmpty()) {
 				str.append(" ");
 			} else if (ele instanceof Date) {
-				str.append(toDateString((Date)ele));
+				str.append(toDateString((Date) ele));
+			} else if (ele instanceof byte[]) {
+				str.append(BLOB_IDENTIFIER);
 			} else {
 				str.append(ele.toString());
 			}
@@ -224,7 +230,9 @@ public abstract class MOMMAbstractStmtCreator implements
 				usestring = true;
 			}
 			if (ele instanceof Date) {
-				str.append(toDateString((Date)ele));
+				str.append(toDateString((Date) ele));
+			} else if (ele instanceof byte[]) {
+				str.append(BLOB_IDENTIFIER);
 			} else {
 				str.append(ele);
 			}
@@ -292,7 +300,9 @@ public abstract class MOMMAbstractStmtCreator implements
 					str.append("'");
 				}
 				if (data instanceof Date) {
-					str.append(toDateString((Date)data));
+					str.append(toDateString((Date) data));
+				} else if (data instanceof byte[]) {
+					str.append(BLOB_IDENTIFIER);
 				} else {
 					str.append(data);
 				}
@@ -308,7 +318,7 @@ public abstract class MOMMAbstractStmtCreator implements
 
 		return str.toString();
 	}
-	
+
 	public String toDateString(Date date) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(
@@ -317,5 +327,7 @@ public abstract class MOMMAbstractStmtCreator implements
 		return sdf.format(date);
 
 	}
+	
+	
 
 }

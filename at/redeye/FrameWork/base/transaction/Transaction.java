@@ -4,6 +4,7 @@
  */
 package at.redeye.FrameWork.base.transaction;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -154,13 +155,13 @@ public abstract class Transaction {
 
 	public int updateValues(DBStrukt binddesc) throws SQLException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException,
-			TableBindingNotRegisteredException {
+			TableBindingNotRegisteredException, IOException {
 		return updateValues(binddesc, null);
 	}
 
 	public int updateValues(DBStrukt binddesc, String where)
 			throws SQLException, UnsupportedDBDataTypeException,
-			WrongBindFileFormatException, TableBindingNotRegisteredException {
+			WrongBindFileFormatException, TableBindingNotRegisteredException, IOException {
 		registerTable(binddesc);
 
 		HashMap<String, Object> data = binddesc.getHashMapAndData();
@@ -187,7 +188,7 @@ public abstract class Transaction {
 
 	public int insertValues(DBStrukt binddesc)
 			throws UnsupportedDBDataTypeException,
-			WrongBindFileFormatException, SQLException {
+			WrongBindFileFormatException, SQLException, IOException {
 		registerTable(binddesc);
 		HashMap<String, Object> data = binddesc.getHashMapAndData();
 		return executer.insertTableValues(binddesc.getName(), data);
@@ -246,7 +247,7 @@ public abstract class Transaction {
 
 	public int getNewSequenceValue(String seqName) throws SQLException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException,
-			TableBindingNotRegisteredException {
+			TableBindingNotRegisteredException, IOException {
 		return sequence.getNewSequenceValue(seqName, this);
 	}
 

@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.base.dbmanager.impl;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Vector;
@@ -159,7 +160,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 	public boolean autoCreateTable(DBStrukt strukt) throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-			WrongBindFileFormatException, CloneNotSupportedException {
+			WrongBindFileFormatException, CloneNotSupportedException, IOException {
 		String version = getTableVersion(strukt.getName());
 
 		if (version == null || !tableExists(strukt.getName())) {
@@ -197,7 +198,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	private boolean setTableVersion(String name, String version)
 			throws SQLException, TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException,
-			CloneNotSupportedException {
+			CloneNotSupportedException, IOException {
 
 		DBTableVersion vers = new DBTableVersion();
 

@@ -1,7 +1,11 @@
 package at.redeye.SqlDBInterface.SqlDBIO.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -82,12 +86,16 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 		case DB_TYPE_BIT:
 			return (new Boolean(rs.getBoolean(index)));
 
-		case DB_TYPE_DATE:		// FT
-		case DB_TYPE_TIME:		// FT
+		case DB_TYPE_DATE: // FT
+		case DB_TYPE_TIME: // FT
 		case DB_TYPE_DATETIME:
 
-			return new Date (rs.getTimestamp(index).getTime());
-
+			return new Date(rs.getTimestamp(index).getTime());
+			
+		case DB_TYPE_BLOB:
+			byte [] bytes = rs.getBytes(index);
+			return bytes;
+			
 		default:
 			throw new UnsupportedDBDataTypeException("DataType "
 					+ sourceType.toString() + " is unknown!");
@@ -350,18 +358,18 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 	}
 
 	public int insertTableValues(String tablename,
-			HashMap<String, Object> values) throws SQLException {
+			HashMap<String, Object> values) throws SQLException, IOException {
 
 		if (tablename.isEmpty()) {
 			throw new SQLException("No tablename given");
 		}
 
-		Statement s = conn_.createStatement();
+		PreparedStatement s;
 		int rv = 0;
 		String stmt = stmtCreator_.buildInsertStmtForTable(tablename, values);
-
+		s = handleDMLStatement(stmt, values);
 		setLastStmt(stmt);
-		rv = s.executeUpdate(stmt);
+		rv = s.executeUpdate();
 
 		s.close();
 		return rv;
@@ -370,21 +378,20 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 
 	public int updateTableValues(String tablename,
 			HashMap<String, Object> values, String whereStmt)
-			throws SQLException, TableBindingNotRegisteredException {
+			throws SQLException, TableBindingNotRegisteredException, IOException {
 
 		if (tablename.isEmpty()) {
 			throw new SQLException("No tablename given");
 		}
 
-		Statement s = conn_.createStatement();
+		PreparedStatement s;
 		int rv = 0;
 
 		String stmt = stmtCreator_.buildUpdateStmtForTable(tablename, values,
 				whereStmt);
-
+		s = handleDMLStatement(stmt, values);
 		setLastStmt(stmt);
-
-		rv = s.executeUpdate(stmt);
+		rv = s.executeUpdate();
 
 		s.close();
 		return rv;
@@ -404,6 +411,36 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 	 */
 	protected void setLastStmt(String lastStmt) {
 		MOMMAbstractStmtExecuter.lastStmt_ = lastStmt;
+	}
+
+	protected boolean containsBlob(String stmt) {
+		return stmt.contains(MOMMAbstractStmtCreator.BLOB_IDENTIFIER);
+	}
+
+	protected java.sql.PreparedStatement handleDMLStatement(String stmt,
+			HashMap<String, Object> values) throws SQLException, IOException {
+
+		PreparedStatement ps;
+		
+		if (containsBlob(stmt)) {
+			stmt = stmt.replaceAll(MOMMAbstractStmtCreator.BLOB_IDENTIFIER, "\\?");
+			ps = conn_.prepareStatement(stmt);
+			Set<String> keys = values.keySet();
+			Iterator<String> iter = keys.iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				Object ele = values.get(key);
+				if (ele instanceof byte[]) {
+					byte[] blobData = (byte[]) ele;
+					InputStream is = new ByteArrayInputStream(blobData);
+					ps.setBinaryStream(1, is, blobData.length);
+					is.close();
+				}
+			}
+		} else {
+			ps = conn_.prepareStatement(stmt);
+		}
+		return ps;
 	}
 
 }
