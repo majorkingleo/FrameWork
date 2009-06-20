@@ -1,5 +1,6 @@
 package at.redeye.SqlDBInterface.SqlDBIO;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Vector;
@@ -84,8 +85,8 @@ public interface MOMMStmtExecInterface {
 	 *            The insert Statement. The user is fully responsible for giving
 	 *            a valid statement.
 	 * @return Number of inserted elements
-	 * @throws SQLException
-	 *             In case of SQL-errors
+	 * @throws SQLException, IOException
+	 *             In case of SQL errors
 	 */
 	public int updateValues(String stmt) throws SQLException;
 
@@ -95,8 +96,8 @@ public interface MOMMStmtExecInterface {
 	 *            The update Statement. The user is fully responsible for giving
 	 *            a valid statement.
 	 * @return Number of inserted elements
-	 * @throws SQLException
-	 *             In case of SQL-errors
+	 * @throws SQLException, IOException
+	 *             In case of SQL errors
 	 */
 	public int insertValues(String stmt) throws SQLException;
 
@@ -114,10 +115,11 @@ public interface MOMMStmtExecInterface {
 	 * @throws SQLException
 	 *             If data is invalid or missing or in case of SQL errors
 	 * @throws TableBindingNotRegisteredException 
+	 * @throws IOException
 	 */
 	public int updateTableValues(String tablename,
 			HashMap<String, Object> values, String whereStmt)
-			throws SQLException, TableBindingNotRegisteredException;
+			throws SQLException, TableBindingNotRegisteredException, IOException;
 
 	/**
 	 * 
@@ -128,9 +130,10 @@ public interface MOMMStmtExecInterface {
 	 * @return Number of inserted elements
 	 * @throws SQLException
 	 *             If data is invalid or missing or in case of SQL errors
+	 * @throws IOException
 	 */
 	public int insertTableValues(String tablename,
-			HashMap<String, Object> values) throws SQLException;
+			HashMap<String, Object> values) throws SQLException, IOException;
 	
 	/**
 	 * 
