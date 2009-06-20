@@ -32,13 +32,7 @@ public class DBBlob extends DBValue {
 
     @Override
     public void loadFromDB(Object obj) {
-        try {
-            Blob blob = (Blob)obj;
-            value = blob.getBytes(0,0);
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DBBlob.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        value = ((byte[])obj);
     }
 
     @Override
@@ -53,16 +47,10 @@ public class DBBlob extends DBValue {
 
     @Override
     public void loadFromCopy(Object obj) {
-        try {
-            Blob blob = (Blob) obj;
-            byte[] bb = blob.getBytes(0, 0);
-            value = new byte[bb.length];
-            
-            System.arraycopy(bb, 0, value, 0, bb.length);
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(DBBlob.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        byte[] bb = (byte[])obj;
+		value = new byte[bb.length];
+		
+		System.arraycopy(bb, 0, value, 0, bb.length);
     }
 
     @Override
