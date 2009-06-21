@@ -3,7 +3,8 @@
  */
 package at.redeye.Communication.sps.H1.comm.impl;
 
-import com.sun.corba.se.impl.ior.ByteBuffer;
+import java.nio.ByteBuffer;
+
 
 /**
  * @author Mario Mattl
@@ -32,42 +33,42 @@ public class OSIConnectionFrame {
 
 	public byte[] toByteArray() {
 
-		ByteBuffer bb = new ByteBuffer();
+		ByteBuffer bb = ByteBuffer.allocate(100);
 
 		byte[] header = osiheader.toByteArray();
 
 		for (int idx = 0; idx < header.length; idx++) {
-			bb.append(header[idx]);
+			bb.put(header[idx]);
 		}
 
-		bb.append(code);
-		bb.append(dest_ref[0]);
-		bb.append(dest_ref[1]);
-		bb.append(src_ref[0]);
-		bb.append(src_ref[1]);
-		bb.append(tp_class);
-
-		return (bb.toArray());
+		bb.put(code);
+		bb.put(dest_ref[0]);
+		bb.put(dest_ref[1]);
+		bb.put(src_ref[0]);
+		bb.put(src_ref[1]);
+		bb.put(tp_class);
+		
+		return (bb.array());
 
 	}
 
 	public ByteBuffer toByteBuffer() {
 
-		ByteBuffer bb = new ByteBuffer();
+		ByteBuffer bb = ByteBuffer.allocate(100);
 
 		byte[] header = osiheader.toByteArray();
 
 		for (int idx = 0; idx < header.length; idx++) {
-			bb.append(header[idx]);
+			bb.put(header[idx]);
 		}
 
-		bb.append(code);
-		bb.append(dest_ref[0]);
-		bb.append(dest_ref[1]);
-		bb.append(src_ref[0]);
-		bb.append(src_ref[1]);
-		bb.append(tp_class);
-
+		bb.put(code);
+		bb.put(dest_ref[0]);
+		bb.put(dest_ref[1]);
+		bb.put(src_ref[0]);
+		bb.put(src_ref[1]);
+		bb.put(tp_class);
+		
 		return (bb);
 
 	}

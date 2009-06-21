@@ -3,7 +3,8 @@
  */
 package at.redeye.Communication.sps.H1.comm.impl;
 
-import com.sun.corba.se.impl.ior.ByteBuffer;
+import java.nio.ByteBuffer;
+
 
 /**
  * @author Mario Mattl
@@ -17,24 +18,24 @@ public class OSIDataFrame {
 
 	public ByteBuffer toByteBuffer() {
 
-		ByteBuffer bb = new ByteBuffer();
+		ByteBuffer bb = ByteBuffer.allocate(100);
 
 		byte[] header = osiheader.toByteArray();
 
 		for (int idx = 0; idx < header.length; idx++) {
-			bb.append(header[idx]);
+			bb.put(header[idx]);
 		}
 
-		bb.append(code);
-		bb.append(last);
-
+		bb.put(code);
+		bb.put(last);
+		
 		return (bb);
 
 	}
 
 	public int getLength() {
 
-		return toByteBuffer().size();
+		return toByteBuffer().position();
 
 	}
 

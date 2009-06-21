@@ -16,8 +16,8 @@ import at.redeye.Communication.sps.H1.comm.IH1CommListener;
 import at.redeye.Communication.sps.H1.comm.IH1Communication;
 import at.redeye.Communication.sps.H1.comm.UpdateReason;
 
-import com.sun.corba.se.impl.ior.ByteBuffer;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 
 public class H1TCPHandling implements IH1Communication {
 
@@ -175,32 +175,30 @@ public class H1TCPHandling implements IH1Communication {
         ocf.tp_class = 0;
 
         ByteBuffer bb = ocf.toByteBuffer();
-        bb.trimToSize();
-        int frame_len = bb.size();
+        
+        int frame_len = bb.position();
 
         logger.info("NOTE: frame_len = " + frame_len);
 
-        bb.append(OSIConnectionFrame.PARA_TPDU);
-        bb.append((byte) 1);
-        bb.append((byte) OSIConnectionFrame.POW_PDU);
-        bb.append((byte) OSIConnectionFrame.PARA_MYTSAP);
+        bb.put(OSIConnectionFrame.PARA_TPDU);
+        bb.put((byte) 1);
+        bb.put((byte) OSIConnectionFrame.POW_PDU);
+        bb.put((byte) OSIConnectionFrame.PARA_MYTSAP);
 
         byte[] tsap = conndef.getMytsapname().getBytes();
-        bb.append((byte) tsap.length);
+        bb.put((byte) tsap.length);
         for (int i = 0; i < tsap.length; i++) {
-            bb.append(tsap[i]);
+            bb.put(tsap[i]);
         }
 
         tsap = conndef.getHosttsapname().getBytes();
-        bb.append((byte) OSIConnectionFrame.PARA_HOSTTSAP);
-        bb.append((byte) tsap.length);
+        bb.put((byte) OSIConnectionFrame.PARA_HOSTTSAP);
+        bb.put((byte) tsap.length);
         for (int i = 0; i < tsap.length; i++) {
-            bb.append(tsap[i]);
+            bb.put(tsap[i]);
         }
 
-        bb.trimToSize();
-
-        int len = bb.size();
+        int len = bb.position();
 
         // Fill OSI header with length info
         ocf.osiheader.tpkt_len[0] = (byte) (len / 0x100);
@@ -208,9 +206,11 @@ public class H1TCPHandling implements IH1Communication {
         ocf.osiheader.headlen = (byte) (len - ocf.osiheader.getLength());
 
         // Replace the affected bytes in ByteBuffer
-
+        bb.flip();
+       
         byte[] header = ocf.osiheader.toByteArray();
-        byte[] arr = bb.toArray();
+        byte[] arr = new byte [len];
+        bb.get(arr, 0, len);
 
         for (int idx = 0; idx < header.length; idx++) {
             arr[idx] = header[idx];
@@ -279,18 +279,19 @@ public class H1TCPHandling implements IH1Communication {
         byte[] buffer = new byte[expectedLength];
         int len = in.read(buffer, 0, expectedLength);
 
-        ByteBuffer bb = new ByteBuffer();
+        ByteBuffer bb = ByteBuffer.allocate(len);
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < len; i++) {
-            bb.append((byte) buffer[i]);
+            bb.put((byte) buffer[i]);
             if (i == header.getLength()) {
                 str.append(" | ");
             }
             str.append(String.format("%02x ", (byte) buffer[i]));
         }
         logger.info("Receive (" + len + "): " + str.toString());
-        bb.trimToSize();
-        byte[] arr = bb.toArray();
+        bb.flip();
+        byte[] arr = new byte [len];
+        bb.get(arr, 0, len);
         updateListener(UpdateReason.INBOUND_MESSAGE, arr, null);
         return arr;
     }
@@ -309,11 +310,11 @@ public class H1TCPHandling implements IH1Communication {
         ByteBuffer bb = odf.toByteBuffer();
         if (dataToSend != null) {
             for (int i = 0; i < dataToSend.length; i++) {
-                bb.append(dataToSend[i]);
+                bb.put(dataToSend[i]);
             }
         }
-        bb.trimToSize();
-        int len = bb.size();
+       
+        int len = bb.position();
 
         // Fill OSI header with length info
         odf.osiheader.tpkt_len[0] = (byte) (len / 0x100);
@@ -325,7 +326,9 @@ public class H1TCPHandling implements IH1Communication {
         // Replace the affected bytes in ByteBuffer
 
         byte[] header = odf.osiheader.toByteArray();
-        byte[] arr = bb.toArray();
+        logger.info("len = "+len);
+        byte[] arr = new byte[len];
+        bb.get(arr, 0, len);
 
         for (int idx = 0; idx < header.length; idx++) {
             arr[idx] = header[idx];
@@ -338,8 +341,10 @@ public class H1TCPHandling implements IH1Communication {
             str.append(String.format("%02x ", arr[idx]));
 
         }
-        logger.info("Transmit (" + bb.size() + "): " + str.toString());
-        byte [] data = bb.toArray();
+        logger.info("Transmit (" + bb.position() + "): " + str.toString());
+        len = bb.position();
+        byte [] data = new byte [len] ;
+        bb.get(data, 0, len);
         out.write(data);
         out.flush();
         
