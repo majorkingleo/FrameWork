@@ -143,6 +143,8 @@ public class UserDataHandling implements UserManagementInterface {
 		Transaction tid = conn.getNewTransaction();
 		Vector<DBStrukt> pbrecords = tid.fetchTable(new DBPb());
 
+        conn.closeTransaction(tid);
+        
 		return pbrecords;
 	}
 

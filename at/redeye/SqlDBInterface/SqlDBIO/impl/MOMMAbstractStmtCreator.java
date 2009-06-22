@@ -43,6 +43,10 @@ public abstract class MOMMAbstractStmtCreator implements
 	protected String markTableName(String table) {
 		return table;
 	}
+    
+    protected String markTableAndColumnNameForUpdate(String table, String column) {
+		return markTableName(table) + "." + markColumnName(column);
+	}
 
 	public String buildStmtForTable(String[] tablenames, String whereStmt,
 			HashMap<String, MOMMColumnAttribute> columnNames) {
@@ -222,7 +226,7 @@ public abstract class MOMMAbstractStmtCreator implements
 			usestring = false;
 			String key = iter.next();
 			logger.trace("--> " + key);
-			str.append(markTableName(table) + "." + markColumnName(key));
+			str.append(markTableAndColumnNameForUpdate(table,key));
 			str.append("=");
 			Object ele = values.get(key);
 			if (ele instanceof String || ele instanceof Date) {

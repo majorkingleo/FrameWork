@@ -320,7 +320,8 @@ public class AdminDlg extends BaseDialog {
 				trans.updateValues(pb);
 				trans.commit();
 			} catch (SQLException sqlex) {
-				logger.error(sqlex);
+                logger.error(getTransaction().getSql());
+				logger.error(sqlex);                
 			} catch (UnsupportedDBDataTypeException ex) {
 				logger.error(ex);
 			} catch (WrongBindFileFormatException ex) {

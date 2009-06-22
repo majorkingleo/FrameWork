@@ -8,6 +8,7 @@ package at.redeye.FrameWork.base;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -15,6 +16,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
+import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -130,6 +132,19 @@ public class BaseDialog extends javax.swing.JFrame  {
             transaction = null;            
         }
         
+        if( transaction != null )
+        {
+            try {
+
+                if (!transaction.isOpen()) {
+                    root.getDBConnection().closeTransaction(transaction);
+                    transaction = null;
+                }
+            } catch (SQLException ex) {
+                java.util.logging.Logger.getLogger(BaseDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
         if( transaction != null )        
             return transaction;
         
@@ -137,7 +152,7 @@ public class BaseDialog extends javax.swing.JFrame  {
             return null;
         
         transaction = root.getDBConnection().getNewTransaction();
-        
+               
         return transaction;
     }
     
@@ -146,7 +161,10 @@ public class BaseDialog extends javax.swing.JFrame  {
         if( root.getDBConnection() == null )
             return null;
         
-        return root.getDBConnection().getNewTransaction();
+        Transaction trans = root.getDBConnection().getNewTransaction();
+
+        
+        return trans;
     }
     
     public void closeTransaction( Transaction tran ) throws SQLException
@@ -193,14 +211,22 @@ public class BaseDialog extends javax.swing.JFrame  {
      */
     public int getNewSequenceValue(String seqName) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException
     {
-        if( seq_transaction == null )
-            seq_transaction = getNewTransaction();
+        if( getTransaction().getDBMSType() == MOMMSupportedDBMSTypes.DB_SQLITE )
+        {
+            int value = getTransaction().getNewSequenceValue(seqName);
+            return value;
+        }
+        else
+        {
+            if( seq_transaction == null )
+                seq_transaction = getNewTransaction();
          
-        int value = seq_transaction.getNewSequenceValue(seqName);
+            int value = seq_transaction.getNewSequenceValue(seqName);
         
-        seq_transaction.commit();
+            seq_transaction.commit();
         
-        return value;
+            return value;
+        }
     }
     
     /*

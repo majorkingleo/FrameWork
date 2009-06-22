@@ -14,8 +14,22 @@ public class MOMMStmtCreatorSQLITE extends MOMMAbstractStmtCreator  {
 	}
     
     @Override
-    public String markColumnName( String columnName )
+    protected String markColumnName( String columnName )
     {
-        return "`" + columnName.toLowerCase() + "`";
+        return "`" + columnName.toLowerCase() + "`";                
     }
+    
+    @Override
+    protected String markTableName( String tableName )
+    {
+        return "`" + tableName.toUpperCase() + "`";
+    }
+    
+    @Override
+    protected String markTableAndColumnNameForUpdate( String table, String column )
+    {
+        return markColumnName(column);
+    }
+    
+    
 }

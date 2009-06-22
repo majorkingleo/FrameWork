@@ -20,6 +20,7 @@ import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.transaction.MSSQLTransaction;
 import at.redeye.FrameWork.base.transaction.MySQLTransaction;
 import at.redeye.FrameWork.base.transaction.OracleTransaction;
+import at.redeye.FrameWork.base.transaction.SqLiteTransaction;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.MOMMDbConnectionInterface;
@@ -450,6 +451,9 @@ private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 			case DB_ORACLE:
 				t = new OracleTransaction(connparams);
 				break;
+            case DB_SQLITE:
+                t = new SqLiteTransaction(connparams);
+                break;
 			default:
 				Logger.getLogger(DBConnection.class.getName()).log(
 						Level.SEVERE, "Unsupported DBMS!");
