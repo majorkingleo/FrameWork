@@ -31,7 +31,7 @@ public class DBImage extends DBStrukt
         add(file_name);
         add(hist);
         
-        id.setAsPrimaryKey();
+        id.setAsPrimaryKey();                
     }
     
     

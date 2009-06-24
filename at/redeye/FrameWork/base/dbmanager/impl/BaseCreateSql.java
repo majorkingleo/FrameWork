@@ -17,7 +17,7 @@ import java.util.Vector;
  *
  * @author Administrator
  */
-public abstract class BaseCreateSql {
+public abstract class BaseCreateSql implements BackupTableInterface {
     
         
     public String createSqlforTable( DBStrukt strukt )
@@ -104,4 +104,18 @@ public abstract class BaseCreateSql {
     protected abstract String addStorageInfo() ;
   
     public abstract String markColumn (String col);        
+    
+    public String createSqlForBackup( String table, String target_name )
+    {
+        String res = "create table " + markColumn( target_name ) + " as select * from " + markColumn( table );
+        
+        return res;
+    }
+    
+    public String createSqlDropTable( String table )
+    {
+        String res = "drop table " + markColumn( table );
+        
+        return res;
+    }
 }
