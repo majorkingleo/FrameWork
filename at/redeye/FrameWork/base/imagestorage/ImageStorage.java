@@ -23,8 +23,7 @@ import javax.swing.JFileChooser;
  * @author  martin
  */
 public class ImageStorage extends BaseDialog {
-        
-    Vector<ImageListContent> list = new Vector<ImageListContent>();
+            
     
     boolean changed = false;
     
@@ -32,40 +31,15 @@ public class ImageStorage extends BaseDialog {
     public ImageStorage(Root root) {
         super(root,"Bilderverwaltung");
         initComponents();
-        
-        imageList.setCellRenderer(new ImageCellRenderer());
+                
+        imageList.setParent(this);
         
         feed_list();
     }
 
     private void feed_list() 
     {
-        new AutoMBox(this.getTitle()) {
-
-            @Override
-            public void do_stuff() throws Exception {
-
-                final Vector<DBStrukt> res = getTransaction().fetchTable(new DBImage());
-
-                list.clear();
-
-                Thread t = new Thread() {
-
-                    @Override
-                    public void run() {
-
-                        for (int i = 0; i < res.size(); i++) {
-
-                            DBImage image = (DBImage) res.get(i);
-                            ImageListContent content = ImageListContent.createPanelFromDB(image);
-                            list.add(content);
-                            imageList.setListData(list);
-                        }
-                    }
-                };
-                t.start();
-            }
-        };
+        imageList.feed_list();
     }
 
     @Override
@@ -94,13 +68,12 @@ public class ImageStorage extends BaseDialog {
     private void initComponents() {
 
         helpButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        imageList = new javax.swing.JList();
         buttonClose = new javax.swing.JButton();
         jBDel = new javax.swing.JButton();
         jLTitle = new javax.swing.JLabel();
         jBSave = new javax.swing.JButton();
         jBLoad = new javax.swing.JButton();
+        imageList = new at.redeye.FrameWork.base.imagestorage.ImageStoragePanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -111,10 +84,7 @@ public class ImageStorage extends BaseDialog {
             }
         });
 
-        imageList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(imageList);
-
-        buttonClose.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        buttonClose.setFont(new java.awt.Font("Tahoma", 0, 12));
         buttonClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
         buttonClose.setText("Schließen");
         buttonClose.setPreferredSize(new java.awt.Dimension(130, 31));
@@ -132,7 +102,7 @@ public class ImageStorage extends BaseDialog {
             }
         });
 
-        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jLTitle.setFont(new java.awt.Font("Dialog", 1, 18));
         jLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLTitle.setText("Bilderverwaltung");
 
@@ -156,11 +126,11 @@ public class ImageStorage extends BaseDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(imageList, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 548, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(helpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -181,15 +151,15 @@ public class ImageStorage extends BaseDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(helpButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(imageList, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonClose, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBSave)
                     .addComponent(jBLoad)
                     .addComponent(jBDel))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addGap(27, 27, 27))
         );
 
         pack();
@@ -239,8 +209,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
                     " where " +
                     getTransaction().markColumn(image.id) +
                     " = '" + content.getId() + "'");
-            list.remove(content);
-            imageList.setListData(list);
+            imageList.removeValue(content);            
             changed = true;
         }
     };    
@@ -310,8 +279,7 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
                     public void run() 
                     {
                         ImageListContent content = ImageListContent.createPanelFromDB(image);
-                        list.add(content);
-                        imageList.setListData(list);                        
+                        imageList.addValue(content);                                             
                     }
                 };
 
@@ -326,12 +294,11 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonClose;
     private javax.swing.JButton helpButton;
-    private javax.swing.JList imageList;
+    private at.redeye.FrameWork.base.imagestorage.ImageStoragePanel imageList;
     private javax.swing.JButton jBDel;
     private javax.swing.JButton jBLoad;
     private javax.swing.JButton jBSave;
     private javax.swing.JLabel jLTitle;
-    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
 }
