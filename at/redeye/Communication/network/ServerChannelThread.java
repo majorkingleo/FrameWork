@@ -113,8 +113,15 @@ public class ServerChannelThread extends Thread {
 	      // loop while data available, channel is non-blocking
 	      while ((count = socketChannel.read (buffer)) > 0) {
 	    	  
+	         
+	         int len = buffer.position();
 	         buffer.flip();      // make buffer readable
-	         byte [] arr = buffer.array();
+	         if (len <= 0) {
+	        	 System.out.println("Buffer is empty -> nothing to do\n");
+	        	 continue;
+	         }
+	         byte [] arr = new byte [len];
+	         buffer.get(arr, 0, len);
 	         for (int i = 0; i < arr.length; i++) {
 	        	 
 	        	 System.out.print(String.format("%02x ", arr[i]));

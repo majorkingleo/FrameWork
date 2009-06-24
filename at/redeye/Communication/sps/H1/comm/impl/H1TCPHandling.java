@@ -278,8 +278,13 @@ public class H1TCPHandling implements IH1Communication {
         OSIHeader header = new OSIHeader();
         byte[] buffer = new byte[expectedLength];
         int len = in.read(buffer, 0, expectedLength);
+        
+        if (len < 0) {
+        	logger.info("Read nothing!");
+        	return null;
+        }
 
-        ByteBuffer bb = ByteBuffer.allocate(len);
+        ByteBuffer bb = ByteBuffer.allocate(expectedLength);
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < len; i++) {
             bb.put((byte) buffer[i]);
@@ -308,32 +313,36 @@ public class H1TCPHandling implements IH1Communication {
         odf.last = (byte) OSIConnectionFrame.IS_LAST;
 
         ByteBuffer bb = odf.toByteBuffer();
+       
         if (dataToSend != null) {
             for (int i = 0; i < dataToSend.length; i++) {
                 bb.put(dataToSend[i]);
             }
+            
         }
-       
+  
         int len = bb.position();
+        bb.flip();
 
         // Fill OSI header with length info
         odf.osiheader.tpkt_len[0] = (byte) (len / 0x100);
         odf.osiheader.tpkt_len[1] = (byte) (len % 0x100);
         odf.osiheader.headlen = (byte) 2;
 
-        StringBuilder str = new StringBuilder();
 
         // Replace the affected bytes in ByteBuffer
 
         byte[] header = odf.osiheader.toByteArray();
         logger.info("len = "+len);
         byte[] arr = new byte[len];
+        
         bb.get(arr, 0, len);
 
         for (int idx = 0; idx < header.length; idx++) {
             arr[idx] = header[idx];
         }
 
+        StringBuilder str = new StringBuilder();
         for (int idx = 0; idx < arr.length; idx++) {
             if (idx == header.length) {
                 str.append(" | ");
@@ -342,7 +351,8 @@ public class H1TCPHandling implements IH1Communication {
 
         }
         logger.info("Transmit (" + bb.position() + "): " + str.toString());
-        len = bb.position();
+        bb.flip();
+        len = bb.position();    
         byte [] data = new byte [len] ;
         bb.get(data, 0, len);
         out.write(data);

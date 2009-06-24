@@ -28,15 +28,15 @@ public class H1ReceiverThread extends Thread {
     public void run() {
 
         while (true) {
-            if (h1comm.getConnectionPhase() != ConnectionPhase.H1Connected) {
-                return;
-            }
+            
             try {
-
+            	if (h1comm.getConnectionPhase() != ConnectionPhase.H1Connected) {
+            		logger.trace("H1 is not connected!");
+                    sleep (1000);
+                    continue;
+                }
                 h1comm.receive(0);
                 h1comm.transmitH1Answer();
-
-                sleep(300);
 
             } catch (SocketTimeoutException ste) {
                 logger.trace("Receive from socket: " + ste.getMessage());

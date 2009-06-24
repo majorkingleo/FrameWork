@@ -28,7 +28,7 @@ public class OSIDataFrame {
 
 		bb.put(code);
 		bb.put(last);
-		
+		//bb.flip();
 		return (bb);
 
 	}

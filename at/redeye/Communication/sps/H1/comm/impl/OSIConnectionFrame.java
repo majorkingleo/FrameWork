@@ -23,7 +23,7 @@ public class OSIConnectionFrame {
 	protected final static byte NOT_LAST = (byte) 0x00;
 
 	protected final static byte POW_PDU = (byte) 9;
-	protected final static char MAX_PDU = 512;
+	protected final static byte MAX_PDU = (byte) 100;
 
 	OSIHeader osiheader = new OSIHeader();
 	Byte code = 0x0;
@@ -74,6 +74,10 @@ public class OSIConnectionFrame {
 	}
 	
 	public void initializeByBytes (byte [] in) {
+		
+		if (in == null) {
+			return;
+		}
 		
 		osiheader.tpkt_len[0] = in[2] ;
 		osiheader.tpkt_len[1] = in[3];
