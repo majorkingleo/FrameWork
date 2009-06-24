@@ -8,6 +8,7 @@ import javax.swing.filechooser.*;
 /* ImageFileView.java is used by FileChooserDemo2.java. */
 public class ImageFileView extends FileView {
 
+    @Override
     public String getName(File f) {
         return null; //let the L&F FileView figure this out
     }
@@ -47,14 +48,14 @@ public class ImageFileView extends FileView {
         if (extension != null) {
             if (extension.equals(ImageUtils.jpeg) ||
                 extension.equals(ImageUtils.jpg)) {
-                icon = ImageUtils.loadImageIcon(f.getAbsolutePath());
+                icon = ImageUtils.loadScaledImageIcon(f.getAbsolutePath());
             } else if (extension.equals(ImageUtils.gif)) {
-                icon = ImageUtils.loadImageIcon(f.getAbsolutePath());;
+                icon = ImageUtils.loadScaledImageIcon(f.getAbsolutePath());
             } else if (extension.equals(ImageUtils.tiff) ||
                        extension.equals(ImageUtils.tif)) {
-                icon = ImageUtils.loadImageIcon(f.getAbsolutePath());;
+                icon = ImageUtils.loadScaledImageIcon(f.getAbsolutePath());
             } else if (extension.equals(ImageUtils.png)) {                
-                icon = ImageUtils.loadImageIcon(f.getAbsolutePath());;
+                icon = ImageUtils.loadScaledImageIcon(f.getAbsolutePath());
             }
         }
         return icon;

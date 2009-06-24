@@ -47,7 +47,7 @@ public class CreateSqlMySql extends BaseCreateSql {
                 return "int default '0'";
                 
             case DB_TYPE_BLOB:
-                return "BLOB";
+                return "MEDIUMBLOB";
         }
         
         return null;

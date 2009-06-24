@@ -26,6 +26,9 @@ public class ImageFileFilter extends javax.swing.filechooser.FileFilter implemen
     
     public boolean accept(File file) 
     {
+        if( file.isDirectory() )
+            return true;
+        
         if( !file.isFile() )
             return false;
                 

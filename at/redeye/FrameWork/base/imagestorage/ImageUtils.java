@@ -72,7 +72,7 @@ public class ImageUtils {
         }
     }
     
-    public static ImageIcon loadImageIcon(String path) {
+    public static ImageIcon loadScaledImageIcon(String path) {
 
         try {
             java.net.URL imgURL;
@@ -94,6 +94,24 @@ public class ImageUtils {
             return null;
         }
         
+    }
+    
+    public static ImageIcon loadImageIcon(byte bytes[], String descr) 
+    {
+        ImageIcon image = new ImageIcon(bytes,descr);
+        return image;        
+    }
+
+    public static ImageIcon loadScaledImageIcon(byte bytes[], String descr, int width, int height) 
+    {
+        ImageIcon image = loadImageIcon(bytes,descr);
+        image.setImage(scaleImage(image.getImage(),width,height));
+        return image;
+    }
+    
+    public static ImageIcon loadScaledImageIcon(byte bytes[], String descr) 
+    {
+        return loadScaledImageIcon(bytes, descr, 50, 50);
     }
     
     public static Image scaleImage(Image image, int width, int height )

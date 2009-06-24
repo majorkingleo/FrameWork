@@ -9,47 +9,80 @@ package at.redeye.FrameWork.base.imagestorage;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.imagestorage.bindtypes.DBImage;
 import at.redeye.FrameWork.utilities.ReadFile;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
-import java.awt.Color;
-import java.awt.Component;
 import java.io.File;
 import java.util.Vector;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
 
 /**
  *
  * @author  martin
  */
 public class ImageStorage extends BaseDialog {
-
-   class CustomCellRenderer implements ListCellRenderer {
-
-       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-           Component component = (Component) value;
-           component.setBackground(isSelected ? Color.black : Color.white);
-           component.setForeground(isSelected ? Color.white : Color.black);
-           return component;
-       }
-                
-   }
-
+        
+    Vector<ImageListContent> list = new Vector<ImageListContent>();
     
+    boolean changed = false;
     
     /** Creates new form ImageStorage */
     public ImageStorage(Root root) {
         super(root,"Bilderverwaltung");
         initComponents();
         
-        imageList.setCellRenderer(new CustomCellRenderer());
+        imageList.setCellRenderer(new ImageCellRenderer());
+        
+        feed_list();
     }
 
+    private void feed_list() 
+    {
+        new AutoMBox(this.getTitle()) {
+
+            @Override
+            public void do_stuff() throws Exception {
+
+                final Vector<DBStrukt> res = getTransaction().fetchTable(new DBImage());
+
+                list.clear();
+
+                Thread t = new Thread() {
+
+                    @Override
+                    public void run() {
+
+                        for (int i = 0; i < res.size(); i++) {
+
+                            DBImage image = (DBImage) res.get(i);
+                            ImageListContent content = ImageListContent.createPanelFromDB(image);
+                            list.add(content);
+                            imageList.setListData(list);
+                        }
+                    }
+                };
+                t.start();
+            }
+        };
+    }
+
+    @Override
+    protected boolean canClose() 
+    {
+        if( changed == true )        
+        {
+            int ret = checkSave();
+
+            if (ret == 1) {
+                jBSaveActionPerformed(null);
+            } else if (ret == -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -171,16 +204,60 @@ java.awt.EventQueue.invokeLater(new Runnable() {
 }//GEN-LAST:event_helpButtonActionPerformed
 
 private void buttonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCloseActionPerformed
-    close();
+ 
+    new AutoMBox(getTitle()) {    
+        @Override
+        public void do_stuff() throws Exception {
+            
+            if( canClose() )
+            {
+                getTransaction().rollback();
+                close();
+            }
+        }
+    };
+    
 }//GEN-LAST:event_buttonCloseActionPerformed
 
 private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
 // TODO add your handling code here:
+    final ImageListContent content = (ImageListContent) imageList.getSelectedValue();
+
+    if( content == null )
+        return;
+                
+    new AutoMBox(getTitle()) {
+
+        @Override
+        public void do_stuff() throws Exception {
+            DBImage image = new DBImage();
+
+            getTransaction().updateValues(
+                    "delete from " +
+                    getTransaction().markTable(image.getName()) +
+                    " where " +
+                    getTransaction().markColumn(image.id) +
+                    " = '" + content.getId() + "'");
+            list.remove(content);
+            imageList.setListData(list);
+            changed = true;
+        }
+    };    
+
  
 }//GEN-LAST:event_jBDelActionPerformed
 
 private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
+     
+    new AutoMBox(getTitle()) {
 
+            @Override
+            public void do_stuff() throws Exception {
+                getTransaction().commit();
+                changed = false;
+            }
+        
+    };
 }//GEN-LAST:event_jBSaveActionPerformed
 
 private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBLoadActionPerformed
@@ -197,9 +274,7 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     if( retval != 0 )    
       return;
     
-    final File[] files = fc.getSelectedFiles();
-    
-    final Vector<JPanel> data = new Vector<JPanel>();
+    final File[] files = fc.getSelectedFiles();        
     
     new AutoMBox(this.getTitle()) {
 
@@ -208,15 +283,8 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
             for (int i = 0; i < files.length; i++) {
                 System.out.println("file: " + files[i].getName());
-                ImageIcon icon = ImageUtils.loadImageIcon(files[i].getAbsolutePath());
-
-                JPanel panel = new JPanel();
-
-                panel.add(new JLabel(icon));
-
-                data.add(panel);
-
-                DBImage image = new DBImage();
+                
+                final DBImage image = new DBImage();
 
                 byte[] bytes = ReadFile.getBytesFromFile(files[i]);
 
@@ -226,13 +294,25 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
                 image.file_name.loadFromString(files[i].getName());
                 image.hist.setAnHist(root.getUserName());
 
-                getTransaction().insertValues(image);
-                getTransaction().commit();
+                getTransaction().insertValues(image);    
+                changed = true;
+                
+                Thread t = new Thread() {
+
+                    @Override
+                    public void run() 
+                    {
+                        ImageListContent content = ImageListContent.createPanelFromDB(image);
+                        list.add(content);
+                        imageList.setListData(list);                        
+                    }
+                };
+
+                t.start();
             }
         }
     };
-     
-    imageList.setListData(data);
+         
 }//GEN-LAST:event_jBLoadActionPerformed
 
 
