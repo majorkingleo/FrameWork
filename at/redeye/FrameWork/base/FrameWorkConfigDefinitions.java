@@ -22,7 +22,7 @@ public class FrameWorkConfigDefinitions {
     public static DBConfig SpreadSheetColorOdd = new DBConfig("SpreadSheetColorOdd", "#ffffff", "Hintergundfarbe der Tabelle bei ungeraden Reihen." );
     public static DBConfig SpreadSheetColorOddEditable = new DBConfig("SpreadSheetColorOddEditable", "#dcf5eb", "Hintergundfarbe der Tabelle bei ungeraden editiebaren Reihen." );
     public static DBConfig DefaultAutoLineBreakWidth = new DBConfig( "DefaultAutoLineBreakWidth", "40", "Breite eines automatisch umgebrochenen Textes.");
-    
+    public static DBConfig ImagePreviewInFileOpen = new DBConfig("ImagePreviewinFileOpen","false","Soll im Datei öffnen Dialogen die Bildervorschau angezeigt werden?");
     
     public static void registerDefinitions()
     {
@@ -39,6 +39,7 @@ public class FrameWorkConfigDefinitions {
         addLocal(SpreadSheetColorOddEditable);
         
         addLocal(DefaultAutoLineBreakWidth);
+        addLocal(ImagePreviewInFileOpen);
     }
     
     static void add( String name, String value, String descr )

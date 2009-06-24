@@ -8,6 +8,7 @@ package at.redeye.FrameWork.base.imagestorage;
 
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.imagestorage.bindtypes.DBImage;
@@ -268,7 +269,13 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     fc.setAcceptAllFileFilterUsed(false);
     fc.setFileFilter(new ImageFileFilter());
     fc.setMultiSelectionEnabled(true);    
-    fc.setFileView(new ImageFileView());
+    // is Arschlangsam daher mach ma das eher nicht.
+    
+    if( root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.ImagePreviewInFileOpen).equalsIgnoreCase("true") )
+    {
+        fc.setFileView(new ImageFileView());
+    }
+    
     int retval = fc.showOpenDialog(this);
     
     if( retval != 0 )    
