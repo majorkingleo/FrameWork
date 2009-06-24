@@ -351,8 +351,8 @@ public class H1TCPHandling implements IH1Communication {
 
         }
         logger.info("Transmit (" + bb.position() + "): " + str.toString());
+        len = bb.position();
         bb.flip();
-        len = bb.position();    
         byte [] data = new byte [len] ;
         bb.get(data, 0, len);
         out.write(data);
