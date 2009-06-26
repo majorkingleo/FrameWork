@@ -33,7 +33,6 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMTypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
 
@@ -73,7 +72,7 @@ public abstract class Transaction {
 			sequence = new CommonSequence();
 			break;
 		}
-	}    
+	}
 
 	public boolean isOpen() throws SQLException {
 		if (conn == null) {
@@ -250,11 +249,10 @@ public abstract class Transaction {
 	public int getNewSequenceValue(String seqName, int magic) throws SQLException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException,
 			TableBindingNotRegisteredException, IOException {
-        
         if( magic != 1234567 )
         {
-            Logger.getLogger(Transaction.class.getName()).log(
-						Level.SEVERE, "Unqulified call of transaction ");
+            Logger logger = Logger.getLogger(Transaction.class.getCanonicalName());
+            logger.warning("Unqualified access to Sequence Value!");
         }
         
 		return sequence.getNewSequenceValue(seqName, this);
