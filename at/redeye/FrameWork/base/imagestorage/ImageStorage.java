@@ -8,24 +8,22 @@ package at.redeye.FrameWork.base.imagestorage;
 
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.CanCloseInterface;
+import at.redeye.FrameWork.base.DefaultCanClose;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.imagestorage.bindtypes.DBImage;
 import at.redeye.FrameWork.utilities.ReadFile;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import java.io.File;
-import java.util.Vector;
 import javax.swing.JFileChooser;
 
 /**
  *
  * @author  martin
  */
-public class ImageStorage extends BaseDialog {
-            
-    
-    boolean changed = false;
+public class ImageStorage extends BaseDialog implements CanCloseInterface {
+                    
     
     /** Creates new form ImageStorage */
     public ImageStorage(Root root) {
@@ -45,17 +43,12 @@ public class ImageStorage extends BaseDialog {
     @Override
     protected boolean canClose() 
     {
-        if( changed == true )        
-        {
-            int ret = checkSave();
-
-            if (ret == 1) {
-                jBSaveActionPerformed(null);
-            } else if (ret == -1) {
-                return false;
-            }
-        }
-        return true;
+        return DefaultCanClose.DefaultCanClose(this);
+    }
+    
+    public void saveData()
+    {
+        jBSaveActionPerformed(null);
     }
     
     /** This method is called from within the constructor to
@@ -210,7 +203,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
                     getTransaction().markColumn(image.id) +
                     " = '" + content.getId() + "'");
             imageList.removeValue(content);            
-            changed = true;
+            setEdited();
         }
     };    
 
@@ -224,7 +217,7 @@ private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
             @Override
             public void do_stuff() throws Exception {
                 getTransaction().commit();
-                changed = false;
+                clearEdited();
             }
         
     };
@@ -266,12 +259,12 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
                 image.image.value = bytes;
 
-                image.id.loadFromCopy(getTransaction().getNewSequenceValue(image.getName()));
+                image.id.loadFromCopy(getNewSequenceValue(image.getName()));
                 image.file_name.loadFromString(files[i].getName());
                 image.hist.setAnHist(root.getUserName());
 
                 getTransaction().insertValues(image);    
-                changed = true;
+                setEdited();
                 
                 Thread t = new Thread() {
 

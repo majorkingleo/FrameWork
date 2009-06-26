@@ -177,7 +177,7 @@ public class DBConnection {
 				return null;
 			}
             Logger.getLogger(DBConnection.class.getName()).log(
-						Level.SEVERE, "Transaction Opened: " + trans.hashCode());
+						Level.INFO, "Transaction Opened: " + trans.hashCode());
             
             if( is_new_transaction )
                 transactions.add(trans);
@@ -221,7 +221,7 @@ public class DBConnection {
 		transactions.remove(trans);
         
         Logger.getLogger(DBConnection.class.getName()).log(
-						Level.SEVERE, "Transaction Closed: " + trans.hashCode());
+						Level.INFO, "Transaction Closed: " + trans.hashCode());
 
 		return true;
 	}

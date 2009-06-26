@@ -240,7 +240,7 @@ public class BaseDialog extends javax.swing.JFrame  {
     {
         if( getTransaction().getDBMSType() == MOMMSupportedDBMSTypes.DB_SQLITE )
         {
-            int value = getTransaction().getNewSequenceValue(seqName);
+            int value = getTransaction().getNewSequenceValue(seqName,1234567);
             return value;
         }
         else
@@ -248,7 +248,7 @@ public class BaseDialog extends javax.swing.JFrame  {
             if( seq_transaction == null )
                 seq_transaction = getNewTransaction();
          
-            int value = seq_transaction.getNewSequenceValue(seqName);
+            int value = seq_transaction.getNewSequenceValue(seqName,1234567);
         
             seq_transaction.commit();
         
@@ -261,7 +261,7 @@ public class BaseDialog extends javax.swing.JFrame  {
      *         0 on Don't Save
      *        -1 on Cancel
      */ 
-    protected int checkSave()
+    public int checkSave()
     {
         Object[] options = {"Daten Speichern", "Änderungen verwerfen", "Abbrechen"};
 
