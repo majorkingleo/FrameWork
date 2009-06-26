@@ -14,6 +14,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 
+import at.redeye.UserManagement.impl.ExtKeyListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -65,7 +66,8 @@ public class BaseDialog extends javax.swing.JFrame  {
         int y = Integer.parseInt( root.getSetup().getLocalConfig(title.concat(Setup.WindowY), "300") );                          
         
         this.setBounds(x, y, 0, 0); 
-        
+                
+        this.addKeyListener(new ExtKeyListener(this));
         
         loadStuff();
     }
