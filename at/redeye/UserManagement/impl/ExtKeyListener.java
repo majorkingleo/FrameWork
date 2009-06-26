@@ -20,6 +20,11 @@ public class ExtKeyListener implements KeyListener {
 		super();
 		this.dlg = dlg;
 	}
+    
+       public ExtKeyListener(BaseDialog dlg) {
+		super();
+		this.dlg = dlg;
+	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
