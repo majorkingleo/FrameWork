@@ -35,8 +35,10 @@ public class H1ReceiverThread extends Thread {
                     sleep (1000);
                     continue;
                 }
-                h1comm.receive(0);
-                h1comm.transmitH1Answer();
+                if (h1comm.receive(0) != null) {
+                    // If we got something, we have to send an answer
+                    h1comm.transmitH1Answer();
+                }
 
             } catch (SocketTimeoutException ste) {
                 logger.trace("Receive from socket: " + ste.getMessage());
