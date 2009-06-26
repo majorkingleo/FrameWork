@@ -65,8 +65,7 @@ public class BaseDialog extends javax.swing.JFrame  {
         int x = Integer.parseInt( root.getSetup().getLocalConfig(title.concat(Setup.WindowX), "300") );  
         int y = Integer.parseInt( root.getSetup().getLocalConfig(title.concat(Setup.WindowY), "300") );                          
         
-        this.setBounds(x, y, 0, 0); 
-                
+        this.setBounds(x, y, 0, 0);                 
         this.addKeyListener(new ExtKeyListener(this));
         
         loadStuff();
