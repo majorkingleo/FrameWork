@@ -184,7 +184,7 @@ public class LocalSetup extends Setup {
                 {                                       
                     DBConfig c = global_config.get(key);
                     
-                    insertOrUpdateValue(trans, c);
+                    DefaultInsertOrUpdater.insertOrUpdateValuesWidthPrimKey(trans, c);
                 }
                 
                 trans.commit();                  
@@ -193,23 +193,6 @@ public class LocalSetup extends Setup {
                 result = new Boolean(true);
             }
 
-            private void insertOrUpdateValue(Transaction trans, DBConfig c) throws Exception 
-            {
-                DBConfig c_db = new DBConfig();
-                
-                c_db.name.loadFromString(c.getConfigName());
-                
-                if( trans.fetchTableWithPrimkey(c_db) == true )
-                {
-                    if( c.differs(c_db) ) {
-                        c.hist.setAeHist(root.getUserName());
-                        trans.updateValues(c);
-                    }
-                } else {
-                    c.hist.setAnHist(root.getUserName());
-                    trans.insertValues(c);
-                }                    
-            }
         };
         
         return (Boolean)al.result;
