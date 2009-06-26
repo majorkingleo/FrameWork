@@ -45,7 +45,7 @@ public class DBHistory extends DBStrukt {
 
     @Override
     public DBHistory getNewOne() {
-        return new DBHistory( name );
+        return new DBHistory( strukt_name );
     }   
     
     public void setAnHist( String user )

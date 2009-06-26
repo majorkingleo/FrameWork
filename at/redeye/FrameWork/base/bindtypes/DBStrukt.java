@@ -28,7 +28,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
 
 public abstract class DBStrukt {
    
-    protected String name;
+    protected String strukt_name;
     protected String title = new String();
     public Vector<DBValue> elements = new Vector<DBValue>();
     public Vector<DBStrukt> sub_strukts = new Vector<DBStrukt>();
@@ -36,14 +36,14 @@ public abstract class DBStrukt {
 
     public DBStrukt( String name )
     {
-        this.name = name;
+        this.strukt_name = name;
     }
 
     
 
     public DBStrukt( String name, String title )
     {
-        this.name = name;
+        this.strukt_name = name;
         this.title = title;
     }
 
@@ -107,7 +107,7 @@ public abstract class DBStrukt {
 
     public String getName()
     {
-        return name;
+        return strukt_name;
     }
 
     
