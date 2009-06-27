@@ -5,6 +5,8 @@
 
 package at.redeye.FrameWork.base;
 
+import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
+
 /**
  *
  * @author martin
@@ -23,6 +25,18 @@ public class DefaultCanClose
                 return false;
             }
         }
+        return true;
+    }
+    
+    public static boolean DefaultCanCloseWithTable( CanCloseInterface iface, TableManipulator tm )
+    {
+        int ret = iface.checkSave(tm);
+
+        if (ret == 1) {
+            iface.saveData();
+        } else if (ret == -1) {
+            return false;
+        }        
         return true;
     }
 }

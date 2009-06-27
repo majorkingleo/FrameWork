@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
@@ -282,7 +283,7 @@ public class BaseDialog extends javax.swing.JFrame  {
         }
     }
     
-    protected int checkSave( TableManipulator tm )
+    public int checkSave( TableManipulator tm )
     {
         tm.stopEditing();
         
@@ -307,7 +308,7 @@ public class BaseDialog extends javax.swing.JFrame  {
                 return 1;
             }                
         }
-    }
+    }        
     
     
     protected boolean canClose() {
@@ -338,5 +339,22 @@ public class BaseDialog extends javax.swing.JFrame  {
     private void loadStuff() 
     {
         StringUtils.set_defaultAutoLineLenght(Integer.valueOf(root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth)));
+    }
+    
+    protected boolean checkAnyAndSingleSelection( JTable table )
+    {
+        if (table.getSelectedRowCount() <= 0) {
+            return false;
+        }
+        
+        if (table.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(null,
+                    "Bitte nur einen Eintrag auswählen.",
+                    "Fehler",
+                    JOptionPane.OK_OPTION);
+            return false;
+        }
+        
+        return true;
     }
 }

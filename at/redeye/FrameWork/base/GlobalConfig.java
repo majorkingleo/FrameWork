@@ -23,7 +23,7 @@ import java.util.Vector;
  *
  * @author  martin
  */
-public class GlobalConfig extends BaseDialog {
+public class GlobalConfig extends BaseDialog implements CanCloseInterface {
 
     private static final long serialVersionUID = 1L;
 
@@ -204,28 +204,26 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
 private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
 
+   saveData();
+                
+}//GEN-LAST:event_jBSaveActionPerformed
+
+
+@Override
+public boolean canClose()
+{    
+    return DefaultCanClose.DefaultCanCloseWithTable(this, tm);
+}
+
+public void saveData()
+{
     for (Integer i : tm.getEditedRows()) {
         DBConfig entry = (DBConfig) values.get(i);
         root.getSetup().setConfig(entry.getConfigName(), entry.getConfigValue());
     }
 
     root.saveSetup();
-    feed_table();    
-                
-}//GEN-LAST:event_jBSaveActionPerformed
-
-
-@Override
-protected boolean canClose()
-{    
-    int ret = checkSave( tm );
-    
-    if( ret == 1 )
-        jBSaveActionPerformed( null );
-    else if( ret == -1 )
-        return false;
-    
-    return true;
+    feed_table();
 }
 
 

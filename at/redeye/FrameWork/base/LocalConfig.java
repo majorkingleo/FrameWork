@@ -22,7 +22,7 @@ import java.util.Vector;
  *
  * @author  martin
  */
-public class LocalConfig extends BaseDialog {
+public class LocalConfig extends BaseDialog implements CanCloseInterface {
 
     private static final long serialVersionUID = 1L;
 
@@ -183,14 +183,7 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
 private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
 
-    for (Integer i : tm.getEditedRows()) {
-        DBConfig entry = (DBConfig) values.get(i);
-        root.getSetup().setLocalConfig(entry.getConfigName(), entry.getConfigValue());
-    }
-
-    root.saveSetup();    
-    feed_table();
-                
+    saveData();
 }//GEN-LAST:event_jBSaveActionPerformed
 
 
@@ -203,16 +196,21 @@ private void jBCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     
 
 @Override
-protected boolean canClose()
+public boolean canClose()
 {    
-    int ret = checkSave( tm );
-    
-    if( ret == 1 )
-        jBSaveActionPerformed( null );
-    else if( ret == -1 )
-        return false;
-    
-    return true;
+    return DefaultCanClose.DefaultCanCloseWithTable(this, tm);
+}
+
+public void saveData()
+{
+    for (Integer i : tm.getEditedRows()) {
+        DBConfig entry = (DBConfig) values.get(i);
+        root.getSetup().setLocalConfig(entry.getConfigName(), entry.getConfigValue());
+    }
+
+    root.saveSetup();
+    feed_table();
+                
 }
 
 
