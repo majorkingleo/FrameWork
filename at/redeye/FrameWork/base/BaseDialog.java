@@ -37,7 +37,7 @@ public class BaseDialog extends javax.swing.JFrame  {
     private Transaction transaction = null;
     protected String title;
     private DBConnection con = null;
-    private static Logger logger = Logger.getLogger(BaseDialog.class.getName());
+    protected static Logger logger = Logger.getLogger(BaseDialog.class.getName());
     private Transaction seq_transaction = null;
     boolean edited = false;
     
