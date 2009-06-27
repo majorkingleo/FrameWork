@@ -36,7 +36,7 @@ public class DBInteger extends DBValue {
     }
 
     @Override
-    public Object getValue() {
+    public Integer getValue() {
         return value;
     }
     

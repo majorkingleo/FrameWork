@@ -6,6 +6,7 @@
 package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.bindtypes.DBString;
+import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
@@ -104,9 +105,9 @@ public class BaseDialog extends javax.swing.JFrame  {
     static class TextDBStringPair extends Pair
     {
         JTextField textfield;
-        DBString value;
+        DBValue value;
         
-        public TextDBStringPair( JTextField textfield, DBString value )
+        public TextDBStringPair( JTextField textfield, DBValue value )
         {
             this.textfield = textfield;
             this.value = value;
@@ -114,12 +115,12 @@ public class BaseDialog extends javax.swing.JFrame  {
         
         public void gui_to_var()
         {            
-            value.loadFromCopy(textfield.getText());
+            value.loadFromString(textfield.getText());
         }
         
         public void var_to_gui()
         {
-            textfield.setText((String) value.getValue());
+            textfield.setText(value.toString());
         }
     }
     
@@ -130,7 +131,7 @@ public class BaseDialog extends javax.swing.JFrame  {
         pairs.add( new TextStringPair( jtext, var ) );
     }        
     
-    public void bindVar(JTextField jtext, DBString var) {
+    public void bindVar(JTextField jtext, DBValue var) {
          pairs.add( new TextDBStringPair( jtext, var ) );
     }
     
