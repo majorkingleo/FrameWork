@@ -14,9 +14,11 @@ import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.imagestorage.bindtypes.DBImage;
 import at.redeye.FrameWork.utilities.ReadFile;
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -24,6 +26,7 @@ import javax.swing.JFileChooser;
  */
 public class ImageStorage extends BaseDialog implements CanCloseInterface {
                     
+    private static RemovingAllowedInterface remover = null;
     
     /** Creates new form ImageStorage */
     public ImageStorage(Root root) {
@@ -33,6 +36,11 @@ public class ImageStorage extends BaseDialog implements CanCloseInterface {
         imageList.setParent(this);
         
         feed_list();
+    }
+    
+    public static void setRemovingAllowedHandler(RemovingAllowedInterface remover)
+    {
+        ImageStorage.remover = remover;
     }
 
     private void feed_list() 
@@ -188,17 +196,28 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     final ImageListContent content = (ImageListContent) imageList.getSelectedValue();
 
     if( content == null )
-        return;
+        return;        
                 
     new AutoMBox(getTitle()) {
 
         @Override
         public void do_stuff() throws Exception {
+            
+            if( remover.canRemoveImage(getTransaction(), content.getId() ) == false )
+            {
+                JOptionPane.showMessageDialog(null,
+                        StringUtils.autoLineBreak(
+                        "Diese Bild wird noch verwendet und darf daher nicht entfernt werden."),                        
+                        "Error",
+                        JOptionPane.OK_OPTION);
+                return;
+            }
+            
             DBImage image = new DBImage();
 
             getTransaction().updateValues(
                     "delete from " +
-                    getTransaction().markTable(image.getName()) +
+                    getTransaction().markTable(image) +
                     " where " +
                     getTransaction().markColumn(image.id) +
                     " = '" + content.getId() + "'");

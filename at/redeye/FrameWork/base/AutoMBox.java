@@ -9,6 +9,10 @@ import org.apache.log4j.Logger;
 
 import at.redeye.FrameWork.utilities.StringUtils;
 
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
@@ -41,20 +45,41 @@ public abstract class AutoMBox
         try {
             do_stuff();
             failed = false;
+        } catch (SQLException ex) {               
+            logger.error("Exception: " + ex.toString());
+            thrown_ex = ex;
+            ex.printStackTrace();
+        } catch (TableBindingNotRegisteredException ex) {
+            logger.error("Exception: " + ex.toString());
+            thrown_ex = ex;
+            ex.printStackTrace();
+        } catch (UnsupportedDBDataTypeException ex) {
+            logger.error("Exception: " + ex.toString());
+            thrown_ex = ex;
+            ex.printStackTrace();
+        } catch (WrongBindFileFormatException ex) {
+            logger.error("Exception: " + ex.toString());
+            thrown_ex = ex;
+            ex.printStackTrace();
+        } catch (CloneNotSupportedException ex) {
+            logger.error("Exception: " + ex.toString());
+            thrown_ex = ex;
+            ex.printStackTrace();              
         } catch (Exception ex) {
             logger.error("Exception: " + ex.toString() + "\n" + ex.getLocalizedMessage() );
             ex.printStackTrace();
             
-            thrown_ex = ex;
-            
-            if( do_mbox )
-            {            
-            	JOptionPane.showMessageDialog(null, 
-            			StringUtils.autoLineBreak(
-            				"Es ist ein Fehler aufgetreten: " + 
-            				ex.getLocalizedMessage()),
-                "Error",
-                JOptionPane.OK_OPTION);
+            thrown_ex = ex;            
+        }
+        
+        if (thrown_ex != null) {
+            if (do_mbox) {
+                JOptionPane.showMessageDialog(null,
+                        StringUtils.autoLineBreak(
+                        "Es ist ein Fehler aufgetreten: " +
+                        thrown_ex.getLocalizedMessage()),
+                        "Error",
+                        JOptionPane.OK_OPTION);
             }
         }
     }
