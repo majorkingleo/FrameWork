@@ -6,6 +6,7 @@ package at.redeye.FrameWork.base.tablemanipulator;
 
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 
+import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -16,9 +17,25 @@ import java.util.Vector;
  */
 public class TableDesign {
 
+    public static class ColoredCell {
+        int row;
+        int col;
+        Color color;
+    }
+
     public Set<Integer> edited_cols;
     public Set<Integer> edited_rows;
     public Vector<Vector<Object>> rows = new Vector<Vector<Object>>();
+    protected Vector<ColoredCell>  coloredCells = new Vector<ColoredCell>();
+
+    public void addColoredCell (int row, int col, Color color) {
+        ColoredCell cell = new ColoredCell();
+        cell.row = row;
+        cell.col = col;
+        cell.color = color;
+        coloredCells.add (cell);
+
+    }
 
     public static class Coll {
 

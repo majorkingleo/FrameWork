@@ -22,6 +22,7 @@ import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 
+import java.awt.Color;
 import java.util.HashSet;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableColumnModel;
@@ -378,4 +379,28 @@ public class TableManipulator {
        if( ce != null )
            ce.stopCellEditing();
     }
+
+
+    public void setCellColor (DBValue column, int row, Color color) {
+
+        Vector<DBValue> values = binddesc.getAllValues();
+
+
+        for( int i = 0, col=0; i < values.size(); i++ )
+        {
+            if( isHidden( i ) )
+                continue;
+
+
+            if( values.get(i).getName().equals(column.getName()) )
+            {
+                tabledesign.addColoredCell(row, col, color);
+                
+                return;
+            }
+
+            col++;
+        }
+    }
+
 }

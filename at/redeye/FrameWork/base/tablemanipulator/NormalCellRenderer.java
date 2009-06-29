@@ -7,6 +7,7 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.base.tablemanipulator.TableDesign.ColoredCell;
 import at.redeye.FrameWork.utilities.HTMLColor;
 
 import java.awt.Color;
@@ -140,9 +141,21 @@ public class NormalCellRenderer extends DefaultTableCellRenderer {
             }
         }
 
+        // User set color
+        if (!this.isSelected) {
+            ColoredCell ccell;
+            for (int ccellindex= 0; ccellindex < tabledesign.coloredCells.size(); ccellindex++) {
+                ccell = tabledesign.coloredCells.get(ccellindex);
+                if (ccell.col == col && ccell.row == row) {
+                    this.setBackground(ccell.color);
+                }
+            }
+        }
+
         if (tabledesign.edited_rows.contains(row) &&
                 tabledesign.edited_cols.contains(col)) {
             this.setFont(new Font(font.getFamily(), Font.BOLD, font.getSize()));
         }
     }
+
 }
