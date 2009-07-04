@@ -151,7 +151,7 @@ public class TableManipulator {
             SwingConstants.LEFT);
  
         // table.setAutoCreateRowSorter(true);
-        table.getTableHeader().setReorderingAllowed(true);
+        table.getTableHeader().setReorderingAllowed(false);
  /*
         for (int i = 0; i < table.getColumnCount(); i++) {
             TableColumn column = table.getColumnModel().getColumn(i);
@@ -226,7 +226,7 @@ public class TableManipulator {
          * anderer Anzeige Format String verwendet wird
          * wird unser ursprüngliches Objekt in
          * table_copy durch einen String ersetzt,
-         * und weil das alles referenzen sind, 
+         * und weil das alles Referenzen sind, 
          * würde dies auch mit unserem db_copy
          * Vector passieren.
          * Deswegen der 2. Vector.
