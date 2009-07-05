@@ -4,6 +4,7 @@
  */
 package at.redeye.FrameWork.base;
 
+import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
@@ -20,6 +21,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 import java.util.logging.Level;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -30,7 +32,7 @@ import org.apache.log4j.Logger;
  *
  * @author martin
  */
-public class BaseDialog extends javax.swing.JFrame {
+public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
 
     private static final long serialVersionUID = 1L;
     protected Root root;
@@ -49,6 +51,7 @@ public class BaseDialog extends javax.swing.JFrame {
         }
     };
     boolean edited = false;
+    protected BindVarBase bind_vars = new BindVarBase();
 
     protected BaseDialog() {
     }
@@ -84,72 +87,10 @@ public class BaseDialog extends javax.swing.JFrame {
         loadStuff();
     }
 
-    static public abstract class Pair {
+    
+    
 
-        public abstract void gui_to_var();
 
-        public abstract void var_to_gui();
-    };
-
-    static class TextStringPair extends Pair {
-
-        JTextField textfield;
-        StringBuffer value;
-
-        public TextStringPair(JTextField textfield, StringBuffer value) {
-            this.textfield = textfield;
-            this.value = value;
-        }
-
-        public void gui_to_var() {
-            value.delete(0, value.length());
-            value.append(textfield.getText());
-        }
-
-        public void var_to_gui() {
-            textfield.setText(value.toString());
-        }
-    }
-
-    static class TextDBStringPair extends Pair {
-
-        JTextField textfield;
-        DBValue value;
-
-        public TextDBStringPair(JTextField textfield, DBValue value) {
-            this.textfield = textfield;
-            this.value = value;
-        }
-
-        public void gui_to_var() {
-            value.loadFromString(textfield.getText());
-        }
-
-        public void var_to_gui() {
-            textfield.setText(value.toString());
-        }
-    }
-    public Vector<Pair> pairs = new Vector<Pair>();
-
-    public void bindVar(JTextField jtext, StringBuffer var) {
-        pairs.add(new TextStringPair(jtext, var));
-    }
-
-    public void bindVar(JTextField jtext, DBValue var) {
-        pairs.add(new TextDBStringPair(jtext, var));
-    }
-
-    public void var_to_gui() {
-        for (Pair pair : pairs) {
-            pair.var_to_gui();
-        }
-    }
-
-    public void gui_to_var() {
-        for (Pair pair : pairs) {
-            pair.gui_to_var();
-        }
-    }
 
     public Transaction getTransaction() {
         if (con == null) {
@@ -341,5 +282,25 @@ public class BaseDialog extends javax.swing.JFrame {
         }
 
         return true;
+    }
+
+    public void bindVar(JTextField jtext, StringBuffer var) {
+       bind_vars.bindVar(jtext,var);
+    }
+
+    public void bindVar(JTextField jtext, DBValue var) {
+       bind_vars.bindVar(jtext,var);
+    }
+    
+    public void bindVar(JCheckBox jtext, DBFlagInteger var) {
+       bind_vars.bindVar(jtext,var);
+    }
+
+    public void var_to_gui() {
+        bind_vars.var_to_gui();
+    }
+
+    public void gui_to_var() {
+        bind_vars.gui_to_var();
     }
 }

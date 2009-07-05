@@ -71,7 +71,11 @@ public class DBFlagInteger extends DBEnumAsInteger
         }
         
     }
-    
+
+    public DBFlagInteger( String name )
+    {        
+        super( name, name, new FlagIntegerHandler() );
+    }
     
     public DBFlagInteger( String name, String title )
     {        

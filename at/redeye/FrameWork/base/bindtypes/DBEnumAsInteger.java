@@ -67,7 +67,7 @@ public class DBEnumAsInteger extends DBValue {
     }
 
     @Override
-    public Object getValue() {
+    public Integer getValue() {
         return handler.getValue();
     }
 
