@@ -141,7 +141,7 @@ public class ImageUtils {
         
         scale_height = (int)((double)width / ratio);
         
-        image = image.getScaledInstance(scale_width, scale_height, Image.SCALE_FAST);
+        image = image.getScaledInstance(scale_width, scale_height, Image.SCALE_SMOOTH);
             
         return image;
     }
