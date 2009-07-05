@@ -184,7 +184,7 @@ public class LocalSetup extends Setup {
                 {                                       
                     DBConfig c = global_config.get(key);
                     
-                    DefaultInsertOrUpdater.insertOrUpdateValuesWidthPrimKey(trans, c);
+                    DefaultInsertOrUpdater.insertOrUpdateValuesWithPrimKey(trans, c);
                 }
                 
                 trans.commit();                  

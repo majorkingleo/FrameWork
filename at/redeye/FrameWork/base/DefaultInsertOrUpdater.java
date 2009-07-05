@@ -21,7 +21,7 @@ import java.sql.SQLException;
  */
 public class DefaultInsertOrUpdater 
 {
-   public static void insertOrUpdateValuesWidthPrimKey(Transaction trans, DBStrukt entry) 
+   public static void insertOrUpdateValuesWithPrimKey(Transaction trans, DBStrukt entry) 
            throws UnsupportedDBDataTypeException, WrongBindFileFormatException, SQLException, TableBindingNotRegisteredException, IOException 
    {
         DBStrukt e = entry.getNewOne();
@@ -35,7 +35,7 @@ public class DefaultInsertOrUpdater
         }
     }
 
-   public static void insertOrUpdateValuesWidthPrimKey(Transaction trans, DBStrukt entry, DBHistory hist, String User ) 
+   public static void insertOrUpdateValuesWithPrimKey(Transaction trans, DBStrukt entry, DBHistory hist, String User ) 
            throws UnsupportedDBDataTypeException, WrongBindFileFormatException, SQLException, TableBindingNotRegisteredException, IOException 
    {
         DBStrukt e = entry.getNewOne();
