@@ -60,6 +60,9 @@ public class CreateSqlMSSql extends BaseCreateSql {
 		case DB_TYPE_BIT:
 		case DB_TYPE_SHORT:
 			return "int default '0'";
+        case DB_TYPE_BLOB:
+            return "varbinary (max)";
+
 		}
 
 		return null;
