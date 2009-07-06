@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 public class ImageStorage extends BaseDialog implements CanCloseInterface {
                     
     private static RemovingAllowedInterface remover = null;
+    private static String last_path = null;
     
     /** Creates new form ImageStorage */
     public ImageStorage(Root root) {
@@ -250,6 +251,11 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     fc.setAcceptAllFileFilterUsed(false);
     fc.setFileFilter(new ImageFileFilter());
     fc.setMultiSelectionEnabled(true);    
+    
+    if( last_path != null )
+    {
+        fc.setCurrentDirectory(new File(last_path));
+    }
     // is Arschlangsam daher mach ma das eher nicht.
     
     if( root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.ImagePreviewInFileOpen).equalsIgnoreCase("true") )
@@ -271,6 +277,7 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
             for (int i = 0; i < files.length; i++) {
                 System.out.println("file: " + files[i].getName());
+                last_path = files[i].getPath();
                 
                 final DBImage image = new DBImage();
 
