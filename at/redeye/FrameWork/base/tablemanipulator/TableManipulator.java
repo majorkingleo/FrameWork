@@ -259,6 +259,7 @@ public class TableManipulator {
         tabledesign.edited_cols.clear();
         tabledesign.edited_rows.clear();
         tabledesign.rows.clear();
+        tabledesign.coloredCells.clear();
     }
     
     public void remove( int row )
@@ -395,7 +396,6 @@ public class TableManipulator {
             if( values.get(i).getName().equals(column.getName()) )
             {
                 tabledesign.addColoredCell(row, col, color);
-                
                 return;
             }
 
