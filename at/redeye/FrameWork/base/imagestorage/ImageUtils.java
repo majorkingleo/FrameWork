@@ -36,8 +36,10 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+/* Utils.java is used by FileChooserDemo2.java. */
 /* Utils.java is used by FileChooserDemo2.java. */
 public class ImageUtils {
     public final static String jpeg = "jpeg";
@@ -59,6 +61,13 @@ public class ImageUtils {
             ext = s.substring(i+1).toLowerCase();
         }
         return ext;
+    }
+
+    public static Icon loadScaledImageIcon(String path, int w, int h) {
+        ImageIcon icon = createImageIcon(path);
+        Image image = scaleImage(icon.getImage(),w,h);
+        icon.setImage(image);
+        return icon;
     }
 
     /** Returns an ImageIcon, or null if the path was invalid. */
