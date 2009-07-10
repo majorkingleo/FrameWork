@@ -17,8 +17,6 @@ public interface IH1Communication {
 
     public int handleH1Request();
 
-    public void transmit(byte[] dataToSend) throws IOException, H1ConnectionException;
-
     public void transmitH1Answer() throws IOException, H1ConnectionException;
 
     public byte[] receive(int expectedBytes) throws IOException, H1ConnectionException;

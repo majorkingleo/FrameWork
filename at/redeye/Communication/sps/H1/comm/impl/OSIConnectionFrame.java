@@ -34,6 +34,8 @@ public class OSIConnectionFrame {
 	public byte[] toByteArray() {
 
 		ByteBuffer bb = ByteBuffer.allocate(100);
+		
+		bb.clear();
 
 		byte[] header = osiheader.toByteArray();
 
@@ -55,6 +57,8 @@ public class OSIConnectionFrame {
 	public ByteBuffer toByteBuffer() {
 
 		ByteBuffer bb = ByteBuffer.allocate(100);
+		
+		bb.clear();
 
 		byte[] header = osiheader.toByteArray();
 

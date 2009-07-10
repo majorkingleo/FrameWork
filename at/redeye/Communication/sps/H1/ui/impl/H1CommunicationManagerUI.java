@@ -10,23 +10,23 @@
  */
 package at.redeye.Communication.sps.H1.ui.impl;
 
-import java.io.IOException;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JOptionPane;
+
+import org.apache.log4j.Logger;
 
 import at.redeye.Communication.sps.H1.comm.IH1CommListener;
 import at.redeye.Communication.sps.H1.comm.IH1Communication;
+import at.redeye.Communication.sps.H1.comm.IH1QueueSender;
 import at.redeye.Communication.sps.H1.comm.impl.ConnectionPhase;
 import at.redeye.Communication.sps.H1.comm.impl.H1ConnectionDefinition;
-import at.redeye.Communication.sps.H1.comm.impl.H1ConnectionException;
+import at.redeye.Communication.sps.H1.comm.impl.H1QueueSender;
 import at.redeye.Communication.sps.H1.comm.impl.H1ReceiverThread;
 import at.redeye.Communication.sps.H1.comm.impl.H1TCPHandling;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
-
-
-import java.awt.event.KeyEvent;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -284,18 +284,9 @@ public class H1CommunicationManagerUI extends BaseDialog implements IH1CommListe
 
     private void buttonTransmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonTransmitActionPerformed
 
-        String message = " --- ";
-        try {
-            h1comm.transmit(textareaToSPS.getText().getBytes());
-        } catch (IOException ex) {
-            message = ex.getMessage();
-            logger.error(message);
-
-        } catch (H1ConnectionException hce) {
-            message = hce.getMessage();
-            logger.error(message);
-
-        }
+    	IH1QueueSender sender = new H1QueueSender();
+        sender.transmit(textareaToSPS.getText().getBytes());
+        
 }//GEN-LAST:event_buttonTransmitActionPerformed
 
     private void buttonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConnectActionPerformed

@@ -19,6 +19,8 @@ public class OSIDataFrame {
 	public ByteBuffer toByteBuffer() {
 
 		ByteBuffer bb = ByteBuffer.allocate(100);
+		
+		bb.clear();
 
 		byte[] header = osiheader.toByteArray();
 

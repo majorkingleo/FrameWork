@@ -285,6 +285,7 @@ public class H1TCPHandling implements IH1Communication {
         }
 
         ByteBuffer bb = ByteBuffer.allocate(expectedLength);
+        bb.clear();
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < len; i++) {
             bb.put((byte) buffer[i]);
@@ -301,8 +302,8 @@ public class H1TCPHandling implements IH1Communication {
         return arr;
     }
 
-    @Override
-    public void transmit(byte[] dataToSend) throws IOException, H1ConnectionException {
+    
+    protected void transmit(byte[] dataToSend) throws IOException, H1ConnectionException {
 
         if (s == null || out == null) {
             throw new H1ConnectionException("Transmit data: Not connected!");
@@ -313,6 +314,11 @@ public class H1TCPHandling implements IH1Communication {
         odf.last = (byte) OSIConnectionFrame.IS_LAST;
 
         ByteBuffer bb = odf.toByteBuffer();
+        
+        if (dataToSend != null && (bb.position() + dataToSend.length > bb.capacity())) {
+        	logger.error("Data array is too long -> ignoring it!");
+        	return;
+        }
        
         if (dataToSend != null) {
             for (int i = 0; i < dataToSend.length; i++) {
