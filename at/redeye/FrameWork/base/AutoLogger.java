@@ -20,7 +20,8 @@ public abstract class AutoLogger {
     
     protected Logger logger;    
     protected Exception thrown_ex = null;
-    protected boolean failed = true;
+    private boolean failed = true;
+    protected boolean logical_failure = false;
     public Object result = null;
     
     public AutoLogger( String className )
@@ -66,6 +67,19 @@ public abstract class AutoLogger {
     
     public boolean isFailed()
     {
-        return failed;
+        if( failed || logical_failure )
+            return true;
+        
+        return false;
+    }
+    
+    protected void setFailed()
+    {
+        logical_failure = true;
+    }
+    
+    protected void clearFailed()
+    {
+        logical_failure = false;
     }
 }

@@ -118,4 +118,48 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         
         return res;
     }
+    
+    public String createSqlForNewRows( DBStrukt strukt, Integer Version )
+    {
+        String res = new String();
+        
+        Vector<String> primKeys = new Vector<String>();
+        Vector<String> indexKeys = new Vector<String>();                
+        
+        HashMap<String, MOMMColumnAttribute> colls = strukt.getHashMapForVersion(Version);
+        
+        Set<String> keys = colls.keySet();
+        
+        for( Iterator<String> it = keys.iterator(); it.hasNext(); )
+        {
+            String name = it.next();
+            
+            res += "alter table " + markColumn(strukt.getName()) + " add ";
+            
+            MOMMColumnAttribute attr = colls.get( name );
+            
+            res +=   markColumn(name) + " " + createSqlForRow( attr ) + " NOT NULL";
+            
+            if( it.hasNext() )
+                res = res + ";\n";
+            
+            if( attr.isPrimaryKey() )
+                primKeys.add(name);
+            
+            if( attr.hasIndex() )
+                indexKeys.add(name);
+        }                                
+        
+        if( !primKeys.isEmpty() )                    
+        {
+            res += createPrimKeys( strukt.getName(), primKeys );
+        }
+        
+        if( !indexKeys.isEmpty() )                    
+        {
+            res += createIndexKeys( strukt.getName(), indexKeys );
+        }
+        
+        return res;        
+    }
 }

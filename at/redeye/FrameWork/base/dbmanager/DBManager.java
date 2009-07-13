@@ -26,7 +26,7 @@ public interface DBManager {
     
     public Collection<String> getTables() throws SQLException;
     public boolean backupTable( String origin_name, String backup_name ) throws SQLException;
-    public boolean migrateTable( String table, String fromVersion, String toVersion, String script ) throws SQLException;
+    public boolean migrateTable( DBStrukt strukt, Integer fromVersion ) throws SQLException;
     public boolean createTable( DBStrukt strukt ) throws SQLException;
     public boolean autoCreateTable( DBStrukt strukt ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, CloneNotSupportedException, WrongBindFileFormatException, IOException;
     public boolean db_supports_all_requested_features() throws SQLException;

@@ -10,6 +10,7 @@
 
 package at.redeye.FrameWork.base.bindtypes;
 
+import at.redeye.FrameWork.utilities.Pair;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
@@ -32,7 +33,8 @@ public abstract class DBStrukt {
     protected String title = new String();
     public Vector<DBValue> elements = new Vector<DBValue>();
     public Vector<DBStrukt> sub_strukts = new Vector<DBStrukt>();
-    protected String version = null;
+    protected Integer version = null;
+    protected Vector<Pair<Integer,DBValue>>  elements_with_version = new Vector<Pair<Integer,DBValue>>();    
 
     public DBStrukt( String name )
     {
@@ -54,6 +56,12 @@ public abstract class DBStrukt {
         elements.add( value );
     }
 
+    
+    public void add( DBValue value, Integer version )
+    {
+        elements.add( value );
+        elements_with_version.add(new Pair(version,value));
+    }
     
 
     public void add( DBStrukt substrukt )
@@ -147,11 +155,41 @@ public abstract class DBStrukt {
 
     protected HashMap<String, MOMMColumnAttribute> getHashMap( String prefix )
     {
+        return getHashMap( prefix, null );
+    }
+        
+    protected boolean VersionExists( DBValue val, Integer Version )
+    {
+        for( Pair<Integer,DBValue> pair : elements_with_version )
+        {
+            if( (int)pair.getFirst() == (int)Version )
+            {
+                if( pair.getSecond() == val )
+                    return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public HashMap<String, MOMMColumnAttribute> getHashMapForVersion( Integer Version )
+    {
+        return getHashMap("", Version);
+    }
+    
+    protected HashMap<String, MOMMColumnAttribute> getHashMap( String prefix , Integer Version )
+    {
         HashMap<String, MOMMColumnAttribute> colls = new HashMap<String, MOMMColumnAttribute>();      
 
         for( int i = 0; i < elements.size(); i++ )   
         {
             DBValue val = elements.get(i);
+            
+            if( Version != null )
+            {
+                if( !VersionExists( val, Version ) )
+                    continue;
+            }
             
             MOMMColumnAttribute attr = new MOMMColumnAttribute( val.getDBType() );
             
@@ -171,7 +209,7 @@ public abstract class DBStrukt {
         {
             DBStrukt strukt = sub_strukts.get(i);
             
-            HashMap<String, MOMMColumnAttribute> sub_colls = strukt.getHashMap( prefix + strukt.getName() + "_" );
+            HashMap<String, MOMMColumnAttribute> sub_colls = strukt.getHashMap( prefix + strukt.getName() + "_", Version );
             
             Set<String> keys = sub_colls.keySet();
             
@@ -321,18 +359,18 @@ public abstract class DBStrukt {
         return s;
     }
 
-    public void setVersion( String version )
+    public void setVersion( Integer version )
     {
         this.version = version;
     }
     
-    public String getVersion()
+    public Integer getVersion()
     {
         if( version == null )
-            return "0.1";
+            return 1;
         
         return version;
-    }    
+    }
 
 }
 

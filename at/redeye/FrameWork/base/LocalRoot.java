@@ -169,6 +169,7 @@ public class LocalRoot extends Root {
         return (DBBindtypeManager) dbmanager;
     }        
     
+    @Override
     public DBManager getDBManager()
     {
         return dbmanager;

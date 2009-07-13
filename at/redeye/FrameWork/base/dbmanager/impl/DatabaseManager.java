@@ -32,7 +32,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	protected BaseCreateSql createSql = null;
 	protected MOMMSupportedDBMSTypes dbmstype = null;
 	protected ShowTables showTables = null;
-	protected Vector<DBStrukt> tables = new Vector<DBStrukt>();
+	protected Vector<DBStrukt> tables = new Vector<DBStrukt>();    
 
 	public DatabaseManager() {
 
@@ -126,27 +126,51 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	}
 
 	public boolean backupTable(String origin_name, String backup_name)
-			throws SQLException {
-		throw new UnsupportedOperationException("Not supported yet.");
+			throws SQLException 
+    {                        
+		String sql = createSql.createSqlForBackup(origin_name, backup_name);
+    
+        return execSql( sql );        
 	}
 
-	public boolean migrateTable(String table, String fromVersion,
-			String toVersion, String script) throws SQLException {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public boolean migrateTable(DBStrukt strukt, Integer fromVersion ) throws SQLException 
+    {
+        String table_name = strukt.getName();
+        
+		for( int i = 0; i < 50; i++ )
+        {
+            table_name = strukt.getName() + "_" + fromVersion + "_" + i;
+            
+            if( tableExists(table_name ) )
+               continue;                        
+            
+            break;
+        }
+        
+        if( !backupTable( strukt.getName(), table_name) )        
+            return false;
+      
+        String sql = "";
+        
+        for( int i = fromVersion; i < strukt.getVersion(); i++ )
+        {
+            sql += createSql.createSqlForNewRows(strukt, i+1);
+        }        
+        
+        return execSql( sql );
 	}
-
-	public boolean createTable(DBStrukt strukt) throws SQLException {
-		String sql = createSql.createSqlforTable(strukt);
-
-		String[] sqls = sql.split(";");
-
-		boolean done_something = false;
+    
+    protected boolean execSql( String sql ) throws SQLException
+    {
+        String[] sqls = sql.split(";");
+        
+        boolean done_something = false;
 
 		for (String s : sqls) {
 			String s1 = s.trim();
 
 			if (!s1.isEmpty()) {
-				if (trans.updateValues(s1) != 0) {
+				if (trans.updateValues(s1) < 0) {
 					System.out.println("SqlStatement failed: " + s1);
 					return false;
 				}
@@ -156,6 +180,13 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		}
 
 		return done_something;
+    }
+
+	public boolean createTable(DBStrukt strukt) throws SQLException 
+    {
+		String sql = createSql.createSqlforTable(strukt);
+		
+		return execSql( sql );
 	}
 
 	public boolean autoCreateTable(DBStrukt strukt) throws SQLException,
@@ -186,16 +217,28 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 				}
 			}
 		} else {
-			String vers = strukt.getVersion();
-			if (vers.compareTo(version) == 0) {
+			Integer vers = strukt.getVersion();
+            Integer ivers = 0;
+            
+           if( version.equals("0.1") ) // compatible mode for older apps
+               ivers = 1;
+           else
+               ivers = Integer.parseInt(version);
+            
+			if (vers.compareTo(ivers) == 0) {
 				return true;
 			} else {
-				return false;
+                if (!migrateTable(strukt, ivers)) {
+                    return false;
+				} else {
+					return setTableVersion(strukt.getName(), strukt
+				  		   .getVersion());
+				}
 			}
 		}
 	}
 
-	private boolean setTableVersion(String name, String version)
+	private boolean setTableVersion(String name, Integer version)
 			throws SQLException, TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException,
 			CloneNotSupportedException, IOException {
@@ -208,12 +251,12 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 		if (rv == true) {
 			
-			vers.version.loadFromString(vers.getVersion());
+			vers.version.loadFromString(vers.getVersion().toString());
 			trans.updateValues(vers);
 
 		} else {
 			
-			vers.version.loadFromString(vers.getVersion());
+			vers.version.loadFromString(vers.getVersion().toString());
 			trans.insertValues(vers);
 			
 		}
@@ -225,10 +268,10 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		tables.add(strukt);
 	}
 
-	public boolean autocreate() {
-
-		AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {
-
+	public boolean autocreate() {               
+        
+		AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {                        
+            
 			@Override
 			public void do_stuff() throws Exception {
 
@@ -236,7 +279,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 					logger.debug("Creating Table: " + strukt.getName());
 					boolean success = autoCreateTable(strukt);
 					if (!success) {
-						failed = true;
+						setFailed();
 						logger.debug("Failed to create Table: "
 								+ strukt.getName());
 					}

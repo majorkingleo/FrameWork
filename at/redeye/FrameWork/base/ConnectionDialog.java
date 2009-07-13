@@ -435,11 +435,12 @@ private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     }
     else
     {
+        Transaction t = null;
+        
         try {
             con.close();
 
-            ConnectionDefinition connparams = getDefinition();
-            Transaction t;
+            ConnectionDefinition connparams = getDefinition();            
 
 			switch (connparams.getDBMSType()) {
 			case DB_MSSQL:
@@ -474,17 +475,21 @@ private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             } 
             else 
             {            
-                bindtypeManager.autocreate();
+                boolean success = bindtypeManager.autocreate();
 
-                t.commit();
-                t.close();
+                if( !success )
+                {
+                    t.rollback();                    
+                } else {                
+                    t.commit();                    
 
-                JOptionPane.showMessageDialog(null,
-                	StringUtils.autoLineBreak(
-                        "Die Datenbank konnte erfolgreich eingerichtet werden."),
-                        "Erfolg",
-                        JOptionPane.INFORMATION_MESSAGE);
-                return;
+                    JOptionPane.showMessageDialog(null,
+                            StringUtils.autoLineBreak(
+                            "Die Datenbank konnte erfolgreich eingerichtet werden."),
+                            "Erfolg",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
@@ -494,6 +499,16 @@ private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
             Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnSupportedDatabaseException ex) {
             Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            
+            if( t != null )
+            {
+                try {
+                    t.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         
         JOptionPane.showMessageDialog(null, 
