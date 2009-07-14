@@ -15,6 +15,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 
 import at.redeye.UserManagement.impl.ExtKeyListener;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Timer;
@@ -81,6 +82,20 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         int x = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowX), "300"));
         int y = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowY), "300"));
 
+        Dimension dim = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        
+        if( dim.getWidth() < x + getWidth() )
+            x = 300;
+        
+        if( dim.getHeight() < y + getHeight() )
+            y = 300;
+        
+        if( x < 0 )
+            x = 300;
+        
+        if( y < 0 )
+            y = 300;
+        
         this.setBounds(x, y, 0, 0);
         this.addKeyListener(new ExtKeyListener(this));
 
