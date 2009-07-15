@@ -9,6 +9,7 @@ package at.redeye.FrameWork.base;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.utilities.FreeMemory;
+import at.redeye.FrameWork.utilities.MemoryInformation;
 
 /**
  *
@@ -26,7 +27,14 @@ public class MemInfo extends BaseDialog {
 
     private void reload()
     {
-        jTextMeminfo.setText( FreeMemory.getMeminfo() );
+        StringBuilder info = new StringBuilder();
+        
+        info.append(FreeMemory.getMeminfo());
+        info.append("\n------------------------\n");
+        info.append(MemoryInformation.createMemoryInfo());
+        
+        jTextMeminfo.setText( info.toString() );                 
+        jTextMeminfo.setCaretPosition(0);
     }
     
     /** This method is called from within the constructor to
