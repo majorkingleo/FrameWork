@@ -18,4 +18,10 @@ public interface DBBindtypeManager {
     public void register( DBStrukt strukt );
     public boolean autocreate();
     public void setTransaction( Transaction trans );
+    
+    /*
+     * returns true if all registered tables have the correct version      
+     * */
+    public boolean check_table_versions();
+    public boolean check_table_versions_with_message( int Permissionlevel );
 }

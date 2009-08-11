@@ -17,10 +17,15 @@ import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.dbmanager.ShowTables;
 import at.redeye.FrameWork.base.dbmanager.impl.bindtypes.DBTableVersion;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
+import at.redeye.UserManagement.UserManagementInterface;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  * 
@@ -314,6 +319,96 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
         };
         
         return (Boolean)al.result;
+    }
+
+    public boolean check_table_versions() 
+    {
+        AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {                        
+            
+			@Override
+			public void do_stuff() throws Exception {
+
+				for (final DBStrukt strukt : tables) {
+					logger.debug("Checking Table: " + strukt.getName());
+                    
+                    String sversion = getTableVersion( strukt.getName() );
+                    
+                    if( sversion == null )
+                    {
+                        logger.error("Not entry of Table " + strukt.getName() + " or table TABLEVERSION itsself does not exists");
+                        setFailed();
+                        break;
+                    }
+                    
+                    int iversion = 0;
+                    
+                    if( sversion.equals("0.1") )
+                        iversion = 1;
+                    else
+                        iversion = Integer.parseInt(sversion);
+                    
+                    boolean success = false;
+                    
+                    if( iversion == strukt.getVersion() )
+                        success = true;
+                    					
+					if (!success) {
+						setFailed();
+						logger.debug(String.format("Table %s has version '%d' (string: %s) in Database and '%d' in Application Code. Updating Table is required.",
+								strukt.getName(), iversion, sversion, strukt.getVersion() ) );
+					}
+				}
+			}
+		};
+
+		if (al.isFailed()) {
+			System.out.println("Last Sql: " + trans.getSql());
+			return false;
+		}
+        
+        return true;
+    }
+
+    public boolean check_table_versions_with_message( final int Permissionlevel ) 
+    {        
+        if( !check_table_versions() )
+        {                        
+            final String adminMsg = 
+                    "Bitte öffnen Sie den Datenbankverbindungsdialog (Programm=>Datenbankeinstellungen) " +
+                    "und betätigen Sie den Button \"Einrichten\". Dadurch werden die notwendigen Änderungen " +
+                    "an der Datenbank automatisch durchgeführt. Bevor Tabellen manipuliert werden, erstellt " +
+                    "die Applikation automatisch Sicherungen der zu manipulierenden Tabellen. " +
+                    "Zusätzlich sollten Sie jedoch vorher eine Sicherung der gesammten Datenbank durchführen. " +
+                    "Um Datenverlusten vorzubeugen stellen Sie bitte auch sicher, dass währen der Migration " + 
+                    "kein anderer User mehr auf die Datenbank zugreift";
+            
+            final String userMsg = 
+                    "Bitte kontaktieren Sie Ihren Administrator damit dieser eine Aktualisierung der Datenbank " +
+                    "durchführen kann. Um den Vorgang zu starten, muß sich ein Benutzer mit Administratorrechten " +
+                    "auf dieser Applikation anmelden. Dann erfolgen auch noch weiter Hinweise. " +
+                    "Sie können das Programm nun auch noch weiter verwenden, es ist aber nicht mehr " +
+                    "sichergestellt das es korrekt funktioniert.";
+                                    
+            String msg;
+
+            if (Permissionlevel == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+                msg = adminMsg;
+            } else {
+                msg = userMsg;
+            }
+
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    StringUtils.autoLineBreak(
+                    "Eine oder mehrere Tabellen in der Datenbank weichen von jener Version, die im Programm " +
+                    "benötigt werden ab.\n\n" + msg),
+                    "Datenbank", JOptionPane.WARNING_MESSAGE);
+
+            return false;
+        }
+        
+        return true;
     }
     
     
