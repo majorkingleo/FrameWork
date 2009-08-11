@@ -357,14 +357,11 @@ public class H1TCPHandling implements IH1Communication {
 
         }
         logger.info("Transmit (" + bb.position() + "): " + str.toString());
-        len = bb.position();
-        bb.flip();
-        byte [] data = new byte [len] ;
-        bb.get(data, 0, len);
-        out.write(data);
+        
+        out.write(arr);
         out.flush();
         
-        updateListener(UpdateReason.OUTBOUND_MESSAGE, data, null);
+        updateListener(UpdateReason.OUTBOUND_MESSAGE, arr, null);
 
     }
 
