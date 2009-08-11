@@ -139,7 +139,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
         
 		for( int i = 0; i < 50; i++ )
         {
-            table_name = strukt.getName() + "_" + fromVersion + "_" + i;
+            table_name = strukt.getName() + "_" + String.format("%02d",fromVersion) + "_" + String.format("%02d",i+1);
             
             if( tableExists(table_name ) )
                continue;                        
@@ -231,8 +231,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
                 if (!migrateTable(strukt, ivers)) {
                     return false;
 				} else {
-					return setTableVersion(strukt.getName(), strukt
-				  		   .getVersion());
+					return setTableVersion(strukt.getName(), strukt.getVersion());
 				}
 			}
 		}
@@ -251,12 +250,12 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 		if (rv == true) {
 			
-			vers.version.loadFromString(vers.getVersion().toString());
+			vers.version.loadFromString(version.toString());
 			trans.updateValues(vers);
 
 		} else {
 			
-			vers.version.loadFromString(vers.getVersion().toString());
+			vers.version.loadFromString(version.toString());
 			trans.insertValues(vers);
 			
 		}
