@@ -57,15 +57,6 @@ public class MySQLTransaction extends Transaction {
     @Override
     public String getDayStmt(String column, DBDateTime day) {
 
-        /*
-        StringBuilder str = new StringBuilder();
-
-        
-        str.append(markColumn(column));
-        str.append(" LIKE '");
-        str.append(day.getDateStr());
-        str.append("%'");
-         */
         DateMidnight dm = new DateMidnight((Date) day.getValue());
 
         return getPeriodExclStmt(column, dm.toDate(), dm.plusDays(1).toDate());
@@ -76,14 +67,16 @@ public class MySQLTransaction extends Transaction {
 
         StringBuilder str = new StringBuilder();
 
+        str.append("( ");
         str.append(markColumn(column));
         str.append(" >= '");
         str.append(begin.toString());
-        str.append("%' AND ");
+        str.append("' AND ");
         str.append(markColumn(column));
         str.append(" <= '");
         str.append(end.toString());
-        str.append("%'");
+        str.append("'");
+        str.append(") ");
 
         return str.toString();
 
@@ -106,6 +99,7 @@ public class MySQLTransaction extends Transaction {
 
         StringBuilder str = new StringBuilder();
 
+        str.append("( ");
         str.append(markColumn(column));
         str.append(" >= '");
         str.append(beginStr);
@@ -114,6 +108,7 @@ public class MySQLTransaction extends Transaction {
         str.append(" <= '");
         str.append(endStr);
         str.append("'");
+        str.append(") ");
 
         return str.toString();
 
@@ -127,6 +122,7 @@ public class MySQLTransaction extends Transaction {
         String str_begin = DBDateTime.getStdString(begin);
         String str_end = DBDateTime.getStdString(end);
 
+        str.append("( ");
         str.append(markColumn(column));
         str.append(" >= '");
         str.append(str_begin);
@@ -135,6 +131,7 @@ public class MySQLTransaction extends Transaction {
         str.append(" < '");
         str.append(str_end);
         str.append("'");
+        str.append(") ");
 
         return str.toString();
     }
@@ -166,13 +163,79 @@ public class MySQLTransaction extends Transaction {
 
         String str_date = DBDateTime.getStdString(date);
 
-        str.append(markColumn(column1));
+        str.append("( ");
+        str.append(markColumn(column1));        
         str.append(" >= '");
         str.append(str_date);
         str.append("' AND '");
         str.append(str_date);
         str.append("' < ");
         str.append(markColumn(column2));
+        str.append(") ");
+
+        return str.toString();
+    }
+
+    @Override
+    public String getHigherDate(String column, DateMidnight date)
+    {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column));
+        str.append(" >= '");
+        str.append(str_date);
+        str.append("'");
+
+        return str.toString();
+    }
+
+    @Override
+    public String getLowerDate(String column, DateMidnight date)
+    {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column));
+        str.append(" <= '");
+        str.append(str_date);
+        str.append("'");
+
+        return str.toString();
+    }
+
+    @Override
+    public String getHigherDateExl(String column, DateMidnight date)
+    {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column));
+        str.append(" > '");
+        str.append(str_date);
+        str.append("'");
+
+        return str.toString();
+    }
+
+    @Override
+    public String getLowerDateExl(String column, DateMidnight date)
+    {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column));
+        str.append(" < '");
+        str.append(str_date);
+        str.append("'");
 
         return str.toString();
     }

@@ -134,7 +134,7 @@ public class NormalTableCellEditor extends AbstractCellEditor implements TableCe
                 if (tabledesign.colls.get(last_col).validator.wantDoLoadSelf()) {
                     do_self = false;
 
-                    if (!tabledesign.colls.get(last_col).validator.loadToValue(val, s)) {
+                    if (!tabledesign.colls.get(last_col).validator.loadToValue(val, s, last_row)) {
                         component.setBorder(new LineBorder(Color.RED));
                         return false;
                     }

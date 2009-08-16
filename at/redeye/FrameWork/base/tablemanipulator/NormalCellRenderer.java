@@ -102,7 +102,7 @@ public class NormalCellRenderer extends DefaultTableCellRenderer {
                 Object val = tabledesign.rows.get(row).get(col);
 
                 if (val instanceof DBValue && v instanceof String) {
-                    tabledesign.colls.get(col).validator.loadToValue((DBValue) val, (String) v);
+                    tabledesign.colls.get(col).validator.loadToValue((DBValue) val, (String) v,row);
                     String res = tabledesign.colls.get(col).validator.formatData(val);
                     super.setValue(res);
                 } else {

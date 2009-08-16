@@ -403,4 +403,15 @@ public class TableManipulator {
         }
     }
 
+    public void updateUI()
+    {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.fireTableDataChanged();
+        //table.updateUI();
+    }
+
+    public int getSelectedRow()
+    {
+        return table.getSelectedRow();
+    }
 }

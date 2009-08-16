@@ -49,7 +49,7 @@ public class DBDateTime extends DBValue {
 	}
 
 	@Override
-	public Object getValue() {
+	public Date getValue() {
 		return value;
 	}
 

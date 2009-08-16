@@ -34,9 +34,11 @@ public class HMSTime {
     public String toString( String format )
     {                        
         String fields[] = format.split(":");
-        
-        StringBuilder res = new StringBuilder();
-        
+
+        long m = Math.abs(millis);
+
+        StringBuilder res = new StringBuilder();        
+
         for( int i = 0; i < fields.length; i++ )
         {
             if( res.length() > 0 )
@@ -44,7 +46,7 @@ public class HMSTime {
             
             if( fields[i].matches("H+"))
             {
-                long hours   = getHours();
+                long hours   = getHours(m);
         
                 if( hours < 10 )
                     res.append("0");
@@ -53,8 +55,8 @@ public class HMSTime {
             }
             else if( fields[i].matches("m+") )
             {
-                long minutes = getMinutesOfHour();
-                
+                long minutes = getMinutesOfHour(m);
+
                 if( minutes < 10 )
                     res.append("0");
                 
@@ -62,15 +64,18 @@ public class HMSTime {
             }
             else if( fields[i].matches("s+"))
             {
-                long seconds = getSecondsOfHour();
+                long seconds = getSecondsOfHour(m);
                 
                 if( seconds < 10 )
-                    res.append("0");
+                    res.append("0");                
                 
                 res.append(String.valueOf(seconds));
-            }            
+            }
         }
-        
+
+        if( millis < 0 )
+            return "-" + res.toString();
+
         return res.toString();
     }
     
@@ -79,22 +84,37 @@ public class HMSTime {
     {
         return toString("HH:mm:ss");
     }
-    
+
     public long getHours()
+    {
+        return getHours(millis);
+    }
+
+    public static long getHours(long millis)
     {
         return millis / 1000 / 60 / 60;
     }
-    
+
     public long getMinutesOfHour()
     {
-        long rest  = ( millis / 1000 ) - getHours() * 60 * 60;
+        return getMinutesOfHour(millis);
+    }
+
+    public static long getMinutesOfHour(long millis)
+    {
+        long rest  = ( millis / 1000 ) - getHours(millis) * 60 * 60;
         
         return rest / 60;
     }
-    
+
     public long getSecondsOfHour()
     {
-        long rest = ( millis / 1000 ) - getHours() * 60 * 60 - getMinutesOfHour() * 60;
+        return getSecondsOfHour(millis);
+    }
+
+    public static long getSecondsOfHour(long millis)
+    {
+        long rest = ( millis / 1000 ) - getHours(millis) * 60 * 60 - getMinutesOfHour(millis) * 60;
         
         return rest;
     }

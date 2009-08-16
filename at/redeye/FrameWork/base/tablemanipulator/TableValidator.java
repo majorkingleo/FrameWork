@@ -21,7 +21,7 @@ public abstract class TableValidator {
         return true;
     }
 
-    public boolean loadToValue(DBValue val, String s) {
+    public boolean loadToValue(DBValue val, String s, int row) {
         return false;
     }
 

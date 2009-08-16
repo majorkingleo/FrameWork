@@ -245,4 +245,24 @@ public class SqLiteTransaction extends Transaction {
         System.out.println("build: "+str.toString());
         return str.toString();
     }
+
+    @Override
+    public String getHigherDate(String column, DateMidnight dm_from) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getLowerDate(String column, DateMidnight dm_from) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getHigherDateExl(String column, DateMidnight dm_from) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getLowerDateExl(String column, DateMidnight dm_from) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

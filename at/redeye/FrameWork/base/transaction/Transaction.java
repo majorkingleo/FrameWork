@@ -223,7 +223,11 @@ public abstract class Transaction {
     
     public abstract String getDayStmt(String string, Date toDate);
 
-    public abstract String getDayStmt(String string, DateMidnight day);    
+    public abstract String getDayStmt(String string, DateMidnight day);
+
+    public String getDayStmt(DBDateTime to, DateMidnight dateMidnight) {
+        return getDayStmt( to.getName(), dateMidnight );
+    }
 	
 	public abstract String getPeriodStmt (String column, DBDateTime begin, DBDateTime end);
 	
@@ -260,6 +264,28 @@ public abstract class Transaction {
 
     public abstract String getGUIFilterWhereStmt (Vector <? extends JComponent> fromFilter, Vector<? extends JComponent> toFilter);
 
+    public abstract String getHigherDate(String column, DateMidnight dm_from);
 
+    public abstract String getLowerDate(String column, DateMidnight dm_from);
+
+    public String getHigherDate(DBDateTime column, DateMidnight dm_from) {
+        return getHigherDate(column.getName(), dm_from);
+    }
+
+    public String getLowerDate(DBDateTime column, DateMidnight dm_from) {
+        return getLowerDate(column.getName(), dm_from);
+    }
+
+    public abstract String getHigherDateExl(String column, DateMidnight dm_from);
+
+    public abstract String getLowerDateExl(String column, DateMidnight dm_from);
+
+    public String getHigherDateExl(DBDateTime column, DateMidnight dm_from) {
+        return getHigherDateExl(column.getName(), dm_from);
+    }
+
+    public String getLowerDateExl(DBDateTime column, DateMidnight dm_from) {
+        return getLowerDateExl(column.getName(), dm_from);
+    }
 
 }

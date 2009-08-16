@@ -36,7 +36,7 @@ public class DBDouble extends DBValue {
     }
 
     @Override
-    public Object getValue() {
+    public Double getValue() {
         return value;
     }
     
