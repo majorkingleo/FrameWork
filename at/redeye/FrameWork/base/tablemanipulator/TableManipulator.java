@@ -403,9 +403,28 @@ public class TableManipulator {
         }
     }
 
-    public void updateUI()
+    public void updateValue( DBValue value, int row )
     {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        Vector<DBValue> values = binddesc.getAllValues();
+
+        for( int i = 0, col=0; i < values.size(); i++ )
+        {
+            if( isHidden( i ) )
+                continue;
+
+            if( values.get(i).getName().equals(value.getName()) )
+            {
+                model.setValueAt(value, row, col);
+                //model.fireTableCellUpdated(row, col);
+                return;
+            }
+
+            col++;
+        }
+    }
+
+    public void updateUI()
+    {        
         model.fireTableDataChanged();
         //table.updateUI();
     }
