@@ -6,6 +6,7 @@
 package at.redeye.FrameWork.utilities.calendar;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Vector;
 import org.joda.time.DateMidnight;
 
@@ -86,5 +87,4 @@ public class AustrianHolidays extends BaseHolidays implements Holidays {
     public String getPrimaryCountryCode() {
         return myCountryCode;
     }
-
 }

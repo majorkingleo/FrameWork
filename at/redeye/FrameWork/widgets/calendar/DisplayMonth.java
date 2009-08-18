@@ -31,6 +31,8 @@ public interface DisplayMonth {
     public int isWhatDayOfMonth( DisplayDay day );
     
     public void setHolidays( Holidays holidays );
+
+    public Holidays getHolidays();
     
     public void setInfoRenderer( InfoRenderer renderer );
     

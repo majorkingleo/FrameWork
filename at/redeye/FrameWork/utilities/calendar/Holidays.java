@@ -6,6 +6,7 @@
 package at.redeye.FrameWork.utilities.calendar;
 
 import java.util.Collection;
+import java.util.Date;
 import org.joda.time.DateMidnight;
 
 /**
@@ -75,4 +76,10 @@ public interface Holidays {
     public int getNumberOfCountryCodes();
     
     public String getPrimaryCountryCode();
+
+    /*
+     * @return returns a list of holidays a specific date.
+     * @date date for the holiday we are looking for
+     */
+    public HolidayInfo getHolidayForDay( DateMidnight date );
 }

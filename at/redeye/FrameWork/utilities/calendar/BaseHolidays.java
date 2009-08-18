@@ -7,15 +7,19 @@ package at.redeye.FrameWork.utilities.calendar;
 
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 
+import java.util.Collection;
+import java.util.Date;
 import org.joda.time.DateMidnight;
 
 /**
  *
  * @author martin
  */
-public class BaseHolidays {
+public abstract class BaseHolidays {
     
     public String CountryCode = "";
+    protected int last_used_year=0;
+    protected Collection<HolidayInfo> last_used_holidays = null;
     
     public BaseHolidays( String CountryCode )
     {
@@ -74,5 +78,28 @@ public class BaseHolidays {
             
             dm = dm.minusDays(1);
         }
+    }
+    
+    public abstract Collection<HolidayInfo> getHolidays(int year);
+
+
+    public HolidayInfo getHolidayForDay( DateMidnight date )
+    {
+        if( last_used_year != date.getYear() ||
+                last_used_holidays == null )
+        {
+            last_used_year = date.getYear();
+            last_used_holidays = getHolidays(last_used_year);
+        }
+
+        for( HolidayInfo hi : last_used_holidays )
+        {
+            if( hi.date.equals(date) )
+            {
+                return hi;
+            }
+        }
+
+        return null;
     }
 }

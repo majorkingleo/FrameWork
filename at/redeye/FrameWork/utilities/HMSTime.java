@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 public class HMSTime {
 
     long millis;
-    
+
     public HMSTime()
     {
         millis = 0;
@@ -137,5 +137,10 @@ public class HMSTime {
     public void addHours( long hours )
     {
         millis += hours * 60 * 60 * 1000;
+    }
+
+    public void setTime( long millis )
+    {
+        this.millis = millis;
     }
 }

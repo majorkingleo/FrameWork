@@ -677,5 +677,9 @@ public class CalendarComponent extends javax.swing.JPanel implements DisplayMont
         dd.setToday();
     }
 
+    public Holidays getHolidays() {
+       return holidays;
+    }
+
 
 }

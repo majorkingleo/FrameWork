@@ -6,9 +6,11 @@
 package at.redeye.FrameWork.utilities.calendar;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Vector;
 
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
+import org.joda.time.DateMidnight;
 
 /**
  *
@@ -138,5 +140,9 @@ public class HolidayMerger implements Holidays {
         
     public String getPrimaryCountryCode() {
         return primaryCountry;
+    }
+
+    public HolidayInfo getHolidayForDay(DateMidnight date) {
+        return primHolidays.getHolidayForDay(date);
     }
 }
