@@ -6,7 +6,6 @@
 package at.redeye.FrameWork.utilities.calendar;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Vector;
 
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
@@ -143,6 +142,10 @@ public class HolidayMerger implements Holidays {
     }
 
     public HolidayInfo getHolidayForDay(DateMidnight date) {
-        return primHolidays.getHolidayForDay(date);
+
+        if( primHolidays != null )
+            return primHolidays.getHolidayForDay(date);
+
+        return null;
     }
 }
