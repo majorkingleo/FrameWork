@@ -38,7 +38,7 @@ public class DBString extends DBValue {
     }
 
     @Override
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
     

@@ -114,13 +114,9 @@ public class MySQLTransaction extends Transaction {
 
     }
 
-    private String getPeriodExclStmt(String column, Date begin, Date end) {
+    private String getPeriodExclStmt(String column, String str_begin, String str_end) {
 
         StringBuilder str = new StringBuilder();
-
-
-        String str_begin = DBDateTime.getStdString(begin);
-        String str_end = DBDateTime.getStdString(end);
 
         str.append("( ");
         str.append(markColumn(column));
@@ -134,6 +130,16 @@ public class MySQLTransaction extends Transaction {
         str.append(") ");
 
         return str.toString();
+    }
+
+
+    private String getPeriodExclStmt(String column, Date begin, Date end) {
+       
+
+        String str_begin = DBDateTime.getStdString(begin);
+        String str_end = DBDateTime.getStdString(end);
+
+        return getPeriodExclStmt(column, str_begin, str_end);
     }
 
     @Override
@@ -151,9 +157,16 @@ public class MySQLTransaction extends Transaction {
 
     @Override
     public String getPeriodStmt(String column, DateMidnight dm_from, DateMidnight dm_to) {
-        return getPeriodStmt(column,
+
+        // da wir bei to den Tag auch inklusive haben wollen
+        // und mysql das so selektiert zählen wir 1 dazu damit wir
+        // einfach den nächsten Tag um 00:00 und machen
+        // den getPeriodStmtExl aufruf, damit wir keine Einträge für
+        // 00:00 bekommen, aber alle davor :-)
+
+        return getPeriodExclStmt(column,
                 DBDateTime.getStdString(dm_from),
-                DBDateTime.getStdString(dm_to));
+                DBDateTime.getStdString(dm_to.plusDays(1)));
     }
 
     @Override
