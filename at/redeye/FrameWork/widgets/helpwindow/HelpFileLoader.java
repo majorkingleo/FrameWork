@@ -12,16 +12,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.Vector;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author martin
  */
 public class HelpFileLoader {       
-        
+
+    private static Logger logger = Logger.getLogger(HelpFileLoader.class);
     
-    public static int findImgTag( StringBuilder s, int start )
+    public int findImgTag( StringBuilder s, int start )
     {
         int pos;
         
@@ -58,7 +61,7 @@ public class HelpFileLoader {
         return -1;
     }        
           
-    public static String replace_src( StringBuilder s )
+    public String replace_src( StringBuilder s )
     {                
         Vector<String> res = StringUtils.split_str( s, "=");
         
@@ -79,17 +82,18 @@ public class HelpFileLoader {
             
             String src = StringUtils.strip( new StringBuilder(part), " \t\r\n\"" );
 
-            URL resource = Class.class.getResource(src);
+            URL resource = getClass().getResource(src);
             
             String imgsrc = null;
             
             if( resource != null )
             {
                 imgsrc = resource.toString();
+                logger.info("image: " + src);
             }
             else
             {
-                System.out.println( "Cannot load Image: " + src );
+                logger.error( "Cannot load Image: " + src );
             }
                 
             
@@ -104,7 +108,7 @@ public class HelpFileLoader {
         return ret.toString();
     }
     
-    public static StringBuilder prepareImages( StringBuilder s )
+    public StringBuilder prepareImages( StringBuilder s )
     {
         int start=0;
         
