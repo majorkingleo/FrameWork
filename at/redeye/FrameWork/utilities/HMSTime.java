@@ -143,4 +143,9 @@ public class HMSTime {
     {
         this.millis = millis;
     }
+
+    public long getMillis()
+    {
+        return millis;
+    }
 }

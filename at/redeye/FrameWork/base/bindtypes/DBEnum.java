@@ -65,7 +65,7 @@ public class DBEnum extends DBValue {
     }
 
     @Override
-    public Object getValue() {
+    public String getValue() {
         return handler.getValue();
     }
 
