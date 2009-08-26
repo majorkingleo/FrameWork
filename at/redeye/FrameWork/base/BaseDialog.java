@@ -16,17 +16,22 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 
 import at.redeye.UserManagement.impl.ExtKeyListener;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 
 /**
@@ -51,6 +56,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
             doAutoRefresh();
         }
     };
+
     boolean edited = false;
     protected BindVarBase bind_vars = new BindVarBase();
 
@@ -97,9 +103,27 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
             y = 300;
         
         this.setBounds(x, y, 0, 0);
-        this.addKeyListener(new ExtKeyListener(this));
+        //this.addKeyListener(new ExtKeyListener(this));
 
         loadStuff();
+    }
+
+    @Override
+    protected JRootPane createRootPane()
+    {
+        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        JRootPane myrootPane = super.createRootPane();
+        myrootPane.registerKeyboardAction(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if( canClose() )
+                {
+                    close();
+                }
+            }
+        }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        
+        return myrootPane;
     }
 
     
