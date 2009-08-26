@@ -229,7 +229,7 @@ public class TableManipulator {
             } else if( tcoll.dbval instanceof DBSqlAsInteger ) {
                 col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBSqlAsInteger)tcoll.dbval));
             } else {
-                col.setCellEditor(new NormalTableCellEditor(tabledesign));            
+                col.setCellEditor(new AdvancedTableCellEditor(tabledesign));
             }
         }                       
     }

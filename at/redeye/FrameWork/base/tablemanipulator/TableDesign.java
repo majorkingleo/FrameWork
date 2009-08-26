@@ -7,6 +7,7 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 
 import java.awt.Color;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -69,5 +70,47 @@ public class TableDesign {
         this.colls = colls;
         this.edited_cols = new HashSet<Integer>();
         this.edited_rows = new HashSet<Integer>();
+    }
+
+    public Vector<String> getAllOfCollSorted(int col)
+    {
+        Vector<String> all = new Vector<String>();
+
+        TableValidator validator = null;
+
+        if( col >= 0 && col < colls.size() )
+        {
+            Coll coll = colls.get(col);
+            validator = coll.validator;
+        }
+
+        for( int i = 0; i < rows.size(); i++ )
+        {
+            if( rows.get(i).size() > col && col > 0 )
+            {
+                Object obj = rows.get(i).get(col);
+
+
+                if( validator != null )
+                {
+                    all.add(validator.formatData(obj));
+                }
+                else
+                {
+                    all.add(obj.toString());
+                }
+            }
+        }
+
+        Collections.sort(all);
+
+        // System.out.println( "HEEEEEEEEERE ");
+
+        for( int i = 0; i < all.size(); i++ )
+        {
+            System.out.println("xx: " + all.get(i));
+        }
+
+        return all;
     }
 }

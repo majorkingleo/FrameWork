@@ -37,7 +37,9 @@ public class DocumentFieldLimit extends PlainDocument {
 
     @Override
     public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-        
+
+        //System.out.println("str: " + this.getText(0, getLength()) + " => " + str);
+
         if( str != null )            
             if( getLength() + str.length() <= limit )
                 super.insertString(offs, str, a);
