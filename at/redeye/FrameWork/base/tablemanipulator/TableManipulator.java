@@ -135,7 +135,7 @@ public class TableManipulator {
  
             Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
  
-            width = comp.getPreferredSize().width;
+            int width_header = comp.getPreferredSize().width;
  
             // Get maximum width of column data
             for (int r = 0; r < table.getRowCount(); r++) {
@@ -148,10 +148,16 @@ public class TableManipulator {
 
             if( tabledesign.colls.get(vColIndex).isEditable )
             {
-                width += 2 * margin_editable;
+                if( width_header <= width )
+                    width += 2 * margin_editable;
+                else
+                    width = width_header += margin_default;
             } else {
                 // Add margin
-                width += 2 * margin_default;
+                if( width_header <= width )
+                    width += 2 * margin_default;
+                else
+                    width = width_header += margin_default;
             }
  
             // Set the width
