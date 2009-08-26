@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.base.tablemanipulator;
 
+import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import java.awt.Component;
 import java.util.Collection;
 import java.util.Set;
@@ -113,8 +114,12 @@ public class TableManipulator {
      public void autoResizeColWidth(JTable table, DefaultTableModel model) {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);        
  
-        int margin = 5;
+        String smargin_default = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.SpreadSheetMarginReadOnly);
+        String smargin_editable = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.SpreadSheetMarginEditable);
  
+        int margin_default = Integer.valueOf(smargin_default);
+        int margin_editable = Integer.valueOf(smargin_editable);
+
         for (int i = 0; i < table.getColumnCount(); i++) {
             int                     vColIndex = i;
             DefaultTableColumnModel colModel  = (DefaultTableColumnModel) table.getColumnModel();
@@ -139,9 +144,15 @@ public class TableManipulator {
                         r, vColIndex);
                 width = Math.max(width, comp.getPreferredSize().width);
             }
- 
-            // Add margin
-            width += 2 * margin;
+
+
+            if( tabledesign.colls.get(vColIndex).isEditable )
+            {
+                width += 2 * margin_editable;
+            } else {
+                // Add margin
+                width += 2 * margin_default;
+            }
  
             // Set the width
             col.setPreferredWidth(width);
