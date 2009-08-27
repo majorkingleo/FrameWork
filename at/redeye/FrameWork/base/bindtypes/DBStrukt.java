@@ -125,7 +125,21 @@ public abstract class DBStrukt {
         return elements.get(idx);
     }
 
-    
+    public DBValue getValue( DBValue val )
+    {
+        return getValue(val.getName());
+    }
+
+    public DBValue getValue( String name )
+    {
+        for( DBValue val : elements )
+        {
+            if( val.getName().equals(name) )
+                return val;
+        }
+
+        return null;
+    }
 
     public int countValues()
     {

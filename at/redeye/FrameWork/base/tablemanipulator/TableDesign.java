@@ -35,7 +35,6 @@ public class TableDesign {
         cell.col = col;
         cell.color = color;
         coloredCells.add (cell);
-
     }
 
     public static class Coll {
@@ -44,6 +43,7 @@ public class TableDesign {
         public boolean isEditable = true;
         public TableValidator validator = null;
         DBValue dbval = null;
+        public Vector<Object> additional_autocoplete_values = null;
 
         public Coll(String title) {
             this.Title = title;
@@ -77,10 +77,11 @@ public class TableDesign {
         Vector<String> all = new Vector<String>();
 
         TableValidator validator = null;
+        Coll coll = null;
 
         if( col >= 0 && col < colls.size() )
         {
-            Coll coll = colls.get(col);
+            coll = colls.get(col);
             validator = coll.validator;
         }
 
@@ -102,15 +103,26 @@ public class TableDesign {
             }
         }
 
+        if( coll.additional_autocoplete_values != null )
+        {
+            for( Object obj : coll.additional_autocoplete_values )
+            {
+                if( validator != null )
+                    all.add(validator.formatData(obj));
+                else
+                    all.add(obj.toString());
+            }
+        }
+
         Collections.sort(all);
 
         // System.out.println( "HEEEEEEEEERE ");
-
+        /*
         for( int i = 0; i < all.size(); i++ )
         {
             System.out.println("xx: " + all.get(i));
         }
-
+        */
         return all;
     }
 }

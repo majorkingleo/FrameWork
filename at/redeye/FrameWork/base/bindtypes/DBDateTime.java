@@ -35,7 +35,7 @@ public class DBDateTime extends DBValue {
 	}
 
 	@Override
-	public DBValue getCopy() {
+	public DBDateTime getCopy() {
 		DBDateTime datetime = new DBDateTime(name);
 		datetime.value = value;
 
@@ -104,13 +104,17 @@ public class DBDateTime extends DBValue {
 				+ MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
 	}
 
-	
-	public String getTimeStr() {
+
+    public String getTimeStr() {
+        return getTimeStr(value);
+    }
+
+	public static String getTimeStr(Date date) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(
 				MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
 
-		return sdf.format(value);
+		return sdf.format(date);
 
 	}
 
@@ -141,15 +145,17 @@ public class DBDateTime extends DBValue {
 
 		loadFromString(completet);
 
+        /*
 		System.out.println("completed: '" + completet + "' toString '"
 				+ toString() + "'");
-
+        */
+        
 		if (completet.equalsIgnoreCase(toString()) == true) {
-			System.out.println("true");
+			//System.out.println("true");
 			return true;
 		}
 
-		System.out.println("false");
+		//System.out.println("false");
 
 		return false;
 	}

@@ -223,11 +223,11 @@ public class TableManipulator {
             TableDesign.Coll tcoll = tabledesign.colls.get(i);
             
             if( tcoll.dbval instanceof DBEnum ) {
-                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBEnum)tcoll.dbval));
+                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBEnum)tcoll.dbval));
             } else if( tcoll.dbval instanceof DBEnumAsInteger ) {
-                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBEnumAsInteger)tcoll.dbval));
+                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBEnumAsInteger)tcoll.dbval));
             } else if( tcoll.dbval instanceof DBSqlAsInteger ) {
-                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBSqlAsInteger)tcoll.dbval));
+                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBSqlAsInteger)tcoll.dbval));
             } else {
                 col.setCellEditor(new AdvancedTableCellEditor(tabledesign));
             }
@@ -360,10 +360,27 @@ public class TableManipulator {
             }
             
             col++;
-        }                
+        } 
     }
      
+    public void setAdditionalAutocompleteData( DBValue column, Vector<Object> data )
+    {
+        Vector<DBValue> values = binddesc.getAllValues();
 
+        for( int i = 0, col=0; i < values.size(); i++ )
+        {
+            if( isHidden( i ) )
+                continue;
+
+            if( values.get(i).hashCode() == column.hashCode() )
+            {
+                tabledesign.colls.get(col).additional_autocoplete_values = data;
+                return;
+            }
+
+            col++;
+        }
+    }
     
     public void hide( DBValue column )
     {        
