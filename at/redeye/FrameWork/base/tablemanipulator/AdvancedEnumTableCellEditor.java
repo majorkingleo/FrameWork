@@ -39,7 +39,7 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
         component.setEditor(editor);
         editor.set_items(value.getPossibleValues());
         component.setEditable(true);
-        editor.setEditable(true);
+        editor.setEditable(false);
     }
 
     public AdvancedEnumTableCellEditor(TableDesign tabledesign, DBEnumAsInteger value) {

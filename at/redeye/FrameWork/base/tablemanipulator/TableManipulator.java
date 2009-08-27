@@ -223,11 +223,11 @@ public class TableManipulator {
             TableDesign.Coll tcoll = tabledesign.colls.get(i);
             
             if( tcoll.dbval instanceof DBEnum ) {
-                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBEnum)tcoll.dbval));
+                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBEnum)tcoll.dbval));
             } else if( tcoll.dbval instanceof DBEnumAsInteger ) {
-                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBEnumAsInteger)tcoll.dbval));
+                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBEnumAsInteger)tcoll.dbval));
             } else if( tcoll.dbval instanceof DBSqlAsInteger ) {
-                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBSqlAsInteger)tcoll.dbval));
+                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBSqlAsInteger)tcoll.dbval));
             } else {
                 col.setCellEditor(new AdvancedTableCellEditor(tabledesign));
             }
