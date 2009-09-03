@@ -27,6 +27,7 @@ public class Pair<T, S>
     return second;
   }
  
+  @Override
   public String toString()
   { 
     return "(" + first.toString() + ", " + second.toString() + ")"; 

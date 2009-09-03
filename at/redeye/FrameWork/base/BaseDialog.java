@@ -309,6 +309,10 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
 
     protected boolean checkAnyAndSingleSelection(JTable table) {
         if (table.getSelectedRowCount() <= 0) {
+            JOptionPane.showMessageDialog(null,
+                    StringUtils.autoLineBreak("Bitte wählen Sie einen Eintrag aus."),
+                    "Fehler",
+                    JOptionPane.OK_OPTION);
             return false;
         }
 

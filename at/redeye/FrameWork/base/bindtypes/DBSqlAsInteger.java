@@ -96,6 +96,7 @@ public class DBSqlAsInteger extends DBEnumAsInteger
             {
                 if( pairs.get(i).val.equals(value) )
                 {
+                    System.out.println( "value: "  + value + " is text " +  pairs.get(i).text);
                     return pairs.get(i).text;                    
                 }
             }
@@ -143,6 +144,7 @@ public class DBSqlAsInteger extends DBEnumAsInteger
     @Override
     public String toString()
     {
+        System.out.println( "returnung: " + handler.getValueAsString());
         return handler.getValueAsString();
     }
 }
