@@ -31,6 +31,7 @@ public class EnumTableCellEditor extends AbstractCellEditor implements TableCell
         
         for( String s : value.getPossibleValues() )
         {
+            // System.out.println(" xxxxx (" + value.getName() + ") value: " + s);
             component.addItem(s);
         }                
     }
@@ -40,6 +41,7 @@ public class EnumTableCellEditor extends AbstractCellEditor implements TableCell
         
         for( String s : value.getPossibleValues() )
         {
+            // System.out.println("yyyyyyyyy e as integer (" + value.getName() + ") value: " + s);
             component.addItem(s);
         }
     }
