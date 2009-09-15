@@ -223,11 +223,11 @@ public class TableManipulator {
             TableDesign.Coll tcoll = tabledesign.colls.get(i);
             
             if( tcoll.dbval instanceof DBEnum ) {
-                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBEnum)tcoll.dbval));
+                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBEnum)tcoll.dbval));
             } else if( tcoll.dbval instanceof DBEnumAsInteger ) {
-                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBEnumAsInteger)tcoll.dbval));
+                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBEnumAsInteger)tcoll.dbval));
             } else if( tcoll.dbval instanceof DBSqlAsInteger ) {
-                col.setCellEditor(new EnumTableCellEditor(tabledesign, (DBSqlAsInteger)tcoll.dbval));
+                col.setCellEditor(new AdvancedEnumTableCellEditor(tabledesign, (DBSqlAsInteger)tcoll.dbval));
             } else {
                 col.setCellEditor(new AdvancedTableCellEditor(tabledesign));
             }
@@ -238,7 +238,7 @@ public class TableManipulator {
     public void addRow( Vector<?> data )
     {
         /* Wir müssen hier einen 2. Vector anlegen,
-         * da der eine an die Tebelle angebunden wird
+         * da der eine an die Tabelle angebunden wird
          * und wenn über den TableVelidator ein
          * anderer Anzeige Format String verwendet wird
          * wird unser ursprüngliches Objekt in
@@ -374,7 +374,7 @@ public class TableManipulator {
 
             if( values.get(i).hashCode() == column.hashCode() )
             {
-                tabledesign.colls.get(col).additional_autocoplete_values = data;
+                tabledesign.colls.get(col).additional_autocomplete_values = data;
                 return;
             }
 

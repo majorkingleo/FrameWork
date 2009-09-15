@@ -23,7 +23,8 @@ public class DBEnumAsInteger extends DBValue {
         public abstract Integer getValue();        
         public abstract String getValueAsString();        
         public abstract EnumAsIntegerHandler getNewOne();
-        public abstract Vector<String> getPossibleValues();  
+        public abstract Vector<String> getPossibleValues();
+        public abstract void refresh();
     }
     
     public EnumAsIntegerHandler handler; 
@@ -92,5 +93,13 @@ public class DBEnumAsInteger extends DBValue {
     public Vector<String> getPossibleValues()
     {
         return handler.getPossibleValues();
+    }
+
+    /*
+     * refreshes the handler cached data (possible values)
+     */
+    public void refresh()
+    {
+        handler.refresh();
     }
 }

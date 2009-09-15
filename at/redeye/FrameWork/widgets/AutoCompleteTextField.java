@@ -89,7 +89,7 @@ public class AutoCompleteTextField extends JTextField
         // does anything to the text field. the text
         // field will be affected after this finishes.
         
-        //System.out.println( "keyPressed" );
+        System.out.println( "keyPressed" );
     }
 
     public void keyTyped(KeyEvent ke) {
@@ -98,7 +98,7 @@ public class AutoCompleteTextField extends JTextField
         // is modified; the event can be cancelled here
         // to prevent action)
 
-        //System.out.println( "keyTyped" );
+        System.out.println( "keyTyped" );
     }
 
     public void keyReleased(KeyEvent ke) {
@@ -106,7 +106,7 @@ public class AutoCompleteTextField extends JTextField
         // has already had it's effect on the textfield value
         // (a normal keypress is inserted/appended, etc.)
 
-        //System.out.println( "keyReleased" );
+        System.out.println( "keyReleased" );
 
         char ch = ke.getKeyChar();
         int code = ke.getKeyCode();
@@ -134,6 +134,7 @@ public class AutoCompleteTextField extends JTextField
     }
 
     public void focusGained(FocusEvent e) {
+        System.out.println("FOCUS_GAINED");
         selectAll();
     }
 
@@ -143,8 +144,7 @@ public class AutoCompleteTextField extends JTextField
 
     public java.awt.Component getEditorComponent() {
         // this satisfies ComboBoxEditor interface
-        // (along with getItem and setItem
-
+        // (along with getItem and setItem        
 
         return this;
     }

@@ -90,6 +90,11 @@ public class DBPermissionLevelInteger extends DBEnumAsInteger
            
            return res;
         }
+
+        @Override
+        public void refresh() {
+            // nothing todo
+        }
         
     }
     

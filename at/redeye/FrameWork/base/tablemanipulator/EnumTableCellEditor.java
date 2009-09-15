@@ -7,6 +7,8 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.bindtypes.DBEnum;
 import at.redeye.FrameWork.base.bindtypes.DBEnumAsInteger;
 
+import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
+import at.redeye.FrameWork.base.bindtypes.DBValue;
 import java.awt.Component;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
@@ -60,12 +62,27 @@ public class EnumTableCellEditor extends AbstractCellEditor implements TableCell
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 
-        // System.out.println("getTableCellEditorComponent");
+        System.out.println("getTableCellEditorComponent");
 
         last_row = row;
         last_col = column;
         current_value = value;
+
+        DBValue val = (DBValue) tabledesign.rows.get(row).get(column);
+
+        if( val instanceof  DBSqlAsInteger ) {
+            DBSqlAsInteger sql_val = (DBSqlAsInteger) val;
+
+            component.removeAllItems();
+
+            for( String s : sql_val.getPossibleValues() )
+            {
+               component.addItem(s);
+            }
+        }
+
         component.setSelectedItem(value);
+
         return component;
     }
 
@@ -73,8 +90,6 @@ public class EnumTableCellEditor extends AbstractCellEditor implements TableCell
     public boolean stopCellEditing() {
 
         // System.out.println("stopCellEditing");
-
-
         return super.stopCellEditing();
     }
 }

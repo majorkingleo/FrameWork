@@ -7,11 +7,13 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.bindtypes.DBEnum;
 import at.redeye.FrameWork.base.bindtypes.DBEnumAsInteger;
 
-import at.redeye.FrameWork.widgets.AutoCompleteTextField;
+import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.widgets.AutoCompleteCombo;
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.AbstractCellEditor;
-import javax.swing.JComboBox;
 import javax.swing.JTable;
+import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 
 /**
@@ -19,9 +21,10 @@ import javax.swing.table.TableCellEditor;
  * @author martin
  */
 public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements TableCellEditor {
+    
 
-    private static final long serialVersionUID = 1L;
-    JComboBox component = new JComboBox();
+    private static final long serialVersionUID = 1L;        
+    AutoCompleteCombo component = new AutoCompleteCombo();
     TableDesign tabledesign;
     int last_row = 0;
     int last_col = 0;
@@ -34,12 +37,9 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
         {
             component.addItem(s);
         }
-
-        AutoCompleteTextField editor = new AutoCompleteTextField();
-        component.setEditor(editor);
-        editor.set_items(value.getPossibleValues());
-        component.setEditable(true);
-        editor.setEditable(false);
+        
+        // component.set_items(value.getPossibleValues());
+        component.setEditable(true);       
     }
 
     public AdvancedEnumTableCellEditor(TableDesign tabledesign, DBEnumAsInteger value) {
@@ -49,12 +49,9 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
         {
             component.addItem(s);
         }
-
-        AutoCompleteTextField editor = new AutoCompleteTextField();
-        component.setEditor(editor);
-        editor.set_items(value.getPossibleValues());
-        component.setEditable(true);
-        editor.setEditable(true);
+                
+        // component.set_items(value.getPossibleValues());
+        component.setEditable(true);        
     }
 
     public Object getCellEditorValue() {
@@ -66,25 +63,90 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
 
         tabledesign.edited_cols.add(last_col);
         tabledesign.edited_rows.add(last_row);
-        return component.getSelectedItem().toString();
+        // return component.getSelectedItem().toString();
+        return component.getText();
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 
-        // System.out.println("getTableCellEditorComponent");
+        System.out.println("getTableCellEditorComponent for column " + column);
 
         last_row = row;
         last_col = column;
-        current_value = value;
+        current_value = value;        
+
+       java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                if(component.isVisible())
+                    component.requestFocus();
+            }
+        });
+        
+        component.setBorder(new LineBorder(Color.BLACK));
+
+        if( tabledesign.colls.get(last_col).validator != null )
+        {
+            tabledesign.colls.get(last_col).validator.updateComponentBeforeEdit(component, value, tabledesign, row, column);
+        }
+
         component.setSelectedItem(value);
+
         return component;
     }
 
     @Override
     public boolean stopCellEditing() {
 
-        // System.out.println("stopCellEditing");
+       System.out.println("stopCellEditing");
+       component.hidePopup();
 
-        return super.stopCellEditing();
+        if (tabledesign.colls.get(last_col).validator != null) {
+            if (!tabledesign.colls.get(last_col).validator.acceptData(component.getText())) {
+                component.setBorder(new LineBorder(Color.RED));
+                return false;
+            }
+        }
+
+       DBValue val = null;
+
+        if (DBValue.class.isInstance(current_value)) {
+           val = (DBValue) current_value;
+        } else {
+           Object o =  tabledesign.rows.get(last_row).get(last_col);
+           if( o instanceof DBValue )
+               val = (DBValue) o;
+        }
+
+       if( val != null )
+       {
+            String s = component.getText();
+
+            boolean do_self = true;
+
+            if (tabledesign.colls.get(last_col).validator != null) {
+                if (tabledesign.colls.get(last_col).validator.wantDoLoadSelf()) {
+                    do_self = false;
+
+                    if (!tabledesign.colls.get(last_col).validator.loadToValue(val, s, last_row)) {
+                        component.setBorder(new LineBorder(Color.RED));
+                        return false;
+                    }
+                }
+            }
+
+            if (do_self) {
+                if (!val.acceptString(s)) {
+                    component.setBorder(new LineBorder(Color.RED));
+                    return false;
+                } else {
+                    val.loadFromString(s);
+                }
+            }
+        }
+
+        component.setBackground(Color.WHITE);
+
+       return super.stopCellEditing();
     }
 }

@@ -43,7 +43,7 @@ public class TableDesign {
         public boolean isEditable = true;
         public TableValidator validator = null;
         DBValue dbval = null;
-        public Vector<Object> additional_autocoplete_values = null;
+        public Vector<Object> additional_autocomplete_values = null;
 
         public Coll(String title) {
             this.Title = title;
@@ -103,9 +103,9 @@ public class TableDesign {
             }
         }
 
-        if( coll.additional_autocoplete_values != null )
+        if( coll.additional_autocomplete_values != null )
         {
-            for( Object obj : coll.additional_autocoplete_values )
+            for( Object obj : coll.additional_autocomplete_values )
             {
                 if( validator != null )
                     all.add(validator.formatData(obj));

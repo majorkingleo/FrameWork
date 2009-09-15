@@ -69,6 +69,11 @@ public class DBFlagInteger extends DBEnumAsInteger
            
            return res;
         }
+
+        @Override
+        public void refresh() {
+            // nothing to do
+        }
         
     }
 

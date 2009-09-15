@@ -30,10 +30,22 @@ public class DBSqlAsInteger extends DBEnumAsInteger
                 this.text = text;
             }
         }
-        
+
+        public String extra_sql = "";
+
         public abstract Vector<Pair> getPossibleValues();
         
         public abstract int getDefaultValue();
+
+        public abstract void refresh();
+
+        public String getExtraSql() {
+            return extra_sql;
+        }
+
+        public void setExtraSql(String extra_sql) {
+            this.extra_sql = extra_sql;
+        }
     }
     
     public static class SqlAsIntegerHandler extends EnumAsIntegerHandler
@@ -45,8 +57,15 @@ public class DBSqlAsInteger extends DBEnumAsInteger
         SqlAsIntegerHandler( SqlQuery query )
         {
             this.query = query;
-            pairs = query.getPossibleValues();
             this.value = query.getDefaultValue();
+
+            refresh();
+        }
+
+        public void refresh()
+        {
+            query.refresh();
+            pairs = query.getPossibleValues();
         }
         
         @Override
@@ -144,7 +163,7 @@ public class DBSqlAsInteger extends DBEnumAsInteger
     @Override
     public String toString()
     {
-        System.out.println( "returnung: " + handler.getValueAsString());
+        // System.out.println( "returnung: " + handler.getValueAsString());
         return handler.getValueAsString();
     }
 }
