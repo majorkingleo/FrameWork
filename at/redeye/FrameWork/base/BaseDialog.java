@@ -345,4 +345,9 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     public void gui_to_var() {
         bind_vars.gui_to_var();
     }
+
+    public Root getRoot()
+    {
+        return root;
+    }
 }

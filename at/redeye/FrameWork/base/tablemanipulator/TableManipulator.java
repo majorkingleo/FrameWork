@@ -467,4 +467,8 @@ public class TableManipulator {
     {
         return table.getSelectedRow();
     }
+
+    public TableDesign getTabledesign() {
+        return tabledesign;
+    }
 }

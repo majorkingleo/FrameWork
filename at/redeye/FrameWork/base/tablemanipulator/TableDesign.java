@@ -125,4 +125,28 @@ public class TableDesign {
         */
         return all;
     }
+
+
+    public DBValue getColOfRow( DBValue col, int row )
+    {
+        return getColOfRow( col.getName(), row );
+    }
+
+    public DBValue getColOfRow( String name, int row )
+    {
+        Vector vecrow = rows.get(row);
+
+        for( Object o : vecrow )
+        {
+            if( o instanceof DBValue )
+            {
+                DBValue val = (DBValue) o;
+                if( val.getName().equals(name) )
+                    return val;
+            }
+        }
+
+        return null;
+
+    }
 }
