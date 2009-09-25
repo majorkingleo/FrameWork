@@ -13,37 +13,36 @@ import at.redeye.UserManagement.impl.UserLockedException;
 
 public interface UserManagementInterface {
 
-	public final int UM_PERMISSIONLEVEL_NORMAL = 1;
-	public final int UM_PERMISSIONLEVEL_PRIVILEGED = 2;
-	public final int UM_PERMISSIONLEVEL_ADMIN = 3;
+    public final int UM_PERMISSIONLEVEL_NORMAL = 1;
+    public final int UM_PERMISSIONLEVEL_PRIVILEGED = 2;
+    public final int UM_PERMISSIONLEVEL_ADMIN = 3;
+    public final int UM_ACCOUNT_LOCKED = 1;
+    public final int UM_ACCOUNT_UNLOCKED = 0;
 
-	public final int UM_ACCOUNT_LOCKED = 1;
-	public final int UM_ACCOUNT_UNLOCKED = 0;
-	
-	public void requestDialog(UserManagementDialogs dialog);
+    public void requestDialog(UserManagementDialogs dialog);
 
-	public Vector<DBStrukt> getAllUserData() throws SQLException,
-			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-			WrongBindFileFormatException, CloneNotSupportedException;
+    public boolean tryAutoLogin ();
+
+    public Vector<DBStrukt> getAllUserData() throws SQLException,
+            TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
+            WrongBindFileFormatException, CloneNotSupportedException;
 
     public DBPb getUserData(DBPb pb) throws SQLException,
-			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-			WrongBindFileFormatException, CloneNotSupportedException;
+            TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
+            WrongBindFileFormatException, CloneNotSupportedException;
 
+    public DBPb checkUserData(String login, String pwd, boolean autoLoginRequested)
+            throws InvalidLoginException, SQLException,
+            UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
+            WrongBindFileFormatException, CloneNotSupportedException, UserLockedException;
 
-	public DBPb checkUserData(String login, String pwd)
-			throws InvalidLoginException, SQLException,
-			UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
-			WrongBindFileFormatException, CloneNotSupportedException, UserLockedException;
+    public void setLogo(String logoPath);
 
-    public void setLogo (String logoPath);
+    public String getLogo();
 
-    public String getLogo ();
+    public void addUMListener(UserManagementListener listener);
 
-	public void addUMListener(UserManagementListener listener);
+    public void removeUMListener(UserManagementListener listener);
 
-	public void removeUMListener(UserManagementListener listener);
-
-	public void updateListeners();
-
+    public void updateListeners();
 }

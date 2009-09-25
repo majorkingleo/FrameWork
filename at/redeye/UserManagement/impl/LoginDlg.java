@@ -155,7 +155,7 @@ public class LoginDlg extends BaseDialog {
 	protected void buttonOKActionPerformed() {
 		try {
 			DBPb pb = um.checkUserData(fieldUser.getText(), new String(fieldPwd
-					.getPassword()));
+					.getPassword()), false);
 			if (pb != null) {
 				root.setAktivUser(pb);
 				um.updateListeners();
