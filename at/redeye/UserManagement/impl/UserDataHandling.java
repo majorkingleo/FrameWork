@@ -232,6 +232,7 @@ public class UserDataHandling implements UserManagementInterface {
                 return false;
             }
             updateListeners();
+            logger.info ("\n\n" + pb.getUserName() + " : AUTO Login!\n\n");
             return true;
 
         } catch (InvalidLoginException ex) {
