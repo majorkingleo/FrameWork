@@ -3,7 +3,6 @@ package at.redeye.UserManagement.impl;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import java.util.logging.Level;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
@@ -12,7 +11,6 @@ import at.redeye.FrameWork.base.ConnectionDialog;
 import at.redeye.FrameWork.base.DBConnection;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.MD5Calc;
