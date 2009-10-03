@@ -67,7 +67,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         this.title = title;
         setTitle(title);
 
-        root.informWindowOpened();
+        root.informWindowOpened(this);
 
         if (logger.isDebugEnabled()) {
             logger.debug(title);
@@ -206,8 +206,13 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         } catch (SQLException ex) {
             logger.error(ex);
         }
-        root.informWindowClosed();
+        root.informWindowClosed(this);
         this.dispose();
+    }
+
+    public void closeNoAppExit()
+    {
+        close();
     }
 
     /**

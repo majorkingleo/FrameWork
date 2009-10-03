@@ -31,6 +31,7 @@ public class UserDataHandling implements UserManagementInterface {
     private Root root;
     private String logoPath = "";
     private Vector<UserManagementListener> registeredListener;
+    private boolean auto_login_feature_activated = true;
 
     public UserDataHandling(Root root) {
         super();
@@ -207,6 +208,11 @@ public class UserDataHandling implements UserManagementInterface {
 
     public boolean tryAutoLogin() {
 
+        if( !auto_login_feature_activated  )
+        {
+            return false;
+        }
+
         String strAutoLogin =
                 root.getSetup().
                 getConfig(FrameWorkConfigDefinitions.AllowAutoLogin);
@@ -263,5 +269,10 @@ public class UserDataHandling implements UserManagementInterface {
 
 
 
+    }
+
+    public void setAutoLogin(boolean state)
+    {
+        auto_login_feature_activated = state;
     }
 }

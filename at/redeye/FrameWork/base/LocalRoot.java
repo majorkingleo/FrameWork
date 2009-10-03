@@ -13,6 +13,8 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
+import java.util.Vector;
+import javax.swing.JFrame;
 
 /**
  *
@@ -21,10 +23,11 @@ import at.redeye.UserManagement.bindtypes.DBPb;
 public class LocalRoot extends Root {
 
     protected LocalSetup setup;
-    protected DBConnection db_connection;
-    protected int windowCounter=0;
+    protected DBConnection db_connection;    
     protected DBPb userEntry=null;
     protected DBManager dbmanager=null;
+    protected Vector<JFrame> dialogs = new Vector<JFrame>();
+    protected boolean appExitAllowed = true;
     
     public LocalRoot( String app_name )
     {
@@ -102,20 +105,55 @@ public class LocalRoot extends Root {
     }
     
     @Override
-    public void informWindowOpened() 
+    public void informWindowOpened( JFrame dlg )
     {
-        windowCounter++;
+        dialogs.add(dlg);
     }
     
     @Override
-    public void informWindowClosed() 
+    public void informWindowClosed( JFrame dlg )
     {
-        windowCounter--;
+        dialogs.remove(dlg);
         
-        if( windowCounter <= 0 )
+        if( dialogs.size() <= 0 )
         {
-            System.out.println("All Windows closed, normal exit" );
-            appExit();
+            if( appExitAllowed )
+            {
+                System.out.println("All Windows closed, normal exit" );
+                appExit();
+            }
+        }
+    }
+
+    @Override
+    public void closeAllWindowsNoAppExit()
+    {
+        appExitAllowed = false;
+        closeAllWindowsExceptThisOne(null);
+        appExitAllowed = true;
+    }
+
+    @Override
+    public void closeAllWindowsExceptThisOne( JFrame dlg )
+    {
+        Vector<JFrame> dlgs = new Vector<JFrame>();
+        dlgs.addAll(dialogs);
+
+        for( JFrame frame : dlgs )
+        {
+            if( frame != dlg )
+            {
+                if( frame instanceof BaseDialog )
+                {
+                    BaseDialog base_dialog = (BaseDialog) frame;
+                    base_dialog.closeNoAppExit();
+                }
+                else
+                {
+                    frame.dispose();
+                    dialogs.remove(frame);
+                }
+            }
         }
     }
     

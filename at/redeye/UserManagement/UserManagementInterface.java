@@ -22,6 +22,7 @@ public interface UserManagementInterface {
     public void requestDialog(UserManagementDialogs dialog);
 
     public boolean tryAutoLogin ();
+    public void setAutoLogin ( boolean state );
 
     public Vector<DBStrukt> getAllUserData() throws SQLException,
             TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
