@@ -31,7 +31,7 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
     Object current_value;    
     
     public AdvancedEnumTableCellEditor(TableDesign tabledesign, DBEnum value ) {
-        this.tabledesign = tabledesign;
+        this.tabledesign = tabledesign;       
 
         for( String s : value.getPossibleValues() )
         {
@@ -43,8 +43,8 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
     }
 
     public AdvancedEnumTableCellEditor(TableDesign tabledesign, DBEnumAsInteger value) {
-        this.tabledesign = tabledesign;
-        
+        this.tabledesign = tabledesign;        
+
         for( String s : value.getPossibleValues() )
         {
             component.addItem(s);

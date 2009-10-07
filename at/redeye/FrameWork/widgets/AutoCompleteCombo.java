@@ -70,7 +70,9 @@ public class AutoCompleteCombo extends JTextField
 
     public void clearItems()
     {
-        items.clear();
+        if( items != null )
+            items.clear();
+        
         clear();
         hidePopup();
     }
@@ -229,7 +231,19 @@ public class AutoCompleteCombo extends JTextField
         if(items == null)
             items = new Vector<String>();
 
-        items.add(s);
+        boolean found = false;
+
+        for( int i = 0; i < items.size(); i++ )
+        {
+            if( items.get(i).equals(s))
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if( !found )
+            items.add(s);
 
         if( combo != null )
             combo.refresh(items);

@@ -15,6 +15,7 @@ import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import java.util.Vector;
 import javax.swing.JFrame;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -28,6 +29,7 @@ public class LocalRoot extends Root {
     protected DBManager dbmanager=null;
     protected Vector<JFrame> dialogs = new Vector<JFrame>();
     protected boolean appExitAllowed = true;
+    private static Logger logger = Logger.getLogger(LocalRoot.class);
     
     public LocalRoot( String app_name )
     {
@@ -217,7 +219,10 @@ public class LocalRoot extends Root {
     public int getUserId()
     {
         if( userEntry == null )
+        {
+            logger.warn("userEntry is null returning default user id 0");
             return 0;
+        }
         
         return (Integer)userEntry.id.getValue();
     }
