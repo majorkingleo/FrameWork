@@ -160,22 +160,42 @@ public class OracleTransaction extends Transaction {
 
     @Override
     public String getHigherDate(String column, DateMidnight dm_from) {
-        throw new UnsupportedOperationException("Not supported yet.");
+         StringBuilder str = new StringBuilder();
+
+        String str_date = DBDateTime.getStdString(dm_from);
+
+        str.append("TRUNC(");
+        str.append(markColumn(column));
+        str.append(")");
+        str.append(" >= '");
+        str.append(str_date);
+        str.append("'");
+        return str.toString();
     }
 
     @Override
     public String getLowerDate(String column, DateMidnight dm_from) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        StringBuilder str = new StringBuilder();
+
+        String str_date = DBDateTime.getStdString(dm_from);
+
+        str.append("TRUNC(");
+        str.append(markColumn(column));
+        str.append(")");
+        str.append(" <= '");
+        str.append(str_date);
+        str.append("'");
+        return str.toString();
     }
 
     @Override
     public String getHigherDateExl(String column, DateMidnight dm_from) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getHigherDate( column, dm_from.plusDays(1) );
     }
 
     @Override
     public String getLowerDateExl(String column, DateMidnight dm_from) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getLowerDate( column, dm_from.minusDays(1) );
     }
 
 }
