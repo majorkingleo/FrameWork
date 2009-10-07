@@ -235,6 +235,7 @@ public class UserDataHandling implements UserManagementInterface {
             if (pb == null) {
                 return false;
             }
+            root.setAktivUser(pb);
             updateListeners();
             logger.info ("\n\n" + pb.getUserName() + " : AUTO Login!\n\n");
             return true;
