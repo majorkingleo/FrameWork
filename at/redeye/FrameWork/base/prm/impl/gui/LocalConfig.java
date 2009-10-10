@@ -3,13 +3,15 @@
  *
  * Created on 13. März 2009, 09:04
  */
+package at.redeye.FrameWork.base.prm.impl.gui;
 
-package at.redeye.FrameWork.base;
-
+import at.redeye.FrameWork.base.prm.impl.*;
+import at.redeye.FrameWork.base.*;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.prm.PrmListener;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWinHook;
@@ -22,37 +24,40 @@ import java.util.Vector;
  *
  * @author  martin
  */
-public class LocalConfig extends BaseDialog implements CanCloseInterface {
+public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmListener {
 
     private static final long serialVersionUID = 1L;
-
     Vector<DBStrukt> values = new Vector<DBStrukt>();
     TableManipulator tm;
-    
+
     /** Creates new form Config */
     public LocalConfig(Root root) {
-        super( root, "Lokale Einstellungen");
-        
+        super(root, "Lokale Einstellungen");
+
         initComponents();
-        
+
         DBConfig config = new DBConfig();
-        
-        tm = new TableManipulator(root,jTContent, config);                
-                
+
+        tm = new TableManipulator(root, jTContent, config);
+
         tm.hide(config.hist.lo_user);
         tm.hide(config.hist.lo_zeit);
-                                
+
         tm.setEditable(config.value);
-        
+
         tm.prepareTable();
-        
+
         feed_table();
-        
+
         tm.autoResize();
-    }    
+
+        // Register all local parameters that shall be watched
+        root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName()).addPrmListener(this);
+        root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth.getConfigName()).addPrmListener(this);
+    }
 
     private void feed_table() {
-        
+
         values.clear();
         tm.clear();
 
@@ -63,15 +68,14 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface {
         for (String key : keys) {
             vals.put(key, LocalConfigDefinitions.get(key));
         }
-        
+
         for (String key : keys) {
 
-            DBConfig c = (DBConfig)vals.get(key).getCopy();
+            DBConfig c = (DBConfig) vals.get(key).getCopy();
 
             String val = root.getSetup().getLocalConfig(c.getConfigName(), c.getConfigValue());
 
             c.setConfigValue(val);
-                        
             tm.add(c);
             values.add(c);
         }
@@ -144,7 +148,7 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface {
                         .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jBSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 391, Short.MAX_VALUE)
                         .addComponent(jBCancel)))
                 .addContainerGap())
         );
@@ -168,15 +172,15 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface {
     }// </editor-fold>//GEN-END:initComponents
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
-    
+
     java.awt.EventQueue.invokeLater(new Runnable() {
 
         public void run() {
-            
-            HelpWinHook hook = new ConfigParamHook(root,"LOCALSETTINGSHOOOK", false,
+
+            HelpWinHook hook = new ConfigParamHook(root, "LOCALSETTINGSHOOOK", false,
                     LocalConfigDefinitions.help_search_path);
-            
-            new HelpWin(root, "/at/redeye/FrameWork/base/resources/Help/","LocalConfig",hook).setVisible(true);
+
+            new HelpWin(root, "/at/redeye/FrameWork/base/resources/Help/", "LocalConfig", hook).setVisible(true);
         }
     });
 }//GEN-LAST:event_jBHelpActionPerformed
@@ -186,35 +190,29 @@ private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     saveData();
 }//GEN-LAST:event_jBSaveActionPerformed
 
-
 private void jBCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCancelActionPerformed
 
-    if( canClose() )    
+    if (canClose()) {
         close();
-    
-}//GEN-LAST:event_jBCancelActionPerformed
-    
-
-@Override
-public boolean canClose()
-{    
-    return DefaultCanClose.DefaultCanCloseWithTable(this, tm);
-}
-
-public void saveData()
-{
-    for (Integer i : tm.getEditedRows()) {
-        DBConfig entry = (DBConfig) values.get(i);
-        root.getSetup().setLocalConfig(entry.getConfigName(), entry.getConfigValue());
     }
 
-    root.saveSetup();
-    feed_table();
-                
-}
+}//GEN-LAST:event_jBCancelActionPerformed
 
+    @Override
+    public boolean canClose() {
+        return DefaultCanClose.DefaultCanCloseWithTable(this, tm);
+    }
 
+    public void saveData() {
+        for (Integer i : tm.getEditedRows()) {
+            DBConfig entry = (DBConfig) values.get(i);
+            root.getSetup().setLocalConfig(entry.getConfigName(), entry.getConfigValue());
+        }
 
+        root.saveSetup();
+        feed_table();
+
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBCancel;
     private javax.swing.JButton jBHelp;
@@ -224,5 +222,15 @@ public void saveData()
     private javax.swing.JTable jTContent;
     // End of variables declaration//GEN-END:variables
 
+    public void onChange(PrmActionEvent prmActionEvent) {
+
+        System.out.println("Noticed PRM " +
+                prmActionEvent.getParameterName().toString() +
+                "'s change: OLD: " +
+                prmActionEvent.getOldPrmValue().toString() +
+                ", NEW: " + prmActionEvent.getNewPrmValue().toString());
+
+        // TODO: Msg - rollback tid
+    }
 }
 

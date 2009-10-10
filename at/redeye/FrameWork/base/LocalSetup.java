@@ -5,8 +5,11 @@
 
 package at.redeye.FrameWork.base;
 
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.impl.GlobalConfigDefinitions;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.prm.impl.LocalConfigDefinitions;
+import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
 import at.redeye.FrameWork.base.transaction.Transaction;
 
 import java.io.File;
@@ -15,9 +18,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
+
 
 /**
  *
@@ -100,6 +105,27 @@ public class LocalSetup extends Setup {
     public boolean saveProps()
     {       
         try {
+            Properties oldProps = new Properties();
+            FileInputStream in = new FileInputStream(config_file);
+            oldProps.load(in);
+
+            Set keys = oldProps.keySet();
+            Iterator <String> it = keys.iterator();
+
+            DBConfig c = null;
+            while (it.hasNext()) {
+                String currKey = it.next();
+                c = LocalConfigDefinitions.get(currKey);
+                if (c != null) {
+                    PrmActionEvent event = new PrmActionEvent();
+                    event.setOldPrmValue(oldProps.getProperty(currKey, ""));
+                    event.setNewPrmValue(props.getProperty(currKey, ""));
+                    event.setParameterName(currKey);
+                    c.updateListeners(event);
+                }          
+            }
+            
+            in.close();
             FileOutputStream out = new FileOutputStream(config_file);
             props.store(out, "nix");
             out.close();
@@ -179,12 +205,17 @@ public class LocalSetup extends Setup {
                 Transaction trans = conn.getNewTransaction();
                                                 
                 Set<String> keys = global_config.keySet();
-                
+                System.out.println ();
                 for( String key : keys )
                 {                                       
                     DBConfig c = global_config.get(key);
-                    
+                    PrmActionEvent event = new PrmActionEvent();
+                    event.setParameterName(c.name);
+                    event.setOldPrmValue(c.getOldValue());
+                    event.setNewPrmValue(c.value);
                     DefaultInsertOrUpdater.insertOrUpdateValuesWithPrimKey(trans, c);
+                    // Att.: The listener may cause a rollback()!
+                    c.updateListeners(event);
                 }
                 
                 trans.commit();                  
@@ -288,9 +319,21 @@ public class LocalSetup extends Setup {
         setConfig(key,value,false);
     }
 
+    @Override
     public void saveConfig()
     {
         saveProps();
         saveGlobalProps();
-    }        
+    }
+
+    @Override
+    public DBConfig getConfig(String key) {
+        return (global_config.get(key));
+    }
+
+    @Override
+    public DBConfig getLocalConfig(String key) {
+        return LocalConfigDefinitions.get(key);
+    }
+
 }

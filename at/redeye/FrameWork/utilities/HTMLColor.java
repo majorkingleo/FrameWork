@@ -6,7 +6,7 @@
 package at.redeye.FrameWork.utilities;
 
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 
 import java.awt.Color;
 import org.apache.log4j.Logger;

@@ -4,13 +4,16 @@
  * Created on 13. März 2009, 09:04
  */
 
-package at.redeye.FrameWork.base;
+package at.redeye.FrameWork.base.prm.impl.gui;
 
+import at.redeye.FrameWork.base.prm.impl.*;
+import at.redeye.FrameWork.base.*;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.prm.PrmListener;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWinHook;
@@ -23,7 +26,7 @@ import java.util.Vector;
  *
  * @author  martin
  */
-public class GlobalConfig extends BaseDialog implements CanCloseInterface {
+public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,6 +53,11 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface {
         feed_table(false);
         
         tm.autoResize();
+
+        // Register all parameter that shall be watched
+        root.getSetup().getConfig(FrameWorkConfigDefinitions.AllowAutoLogin.getConfigName()).addPrmListener(this);
+        
+
     }    
 
     private void feed_table(boolean autombox) {
@@ -65,8 +73,10 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface {
                 
                 Set<String> keys = GlobalConfigDefinitions.entries.keySet();
                 
-                for( String key : keys )
+                for( String key : keys ) {
+                   System.out.println ("==> "+key);
                    vals.put(key, GlobalConfigDefinitions.get(key));
+                }
                 
                 // nun alle Einträge aus der DB dazumergen
                 
@@ -163,7 +173,7 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface {
                         .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jBSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 391, Short.MAX_VALUE)
                         .addComponent(jBClose)))
                 .addContainerGap())
         );
@@ -251,5 +261,13 @@ new AutoMBox(getTitle()) {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTContent;
     // End of variables declaration//GEN-END:variables
+
+    public void onChange(PrmActionEvent prmActionEvent) {
+        System.out.println("Noticed PRM " +
+                prmActionEvent.getParameterName().toString() +
+                "'s change: OLD: " +
+                prmActionEvent.getOldPrmValue().toString() +
+                ", NEW: " + prmActionEvent.getNewPrmValue().toString());
+    }
 
 }

@@ -1,14 +1,23 @@
-package at.redeye.FrameWork.base.bindtypes;
+package at.redeye.FrameWork.base.prm.bindtypes;
+
+import at.redeye.FrameWork.base.bindtypes.*;
+import at.redeye.FrameWork.base.prm.PrmAttachInterface;
+import at.redeye.FrameWork.base.prm.PrmListener;
+import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
+import java.util.Vector;
 
 
 /**
  *
  * @author martin
  */
-public class DBConfig extends DBStrukt 
+public class DBConfig extends DBStrukt implements PrmAttachInterface
 {    
     public static String TABLENAME = "CONFIG";
-    
+
+    private Vector <PrmListener> prmListeners = new Vector<PrmListener>();
+    private String oldValue = "";
+
     public DBString  name  = new DBString("name", "Name", 100 );
     public DBString  value = new DBString( "value", "Wert", 100 );
     public DBString  descr  = new DBString( "description", "Beschreibung", 250 );
@@ -74,12 +83,36 @@ public class DBConfig extends DBStrukt
     
     public void setConfigValue( String val )
     {
-        value.loadFromString(val);                
+        oldValue = new String (value.toString());
+        value.loadFromString(val);
     }             
     
     @Override
     public DBStrukt getNewOne() {
         return new DBConfig();
     }
+
+    public void addPrmListener(PrmListener listener) {
+        prmListeners.add(listener);
+    }
+
+    public void removePrmListener(PrmListener listener) {
+        prmListeners.remove(listener);
+    }
+
+    public void updateListeners(PrmActionEvent prmActionEvent) {
+
+        System.out.println ("PRM " + name.toString()+ 
+                " has " + prmListeners.size() + " listener(s) registered!");
+
+        for (PrmListener currentListener : prmListeners) {
+            currentListener.onChange(prmActionEvent);
+        }
+    }
+
+    public String getOldValue() {
+        return oldValue;
+    }
+
     
 }

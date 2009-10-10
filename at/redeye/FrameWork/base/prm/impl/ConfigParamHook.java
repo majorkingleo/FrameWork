@@ -3,9 +3,11 @@
  * and open the template in the editor.
  */
 
-package at.redeye.FrameWork.base;
+package at.redeye.FrameWork.base.prm.impl;
 
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
+import at.redeye.FrameWork.base.*;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.widgets.helpwindow.HelpFileLoader;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWinHook;
 

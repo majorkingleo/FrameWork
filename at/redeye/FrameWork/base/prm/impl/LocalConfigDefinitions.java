@@ -1,20 +1,20 @@
 
-package at.redeye.FrameWork.base;
+package at.redeye.FrameWork.base.prm.impl;
 
 
 import java.util.TreeMap;
 import java.util.Vector;
 
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 
 /**
  *
  * @author martin
  */
-public class GlobalConfigDefinitions {
+public class LocalConfigDefinitions {
 
     public static TreeMap<String,DBConfig> entries = new TreeMap<String,DBConfig>();
-    public static Vector<String> help_search_path = new  Vector<String>();
+    public static Vector<String> help_search_path = new  Vector<String>();    
     
     public static void add( DBConfig config )
     {

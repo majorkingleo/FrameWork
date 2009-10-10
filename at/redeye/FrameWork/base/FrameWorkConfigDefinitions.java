@@ -4,7 +4,9 @@
  */
 package at.redeye.FrameWork.base;
 
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.impl.LocalConfigDefinitions;
+import at.redeye.FrameWork.base.prm.impl.GlobalConfigDefinitions;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 
 /**
  *

@@ -5,7 +5,7 @@
 
 package at.redeye.FrameWork.base;
 
-import at.redeye.FrameWork.base.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 
 
 /**
@@ -45,6 +45,10 @@ public abstract class Setup {
     public abstract String getLocalConfig( String key, String default_value );
     
     public abstract String getConfig( String key, String default_value );
+
+    public abstract DBConfig getConfig( String key);
+
+    public abstract DBConfig getLocalConfig(String key);
     
     public abstract void setLocalConfig( String key, String value, boolean if_not_exists );
     
