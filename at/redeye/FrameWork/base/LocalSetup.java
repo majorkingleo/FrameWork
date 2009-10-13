@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -37,7 +38,8 @@ public class LocalSetup extends Setup {
     Properties props;
     Root root;    
     HashMap<String,DBConfig> global_config = null;
-    
+    private static Logger logger = Logger.getLogger(LocalSetup.class);
+
     public LocalSetup( Root root, String app_name )
     {                
         this.app_name = app_name;
@@ -106,8 +108,14 @@ public class LocalSetup extends Setup {
     {       
         try {
             Properties oldProps = new Properties();
-            FileInputStream in = new FileInputStream(config_file);
-            oldProps.load(in);
+
+            try {
+                FileInputStream in = new FileInputStream(config_file);
+                oldProps.load(in);
+                in.close();
+            } catch( FileNotFoundException ex ) {
+                logger.error( "File " + config_file + " existiert noch nicht.");
+            }
 
             Set keys = oldProps.keySet();
             Iterator <String> it = keys.iterator();
@@ -124,8 +132,7 @@ public class LocalSetup extends Setup {
                     c.updateListeners(event);
                 }          
             }
-            
-            in.close();
+             
             FileOutputStream out = new FileOutputStream(config_file);
             props.store(out, "nix");
             out.close();

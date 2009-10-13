@@ -96,7 +96,7 @@ public class LocalRoot extends Root {
                     );
          
          DBConnection con = new DBConnection();
-         
+
          if( con.open(connparams) )
          {
              setDBConnection( con );                          

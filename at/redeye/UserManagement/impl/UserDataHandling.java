@@ -141,10 +141,20 @@ public class UserDataHandling implements UserManagementInterface {
             WrongBindFileFormatException, CloneNotSupportedException {
 
         DBConnection conn = root.getDBConnection();
-        Transaction tid = conn.getNewTransaction();
-        Vector<DBStrukt> pbrecords = tid.fetchTable(new DBPb());
 
-        conn.closeTransaction(tid);
+        Vector<DBStrukt> pbrecords = null;
+
+        if( conn != null )
+        {
+            Transaction tid = conn.getNewTransaction();
+             pbrecords = tid.fetchTable(new DBPb());
+
+            conn.closeTransaction(tid);
+        }
+        else
+        {
+            pbrecords = new Vector<DBStrukt>();
+        }
 
         return pbrecords;
     }
