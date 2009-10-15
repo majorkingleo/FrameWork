@@ -17,7 +17,6 @@ import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWinHook;
 
-import at.redeye.HMCP.Application.AppConfigDefinitions;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;

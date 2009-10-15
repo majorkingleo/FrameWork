@@ -19,7 +19,6 @@ import at.redeye.FrameWork.widgets.helpwindow.HelpWinHook;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,9 +30,9 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
     Vector<DBStrukt> values = new Vector<DBStrukt>();
     TableManipulator tm;
     // Defines PRM which are interesting
-    DBConfig prms [] = {FrameWorkConfigDefinitions.AutoLoginUser,
-            FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth,
-            FrameWorkConfigDefinitions.ImagePreviewInFileOpen};
+    DBConfig prms[] = {FrameWorkConfigDefinitions.AutoLoginUser,
+        FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth,
+        FrameWorkConfigDefinitions.ImagePreviewInFileOpen};
 
     /** Creates new form Config */
     public LocalConfig(Root root) {
@@ -229,13 +228,11 @@ private void jBCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
     public void onChange(PrmActionEvent prmActionEvent) {
 
-        System.out.println("Bin da!");
-        String [] possibleVals = {root.getLogin()};
-        if (!PrmDefaultCheckSuite.passesHasAValueEqual(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName()
-                ,prmActionEvent, possibleVals)) {
+        String[] possibleVals = {root.getLogin(), ""};
+        if (!PrmDefaultCheckSuite.passesHasAValueEqual(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName(), prmActionEvent, possibleVals)) {
 
             PrmErrUtil.displayPrmError(this, FrameWorkConfigDefinitions.AutoLoginUser.getConfigName());
-            root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName(), 
+            root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName(),
                     prmActionEvent.getOldPrmValue().toString());
 
         }
@@ -250,15 +247,13 @@ private void jBCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
         if (!PrmDefaultCheckSuite.passesJaNein(FrameWorkConfigDefinitions.ImagePreviewInFileOpen.getConfigName(), prmActionEvent)) {
 
-           PrmErrUtil.displayPrmError(this, FrameWorkConfigDefinitions.ImagePreviewInFileOpen.getConfigName());
+            PrmErrUtil.displayPrmError(this, FrameWorkConfigDefinitions.ImagePreviewInFileOpen.getConfigName());
             root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.ImagePreviewInFileOpen.getConfigName(),
                     prmActionEvent.getOldPrmValue().toString());
 
         }
-        
-   
-    }
 
-    
+
+    }
 }
 
