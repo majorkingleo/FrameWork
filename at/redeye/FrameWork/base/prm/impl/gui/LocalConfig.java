@@ -19,6 +19,7 @@ import at.redeye.FrameWork.widgets.helpwindow.HelpWinHook;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -29,6 +30,10 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
     private static final long serialVersionUID = 1L;
     Vector<DBStrukt> values = new Vector<DBStrukt>();
     TableManipulator tm;
+    // Defines PRM which are interesting
+    DBConfig prms [] = {FrameWorkConfigDefinitions.AutoLoginUser,
+            FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth,
+            FrameWorkConfigDefinitions.ImagePreviewInFileOpen};
 
     /** Creates new form Config */
     public LocalConfig(Root root) {
@@ -52,8 +57,7 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
         tm.autoResize();
 
         // Register all local parameters that shall be watched
-        root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName()).addPrmListener(this);
-        root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth.getConfigName()).addPrmListener(this);
+        PrmDefaultRegistration.attachToPRM(root, this, prms);
     }
 
     private void feed_table() {
@@ -193,6 +197,7 @@ private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 private void jBCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCancelActionPerformed
 
     if (canClose()) {
+        PrmDefaultRegistration.detachFromPRM(root, this, prms);
         close();
     }
 
@@ -224,13 +229,36 @@ private void jBCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
     public void onChange(PrmActionEvent prmActionEvent) {
 
-        System.out.println("Noticed PRM " +
-                prmActionEvent.getParameterName().toString() +
-                "'s change: OLD: " +
-                prmActionEvent.getOldPrmValue().toString() +
-                ", NEW: " + prmActionEvent.getNewPrmValue().toString());
+        System.out.println("Bin da!");
+        String [] possibleVals = {root.getLogin()};
+        if (!PrmDefaultCheckSuite.passesHasAValueEqual(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName()
+                ,prmActionEvent, possibleVals)) {
 
-        // TODO: Msg - rollback tid
+            PrmErrUtil.displayPrmError(this, FrameWorkConfigDefinitions.AutoLoginUser.getConfigName());
+            root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.AutoLoginUser.getConfigName(), 
+                    prmActionEvent.getOldPrmValue().toString());
+
+        }
+
+        if (!PrmDefaultCheckSuite.passesNumeric(FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth.getConfigName(), prmActionEvent)) {
+
+            PrmErrUtil.displayPrmError(this, FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth.getConfigName());
+            root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth.getConfigName(),
+                    prmActionEvent.getOldPrmValue().toString());
+
+        }
+
+        if (!PrmDefaultCheckSuite.passesJaNein(FrameWorkConfigDefinitions.ImagePreviewInFileOpen.getConfigName(), prmActionEvent)) {
+
+           PrmErrUtil.displayPrmError(this, FrameWorkConfigDefinitions.ImagePreviewInFileOpen.getConfigName());
+            root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.ImagePreviewInFileOpen.getConfigName(),
+                    prmActionEvent.getOldPrmValue().toString());
+
+        }
+        
+   
     }
+
+    
 }
 

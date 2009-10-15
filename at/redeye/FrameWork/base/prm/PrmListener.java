@@ -13,6 +13,6 @@ import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
  */
 public interface PrmListener {
 
-    public void onChange (PrmActionEvent prmActionEvent);
+    public void onChange (PrmActionEvent prmActionEvent) ;
 
 }

@@ -3,7 +3,6 @@
  *
  * Created on 13. März 2009, 09:04
  */
-
 package at.redeye.FrameWork.base.prm.impl.gui;
 
 import at.redeye.FrameWork.base.prm.impl.*;
@@ -18,6 +17,7 @@ import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWinHook;
 
+import at.redeye.HMCP.Application.AppConfigDefinitions;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -29,80 +29,77 @@ import java.util.Vector;
 public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmListener {
 
     private static final long serialVersionUID = 1L;
-
     Vector<DBStrukt> values = new Vector<DBStrukt>();
     TableManipulator tm;
-    
+    DBConfig prms[] = {FrameWorkConfigDefinitions.AllowAutoLogin};
+    GlobalConfig myself;
+
     /** Creates new form Config */
     public GlobalConfig(Root root) {
-        super( root, "Globale Einstellungen");
-        
+        super(root, "Globale Einstellungen");
+
         initComponents();
-        
+
         DBConfig config = new DBConfig();
-        
-        tm = new TableManipulator(root,jTContent, config);                
-                
+
+        tm = new TableManipulator(root, jTContent, config);
+
         tm.hide(config.hist.lo_user);
         tm.hide(config.hist.lo_zeit);
-                                
+
         tm.setEditable(config.value);
-        
+
         tm.prepareTable();
-        
+
         feed_table(false);
-        
+
         tm.autoResize();
 
-        // Register all parameter that shall be watched
-        root.getSetup().getConfig(FrameWorkConfigDefinitions.AllowAutoLogin.getConfigName()).addPrmListener(this);
-        
+        PrmDefaultRegistration.attachToPRM(root, this, prms);
+        myself = this;
+    }
 
-    }    
+    public void feed_table(boolean autombox) {
 
-    private void feed_table(boolean autombox) {
-        
-        new AutoMBox("GlobalConfig", autombox ){
+        new AutoMBox("GlobalConfig", autombox) {
 
             @Override
             public void do_stuff() throws Exception {
                 values.clear();
                 tm.clear();
-                
-                TreeMap<String,DBConfig> vals = new TreeMap<String,DBConfig>();
-                
+
+                TreeMap<String, DBConfig> vals = new TreeMap<String, DBConfig>();
+
                 Set<String> keys = GlobalConfigDefinitions.entries.keySet();
-                
-                for( String key : keys ) {
-                   System.out.println ("==> "+key);
-                   vals.put(key, GlobalConfigDefinitions.get(key));
+
+                for (String key : keys) {
+                    System.out.println("==> " + key);
+                    vals.put(key, GlobalConfigDefinitions.get(key));
                 }
-                
+
                 // nun alle Einträge aus der DB dazumergen
-                
-                Vector<DBStrukt> res = getTransaction().fetchTable(new DBConfig() );
-                
-                for( DBStrukt s : res )
-                {
-                    DBConfig c = (DBConfig)s;
+
+                Vector<DBStrukt> res = getTransaction().fetchTable(new DBConfig());
+
+                for (DBStrukt s : res) {
+                    DBConfig c = (DBConfig) s;
                     vals.put(c.getConfigName(), c);
-                }                  
-                
-                keys = vals.keySet();                                
-                                
-                for( String key : keys ) {
-                    
-                    DBConfig c = (DBConfig)vals.get(key);
+                }
+
+                keys = vals.keySet();
+
+                for (String key : keys) {
+
+                    DBConfig c = (DBConfig) vals.get(key);
                     values.add(c);
                     tm.add(c);
                 }
-            }                        
+            }
         };
-        
+
     }
-    
-    private void feed_table()
-    {
+
+    private void feed_table() {
         feed_table(true);
     }
 
@@ -197,15 +194,15 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmLi
     }// </editor-fold>//GEN-END:initComponents
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
-    
+
     java.awt.EventQueue.invokeLater(new Runnable() {
-                
-        HelpWinHook hook = new ConfigParamHook(root,"GLOBALSETTINGSHOOOK",true,
+
+        HelpWinHook hook = new ConfigParamHook(root, "GLOBALSETTINGSHOOOK", true,
                 GlobalConfigDefinitions.help_search_path);
-        
+
         public void run() {
-            new HelpWin(root, 
-                    "/at/redeye/FrameWork/base/resources/Help/",                    
+            new HelpWin(root,
+                    "/at/redeye/FrameWork/base/resources/Help/",
                     "GlobalConfig",
                     hook).setVisible(true);
         }
@@ -214,45 +211,41 @@ private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
 private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
 
-   saveData();
-                
+    saveData();
+
 }//GEN-LAST:event_jBSaveActionPerformed
 
-
-@Override
-public boolean canClose()
-{    
-    return DefaultCanClose.DefaultCanCloseWithTable(this, tm);
-}
-
-public void saveData()
-{
-    for (Integer i : tm.getEditedRows()) {
-        DBConfig entry = (DBConfig) values.get(i);
-        root.getSetup().setConfig(entry.getConfigName(), entry.getConfigValue());
+    @Override
+    public boolean canClose() {
+        return DefaultCanClose.DefaultCanCloseWithTable(this, tm);
     }
 
-    root.saveSetup();
-    feed_table();
-}
+    public void saveData() {
+        for (Integer i : tm.getEditedRows()) {
+            DBConfig entry = (DBConfig) values.get(i);
+            root.getSetup().setConfig(entry.getConfigName(), entry.getConfigValue());
+        }
 
+        root.saveSetup();
+        feed_table();
+    }
 
 private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCloseActionPerformed
-new AutoMBox(getTitle()) {    
+    new AutoMBox(getTitle()) {
+
         @Override
         public void do_stuff() throws Exception {
-            
-            if( canClose() )
-            {
+
+            if (canClose()) {
                 getTransaction().rollback();
+                PrmDefaultRegistration.detachFromPRM(root, myself, prms);
                 close();
             }
         }
     };
-    
-}//GEN-LAST:event_jBCloseActionPerformed
-    
 
+
+}//GEN-LAST:event_jBCloseActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBClose;
     private javax.swing.JButton jBHelp;
@@ -263,11 +256,14 @@ new AutoMBox(getTitle()) {
     // End of variables declaration//GEN-END:variables
 
     public void onChange(PrmActionEvent prmActionEvent) {
-        System.out.println("Noticed PRM " +
-                prmActionEvent.getParameterName().toString() +
-                "'s change: OLD: " +
-                prmActionEvent.getOldPrmValue().toString() +
-                ", NEW: " + prmActionEvent.getNewPrmValue().toString());
-    }
 
+
+        if (!PrmDefaultCheckSuite.passesJaNein(FrameWorkConfigDefinitions.AllowAutoLogin.getConfigName(), prmActionEvent)) {
+
+            PrmErrUtil.displayPrmError(this, FrameWorkConfigDefinitions.AllowAutoLogin.getConfigName());
+            PrmErrUtil.restoreGlobalPrm(this, FrameWorkConfigDefinitions.AllowAutoLogin,  prmActionEvent.getOldPrmValue().toString());
+            //feed_table();
+           
+        }
+    }
 }
