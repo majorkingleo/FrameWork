@@ -5,6 +5,7 @@
  */
 package at.redeye.FrameWork.base.prm.impl.gui;
 
+import at.redeye.FrameWork.base.prm.PrmCustomChecksInterface;
 import at.redeye.FrameWork.base.prm.impl.*;
 import at.redeye.FrameWork.base.*;
 import at.redeye.FrameWork.base.AutoMBox;
@@ -12,6 +13,7 @@ import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
 import at.redeye.FrameWork.base.prm.PrmListener;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
@@ -30,7 +32,6 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmLi
     private static final long serialVersionUID = 1L;
     Vector<DBStrukt> values = new Vector<DBStrukt>();
     TableManipulator tm;
-    DBConfig prms[] = {FrameWorkConfigDefinitions.AllowAutoLogin};
     GlobalConfig myself;
 
     /** Creates new form Config */
@@ -54,8 +55,15 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmLi
 
         tm.autoResize();
 
-        PrmDefaultRegistration.attachToPRM(root, this, prms);
+        Set<String> keys = GlobalConfigDefinitions.entries.keySet();
+        for (String key : keys) {
+            root.getSetup().getConfig(key).addPrmListener(this);
+            // Set check-callback : -> Ugly programm in LocalSetup
+            root.getSetup().getConfig(key).setCustomChecks(GlobalConfigDefinitions.get(key).getCustomChecks());
+            root.getSetup().getConfig(key).setDefaultChecks(GlobalConfigDefinitions.get(key).getDefaultChecks());
+        }
         myself = this;
+
     }
 
     public void feed_table(boolean autombox) {
@@ -72,7 +80,6 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmLi
                 Set<String> keys = GlobalConfigDefinitions.entries.keySet();
 
                 for (String key : keys) {
-                    System.out.println("==> " + key);
                     vals.put(key, GlobalConfigDefinitions.get(key));
                 }
 
@@ -101,7 +108,6 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmLi
     private void feed_table() {
         feed_table(true);
     }
-
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -237,7 +243,10 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 
             if (canClose()) {
                 getTransaction().rollback();
-                PrmDefaultRegistration.detachFromPRM(root, myself, prms);
+                Set<String> keys = GlobalConfigDefinitions.entries.keySet();
+                for (String key : keys) {
+                    root.getSetup().getConfig(key).removePrmListener(myself);
+                }
                 close();
             }
         }
@@ -254,15 +263,25 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JTable jTContent;
     // End of variables declaration//GEN-END:variables
 
-    public void onChange(PrmActionEvent prmActionEvent) {
+    public void onChange(PrmDefaultChecksInterface checks, PrmActionEvent event) {
+        System.out.println("PRM "+event.getParameterName()+" ," +
+                " OLD: "+event.getOldPrmValue()+" , NEW: "+event.getNewPrmValue());
+        if (checks.doChecks(event) == false) {
+            PrmErrUtil.displayPrmError(this, event.getParameterName().toString());
+            PrmErrUtil.restoreGlobalPrm(this, event.getParameterName().toString(),
+                    event.getOldPrmValue().toString());
 
+        }
 
-        if (!PrmDefaultCheckSuite.passesJaNein(FrameWorkConfigDefinitions.AllowAutoLogin.getConfigName(), prmActionEvent)) {
+    }
 
-            PrmErrUtil.displayPrmError(this, FrameWorkConfigDefinitions.AllowAutoLogin.getConfigName());
-            PrmErrUtil.restoreGlobalPrm(this, FrameWorkConfigDefinitions.AllowAutoLogin,  prmActionEvent.getOldPrmValue().toString());
-            //feed_table();
-           
+    public void onChange(PrmCustomChecksInterface customChecks, PrmActionEvent event) {
+            System.out.println("PRM "+event.getParameterName()+" ," +
+                " OLD: "+event.getOldPrmValue()+" , NEW: "+event.getNewPrmValue());
+        if (customChecks.doCustomChecks(event) == false) {
+            PrmErrUtil.displayPrmError(this, event.getParameterName().toString());
+            PrmErrUtil.restoreGlobalPrm(this, event.getParameterName().toString(),
+                    event.getOldPrmValue().toString());
         }
     }
 }

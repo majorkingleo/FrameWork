@@ -129,6 +129,7 @@ public class LocalSetup extends Setup {
                     event.setOldPrmValue(oldProps.getProperty(currKey, ""));
                     event.setNewPrmValue(props.getProperty(currKey, ""));
                     event.setParameterName(currKey);
+                    event.setPossibleVals(c.getPossibleValues());
                     c.updateListeners(event);
                 }          
             }
@@ -220,8 +221,8 @@ public class LocalSetup extends Setup {
                     event.setParameterName(c.name);
                     event.setOldPrmValue(c.getOldValue());
                     event.setNewPrmValue(c.value);
+                    event.setPossibleVals(c.getPossibleValues());
                     DefaultInsertOrUpdater.insertOrUpdateValuesWithPrimKey(trans, c);
-                    // Att.: The listener may cause a rollback()!
                     c.updateListeners(event);
                 }
                 

@@ -31,8 +31,4 @@ public class GlobalConfigDefinitions {
         help_search_path.add(path);
     }
 
-    // TODO: (Mario) Improve this !!!
-    // A getter for all PRMs in a vector would be sexy!
-
-
 }

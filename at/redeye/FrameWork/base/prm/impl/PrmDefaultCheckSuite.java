@@ -4,18 +4,23 @@
  */
 package at.redeye.FrameWork.base.prm.impl;
 
+import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
 
 /**
  *
  * @author mmattl
  */
-public class PrmDefaultCheckSuite {
+public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
-    public static boolean passesNumeric(String prmToCheck, PrmActionEvent event) {
+    private long checks2Execute = 0x0;
 
-        if (!isMine(prmToCheck, event)) {
-            return true;
-        }
+    public PrmDefaultCheckSuite(long checks2Execute) {
+
+        this.checks2Execute = checks2Execute;
+
+    }
+
+    private static boolean passesDouble(PrmActionEvent event) {
 
         try {
             Double.parseDouble(event.getNewPrmValue().toString());
@@ -26,13 +31,31 @@ public class PrmDefaultCheckSuite {
         return true;
     }
 
-    public static boolean passesJaNein(String prmToCheck, PrmActionEvent event) {
+    private static boolean passesBit(PrmActionEvent event) {
 
-        String [] validStr = {"ja", "nein", "true", "false", "yes", "no"};
-
-        if (!isMine(prmToCheck, event)) {
-            return true;
+        try {
+            Boolean.parseBoolean(event.getNewPrmValue().toString());
+        } catch (NumberFormatException nfe) {
+            return false;
         }
+
+        return true;
+    }
+
+    private static boolean passesLong(PrmActionEvent event) {
+
+        try {
+            Long.parseLong(event.getNewPrmValue().toString());
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static boolean passesJaNein(PrmActionEvent event) {
+
+        String[] validStr = {"ja", "nein", "true", "false", "yes", "no"};
 
         for (int idx = 0; idx < validStr.length; idx++) {
 
@@ -45,28 +68,57 @@ public class PrmDefaultCheckSuite {
 
     }
 
-    public static boolean passesHasAValueEqual(String prmToCheck, PrmActionEvent event, String values[]) {
+    private static boolean passesHasAValueEqual(PrmActionEvent event) {
 
-        if (!isMine(prmToCheck, event)) {
-            return true;
-        }
-
+        String[] values = event.getPossibleVals();
         for (int idx = 0; idx < values.length; idx++) {
+            System.out.println("Checking "+values[idx]+ " / "+ event.getNewPrmValue().toString());
             if (values[idx].equals(event.getNewPrmValue().toString())) {
                 return true;
             }
         }
-  
+
         return false;
 
     }
 
-    private static boolean isMine(String prmToCheck, PrmActionEvent event) {
-        if (prmToCheck.equals(event.getParameterName().toString())) {
-            return true;
+    public boolean doChecks(PrmActionEvent event) {
+
+
+        if ((checks2Execute & PRM_IS_DOUBLE) != 0) {
+            System.out.println("DOUBLE JA");
+            if (!passesDouble(event)) {
+                return false;
+            }
         }
-        return false;
+
+        if ((checks2Execute & PRM_IS_LONG) != 0) {
+            System.out.println("LONG JA");
+            if (!passesLong(event)) {
+                return false;
+            }
+        }
+
+        if ((checks2Execute & PRM_IS_BIT) != 0) {
+            System.out.println("BIT JA");
+            if (!passesBit(event)) {
+                return false;
+            }
+        }
+
+        if ((checks2Execute & PRM_IS_TRUE_FALSE) != 0) {
+            System.out.println("TRUE/FALSE JA");
+            if (!passesJaNein(event)) {
+                return false;
+            }
+        }
+
+        if ((checks2Execute & PRM_HAS_VALUE) != 0) {
+            System.out.println("USER VALUE JA");
+            if (!passesHasAValueEqual(event)) {
+                return false;
+            }
+        }
+        return true;
     }
-
-
 }

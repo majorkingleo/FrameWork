@@ -25,9 +25,9 @@ public class PrmErrUtil {
 
     }
 
-    public static void restoreGlobalPrm(final GlobalConfig dlg, DBConfig prm, String saveValue) {
+    public static void restoreGlobalPrm(final GlobalConfig dlg, String name, String saveValue) {
 
-        dlg.getRoot().getSetup().setConfig(prm.getConfigName(), saveValue);
+        dlg.getRoot().getSetup().setConfig(name, saveValue);
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override

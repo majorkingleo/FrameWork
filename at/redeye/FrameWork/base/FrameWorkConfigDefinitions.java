@@ -4,9 +4,11 @@
  */
 package at.redeye.FrameWork.base;
 
+import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
 import at.redeye.FrameWork.base.prm.impl.LocalConfigDefinitions;
 import at.redeye.FrameWork.base.prm.impl.GlobalConfigDefinitions;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.impl.PrmDefaultCheckSuite;
 
 /**
  *
@@ -23,10 +25,10 @@ public class FrameWorkConfigDefinitions {
     public static DBConfig SpreadSheetColorOddEditable = new DBConfig("SpreadSheetColorOddEditable", "#dcf5eb", "Hintergundfarbe der Tabelle bei ungeraden editiebaren Reihen.");
     public static DBConfig SpreadSheetMarginEditable = new DBConfig("SpreadSheetMarginEditable", "20", "Zusätzlicher Rand, um den die Tabellenspalten breiter gemacht werden um besseres Editieren zu ermöglichen. Dies gilt nur für editierbare Spalten.");
     public static DBConfig SpreadSheetMarginReadOnly = new DBConfig("SpreadSheetMarginReadOnly", "5", "Zusätzlicher Rand, um den die Tabellenspalten breiter gemacht werden. Dieser Wert gilt nur für nicht editierbare Spalten.");
-    public static DBConfig DefaultAutoLineBreakWidth = new DBConfig("DefaultAutoLineBreakWidth", "40", "Breite eines automatisch umgebrochenen Textes.");
-    public static DBConfig ImagePreviewInFileOpen = new DBConfig("ImagePreviewinFileOpen", "false", "Soll im Datei öffnen Dialogen die Bildervorschau angezeigt werden?");
-    public static DBConfig AllowAutoLogin = new DBConfig("AllowAutoLogin", "false", "Ist eine automatische Anmeldung generell zulässig?");
-    public static DBConfig AutoLoginUser = new DBConfig("AutoLoginUser", "", "Legt den Login fest, mit dem die automatische Anmeldung durchgeführt wird.");
+    public static DBConfig DefaultAutoLineBreakWidth = new DBConfig("DefaultAutoLineBreakWidth", "40", "Breite eines automatisch umgebrochenen Textes.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG));
+    public static DBConfig ImagePreviewInFileOpen = new DBConfig("ImagePreviewinFileOpen", "false", "Soll im Datei öffnen Dialogen die Bildervorschau angezeigt werden?", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
+    public static DBConfig AllowAutoLogin = new DBConfig("AllowAutoLogin", "false", "Ist eine automatische Anmeldung generell zulässig?", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
+    public static DBConfig AutoLoginUser = new DBConfig("AutoLoginUser", "", "Legt den Login fest, mit dem die automatische Anmeldung durchgeführt wird.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_HAS_VALUE));
     
 
     public static void registerDefinitions() {
@@ -46,7 +48,6 @@ public class FrameWorkConfigDefinitions {
 
         addLocal(DefaultAutoLineBreakWidth);
         addLocal(ImagePreviewInFileOpen);
-
         addLocal(AutoLoginUser);
         
 

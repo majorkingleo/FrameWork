@@ -15,6 +15,15 @@ public class PrmActionEvent {
     private DBString oldPrmValue = new DBString ("oldPrmValue", 100);
     private DBString newPrmValue = new DBString ("newPrmValue", 100);
     private DBString  parameterName = new DBString ("Parameter Name", 100);
+    private String [] possibleVals = {};
+
+    public String[] getPossibleVals() {
+        return possibleVals;
+    }
+
+    public void setPossibleVals(String[] possibleVals) {
+        this.possibleVals = possibleVals;
+    }
 
     public DBString getNewPrmValue() {
         return newPrmValue;
