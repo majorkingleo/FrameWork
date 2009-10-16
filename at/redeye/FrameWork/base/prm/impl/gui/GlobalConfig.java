@@ -57,10 +57,15 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmLi
 
         Set<String> keys = GlobalConfigDefinitions.entries.keySet();
         for (String key : keys) {
-            root.getSetup().getConfig(key).addPrmListener(this);
-            // Set check-callback : -> Ugly programm in LocalSetup
-            root.getSetup().getConfig(key).setCustomChecks(GlobalConfigDefinitions.get(key).getCustomChecks());
-            root.getSetup().getConfig(key).setDefaultChecks(GlobalConfigDefinitions.get(key).getDefaultChecks());
+            DBConfig c = root.getSetup().getConfig(key);
+            if (c != null) {
+                c.addPrmListener(this);
+                // Set check-callback : -> Ugly programm in LocalSetup
+                c.setCustomChecks(GlobalConfigDefinitions.get(key).getCustomChecks());
+                c.setDefaultChecks(GlobalConfigDefinitions.get(key).getDefaultChecks());
+            } else {
+                logger.warn ("PRM " + key + " not found in LocalSetup!");
+            }
         }
         myself = this;
 
@@ -245,7 +250,10 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
                 getTransaction().rollback();
                 Set<String> keys = GlobalConfigDefinitions.entries.keySet();
                 for (String key : keys) {
-                    root.getSetup().getConfig(key).removePrmListener(myself);
+                    DBConfig c = root.getSetup().getConfig(key);
+                    if (c != null) {
+                        c.removePrmListener(myself);
+                    }
                 }
                 close();
             }
