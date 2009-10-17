@@ -60,9 +60,10 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmLi
             DBConfig c = root.getSetup().getConfig(key);
             if (c != null) {
                 c.addPrmListener(this);
-                // Set check-callback : -> Ugly programm in LocalSetup
+                // Set PRM properties : -> Ugly programm in LocalSetup
                 c.setCustomChecks(GlobalConfigDefinitions.get(key).getCustomChecks());
                 c.setDefaultChecks(GlobalConfigDefinitions.get(key).getDefaultChecks());
+                c.setPossibleValues(GlobalConfigDefinitions.get(key).getPossibleValues());
             } else {
                 logger.warn ("PRM " + key + " not found in LocalSetup!");
             }
@@ -272,8 +273,8 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     // End of variables declaration//GEN-END:variables
 
     public void onChange(PrmDefaultChecksInterface checks, PrmActionEvent event) {
-        System.out.println("PRM "+event.getParameterName()+" ," +
-                " OLD: "+event.getOldPrmValue()+" , NEW: "+event.getNewPrmValue());
+       // System.out.println("PRM "+event.getParameterName()+" ," +
+       //         " OLD: "+event.getOldPrmValue()+" , NEW: "+event.getNewPrmValue());
         if (checks.doChecks(event) == false) {
             PrmErrUtil.displayPrmError(this, event.getParameterName().toString());
             PrmErrUtil.restoreGlobalPrm(this, event.getParameterName().toString(),
@@ -284,8 +285,7 @@ private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     }
 
     public void onChange(PrmCustomChecksInterface customChecks, PrmActionEvent event) {
-            System.out.println("PRM "+event.getParameterName()+" ," +
-                " OLD: "+event.getOldPrmValue()+" , NEW: "+event.getNewPrmValue());
+            
         if (customChecks.doCustomChecks(event) == false) {
             PrmErrUtil.displayPrmError(this, event.getParameterName().toString());
             PrmErrUtil.restoreGlobalPrm(this, event.getParameterName().toString(),

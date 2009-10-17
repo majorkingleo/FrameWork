@@ -20,6 +20,7 @@ public interface MOMMStmtExecInterface {
 	
 	public final static String SQLIF_STD_DATE_FORMAT = "yyyy-MM-dd";
 	public final static String SQLIF_STD_TIME_FORMAT = "HH:mm:ss";
+    public final static String SQLIF_STD_SHORTTIME_FORMAT = "HH:mm";
 
 	/**
 	 * 

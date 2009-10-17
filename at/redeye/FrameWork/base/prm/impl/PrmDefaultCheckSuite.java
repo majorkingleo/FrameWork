@@ -5,6 +5,10 @@
 package at.redeye.FrameWork.base.prm.impl;
 
 import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtExecInterface;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -12,6 +16,7 @@ import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
  */
 public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
+    private Logger logger = Logger.getLogger(PrmDefaultCheckSuite.class.getName());
     private long checks2Execute = 0x0;
 
     public PrmDefaultCheckSuite(long checks2Execute) {
@@ -20,40 +25,45 @@ public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
     }
 
-    private static boolean passesDouble(PrmActionEvent event) {
+    private boolean passesDouble(PrmActionEvent event) {
 
         try {
             Double.parseDouble(event.getNewPrmValue().toString());
         } catch (NumberFormatException nfe) {
+            logger.warn(event.getParameterName().toString() + 
+                    ": Not a Double!\n" + nfe.getMessage());
             return false;
         }
 
         return true;
     }
 
-    private static boolean passesBit(PrmActionEvent event) {
+    private boolean passesBit(PrmActionEvent event) {
 
         try {
             Boolean.parseBoolean(event.getNewPrmValue().toString());
         } catch (NumberFormatException nfe) {
+            logger.warn(event.getParameterName().toString() + 
+                    ": Not a Bit!\n" + nfe.getMessage());
             return false;
         }
 
         return true;
     }
 
-    private static boolean passesLong(PrmActionEvent event) {
+    private boolean passesLong(PrmActionEvent event) {
 
         try {
             Long.parseLong(event.getNewPrmValue().toString());
         } catch (NumberFormatException nfe) {
+            logger.warn(": Not a Long!\n" + nfe.getMessage());
             return false;
         }
 
         return true;
     }
 
-    private static boolean passesJaNein(PrmActionEvent event) {
+    private boolean passesJaNein(PrmActionEvent event) {
 
         String[] validStr = {"ja", "nein", "true", "false", "yes", "no"};
 
@@ -64,21 +74,38 @@ public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
             }
 
         }
+        logger.warn(event.getParameterName().toString() + 
+                ": Not a Yes/No (True/False) !");
         return false;
 
     }
 
-    private static boolean passesHasAValueEqual(PrmActionEvent event) {
+    private boolean passesHasAValueEqual(PrmActionEvent event) {
 
         String[] values = event.getPossibleVals();
         for (int idx = 0; idx < values.length; idx++) {
-            System.out.println("Checking "+values[idx]+ " / "+ event.getNewPrmValue().toString());
+            logger.trace("Checking " + values[idx] + " / " + event.getNewPrmValue().toString());
             if (values[idx].equals(event.getNewPrmValue().toString())) {
                 return true;
             }
         }
-
+        logger.warn(event.getParameterName().toString() + 
+                ": Value doesn't match the allowed ones!");
         return false;
+
+    }
+
+    private boolean passesDateTime(PrmActionEvent event, SimpleDateFormat sdf) {
+
+        try {
+            sdf.parse(event.getNewPrmValue().toString());
+        } catch (ParseException pe) {
+            logger.warn(event.getParameterName().toString() + 
+                    ": Date and/or Time is not valid!\n" + pe.getMessage());
+            return false;
+        }
+
+        return true;
 
     }
 
@@ -86,36 +113,63 @@ public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
 
         if ((checks2Execute & PRM_IS_DOUBLE) != 0) {
-            System.out.println("DOUBLE JA");
             if (!passesDouble(event)) {
                 return false;
             }
         }
 
         if ((checks2Execute & PRM_IS_LONG) != 0) {
-            System.out.println("LONG JA");
             if (!passesLong(event)) {
                 return false;
             }
         }
 
         if ((checks2Execute & PRM_IS_BIT) != 0) {
-            System.out.println("BIT JA");
             if (!passesBit(event)) {
                 return false;
             }
         }
 
         if ((checks2Execute & PRM_IS_TRUE_FALSE) != 0) {
-            System.out.println("TRUE/FALSE JA");
             if (!passesJaNein(event)) {
                 return false;
             }
         }
 
         if ((checks2Execute & PRM_HAS_VALUE) != 0) {
-            System.out.println("USER VALUE JA");
             if (!passesHasAValueEqual(event)) {
+                return false;
+            }
+        }
+
+        if ((checks2Execute & PRM_IS_DATE) != 0) {
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat(MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT);
+            if (!passesDateTime(event, sdf)) {
+                return false;
+            }
+        }
+
+        if ((checks2Execute & PRM_IS_TIME) != 0) {
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat(MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+            if (!passesDateTime(event, sdf)) {
+                return false;
+            }
+        }
+
+        if ((checks2Execute & PRM_IS_SHORTTIME) != 0) {
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat(MOMMStmtExecInterface.SQLIF_STD_SHORTTIME_FORMAT);
+            if (!passesDateTime(event, sdf)) {
+                return false;
+            }
+        }
+
+        if ((checks2Execute & PRM_IS_DATETIME) != 0) {
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat(MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT + " " + MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+            if (!passesDateTime(event, sdf)) {
                 return false;
             }
         }
