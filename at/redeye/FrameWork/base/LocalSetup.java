@@ -336,6 +336,9 @@ public class LocalSetup extends Setup {
 
     @Override
     public DBConfig getConfig(String key) {
+        if (checkGlobal() == false) {
+            return null;
+        }
         return (global_config.get(key));
     }
 
