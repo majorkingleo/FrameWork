@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
-import at.redeye.Communication.sps.H1.comm.impl.H1SenderThread;
 
 /**
  * @author Mario Mattl
@@ -26,10 +25,10 @@ public class ServerChannelThread extends Thread {
 	private int port;
 	private SynchronousQueue<byte []> squeue;
 
-	public ServerChannelThread(int port) {
+	public ServerChannelThread(int port, SynchronousQueue<byte []> sender_queue) {
 		super();
 		this.port = port;
-		this.squeue = H1SenderThread.getQueue();
+		this.squeue = sender_queue;
 	}
 
     @Override
