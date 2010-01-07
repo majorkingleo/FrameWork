@@ -31,8 +31,6 @@ import org.apache.log4j.Logger;
  */
 public class LocalSetup extends Setup {
     
-    String config_name;
-    String config_path;
     String config_file;
     String app_name;
     Properties props;
@@ -44,18 +42,12 @@ public class LocalSetup extends Setup {
     {                
         this.app_name = app_name;
         this.root = root;
-        config_name = app_name + ".properties";
         
-        config_path = System.getProperty("user.home");
-        
-        if( !is_win_system() )
-        {
-           config_name = "." + config_name;    
-        }
-        
-        config_file = config_path + File.separator + config_name;  
-        check();
-                
+        String config_name = app_name + ".properties";
+
+        config_file = getHiddenUserHomeFileName(config_name);
+
+        check();                
     }
     
     private void check()

@@ -6,6 +6,7 @@
 package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
+import java.io.File;
 
 
 /**
@@ -32,6 +33,20 @@ public abstract class Setup {
     public static boolean is_win_system()
     {
         return System.getProperty("os.name").matches(".*[Ww][Ii][Nn].*");
+    }
+
+    public static String getHiddenUserHomeFileName( String name )
+    {
+        String config_path = System.getProperty("user.home");
+
+        if( !is_win_system() )
+        {
+           name = "." + name;
+        }
+
+        String config_file = config_path + File.separator + name;
+
+        return config_file;
     }
 
     public String getConfig(DBConfig config) {
