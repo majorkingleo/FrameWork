@@ -41,7 +41,7 @@ public class CreateSqlOracle extends BaseCreateSql {
 
 		switch (attr.getDatatype()) {
 		case DB_TYPE_STRING:
-			return "VARCHAR(" + attr.getWidth() + ") default "+getDefaultValueVarChar(attr.getWidth());
+			return "VARCHAR(" + attr.getWidth() + ") default "+ getDefaultValueVarChar(attr.getWidth());
 		case DB_TYPE_DATETIME:
 			return "DATE";
 		case DB_TYPE_DATE:

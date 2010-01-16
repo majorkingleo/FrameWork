@@ -138,7 +138,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
             
             MOMMColumnAttribute attr = colls.get( name );
             
-            res +=   markColumn(name) + " " + createSqlForRow( attr ) + " NOT NULL";
+            res +=   markColumn(name) + " " + createSqlForRow( attr ) + " " + appendNotNullIfSupportedbyNewRows( attr );
             
             if( it.hasNext() )
                 res = res + ";\n";
@@ -161,5 +161,9 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         }
         
         return res;        
+    }
+
+    protected String appendNotNullIfSupportedbyNewRows(MOMMColumnAttribute attr) {
+        return " NOT NULL";
     }
 }

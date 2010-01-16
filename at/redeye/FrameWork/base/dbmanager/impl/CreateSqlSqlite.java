@@ -6,6 +6,7 @@
 package at.redeye.FrameWork.base.dbmanager.impl;
 
 import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
 import java.util.Vector;
 
 /**
@@ -54,11 +55,34 @@ public class CreateSqlSqlite extends BaseCreateSql {
         return null;
     }
     
+    @Override
     protected String createPrimKeys( String table, Vector<String> primKeys )
     {
         // nothing todo, is implemented in createSqlForRow
         // since sqlite does not supprt that stuff :(
         return "";
-    }    
+    }
+
+    @Override
+    protected String appendNotNullIfSupportedbyNewRows(MOMMColumnAttribute attr) {
+
+        if( attr.getDatatype() == MOMMDBDataType.DB_TYPE_STRING )
+        {
+            return " default "+ getDefaultValueVarChar(attr.getWidth()) + " NOT NULL ";
+        }
+
+        return " NOT NULL";
+    }
+
+    private String getDefaultValueVarChar(int length) {
+
+		StringBuilder str = new StringBuilder ();
+		str.append("'");
+		for (int i = 0; i < length; i++) {
+			str.append(" ");
+		}
+		str.append("'");
+		return str.toString();
+	}
 
 }
