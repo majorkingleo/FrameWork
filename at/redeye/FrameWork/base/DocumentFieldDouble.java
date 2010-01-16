@@ -25,7 +25,7 @@ public class DocumentFieldDouble extends PlainDocument {
     public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {                
         
         if( str != null )                    
-            if( str.matches("[0-9,.-+]+"))
+            if( str.matches("[0-9,\\.\\-\\+]+"))
                 super.insertString(offs, str, a);
     }
         

@@ -37,6 +37,7 @@ public class LocalSetup extends Setup {
     Root root;    
     HashMap<String,DBConfig> global_config = null;
     private static Logger logger = Logger.getLogger(LocalSetup.class);
+    boolean initial_run = false;
 
     public LocalSetup( Root root, String app_name )
     {                
@@ -83,6 +84,8 @@ public class LocalSetup extends Setup {
             in.close();
             
         } catch( FileNotFoundException e ) {
+            
+            initial_run = true;
             
             return true;
             
@@ -337,6 +340,16 @@ public class LocalSetup extends Setup {
     @Override
     public DBConfig getLocalConfig(String key) {
         return LocalConfigDefinitions.get(key);
+    }
+    
+    /**
+     * 
+     * @return true if local property file was now created
+     */
+    @Override
+    public boolean initialRun()
+    {
+        return initial_run;
     }
 
 }

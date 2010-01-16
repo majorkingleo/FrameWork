@@ -7,7 +7,6 @@ package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.bindtypes.DBHistory;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
-import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;

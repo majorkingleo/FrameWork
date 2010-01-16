@@ -74,4 +74,9 @@ public abstract class Setup {
     public abstract void setConfig( String key, String value );
     
     public void saveConfig() {}
+    
+    public boolean initialRun()
+    {
+        return false;
+    }
 }
