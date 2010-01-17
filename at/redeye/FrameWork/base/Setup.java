@@ -29,6 +29,8 @@ public abstract class Setup {
     
     static public String WindowX = "WindowX";
     static public String WindowY = "WindowY";
+    static public String WindowWidth = "WindowWidth";
+    static public String WindowHeight = "WindowHeight";
     
     public static boolean is_win_system()
     {

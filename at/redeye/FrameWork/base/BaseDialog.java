@@ -86,6 +86,8 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
 
         int x = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowX), "300"));
         int y = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowY), "300"));
+        int w = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowWidth), "0"));
+        int h = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowHeight), "0"));
 
         Dimension dim = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         
@@ -100,11 +102,31 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         
         if( y < 0 )
             y = 300;
-        
+                
         this.setBounds(x, y, 0, 0);
+
+        if( w > 0 && h > 0 && openWithLastWidthAndHeight() )
+        {
+            if( x + w > dim.getWidth() )
+                w = (int)dim.getWidth() - x;
+
+            if( y + h > dim.getHeight() )
+                h = (int)dim.getHeight() - y;
+
+            this.setPreferredSize(new Dimension(w,h));
+        }
         //this.addKeyListener(new ExtKeyListener(this));
 
         loadStuff();
+    }
+
+    /*
+     * Overload this method, if the window shouldn't open with
+     * with the last stored with and height.
+     */
+    protected boolean openWithLastWidthAndHeight()
+    {
+        return true;
     }
 
     @Override
@@ -193,6 +215,8 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     public void close() {
         root.getSetup().setLocalConfig(title.concat(Setup.WindowX), Integer.toString(this.getX()));
         root.getSetup().setLocalConfig(title.concat(Setup.WindowY), Integer.toString(this.getY()));
+        root.getSetup().setLocalConfig(title.concat(Setup.WindowWidth), Integer.toString(this.getWidth()));
+        root.getSetup().setLocalConfig(title.concat(Setup.WindowHeight), Integer.toString(this.getHeight()));
 
         try {
             if (transaction != null) {
