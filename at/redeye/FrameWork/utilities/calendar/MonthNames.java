@@ -1,0 +1,53 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package at.redeye.FrameWork.utilities.calendar;
+
+import java.util.Locale;
+import org.joda.time.DateMidnight;
+
+/**
+ *
+ * @author martin
+ */
+public class MonthNames
+{
+    protected static String[][] codes = {
+                                {"AT"}, {"Jänner",
+                                        "Februar",
+                                        "März",
+                                        "April",
+                                        "Mai",
+                                        "Juni",
+                                        "Juli",
+                                        "August",
+                                        "September",
+                                        "Oktober",
+                                        "November",
+                                        "Dezember" } };
+
+
+    public static String getFullMonthName( int month )
+    {
+        Locale locale = Locale.getDefault();
+
+        String country = locale.getCountry();
+
+        for( int i = 0; i < codes.length; i += 2 )
+        {
+            if( country.equals(codes[i][0]) )
+            {
+                return codes[i+1][month-1];
+            }
+        }
+
+        // Default verhalten
+
+        DateMidnight cal = new DateMidnight(2009, month, 1 );
+
+        return cal.monthOfYear().getAsText(locale);
+    }
+
+}
