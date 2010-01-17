@@ -48,7 +48,10 @@ public class DBDouble extends DBValue {
 
     @Override
     public void loadFromString(String s) {
-        value = Double.parseDouble(s);
+        if( s.isEmpty() )
+            value = 0.0;
+        else
+            value = Double.parseDouble(s);
     }
 
     @Override
