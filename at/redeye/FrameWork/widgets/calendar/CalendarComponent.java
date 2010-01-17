@@ -9,6 +9,7 @@ package at.redeye.FrameWork.widgets.calendar;
 
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
+import at.redeye.FrameWork.utilities.calendar.MonthNames;
 import at.redeye.FrameWork.widgets.calendarday.CalendarDay;
 import at.redeye.FrameWork.widgets.calendarday.CommonInfoRenderer;
 import at.redeye.FrameWork.widgets.calendarday.DayEventListener;
@@ -539,7 +540,7 @@ public class CalendarComponent extends javax.swing.JPanel implements DisplayMont
                 renderer.setDay(cal3.plusDays(count - 1));
         }                        
         
-        jLTitle.setText(Integer.toString(cal.getYear()) + " " + cal.monthOfYear().getAsText(Locale.GERMANY));
+        jLTitle.setText( MonthNames.getFullMonthName(month)+ " " + Integer.toString(cal.getYear()) );
         
         /* Feiertage anzeigen */
         if( holidays != null )
