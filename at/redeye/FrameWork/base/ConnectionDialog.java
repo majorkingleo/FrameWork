@@ -17,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
+import at.redeye.FrameWork.base.transaction.DerbyTransaction;
 import at.redeye.FrameWork.base.transaction.MSSQLTransaction;
 import at.redeye.FrameWork.base.transaction.MySQLTransaction;
 import at.redeye.FrameWork.base.transaction.OracleTransaction;
@@ -451,6 +452,9 @@ private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 				break;
 			case DB_ORACLE:
 				t = new OracleTransaction(connparams);
+				break;
+			case DB_JAVADB:
+				t = new DerbyTransaction(connparams);
 				break;
             case DB_SQLITE:
                 t = new SqLiteTransaction(connparams);

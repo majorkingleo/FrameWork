@@ -14,13 +14,13 @@ public class MOMMStmtCreatorSQLITE extends MOMMAbstractStmtCreator  {
 	}
     
     @Override
-    protected String markColumnName( String columnName )
+	public String markColumnName( String columnName )
     {
         return "`" + columnName.toLowerCase() + "`";                
     }
     
     @Override
-    protected String markTableName( String tableName )
+	public String markTableName( String tableName )
     {
         return "`" + tableName.toUpperCase() + "`";
     }

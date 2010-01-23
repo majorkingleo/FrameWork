@@ -35,15 +35,7 @@ public abstract class MOMMAbstractStmtCreator implements
 		super();
 		this.registration_ = registration;
 	}
-
-	protected String markColumnName(String columnName) {
-		return columnName;
-	}
-
-	protected String markTableName(String table) {
-		return table;
-	}
-    
+	
     protected String markTableAndColumnNameForUpdate(String table, String column) {
 		return markTableName(table) + "." + markColumnName(column);
 	}
@@ -332,6 +324,9 @@ public abstract class MOMMAbstractStmtCreator implements
 
 	}
 	
+	public abstract String markTableName (String tableName);
+	
+	public abstract String markColumnName (String columnName);
 	
 
 }

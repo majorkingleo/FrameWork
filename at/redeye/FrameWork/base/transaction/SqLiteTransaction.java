@@ -45,16 +45,6 @@ public class SqLiteTransaction extends Transaction {
     }
 
     @Override
-    public String markColumn(String in) {
-        return ("`" + in.toLowerCase() + "`");
-    }
-
-    @Override
-    public String markTable(String in) {
-        return ("`" + in.toUpperCase() + "`");
-    }
-
-    @Override
     public String getDayStmt(String column, DBDateTime day) {
 
         /*

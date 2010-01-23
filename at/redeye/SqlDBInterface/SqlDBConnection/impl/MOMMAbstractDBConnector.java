@@ -106,6 +106,19 @@ public abstract class MOMMAbstractDBConnector implements
 			str.append("jdbc:sqlite:");
 			str.append(conndef_.getInstance());
 			break;
+		
+		case DB_JAVADB:
+			if (conndef_.getInstance().isEmpty()) {
+				throw new MissingConnectionParamException(
+						"The database-file must be specified!");
+			}
+			DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
+			str.append("jdbc:derby:");
+			str.append((conndef_.getHostname().isEmpty() ? "localhost"
+					: conndef_.getHostname()));
+			str.append(conndef_.getInstance());
+			str.append(";create=true");
+			break;
 
 		default:
 			throw new UnSupportedDatabaseException();

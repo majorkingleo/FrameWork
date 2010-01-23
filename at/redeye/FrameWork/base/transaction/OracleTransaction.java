@@ -37,16 +37,6 @@ public class OracleTransaction extends Transaction {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public String markColumn(String in) {
-		// TODO Auto-generated method stub
-		return ("\"" + in.toLowerCase() + "\"");
-	}
-
-	@Override
-	public String markTable(String in) {
-		return ("\"" + in.toUpperCase() + "\"");
-	}
 
 	@Override
 	public String getDayStmt(String column, DBDateTime day) {

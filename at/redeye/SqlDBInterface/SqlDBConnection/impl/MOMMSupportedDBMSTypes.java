@@ -7,4 +7,5 @@ public enum MOMMSupportedDBMSTypes {
 	DB_MYSQL,
 	DB_MSSQL,
 	DB_ORACLE,
-	DB_SQLITE}
+	DB_SQLITE,
+	DB_JAVADB}

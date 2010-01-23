@@ -10,6 +10,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import at.redeye.FrameWork.base.transaction.DerbyTransaction;
 import at.redeye.FrameWork.base.transaction.MSSQLTransaction;
 import at.redeye.FrameWork.base.transaction.MySQLTransaction;
 import at.redeye.FrameWork.base.transaction.OracleTransaction;
@@ -52,6 +53,9 @@ public class DBConnection {
 				break;
 			case DB_MYSQL:
 				trans = new MySQLTransaction(definition);
+				break;
+			case DB_JAVADB:
+				trans = new DerbyTransaction(definition);
 				break;
 			case DB_ORACLE:
 				trans = new OracleTransaction(definition);
@@ -144,6 +148,9 @@ public class DBConnection {
 			switch (definition.getDBMSType()) {
 			case DB_MSSQL:
 				trans = new MSSQLTransaction(definition);
+				break;
+			case DB_JAVADB:
+				trans = new DerbyTransaction(definition);
 				break;
 			case DB_MYSQL:
 				trans = new MySQLTransaction(definition);

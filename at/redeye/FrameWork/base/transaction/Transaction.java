@@ -162,7 +162,8 @@ public abstract class Transaction {
 
 	public int updateValues(DBStrukt binddesc, String where)
 			throws SQLException, UnsupportedDBDataTypeException,
-			WrongBindFileFormatException, TableBindingNotRegisteredException, IOException {
+			WrongBindFileFormatException, TableBindingNotRegisteredException,
+			IOException {
 		registerTable(binddesc);
 
 		HashMap<String, Object> data = binddesc.getHashMapAndData();
@@ -203,89 +204,97 @@ public abstract class Transaction {
 		return regi;
 	}
 
-	public abstract String markTable (String in);
-	
-    public String markTable( DBStrukt table )
-    {
-        return markTable( table.getName() );
-    }
-    
-	public abstract String markColumn(String in);
-    
-    public String markColumn( DBValue val )
-    {
-        return markColumn( val.getName() );
-    }
-	
-	public abstract String getDayStmt (String column, DBDateTime day);
-	
-	public abstract String getDayStmt (String column, String dayStr);
-    
-    public abstract String getDayStmt(String string, Date toDate);
+	public String markTable(String in) {
+		return executer.getStmtCreator().markTableName(in);
+	}
 
-    public abstract String getDayStmt(String string, DateMidnight day);
+	public String markTable(DBStrukt table) {
+		return executer.getStmtCreator().markTableName(table.getName());
+	}
 
-    public String getDayStmt(DBDateTime to, DateMidnight dateMidnight) {
-        return getDayStmt( to.getName(), dateMidnight );
-    }
-	
-	public abstract String getPeriodStmt (String column, DBDateTime begin, DBDateTime end);
-	
-	public abstract String getPeriodStmt (String column, String beginStr, String endStr);
-    
-    public abstract String getPeriodStmt(String string, DateMidnight dm_from, DateMidnight dm_to);
-    
-    /*
-     * return: column1 >= date && column2 < date
-     */
-    public abstract String getPeriodStmt( String column1, String column2, DateMidnight date );
-	
-    public String getPeriodStmt (DBValue column1, DBValue column2, DateMidnight dm )
-    {
-        return getPeriodStmt( column1.getName(), column2.getName(), dm );
-    }
-    
-    
+	public String markColumn(String in) {
+		return executer.getStmtCreator().markColumnName(in);
+	}
+
+	public String markColumn(DBValue val) {
+		return executer.getStmtCreator().markColumnName(val.getName());
+	}
+
+	public abstract String getDayStmt(String column, DBDateTime day);
+
+	public abstract String getDayStmt(String column, String dayStr);
+
+	public abstract String getDayStmt(String string, Date toDate);
+
+	public abstract String getDayStmt(String string, DateMidnight day);
+
+	public String getDayStmt(DBDateTime to, DateMidnight dateMidnight) {
+		return getDayStmt(to.getName(), dateMidnight);
+	}
+
+	public abstract String getPeriodStmt(String column, DBDateTime begin,
+			DBDateTime end);
+
+	public abstract String getPeriodStmt(String column, String beginStr,
+			String endStr);
+
+	public abstract String getPeriodStmt(String string, DateMidnight dm_from,
+			DateMidnight dm_to);
+
+	/*
+	 * return: column1 >= date && column2 < date
+	 */
+	public abstract String getPeriodStmt(String column1, String column2,
+			DateMidnight date);
+
+	public String getPeriodStmt(DBValue column1, DBValue column2,
+			DateMidnight dm) {
+		return getPeriodStmt(column1.getName(), column2.getName(), dm);
+	}
+
 	public MOMMSupportedDBMSTypes getDBMSType() {
 		return definition.getDBMSType();
 	}
 
-	public int getNewSequenceValue(String seqName, int magic) throws SQLException,
-			UnsupportedDBDataTypeException, WrongBindFileFormatException,
-			TableBindingNotRegisteredException, IOException {
-        if( magic != 1234567 )
-        {
-            Logger logger = Logger.getLogger(Transaction.class.getCanonicalName());
-            logger.warning("Unqualified access to Sequence Value!");
-        }
-        
+	public int getNewSequenceValue(String seqName, int magic)
+			throws SQLException, UnsupportedDBDataTypeException,
+			WrongBindFileFormatException, TableBindingNotRegisteredException,
+			IOException {
+		if (magic != 1234567) {
+			Logger logger = Logger.getLogger(Transaction.class
+					.getCanonicalName());
+			logger.warning("Unqualified access to Sequence Value!");
+		}
+
 		return sequence.getNewSequenceValue(seqName, this);
 	}
 
-    public abstract String getGUIFilterWhereStmt (Vector <? extends JComponent> fromFilter, Vector<? extends JComponent> toFilter);
+	public abstract String getGUIFilterWhereStmt(
+			Vector<? extends JComponent> fromFilter,
+			Vector<? extends JComponent> toFilter);
 
-    public abstract String getHigherDate(String column, DateMidnight dm_from);
+	public abstract String getHigherDate(String column, DateMidnight dm_from);
 
-    public abstract String getLowerDate(String column, DateMidnight dm_from);
+	public abstract String getLowerDate(String column, DateMidnight dm_from);
 
-    public String getHigherDate(DBDateTime column, DateMidnight dm_from) {
-        return getHigherDate(column.getName(), dm_from);
-    }
+	public String getHigherDate(DBDateTime column, DateMidnight dm_from) {
+		return getHigherDate(column.getName(), dm_from);
+	}
 
-    public String getLowerDate(DBDateTime column, DateMidnight dm_from) {
-        return getLowerDate(column.getName(), dm_from);
-    }
+	public String getLowerDate(DBDateTime column, DateMidnight dm_from) {
+		return getLowerDate(column.getName(), dm_from);
+	}
 
-    public abstract String getHigherDateExl(String column, DateMidnight dm_from);
+	public abstract String getHigherDateExl(String column, DateMidnight dm_from);
 
-    public abstract String getLowerDateExl(String column, DateMidnight dm_from);
+	public abstract String getLowerDateExl(String column, DateMidnight dm_from);
 
-    public String getHigherDateExl(DBDateTime column, DateMidnight dm_from) {
-        return getHigherDateExl(column.getName(), dm_from);
-    }
+	public String getHigherDateExl(DBDateTime column, DateMidnight dm_from) {
+		return getHigherDateExl(column.getName(), dm_from);
+	}
 
-    public String getLowerDateExl(DBDateTime column, DateMidnight dm_from) {
-        return getLowerDateExl(column.getName(), dm_from);
-    }
+	public String getLowerDateExl(DBDateTime column, DateMidnight dm_from) {
+		return getLowerDateExl(column.getName(), dm_from);
+	}
 
 }

@@ -47,6 +47,7 @@ public abstract class AutoMBox
             failed = false;
         } catch (SQLException ex) {               
             logger.error("Exception: " + ex.toString());
+            logger.error("Exception: " + ex.getMessage());
             thrown_ex = ex;
             ex.printStackTrace();
         } catch (TableBindingNotRegisteredException ex) {

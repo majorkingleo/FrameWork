@@ -50,6 +50,9 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 		case DB_MSSQL:
 			this.stmtCreator_ = new MOMMStmtCreatorMSSQL(treg_);
 			break;
+		case DB_JAVADB:
+			this.stmtCreator_ = new MOMMStmtCreatorDerby(treg_);
+			break;
 
 		}
 
@@ -91,11 +94,11 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 		case DB_TYPE_DATETIME:
 
 			return new Date(rs.getTimestamp(index).getTime());
-			
+
 		case DB_TYPE_BLOB:
-			byte [] bytes = rs.getBytes(index);
+			byte[] bytes = rs.getBytes(index);
 			return bytes;
-			
+
 		default:
 			throw new UnsupportedDBDataTypeException("DataType "
 					+ sourceType.toString() + " is unknown!");
@@ -378,7 +381,8 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 
 	public int updateTableValues(String tablename,
 			HashMap<String, Object> values, String whereStmt)
-			throws SQLException, TableBindingNotRegisteredException, IOException {
+			throws SQLException, TableBindingNotRegisteredException,
+			IOException {
 
 		if (tablename.isEmpty()) {
 			throw new SQLException("No tablename given");
@@ -421,9 +425,10 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 			HashMap<String, Object> values) throws SQLException, IOException {
 
 		PreparedStatement ps;
-		
+
 		if (containsBlob(stmt)) {
-			stmt = stmt.replaceAll(MOMMAbstractStmtCreator.BLOB_IDENTIFIER, "\\?");
+			stmt = stmt.replaceAll(MOMMAbstractStmtCreator.BLOB_IDENTIFIER,
+					"\\?");
 			ps = conn_.prepareStatement(stmt);
 			Set<String> keys = values.keySet();
 			Iterator<String> iter = keys.iterator();
@@ -441,6 +446,10 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 			ps = conn_.prepareStatement(stmt);
 		}
 		return ps;
+	}
+	
+	public MOMMStmtCreatorInterface getStmtCreator () {
+		return stmtCreator_;
 	}
 
 }

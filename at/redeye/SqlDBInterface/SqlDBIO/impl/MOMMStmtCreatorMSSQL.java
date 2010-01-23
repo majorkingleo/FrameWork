@@ -22,9 +22,7 @@ public class MOMMStmtCreatorMSSQL extends MOMMAbstractStmtCreator {
 	}
 
 	public String markTableName(String tableName) {
-
 		return "[" + tableName.toUpperCase() + "]";
-
 	}
 
 }

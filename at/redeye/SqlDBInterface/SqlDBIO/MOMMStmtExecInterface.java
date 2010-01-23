@@ -141,4 +141,7 @@ public interface MOMMStmtExecInterface {
 	 * @return The previously executed statement.
 	 */
 	public String getLastStmt ();
+	
+	public MOMMStmtCreatorInterface getStmtCreator();
+	
 }

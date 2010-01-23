@@ -70,5 +70,9 @@ public interface MOMMStmtCreatorInterface {
 	public String buildUpdateStmtForTable(String table,
 			HashMap<String, Object> values, String whereStmt)
 			throws SQLException, TableBindingNotRegisteredException;
+	
+	public String markTableName (String tableName);
+	
+	public String markColumnName (String columnName);
 
 }
