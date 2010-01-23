@@ -26,7 +26,7 @@ public class DBFlagJaNein extends DBEnum
 
         public FlagEnumHandler()
         {
-            types = types.NEIN;
+            types = FLAGTYPES.NEIN;
         }
         
         @Override
