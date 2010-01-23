@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
@@ -23,9 +25,6 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.UserManagement.UserManagementInterface;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 /**
  * 
@@ -56,6 +55,10 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		case DB_MYSQL:
 			createSql = new CreateSqlMySql();
 			break;
+			
+		case DB_JAVADB:
+			createSql = new CreateSqlDerby();
+			break;
 
 		case DB_SQLITE:
 			createSql = new CreateSqlSqlite();
@@ -79,6 +82,10 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 			showTables = new ShowTablesSqlite();
 			break;
 
+		case DB_JAVADB:
+			showTables = new ShowTablesDerby();
+			break;
+			
 		case DB_MYSQL:
 			showTables = new ShowTablesMySql();
 			break;
