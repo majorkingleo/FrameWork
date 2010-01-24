@@ -40,7 +40,7 @@ public class CreateSqlDerby extends BaseCreateSql {
 		case DB_TYPE_STRING:
 			return "VARCHAR(" + attr.getWidth() + ")";
 		case DB_TYPE_DATETIME:
-			return "DATE";
+			return "TIMESTAMP";
 		case DB_TYPE_DATE:
 			return "DATE";
 		case DB_TYPE_FLOAT:
