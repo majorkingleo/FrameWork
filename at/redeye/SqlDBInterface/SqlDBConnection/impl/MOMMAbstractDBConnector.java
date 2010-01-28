@@ -114,8 +114,19 @@ public abstract class MOMMAbstractDBConnector implements
 			}
 			DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
 			str.append("jdbc:derby:");
+
+            /* MOB: in der Instanz ist der DB Name.
+             * zb /home/martin/foobar
+             * aber durch das voraussetzten des hostnamens, oder localhost
+             * wird daraus localhost/home/martin/foo
+             * dadruch wird dann ein entsprechendes Verzeichnis
+             * ausgehend vom aktuellen Verzeichnis verwendet, was nicht gerade
+             * dass ist, wass man vielleicht möchte :-)
+             */
+            /*
 			str.append((conndef_.getHostname().isEmpty() ? "localhost"
 					: conndef_.getHostname()));
+             * */
 			str.append(conndef_.getInstance());
 			str.append(";create=true");
 			break;
