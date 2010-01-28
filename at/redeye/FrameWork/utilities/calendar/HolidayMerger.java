@@ -21,14 +21,25 @@ public class HolidayMerger implements Holidays {
     int numCountryCodes = 0;
     String primaryCountry = "";
     Holidays primHolidays = null;
-    
+    Holidays extraHolidays = null;
+
     public void add( Holidays holiday )
     {
         remove( holiday );
         country_holidays.add(holiday);
         numCountryCodes++;
     }
-    
+
+    public void add( Holidays holiday, boolean is_extra )
+    {
+        remove( holiday );
+        country_holidays.add(holiday);
+        numCountryCodes++;
+        
+        if( is_extra )
+            extraHolidays = holiday;
+    }
+
     public void remove( String CountryCode )
     {
         for( int i = 0; i < country_holidays.size(); i++ )
@@ -65,7 +76,15 @@ public class HolidayMerger implements Holidays {
             all = new Vector<HolidayInfo>();
             
             for( HolidayInfo hi : clone )
-                all.add( new HolidayInfo(hi) );            
+                all.add( new HolidayInfo(hi) );
+
+            if( extraHolidays != null )
+            {
+                clone = extraHolidays.getHolidays(year);
+
+                for( HolidayInfo hi : clone )
+                    all.add( new HolidayInfo(hi) );
+            }
         }
         
         for( Holidays holidays : country_holidays )
@@ -143,8 +162,16 @@ public class HolidayMerger implements Holidays {
 
     public HolidayInfo getHolidayForDay(DateMidnight date) {
 
-        if( primHolidays != null )
-            return primHolidays.getHolidayForDay(date);
+        if( primHolidays != null ) {
+            HolidayInfo hi = primHolidays.getHolidayForDay(date);
+            
+            if( hi == null && extraHolidays != null )
+            {
+                return extraHolidays.getHolidayForDay(date);
+            }
+
+            return hi;
+        }
 
         return null;
     }
