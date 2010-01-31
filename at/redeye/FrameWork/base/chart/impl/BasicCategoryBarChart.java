@@ -10,7 +10,6 @@
  */
 package at.redeye.FrameWork.base.chart.impl;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Paint;
@@ -23,7 +22,6 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.Layer;
 
@@ -77,6 +75,7 @@ public class BasicCategoryBarChart extends javax.swing.JPanel {
          *
          * @return The item color.
          */
+        @Override
         public Paint getItemPaint(final int row, final int column) {
             return this.colors[column % this.colors.length];
         }
