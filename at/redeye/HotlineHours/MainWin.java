@@ -8,8 +8,6 @@ package at.redeye.HotlineHours;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.chart.impl.CategoryChartData;
-import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
-import at.redeye.FrameWork.base.prm.impl.gui.LocalConfig;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
@@ -32,7 +30,7 @@ public class MainWin extends BaseDialog {
      * @param root
      */
     public MainWin(Root root) {
-        super(root, "Bereitschaft - Stundenauswertung");
+        super(root, "Bereitschaft - Stundenauswertung " + Version.getVersion());
         initComponents();
     }
 
@@ -44,17 +42,20 @@ public class MainWin extends BaseDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabelMonat = new javax.swing.JLabel();
         basicColumnChart = new at.redeye.FrameWork.base.chart.impl.BasicCategoryBarChart(new CategoryChartData ("Stunden / Person", "Person", "Stunden", PlotOrientation.VERTICAL, new DefaultCategoryDataset(), null));
         dBFilterMonth = new at.redeye.FrameWork.widgets.DBFilterComboBox();
         jButtonRead = new javax.swing.JButton();
+        jLabelYear = new javax.swing.JLabel();
+        dBFilterYear = new at.redeye.FrameWork.widgets.DBFilterComboBox();
+        jLabelModus = new javax.swing.JLabel();
+        jRadioClassic = new javax.swing.JRadioButton();
+        jRadioProd = new javax.swing.JRadioButton();
+        jRadioSPS = new javax.swing.JRadioButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuProgram = new javax.swing.JMenu();
-        jMenuItemAbout = new javax.swing.JMenuItem();
         jMenuQuit = new javax.swing.JMenuItem();
-        jMUser = new javax.swing.JMenu();
-        jMGlobalConfig = new javax.swing.JMenuItem();
-        jMLocalConfig = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setForeground(new java.awt.Color(204, 204, 255));
@@ -63,7 +64,7 @@ public class MainWin extends BaseDialog {
         jLabelMonat.setText("Monat");
 
         dBFilterMonth.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" }));
-        dBFilterMonth.setSelectedIndex(getMonthAsInt());
+        dBFilterMonth.setSelectedIndex(getMonthAsInt()-1);
         dBFilterMonth.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dBFilterMonthActionPerformed(evt);
@@ -77,15 +78,34 @@ public class MainWin extends BaseDialog {
             }
         });
 
-        jMenuProgram.setText("Programm");
+        jLabelYear.setFont(new java.awt.Font("Tahoma", 0, 12));
+        jLabelYear.setText("Jahr");
 
-        jMenuItemAbout.setText("Info");
-        jMenuItemAbout.addActionListener(new java.awt.event.ActionListener() {
+        dBFilterYear.setModel(new javax.swing.DefaultComboBoxModel(setYearStrings()));
+        dBFilterYear.setSelectedIndex(setYearStrings().length-1);
+
+        jLabelModus.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabelModus.setText("Modus");
+
+        buttonGroup1.add(jRadioClassic);
+        jRadioClassic.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jRadioClassic.setSelected(true);
+        jRadioClassic.setText("Classic");
+
+        buttonGroup1.add(jRadioProd);
+        jRadioProd.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jRadioProd.setText("Produkt");
+        jRadioProd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemAboutActionPerformed(evt);
+                jRadioProdActionPerformed(evt);
             }
         });
-        jMenuProgram.add(jMenuItemAbout);
+
+        buttonGroup1.add(jRadioSPS);
+        jRadioSPS.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jRadioSPS.setText("SPS");
+
+        jMenuProgram.setText("Programm");
 
         jMenuQuit.setText("Beenden");
         jMenuQuit.addActionListener(new java.awt.event.ActionListener() {
@@ -97,31 +117,6 @@ public class MainWin extends BaseDialog {
 
         jMenuBar1.add(jMenuProgram);
 
-        jMUser.setText("Einstellungen");
-        jMUser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMUserActionPerformed(evt);
-            }
-        });
-
-        jMGlobalConfig.setText("Globale Einstellungen");
-        jMGlobalConfig.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMGlobalConfigActionPerformed(evt);
-            }
-        });
-        jMUser.add(jMGlobalConfig);
-
-        jMLocalConfig.setText("Lokale Einstellungen");
-        jMLocalConfig.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMLocalConfigActionPerformed(evt);
-            }
-        });
-        jMUser.add(jMLocalConfig);
-
-        jMenuBar1.add(jMUser);
-
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -129,28 +124,48 @@ public class MainWin extends BaseDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(basicColumnChart, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+                    .addComponent(basicColumnChart, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 933, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabelMonat)
-                        .addGap(56, 56, 56)
-                        .addComponent(dBFilterMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 317, Short.MAX_VALUE)
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelMonat)
+                            .addComponent(jLabelYear))
+                        .addGap(47, 47, 47)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(dBFilterYear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dBFilterMonth, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabelModus, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioClassic)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioProd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioSPS)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 357, Short.MAX_VALUE)
                         .addComponent(jButtonRead)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelMonat)
-                    .addComponent(dBFilterMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonRead))
-                .addGap(18, 18, 18)
-                .addComponent(basicColumnChart, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
-                .addContainerGap())
+                    .addComponent(dBFilterMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dBFilterYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelYear)
+                    .addComponent(jButtonRead)
+                    .addComponent(jLabelModus)
+                    .addComponent(jRadioClassic)
+                    .addComponent(jRadioProd)
+                    .addComponent(jRadioSPS))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(basicColumnChart, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(61, Short.MAX_VALUE))
         );
 
         pack();
@@ -161,47 +176,19 @@ private void jMenuQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     close();
 }//GEN-LAST:event_jMenuQuitActionPerformed
 
-private void jMUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMUserActionPerformed
-}//GEN-LAST:event_jMUserActionPerformed
-
-private void jMGlobalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMGlobalConfigActionPerformed
-
-    java.awt.EventQueue.invokeLater(new Runnable() {//GEN-LAST:event_jMGlobalConfigActionPerformed
-
-            public void run() {
-                new GlobalConfig(root).setVisible(true);
-            }
-        });
-
+    private String[] setYearStrings() {
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        int curryear = Integer.parseInt(sdf.format(now));
+        String[] years = new String[]{String.valueOf(curryear - 2),
+            String.valueOf(curryear - 1), String.valueOf(curryear)};
+        return years;
     }
-
-private void jMLocalConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMLocalConfigActionPerformed
-
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-            new LocalConfig(root).setVisible(true);
-        }
-    });
-}//GEN-LAST:event_jMLocalConfigActionPerformed
-
-private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
-// TODO add your handling code here:
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-            new About(root).setVisible(true);
-        }
-    });
-
-}//GEN-LAST:event_jMenuItemAboutActionPerformed
 
 private void jButtonReadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReadActionPerformed
 
     Transaction trans = getTransaction();
-    Date now = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-    String year = sdf.format(now);
+
 
     Vector<MOMMDBDataType> typelist = new Vector<MOMMDBDataType>();
     typelist.add(MOMMDBDataType.DB_TYPE_LONG);
@@ -209,21 +196,44 @@ private void jButtonReadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     typelist.add(MOMMDBDataType.DB_TYPE_STRING);
     typelist.add(MOMMDBDataType.DB_TYPE_LONG);
 
-    logger.info("YEAR: " + year);
-    String stmt = "select BEREITS.Name, PB.Vorname, PB.Nachname," +
-            " ROUND (SUM (to_date(BEREITS.Bis, 'HH24:MI')+1 - " +
-            " to_date(BEREITS.Von, 'HH24:MI'))*24) SUMME" +
-            " from " +
-            "PB inner join BEREITS ON " +
-            "PB.PersonalNr = Bereits.Name" +
-            " where " +
-            "TO_CHAR (BEREITS.Datum, 'MM') = '" +
-            month2Val(dBFilterMonth.getSelectedItem().toString()) + "'" +
-            " and " +
-            " TO_CHAR (BEREITS.Datum, 'YYYY') = " + "'" + year + "'" +
-            " group by BEREITS.Name,  PB.Vorname, PB.Nachname " +
-            " order by SUMME DESC";
+    String table = getTable();
 
+    String stmt;
+    if (table.equalsIgnoreCase("BEREITS")) {
+        stmt = "select " + table + ".Name, SD_EMPLDATAVIEW.Vorname, SD_EMPLDATAVIEW.Nachname," +
+                " ROUND (SUM (to_date(" + table + ".Bis, 'HH24:MI') + " +
+                "decode (sign (to_date(" + table + ".Bis, 'HH24:MI') - to_date(" + table + ".von, 'HH24:MI')), 1, 0, 1) - " +
+                " to_date(" + table + ".Von, 'HH24:MI'))*24) SUMME" +
+                " from " +
+                "SD_EMPLDATAVIEW inner join " + table + " ON " +
+                "SD_EMPLDATAVIEW.PersNr = " + table + ".Name" +
+                " where " +
+                "TO_CHAR (" + table + ".Datum, 'MM') = '" +
+                month2Val(dBFilterMonth.getSelectedItem().toString()) + "'" +
+                " and " +
+                " TO_CHAR (" + table + ".Datum, 'YYYY') = " + "'" +
+                dBFilterYear.getSelectedItem().toString() + "'" +
+                " group by " + table + ".Name,  SD_EMPLDATAVIEW.Vorname, SD_EMPLDATAVIEW.Nachname " +
+                " order by SUMME DESC";
+    } else {
+        stmt = "select " + table + ".UserId, SD_EMPLDATAVIEW.Vorname, SD_EMPLDATAVIEW.Nachname," +
+                " ROUND (SUM (" + table + ".Bis + " +
+                "decode (sign (" + table + ".Bis - " + table + ".Von),1, 0, 1) " +
+                " - " + table + ".Von)*24) SUMME" +
+                " from " +
+                "SD_EMPLDATAVIEW inner join " + table + " ON " +
+                "SD_EMPLDATAVIEW.PersNr = " + table + ".userId" +
+                " where " +
+                "TO_CHAR (" + table + ".Von, 'MM') = '" +
+                month2Val(dBFilterMonth.getSelectedItem().toString()) + "'" +
+                " and " +
+                " TO_CHAR (" + table + ".Bis, 'YYYY') = " + "'" +
+                dBFilterYear.getSelectedItem().toString() + "'" +
+                " group by " + table + ".UserId,  SD_EMPLDATAVIEW.Vorname, SD_EMPLDATAVIEW.Nachname " +
+                " order by SUMME DESC";
+
+    }
+    logger.info(stmt);
     try {
         Vector<Vector<?>> res = trans.fetchColumnValue(stmt, typelist);
 
@@ -252,6 +262,21 @@ private void jButtonReadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 private void dBFilterMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dBFilterMonthActionPerformed
     // TODO add your handling code here:
 }//GEN-LAST:event_dBFilterMonthActionPerformed
+
+    private String getTable() {
+
+        if (jRadioClassic.isSelected()) {
+            return "BEREITS";
+        } else if (jRadioProd.isSelected()) {
+            return "BEREITSPROD";
+        } else {
+            return "BEREITSSPS";
+        }
+    }
+
+private void jRadioProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioProdActionPerformed
+    // TODO add your handling code here:
+}//GEN-LAST:event_jRadioProdActionPerformed
     private String month2Val(String month) {
 
         Date now = new Date();
@@ -308,16 +333,19 @@ private void dBFilterMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private at.redeye.FrameWork.base.chart.impl.BasicCategoryBarChart basicColumnChart;
+    private javax.swing.ButtonGroup buttonGroup1;
     private at.redeye.FrameWork.widgets.DBFilterComboBox dBFilterMonth;
+    private at.redeye.FrameWork.widgets.DBFilterComboBox dBFilterYear;
     private javax.swing.JButton jButtonRead;
+    private javax.swing.JLabel jLabelModus;
     private javax.swing.JLabel jLabelMonat;
-    private javax.swing.JMenuItem jMGlobalConfig;
-    private javax.swing.JMenuItem jMLocalConfig;
-    private javax.swing.JMenu jMUser;
+    private javax.swing.JLabel jLabelYear;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItemAbout;
     private javax.swing.JMenu jMenuProgram;
     private javax.swing.JMenuItem jMenuQuit;
+    private javax.swing.JRadioButton jRadioClassic;
+    private javax.swing.JRadioButton jRadioProd;
+    private javax.swing.JRadioButton jRadioSPS;
     // End of variables declaration//GEN-END:variables
 }
 
