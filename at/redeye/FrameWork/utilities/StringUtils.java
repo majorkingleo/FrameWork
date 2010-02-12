@@ -134,7 +134,7 @@ public class StringUtils {
 
     public static String autoLineBreak(String what, int length) {
 
-        final char[] myPreferedSigns = {';', '.', ',', '!', '?', '-'};
+        final char[] myPreferedSigns = {';', '.', ',', '!', '?', '>', '-'};
         final char[] mySpaceSigns = {' ', '\t'};
 
         final int searchWindowLengthPreferedSigns = 20;
@@ -188,7 +188,18 @@ public class StringUtils {
                         } else if (in[walker - index] == myPreferedSigns[signidx]) {
                             str.append(new String(in, 0, walker - index + 1));
                             str.append("\n");
-                            walker += 2; // jump over break sign
+
+                            // mob hier stand 2 aber damit verwerfen wir das nächste Zeichen. auch nicht gut
+                            walker += 1; // jump over break sign
+
+                            // spaces überspringen
+                            for( int i = 0 ; i < mySpaceSigns.length; i++ )
+                            {
+                                if( in[walker+1] == mySpaceSigns[i] )
+                                {
+                                    walker++;
+                                }
+                            }
 
                             String rest = new String(in, walker - index,
                                     in.length - (walker - index));
