@@ -96,6 +96,18 @@ public class StringUtils {
         return s.substring(start, end + 1);
     }
 
+    public static String strip_post(StringBuilder s, String what) {
+        int end = skip_char_reverse(s, what, s.length() - 1);
+
+        return s.substring(0, end + 1);
+    }
+
+    public static String strip_post(String str, String what) {
+        StringBuilder s = new StringBuilder();
+        s.append(str);
+        return strip_post(s, what);
+    }
+
     public static String strip(String s, String what) {
         return strip(new StringBuilder(s), what);
     }
@@ -239,5 +251,15 @@ public class StringUtils {
         }
         str.append(in); // rest
         return str.toString();
+    }
+
+    public static String FormatDouble( double d )
+    {
+        String s = String.format("%f",d);
+        s = strip_post(s,"0");
+        s = strip_post(s,".");
+        s = strip_post(s,",");
+
+        return s;
     }
 }
