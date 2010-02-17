@@ -6,7 +6,6 @@ package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
-import java.util.Vector;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
@@ -21,6 +20,9 @@ public interface BindVarInterface {
         public abstract void gui_to_var();
 
         public abstract void var_to_gui();
+
+        public abstract Object get_first();
+        public abstract Object get_second();
     };
 
     static class TextStringPair extends Pair {
@@ -41,6 +43,16 @@ public interface BindVarInterface {
         public void var_to_gui() {
             textfield.setText(value.toString());
         }
+
+        @Override
+        public JTextField get_first() {
+            return textfield;
+        }
+
+        @Override
+        public StringBuffer get_second() {
+            return value;
+        }
     }
 
     static class TextDBStringPair extends Pair {
@@ -59,6 +71,16 @@ public interface BindVarInterface {
 
         public void var_to_gui() {
             textfield.setText(value.toString());
+        }
+
+        @Override
+        public JTextField get_first() {
+            return textfield;
+        }
+
+        @Override
+        public DBValue get_second() {
+            return value;
         }
     }
     
@@ -84,6 +106,16 @@ public interface BindVarInterface {
                 checkbox.setSelected(true);
             else
                 checkbox.setSelected(false);
+        }
+
+        @Override
+        public JCheckBox get_first() {
+            return checkbox;
+        }
+
+        @Override
+        public DBFlagInteger get_second() {
+            return value;
         }
     }
     

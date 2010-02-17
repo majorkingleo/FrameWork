@@ -127,6 +127,16 @@ public class ConnectionDialog extends BaseDialog {
             {
                 DBType = (MOMMSupportedDBMSTypes)JCType.getSelectedItem();
             }
+
+            @Override
+            public Object get_first() {
+                return JCType;
+            }
+
+            @Override
+            public Object get_second() {
+                return DBType;
+            }
         }
         
         bind_vars.pairs.add(new TypePair() );                
