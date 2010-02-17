@@ -23,7 +23,7 @@ public class CreateSqlDerby extends BaseCreateSql {
 
 		for (String key : indexKeys) {
 			res.append(" CREATE INDEX ");
-			res.append(markColumn("IDX_" + key.toUpperCase()));
+			res.append(markColumn("IDX_" + table.toUpperCase() + "_" + key.toUpperCase()));
 			res.append("on");
 			res.append(markColumn(table));
 			res.append("(");
