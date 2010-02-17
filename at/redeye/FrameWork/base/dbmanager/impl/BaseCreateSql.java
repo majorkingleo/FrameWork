@@ -90,7 +90,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
             res.append( "ALTER TABLE ");
             res.append( markColumn(table) );
             res.append( " ADD INDEX ");
-            res.append( markColumn( "IDX_" + key.toUpperCase() ) );
+            res.append( markColumn( "IDX_" + table.toUpperCase() + "_" + key.toUpperCase() ) );
             res.append( "(" );
             res.append( markColumn( key ));
             res.append(");\n");
