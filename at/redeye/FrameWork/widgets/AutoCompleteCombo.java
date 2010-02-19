@@ -169,11 +169,13 @@ public class AutoCompleteCombo extends JTextField
         }
     }
 
+    @Override
     public void focusGained(FocusEvent e) {               
         selectAll();
         showPopup();
     }
 
+    @Override
     public void focusLost(FocusEvent e) {
         select(getCaretPosition(), getCaretPosition());
 
@@ -193,12 +195,15 @@ public class AutoCompleteCombo extends JTextField
 
             addAncestorListener(new AncestorListener() {
 
+                @Override
                 public void ancestorAdded(AncestorEvent event) {
                 }
 
+                @Override
                 public void ancestorRemoved(AncestorEvent event) {
                 }
 
+                @Override
                 public void ancestorMoved(AncestorEvent event) {
                     hidePopup();
                 }
