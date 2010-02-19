@@ -160,5 +160,9 @@ public class DBDateTime extends DBValue {
 		return false;
 	}
 
-
+    public long getTime()
+    {
+        DateTime datetime = new DateTime(value);
+        return datetime.getMillisOfDay();
+    }
 }
