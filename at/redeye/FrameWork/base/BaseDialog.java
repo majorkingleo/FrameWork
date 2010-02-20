@@ -14,6 +14,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -363,14 +364,17 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
        bind_vars.bindVar(jtext,var);
     }
     
+    @Override
     public void bindVar(JCheckBox jtext, DBFlagInteger var) {
        bind_vars.bindVar(jtext,var);
     }
 
+    @Override
     public void var_to_gui() {
         bind_vars.var_to_gui();
     }
 
+    @Override
     public void gui_to_var() {
         bind_vars.gui_to_var();
     }
@@ -378,5 +382,23 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     public Root getRoot()
     {
         return root;
+    }
+
+    public void setWaitCursor()
+    {
+        setWaitCursor(true);
+    }
+
+    public void setWaitCursor( boolean state )
+    {
+        if( state )
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        else
+            setCursor(Cursor.getDefaultCursor());
+    }
+
+    public void setNormalCuros()
+    {
+        setWaitCursor(false);
     }
 }
