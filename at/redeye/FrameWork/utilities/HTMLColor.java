@@ -42,4 +42,15 @@ public class HTMLColor {
         
         return HTMLCode2Color( colorString );
     }
+
+    public static String Color2HTML( Color color )
+    {
+        String res = "#";
+
+        res += String.format("%02X", color.getRed() );
+        res += String.format("%02X", color.getGreen() );
+        res += String.format("%02X", color.getBlue() );
+
+        return res;
+    }
 }
