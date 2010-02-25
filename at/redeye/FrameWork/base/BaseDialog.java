@@ -397,7 +397,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
             setCursor(Cursor.getDefaultCursor());
     }
 
-    public void setNormalCuros()
+    public void setNormalCursor()
     {
         setWaitCursor(false);
     }
