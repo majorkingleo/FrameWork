@@ -195,7 +195,7 @@ public class TableManipulator {
             tabledesign.edited_rows.add(tabledesign.rows.size()-1);
     }
     
-    public void addAll( Collection<DBStrukt> col) 
+    public <T extends DBStrukt> void addAll( Collection<T> col)
     {
         for( DBStrukt s : col )
         {

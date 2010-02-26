@@ -146,6 +146,37 @@ public abstract class Transaction {
 		return res;
 	}
 
+    public <T extends DBStrukt> Vector<T> fetchTable2(T binddesc )
+            throws SQLException, TableBindingNotRegisteredException,
+            UnsupportedDBDataTypeException, WrongBindFileFormatException
+    {
+        return fetchTable2( binddesc, "");
+    }
+
+	public <T extends DBStrukt> Vector<T> fetchTable2(T binddesc, String where)
+			throws SQLException, TableBindingNotRegisteredException,
+			UnsupportedDBDataTypeException, WrongBindFileFormatException {
+
+		registerTable(binddesc);
+
+		String tablenames[] = { binddesc.getName() };
+
+		Vector<HashMap<String, Object>> result = executer.fetchTableValue(
+				tablenames, where);
+
+		Vector<T> res = new Vector<T>();
+
+		res.setSize(result.size());
+
+		for (int i = 0; i < result.size(); i++) {
+			DBStrukt strukt = binddesc.getNewOne();
+			strukt.consume(result.get(i));
+			res.set(i, (T)strukt);
+		}
+
+		return res;
+	}
+
 	public String getSql() {
 		return executer.getLastStmt();
 	}
