@@ -82,4 +82,19 @@ public class DBFlagJaNein extends DBEnum
     {
         return new DBFlagJaNein( name, title );
     }
+
+    public boolean isYes()
+    {
+        FlagEnumHandler my_handler = (FlagEnumHandler) handler;
+
+        if( my_handler.types == FLAGTYPES.JA )
+            return true;
+
+        return false;
+    }
+
+    public boolean isNo()
+    {
+        return !isYes();
+    }
 }
