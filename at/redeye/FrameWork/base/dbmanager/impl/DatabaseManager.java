@@ -133,10 +133,12 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return null;
 	}
 
+    @Override
 	public Collection<String> getTables() throws SQLException {
 		return showTables.showTables(trans);
 	}
 
+    @Override
 	public boolean backupTable(String origin_name, String backup_name)
 			throws SQLException 
     {                        
@@ -145,6 +147,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
         return execSql( sql );        
 	}
 
+    @Override
 	public boolean migrateTable(DBStrukt strukt, Integer fromVersion ) throws SQLException 
     {
         String table_name = strukt.getName();
@@ -194,6 +197,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return done_something;
     }
 
+    @Override
 	public boolean createTable(DBStrukt strukt) throws SQLException 
     {
 		String sql = createSql.createSqlforTable(strukt);
@@ -201,6 +205,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return execSql( sql );
 	}
 
+    @Override
 	public boolean autoCreateTable(DBStrukt strukt) throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
 			WrongBindFileFormatException, CloneNotSupportedException, IOException {

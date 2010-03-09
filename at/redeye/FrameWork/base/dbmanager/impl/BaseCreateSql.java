@@ -105,6 +105,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
   
     public abstract String markColumn (String col);        
     
+    @Override
     public String createSqlForBackup( String table, String target_name )
     {
         String res = "create table " + markColumn( target_name ) + " as select * from " + markColumn( table );
@@ -112,6 +113,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         return res;
     }
     
+    @Override
     public String createSqlDropTable( String table )
     {
         String res = "drop table " + markColumn( table );

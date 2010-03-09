@@ -61,4 +61,15 @@ public class CreateSqlDerby extends BaseCreateSql {
 		return null;
 	}
 
+    @Override
+    public String createSqlForBackup( String table, String target_name )
+    {
+        String res = "create table " + markColumn( target_name ) + " as select * from " + markColumn( table ) +
+                " with no data; " +
+                "insert into " + markColumn( target_name ) + " ( select * from " + markColumn( table ) + ");";
+
+        return res;
+    }
+
+
 }

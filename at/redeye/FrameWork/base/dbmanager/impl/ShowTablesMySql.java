@@ -66,7 +66,7 @@ public class ShowTablesMySql implements ShowTables {
             res = trans.getStmtExecInterface().fetchColumnValue(sql, args);
         } catch (UnsupportedDBDataTypeException ex) {
             System.out.println( "XXX: " + ex );
-            Logger.getLogger(ShowTablesSqlite.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ShowTablesMySql.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         
