@@ -169,7 +169,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
         
         for( int i = fromVersion; i < strukt.getVersion(); i++ )
         {
-            sql += createSql.createSqlForNewRows(strukt, i+1);
+            sql += createSql.createSqlForNewRows(strukt, i+1) +";";
         }        
         
         return execSql( sql );

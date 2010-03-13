@@ -55,12 +55,12 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         
         if( !primKeys.isEmpty() )                    
         {
-            res += createPrimKeys( strukt.getName(), primKeys );
+            res += createPrimKeys( strukt.getName(), primKeys ) + ";";
         }
         
         if( !indexKeys.isEmpty() )                    
         {
-            res += createIndexKeys( strukt.getName(), indexKeys );
+            res += createIndexKeys( strukt.getName(), indexKeys ) + ";";
         }
         
         return res;
@@ -140,10 +140,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
             
             MOMMColumnAttribute attr = colls.get( name );
             
-            res +=   markColumn(name) + " " + createSqlForRow( attr ) + " " + appendNotNullIfSupportedbyNewRows( attr );
-            
-            if( it.hasNext() )
-                res = res + ";\n";
+            res +=   markColumn(name) + " " + createSqlForRow( attr ) + " " + appendNotNullIfSupportedbyNewRows( attr ) + ";\n";
             
             if( attr.isPrimaryKey() )
                 primKeys.add(name);
