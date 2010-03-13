@@ -47,4 +47,17 @@ public class BindVarBase
             pair.gui_to_var();
         }
     }
+
+    public void var_to_gui(DBValue val) {
+
+        for (Pair pair : pairs) {
+
+            if( pair.get_second() == val )
+            {
+                System.out.println( "vat_to_gui for "  + val.getName() );
+                pair.var_to_gui();
+                break;
+            }
+        }
+    }
 }
