@@ -5,10 +5,19 @@
 
 package at.redeye.FrameWork.base;
 
+import at.redeye.Dienstplan.AppConfigDefinitions;
 import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher;
+import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
+import java.io.IOException;
 import java.net.ProxySelector;
+import javax.swing.JOptionPane;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
 
 /**
  *
@@ -55,6 +64,68 @@ public class BaseModuleLauncher
         };
 
         thread.start();
+    }
+
+    public void configureLogging() {
+
+        PatternLayout layout = new PatternLayout(
+                "%d{ISO8601} %-5p (%F:%L): %m%n");
+        ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+
+        String logFileDir = root.getSetup().getLocalConfig(
+                AppConfigDefinitions.LoggingDir);
+        System.out.println("logFileDir: " + logFileDir);
+        String logFileLevel = root.getSetup().getLocalConfig(
+                AppConfigDefinitions.LoggingLevel);
+        String loggingEnabled = root.getSetup().getLocalConfig(
+                AppConfigDefinitions.DoLogging);
+
+        String filename = logFileDir + (logFileDir.isEmpty() ? "" : "/") + "log.OS-" + System.getProperty("user.name", "unknown-user") + ".txt";
+
+        System.out.println("Filename: " + filename);
+
+        logger.setLevel(Level.toLevel(logFileLevel));
+        logger.addAppender(consoleAppender);
+
+        if (loggingEnabled.equalsIgnoreCase("ja") ||
+                loggingEnabled.equalsIgnoreCase("yes") ||
+                loggingEnabled.equalsIgnoreCase("true")) {
+
+            try {
+
+                RollingFileAppender fileAppender = new RollingFileAppender(
+                        layout, filename);
+                fileAppender.setAppend(true);
+                fileAppender.setMaxFileSize("3MB");
+                fileAppender.setName(RollingFileAppender.class.getSimpleName());
+
+                logger.addAppender(fileAppender);
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        StringUtils.autoLineBreak("Das Logger konnte nicht korrekt initialisiert werden!"),
+                        "User Management", JOptionPane.WARNING_MESSAGE);
+
+            }
+        }
+
+    }
+
+     public void checkTableVersions() {
+        new AutoLogger(BaseModuleLauncher.class.getCanonicalName()) {
+
+            @Override
+            public void do_stuff() throws Exception {
+
+                Transaction trans = root.getDBConnection().getDefaultTransaction();
+
+                if (trans.isOpen()) {
+                    root.getBindtypeManager().setTransaction(trans);
+                    root.getBindtypeManager().check_table_versions_with_message(root.getUserPermissionLevel());
+                }
+            }
+        };
     }
 
 }
