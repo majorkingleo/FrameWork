@@ -50,7 +50,7 @@ public class BaseModuleLauncher
                         ProxySelector.setDefault(proxy);
 
                     DesktopLauncher launcher = new DesktopLauncher(root.getAppName(),
-                            root.getWebStartUrl() );
+                            root.getWebStartUrl() , root.getAppTitle() );
 
                     if( launcher.download_jnlp() )
                         logger.info("updated jnlp");

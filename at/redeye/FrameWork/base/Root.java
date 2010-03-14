@@ -19,10 +19,17 @@ public abstract class Root {
 
     String app_name;
     String web_start_url;
+    String app_title;
 
     public Root( String app_name )
     {
         this.app_name = app_name;
+    }
+
+    public Root( String app_name, String app_title )
+    {
+        this.app_name = app_name;
+        this.app_title = app_title;
     }
 
     public abstract Setup getSetup();
@@ -88,6 +95,11 @@ public abstract class Root {
     public String getWebStartUrl()
     {
         return web_start_url;
+    }
+
+    public String getAppTitle()
+    {
+        return app_title;
     }
             
 }

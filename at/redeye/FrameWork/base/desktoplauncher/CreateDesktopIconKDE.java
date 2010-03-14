@@ -16,9 +16,9 @@ import java.io.IOException;
 public class CreateDesktopIconKDE extends CreateDesktopIcon
 {
 
-    public CreateDesktopIconKDE( String png, String ico, String app_name, String url )
+    public CreateDesktopIconKDE( String png, String ico, String app_name, String url, String app_title )
     {
-        super( png, ico, app_name, url );
+        super( png, ico, app_name, url, app_title );
     }
 
     @Override
@@ -67,6 +67,10 @@ public class CreateDesktopIconKDE extends CreateDesktopIcon
             out.append("'\n");
 
             out.append("Type=Application\nTerminal=false\n");
+
+            out.append("Name=");
+            out.append(app_title);
+            out.append("\n");
 
             fout.write(out.toString().getBytes());
 

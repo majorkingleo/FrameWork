@@ -22,25 +22,28 @@ public abstract class CreateDesktopIcon
     String icon_ico;
     String app_name;
     String app_url;
+    String app_title;
 
     protected static Logger logger = Logger.getLogger(CreateDesktopIcon.class.getName());
 
-    public CreateDesktopIcon( String icon_png, String icon_ico, String app_name, String url )
+    public CreateDesktopIcon( String icon_png, String icon_ico, String app_name, String url, String app_title )
     {
         this.icon_png = icon_png;
         this.icon_ico = icon_ico;
         this.app_name = app_name;
         this.app_url = url;
+        this.app_title = app_title;
     }
 
     abstract public boolean createIcon();
 
-    public static CreateDesktopIcon getInstance( String app_name, String url )
+    public static CreateDesktopIcon getInstance( String app_name, String url, String app_title )
     {
         return getInstance("/at/redeye/FrameWork/base/resources/icons/icon.png",
                            "/at/redeye/FrameWork/base/resources/icons/icon.ico",
                            app_name,
-                           url);
+                           url,
+                           app_title);
     }
 
     /*
@@ -92,19 +95,20 @@ public abstract class CreateDesktopIcon
         return export_path_name;
     }
 
-    public static CreateDesktopIcon getInstance(  String icon_png, String icon_ico, String app_name, String url )
+    public static CreateDesktopIcon getInstance(  String icon_png, String icon_ico, 
+                                                  String app_name, String url, String app_title )
     {
         if( Setup.is_win_system() )
-            return new CreateDesktopIconWin(icon_png, icon_ico, app_name, url);
+            return new CreateDesktopIconWin(icon_png, icon_ico, app_name, url, app_title);
         else if( Setup.is_linux_system() )
-            return new CreateDesktopIconKDE(icon_png, icon_ico, app_name, url);
+            return new CreateDesktopIconKDE(icon_png, icon_ico, app_name, url, app_title);
 
         return null;
     }
 
     public static boolean isDesktopIconCreatingSupportedByOs()
     {
-        if( getInstance("foo", "bar")  != null )
+        if( getInstance("foo", "bar", "klo")  != null )
             return true;
 
         return false;

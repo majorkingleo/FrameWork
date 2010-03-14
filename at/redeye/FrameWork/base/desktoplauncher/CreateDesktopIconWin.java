@@ -13,9 +13,9 @@ import net.jimmc.jshortcut.JShellLink;
  */
 public class CreateDesktopIconWin extends CreateDesktopIcon
 {
-    public CreateDesktopIconWin( String png, String ico, String app_name, String url )
+    public CreateDesktopIconWin( String png, String ico, String app_name, String url, String app_title )
     {
-        super( png, ico, app_name, url );
+        super( png, ico, app_name, url, app_title );
     }
 
     @Override
@@ -31,7 +31,7 @@ public class CreateDesktopIconWin extends CreateDesktopIcon
         logger.info("created Icon: " + icon_name);
 
         link.setIconLocation(icon_name);
-        link.setName(app_name);
+        link.setName(app_title);
         link.setWorkingDirectory(System.getProperty("user.home"));
         link.setFolder(JShellLink.getDirectory("desktop"));
         link.setPath("javaws");

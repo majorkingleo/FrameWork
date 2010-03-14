@@ -35,7 +35,18 @@ public class LocalRoot extends Root {
     {
         super(app_name);
 
-        setup = new LocalSetup( this, app_name );      
+        init();
+    }
+
+    public LocalRoot(String app_name, String title) {
+        super(app_name, title);
+
+        init();
+    }
+
+    private void init()
+    {
+        setup = new LocalSetup( this, app_name );
         dbmanager = new DatabaseManager();
     }
 
