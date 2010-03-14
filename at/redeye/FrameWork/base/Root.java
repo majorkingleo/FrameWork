@@ -17,6 +17,14 @@ import javax.swing.JFrame;
  */
 public abstract class Root {
 
+    String app_name;
+    String web_start_url;
+
+    public Root( String app_name )
+    {
+        this.app_name = app_name;
+    }
+
     public abstract Setup getSetup();
     
     public abstract boolean saveSetup();
@@ -65,6 +73,21 @@ public abstract class Root {
     public int getUserId()
     {
         return 0;
+    }
+
+    public String getAppName()
+    {
+        return app_name;
+    }
+
+    public void setWebStartUlr(String url)
+    {
+        web_start_url = url;
+    }
+
+    public String getWebStartUrl()
+    {
+        return web_start_url;
     }
             
 }

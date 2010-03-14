@@ -33,10 +33,12 @@ public class LocalRoot extends Root {
     
     public LocalRoot( String app_name )
     {
+        super(app_name);
+
         setup = new LocalSetup( this, app_name );      
-        dbmanager=new DatabaseManager();
+        dbmanager = new DatabaseManager();
     }
-    
+
     @Override
     public Setup getSetup() {
         return setup;
@@ -50,6 +52,7 @@ public class LocalRoot extends Root {
         return false;
     }      
 
+    @Override
     public void setDBConnection( DBConnection con )
     {
         if( db_connection != null )
@@ -58,6 +61,7 @@ public class LocalRoot extends Root {
         db_connection = con;
     }
     
+    @Override
     public DBConnection getDBConnection()
     {
         return db_connection;
@@ -68,6 +72,7 @@ public class LocalRoot extends Root {
         setDBConnection(null);
     }
     
+    @Override
     public boolean loadDBConnectionFromSetup()
     {
         String database = setup.getLocalConfig(Setup.DBDatabase, "");

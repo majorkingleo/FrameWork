@@ -11,8 +11,8 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.prm.impl.LocalConfigDefinitions;
 import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
 import at.redeye.FrameWork.base.transaction.Transaction;
-
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
-import org.apache.log4j.Logger;
 
 
 /**
@@ -35,8 +34,7 @@ public class LocalSetup extends Setup {
     String app_name;
     Properties props;
     Root root;    
-    HashMap<String,DBConfig> global_config = null;
-    private static Logger logger = Logger.getLogger(LocalSetup.class);
+    HashMap<String,DBConfig> global_config = null;    
     boolean initial_run = false;
 
     public LocalSetup( Root root, String app_name )
@@ -48,7 +46,21 @@ public class LocalSetup extends Setup {
 
         config_file = getHiddenUserHomeFileName(config_name);
 
-        check();                
+        String new_location = getAppConfigFile(app_name, config_name);
+
+        File file = new File( new_location );
+
+        if( file.exists() )
+        {
+            config_file = new_location;
+            check();
+        }
+        else
+        {
+            check();
+            config_file = new_location;
+            saveConfig();
+        }
     }
     
     private void check()

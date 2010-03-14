@@ -7,6 +7,8 @@ package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import java.io.File;
+import org.apache.log4j.Logger;
+
 
 
 /**
@@ -31,10 +33,17 @@ public abstract class Setup {
     static public String WindowY = "WindowY";
     static public String WindowWidth = "WindowWidth";
     static public String WindowHeight = "WindowHeight";
+
+    public static Logger logger = Logger.getLogger(Setup.class);
     
     public static boolean is_win_system()
     {
         return System.getProperty("os.name").matches(".*[Ww][Ii][Nn].*");
+    }
+
+    public static boolean is_linux_system()
+    {
+        return System.getProperty("os.name").equals("Linux");
     }
 
     public static String getHiddenUserHomeFileName( String name )
@@ -49,6 +58,31 @@ public abstract class Setup {
         String config_file = config_path + File.separator + name;
 
         return config_file;
+    }
+
+    public static String getAppConfigDir( String app_name )
+    {
+        String name = getHiddenUserHomeFileName( app_name );
+
+        File file = new File(name);
+
+        if( !file.exists() )
+        {
+            if( !file.mkdirs() )
+            {
+                logger.error("failed createing directory" + name + " !!!");
+                name = null;
+            }
+        }
+        return name;
+    }
+
+    public static String getAppConfigFile( String app_name, String file_name )
+    {
+        String dir = getAppConfigDir(app_name);
+        String file_abs_name = dir + File.separator + file_name;
+
+        return file_abs_name;
     }
 
     public String getConfig(DBConfig config) {
