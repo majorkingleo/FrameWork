@@ -5,7 +5,6 @@
 
 package at.redeye.FrameWork.base;
 
-import at.redeye.Dienstplan.AppConfigDefinitions;
 import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
@@ -73,12 +72,12 @@ public class BaseModuleLauncher
         ConsoleAppender consoleAppender = new ConsoleAppender(layout);
 
         String logFileDir = root.getSetup().getLocalConfig(
-                AppConfigDefinitions.LoggingDir);
+                BaseAppConfigDefinitions.LoggingDir);
         System.out.println("logFileDir: " + logFileDir);
         String logFileLevel = root.getSetup().getLocalConfig(
-                AppConfigDefinitions.LoggingLevel);
+                BaseAppConfigDefinitions.LoggingLevel);
         String loggingEnabled = root.getSetup().getLocalConfig(
-                AppConfigDefinitions.DoLogging);
+                BaseAppConfigDefinitions.DoLogging);
 
         String filename = logFileDir + (logFileDir.isEmpty() ? "" : "/") + "log.OS-" + System.getProperty("user.name", "unknown-user") + ".txt";
 
