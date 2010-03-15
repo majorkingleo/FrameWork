@@ -276,6 +276,11 @@ public class StringUtils {
         return str.toString();
     }
 
+    public static String FormatDouble( double d, int rounding )
+    {
+        return FormatDouble(Rounding.RndDouble(d, rounding));
+    }
+
     public static String FormatDouble( double d )
     {
         String s = String.format("%f",d);
