@@ -61,6 +61,11 @@ public abstract class DBStrukt {
     {
         elements.add( value );
         elements_with_version.add(new Pair(version,value));
+
+        if( this.version == null )
+            this.version = version;
+        else if( version > this.version )
+            this.version = version;
     }
     
 
