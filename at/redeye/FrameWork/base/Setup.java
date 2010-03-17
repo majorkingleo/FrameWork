@@ -41,6 +41,11 @@ public abstract class Setup {
         return System.getProperty("os.name").matches(".*[Ww][Ii][Nn].*");
     }
 
+    public static boolean is_win_7_system()
+    {
+        return System.getProperty("os.name").matches("Windows 7");
+    }
+
     public static boolean is_linux_system()
     {
         return System.getProperty("os.name").equals("Linux");

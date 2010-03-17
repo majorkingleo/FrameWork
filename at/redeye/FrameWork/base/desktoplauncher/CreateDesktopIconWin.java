@@ -5,6 +5,10 @@
 
 package at.redeye.FrameWork.base.desktoplauncher;
 
+import at.redeye.FrameWork.base.Setup;
+import at.redeye.FrameWork.utilities.ReadFile;
+import java.io.File;
+import java.io.IOException;
 import net.jimmc.jshortcut.JShellLink;
 
 /**
@@ -28,13 +32,66 @@ public class CreateDesktopIconWin extends CreateDesktopIcon
         if( icon_name == null )
             return false;
 
-        logger.info("created Icon: " + icon_name);
+        logger.error("created Icon: " + icon_name);
 
         link.setIconLocation(icon_name);
         link.setName(app_title);
         link.setWorkingDirectory(System.getProperty("user.home"));
         link.setFolder(JShellLink.getDirectory("desktop"));
-        link.setPath("javaws");
+
+        File ws_exe = new File( "c:/windows/system32/javaws.exe");
+
+        logger.error("exists: " + ws_exe.exists() );
+        logger.error("isfile: " + ws_exe.isFile() );
+        logger.error("canExec: " + ws_exe.canExecute() );
+        logger.error("canread:" +  ws_exe.canRead() );
+
+        boolean can_read = false;
+        int bytes = 0;
+
+        try
+        {
+            byte[] buf = ReadFile.getBytesFromFile(ws_exe);
+
+            bytes = buf.length;
+
+            if( buf.length > 0 )
+                can_read = true;
+        } catch( IOException ex ) {
+            logger.error(ex);
+        }
+
+        logger.error("canreally_read: " + can_read + " readed " + bytes + " bytes");
+        
+        if( !ws_exe.exists() )
+        {
+            logger.error(ws_exe.getAbsoluteFile() + " not found ");
+
+            if( Setup.is_win_7_system() )
+            {
+                ws_exe = new File( "c:\\windows\\syswow64\\javaws.exe");
+            }
+
+            if( !ws_exe.isFile() )
+            {
+                logger.error(ws_exe.getAbsoluteFile() + " not found ");
+
+                 ws_exe = new File( System.getProperty("java.home") + "\\bin\\javaws.exe" );
+            }
+        }
+
+            if( ws_exe.isFile() )
+            {
+                logger.error("Found javaws at: " + ws_exe.getAbsolutePath());
+                link.setPath(ws_exe.getAbsolutePath());
+            }
+            else
+            {
+                // hope the best
+                logger.error(ws_exe.getAbsoluteFile() + " not found ");
+                link.setPath("javaws");
+            }
+
         link.setArguments("\"" + app_url + "\"");
 
         link.save();
