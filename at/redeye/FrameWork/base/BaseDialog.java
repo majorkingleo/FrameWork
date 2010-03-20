@@ -157,6 +157,11 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         if (con == null) {
             con = root.getDBConnection();
         }
+        // Here we have to check -> NULL pointer exception if no connection
+        // exists, e.g. before inital Setup
+        if (con == null) {
+            return null;
+        }
 
         if (con.hashCode() != root.getDBConnection().hashCode()) {
             con = root.getDBConnection();
