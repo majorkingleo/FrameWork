@@ -3,7 +3,6 @@
  *
  * Created on 2. Januar 2009, 16:50
  */
-
 package at.redeye.UserManagement.impl;
 
 import java.io.IOException;
@@ -19,6 +18,7 @@ import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.utilities.MD5Calc;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
@@ -35,39 +35,39 @@ import at.redeye.UserManagement.bindtypes.DBPb;
  */
 public class AdminDlg extends BaseDialog {
 
-	private TableManipulator tm;
-	private static Logger logger = Logger.getLogger(AdminDlg.class
-			.getSimpleName());
-	private static final long serialVersionUID = 1L;
-	private final static String menuTitle = "Administration Benutzerdaten";
-	private Vector<DBStrukt> pbEntries;
-	private Vector<DBStrukt> oldPbs;
-	private UserManagementInterface um;
+    private TableManipulator tm;
+    private static Logger logger = Logger.getLogger(AdminDlg.class.getSimpleName());
+    private static final long serialVersionUID = 1L;
+    private final static String menuTitle = "Administration Benutzerdaten";
+    private Vector<DBStrukt> pbEntries;
+    private Vector<DBStrukt> oldPbs;
+    private UserManagementInterface um;
+    private Transaction trans;
+    private WizardClientActionInterface wizardAction = null;
 
-	private Transaction trans;
+    /**
+     * Creates new form AdminDlg
+     *
+     * @param root
+     *            Root class
+     */
 
-	/**
-	 * Creates new form AdminDlg
-	 * 
-	 * @param root
-	 *            Root class
-	 */
-	public AdminDlg(Root root) {
-		super(root, menuTitle);
-		initComponents();
-		DBPb pb = new DBPb();
-		oldPbs = new Vector<DBStrukt>();
-		um = new UserDataHandling(root);
-		tm = new TableManipulator(root,jTable1, pb);
+    public AdminDlg(Root root, WizardClientActionInterface wizardAction) {
+        super(root, menuTitle);
+        this.wizardAction = wizardAction;
+        initComponents();
+        DBPb pb = new DBPb();
+        oldPbs = new Vector<DBStrukt>();
+        um = new UserDataHandling(root);
+        tm = new TableManipulator(root, jTable1, pb);
 
-		tm.hide(pb.id);
-		tm.hide(pb.hist.an_user);
-		tm.hide(pb.hist.an_zeit);
-		tm.hide(pb.hist.lo_user);
-		tm.hide(pb.hist.lo_zeit);
+        tm.hide(pb.id);
+        tm.hide(pb.hist.an_user);
+        tm.hide(pb.hist.an_zeit);
+        tm.hide(pb.hist.lo_user);
+        tm.hide(pb.hist.lo_zeit);
 
-        if (root.getUserPermissionLevel()
-                == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+        if (root.getUserPermissionLevel() == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
             tm.setEditable(pb.locked);
             tm.setEditable(pb.surname);
             tm.setEditable(pb.title);
@@ -76,22 +76,57 @@ public class AdminDlg extends BaseDialog {
             tm.setEditable(pb.login);
             tm.setEditable(pb.name);
         } else {
-            tm.hide (pb.pwd);
-            tm.hide (pb.locked);
+            tm.hide(pb.pwd);
+            tm.hide(pb.locked);
         }
 
-		tm.prepareTable();
-		trans = super.getTransaction();
+        tm.prepareTable();
+        trans = super.getTransaction();
         feed_table();
-		tm.autoResize();
+        tm.autoResize();
 
-	}
+    }
 
-	void feed_table() {
 
-		try {
-			tm.clear();
-			oldPbs.clear();
+    public AdminDlg(Root root) {
+        super(root, menuTitle);
+        initComponents();
+        DBPb pb = new DBPb();
+        oldPbs = new Vector<DBStrukt>();
+        um = new UserDataHandling(root);
+        tm = new TableManipulator(root, jTable1, pb);
+
+        tm.hide(pb.id);
+        tm.hide(pb.hist.an_user);
+        tm.hide(pb.hist.an_zeit);
+        tm.hide(pb.hist.lo_user);
+        tm.hide(pb.hist.lo_zeit);
+
+        if (root.getUserPermissionLevel() == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+            tm.setEditable(pb.locked);
+            tm.setEditable(pb.surname);
+            tm.setEditable(pb.title);
+            tm.setEditable(pb.plevel);
+            tm.setEditable(pb.pwd);
+            tm.setEditable(pb.login);
+            tm.setEditable(pb.name);
+        } else {
+            tm.hide(pb.pwd);
+            tm.hide(pb.locked);
+        }
+
+        tm.prepareTable();
+        trans = super.getTransaction();
+        feed_table();
+        tm.autoResize();
+
+    }
+
+    void feed_table() {
+
+        try {
+            tm.clear();
+            oldPbs.clear();
             if (root.getUserPermissionLevel() ==
                     UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
                 pbEntries = um.getAllUserData();
@@ -103,30 +138,29 @@ public class AdminDlg extends BaseDialog {
                 pbEntries = new Vector<DBStrukt>();
                 DBPb pb = new DBPb();
                 pb.id.loadFromCopy(root.getUserId());
-                pbEntries.add (um.getUserData(pb));
+                pbEntries.add(um.getUserData(pb));
             }
-			tm.addAll(pbEntries);
+            tm.addAll(pbEntries);
 
-		} catch (SQLException ex) {
-			logger.error(ex);
-		} catch (TableBindingNotRegisteredException ex) {
-			logger.error(ex);
-		} catch (UnsupportedDBDataTypeException ex) {
-			logger.error(ex);
-		} catch (WrongBindFileFormatException ex) {
-			logger.error(ex);
-		} catch (CloneNotSupportedException ex) {
-			logger.error(ex);
-		}
-	}
+        } catch (SQLException ex) {
+            logger.error(ex);
+        } catch (TableBindingNotRegisteredException ex) {
+            logger.error(ex);
+        } catch (UnsupportedDBDataTypeException ex) {
+            logger.error(ex);
+        } catch (WrongBindFileFormatException ex) {
+            logger.error(ex);
+        } catch (CloneNotSupportedException ex) {
+            logger.error(ex);
+        }
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
-	
-	// <editor-fold defaultstate="collapsed"
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    // <editor-fold defaultstate="collapsed"
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -214,6 +248,14 @@ public class AdminDlg extends BaseDialog {
             }
         });
 
+        if (wizardAction != null) {
+            buttonCancel.setEnabled(false);
+            buttonCancel.setVisible(false);
+        }
+        if (wizardAction != null) {
+            jBHelp.setVisible(false);
+            jBHelp.setEnabled(false);
+        }
         if (root.getUserPermissionLevel() ==
             UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
             buttonChangePwd.setEnabled(false);
@@ -229,7 +271,7 @@ public class AdminDlg extends BaseDialog {
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 960, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 922, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -239,7 +281,7 @@ public class AdminDlg extends BaseDialog {
                         .addComponent(buttonNewUser)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonChangePwd)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 312, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 399, Short.MAX_VALUE)
                         .addComponent(buttonRead)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonCancel)))
@@ -269,90 +311,87 @@ public class AdminDlg extends BaseDialog {
 
 	private void buttonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOKActionPerformed
 
-		Set<Integer> editedRows = tm.getEditedRows();
+        Set<Integer> editedRows = tm.getEditedRows();
 
-		MOMMTypeRegistrationInterface regi = trans.getTypeRegistration();
-		MD5Calc md5 = new MD5Calc("MD5");
+        MOMMTypeRegistrationInterface regi = trans.getTypeRegistration();
+        MD5Calc md5 = new MD5Calc("MD5");
 
-		for (Integer i : editedRows) {
+        for (Integer i : editedRows) {
 
-			DBPb pb = (DBPb) pbEntries.get(i);
+            DBPb pb = (DBPb) pbEntries.get(i);
 
-			if (!regi.getAllRegisteredTables().containsKey(pb.getName())) {
-				HashMap<String, MOMMColumnAttribute> colls = pb.getHashMap();
-				HashMap<String, HashMap<String, MOMMColumnAttribute>> table = new HashMap<String, HashMap<String, MOMMColumnAttribute>>();
+            if (!regi.getAllRegisteredTables().containsKey(pb.getName())) {
+                HashMap<String, MOMMColumnAttribute> colls = pb.getHashMap();
+                HashMap<String, HashMap<String, MOMMColumnAttribute>> table = new HashMap<String, HashMap<String, MOMMColumnAttribute>>();
 
-				table.put(pb.getName(), colls);
+                table.put(pb.getName(), colls);
 
-				try {
-					regi.registerTableBindings(table);
+                try {
+                    regi.registerTableBindings(table);
 
-				} catch (UnsupportedDBDataTypeException e) {
+                } catch (UnsupportedDBDataTypeException e) {
 
-					logger.error(e);
-				} catch (WrongBindFileFormatException e) {
+                    logger.error(e);
+                } catch (WrongBindFileFormatException e) {
 
-					logger.error(e);
-				}
-			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("Edited row id: " + pb.id + " [" + pb.name + " "
-						+ pb.surname + "]");
-			}
+                    logger.error(e);
+                }
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Edited row id: " + pb.id + " [" + pb.name + " " + pb.surname + "]");
+            }
 
-			DBPb oldpb = (DBPb) oldPbs.get(i);
+            DBPb oldpb = (DBPb) oldPbs.get(i);
 
-			logger.error(oldpb.pwd + " / " + pb.pwd);
-			if (oldpb != null
-					&& !pb.pwd.toString().equals(oldpb.pwd.toString())) {
+            logger.error(oldpb.pwd + " / " + pb.pwd);
+            if (oldpb != null && !pb.pwd.toString().equals(oldpb.pwd.toString())) {
 
-				String encPwd = md5.calcChecksum(pb.pwd.toString());
-				if (logger.isDebugEnabled()) {
-					logger.debug("PWD changed [ " + encPwd + " vs. "
-							+ oldpb.pwd.toString() + " -> start encryption");
-				}
-				pb.pwd.loadFromCopy(encPwd);
-			}
-			
+                String encPwd = md5.calcChecksum(pb.pwd.toString());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("PWD changed [ " + encPwd + " vs. " + oldpb.pwd.toString() + " -> start encryption");
+                }
+                pb.pwd.loadFromCopy(encPwd);
+            }
+
             pb.hist.setAeHist(root.getUserName());
-            
-			try {
-				trans.updateValues(pb);
-				trans.commit();
-			} catch (SQLException sqlex) {
-                logger.error(getTransaction().getSql());
-				logger.error(sqlex);                
-			} catch (UnsupportedDBDataTypeException ex) {
-				logger.error(ex);
-			} catch (WrongBindFileFormatException ex) {
-				logger.error(ex);
-			} catch (TableBindingNotRegisteredException ex) {
-				logger.error(ex);
-			} catch (IOException ex) {
-				logger.error(ex);
-			}
 
-		}
-		feed_table();
+            try {
+                trans.updateValues(pb);
+                trans.commit();
+            } catch (SQLException sqlex) {
+                logger.error(getTransaction().getSql());
+                logger.error(sqlex);
+            } catch (UnsupportedDBDataTypeException ex) {
+                logger.error(ex);
+            } catch (WrongBindFileFormatException ex) {
+                logger.error(ex);
+            } catch (TableBindingNotRegisteredException ex) {
+                logger.error(ex);
+            } catch (IOException ex) {
+                logger.error(ex);
+            }
+
+        }
+        feed_table();
 	}//GEN-LAST:event_buttonOKActionPerformed
 
 	private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-		// TODO add your handling code here:
-		close();
+        // TODO add your handling code here:
+        close();
 	}//GEN-LAST:event_buttonCancelActionPerformed
 
 	private void buttonReadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonReadActionPerformed
-		// TODO add your handling code here:
-		feed_table();
+        // TODO add your handling code here:
+        feed_table();
 	}//GEN-LAST:event_buttonReadActionPerformed
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 // TODO add your handling code here:
-    
+
     java.awt.EventQueue.invokeLater(new Runnable() {
 
         public void run() {
-            new HelpWin(root, "/at/redeye/UserManagement/resources/Help/","AdminDlg").setVisible(true);
+            new HelpWin(root, "/at/redeye/UserManagement/resources/Help/", "AdminDlg").setVisible(true);
         }
     });
 }//GEN-LAST:event_jBHelpActionPerformed
@@ -362,52 +401,55 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
     java.awt.EventQueue.invokeLater(new Runnable() {
 
         public void run() {
-            new PwdEditDlg(root,(DBPb) pbEntries.get(0)).setVisible(true);
+            new PwdEditDlg(root, (DBPb) pbEntries.get(0)).setVisible(true);
         }
-
     });
-    
+
 }//GEN-LAST:event_buttonChangePwdActionPerformed
 
-	private void buttonNewUserActionPerformed(java.awt.event.ActionEvent evt) {                                             
+    private void buttonNewUserActionPerformed(java.awt.event.ActionEvent evt) {
 
-		try {
-			int nextVal = getNewSequenceValue("UM_ID_SEQ");
+        if (trans == null) {
+            trans = super.getTransaction();
+        }
 
-			DBPb newPb = new DBPb();
+        try {
+            int nextVal = getNewSequenceValue("UM_ID_SEQ");
 
-			newPb.id.loadFromCopy(new Integer(nextVal));
-			newPb.plevel.loadFromCopy(new Integer(
-					UserManagementInterface.UM_PERMISSIONLEVEL_NORMAL));
-			newPb.locked.loadFromCopy(new Integer(
-					UserManagementInterface.UM_ACCOUNT_LOCKED));
-            			
-			newPb.hist.setAnHist(root.getUserName());            
+            DBPb newPb = new DBPb();
 
-			trans.insertValues(newPb);
+            newPb.id.loadFromCopy(new Integer(nextVal));
+            newPb.plevel.loadFromCopy(new Integer(
+                    UserManagementInterface.UM_PERMISSIONLEVEL_NORMAL));
+            newPb.locked.loadFromCopy(new Integer(
+                    UserManagementInterface.UM_ACCOUNT_LOCKED));
 
-			tm.setEditable(newPb.name);
-			tm.setEditable(newPb.login);
-			tm.add(newPb);
-			pbEntries.add(newPb);
-			oldPbs.add(newPb.getCopy());
+            newPb.hist.setAnHist(root.getUserName());
 
-		} catch (SQLException ex) {
-			
-			logger.error(ex);
-		} catch (UnsupportedDBDataTypeException ex) {
-			
-			logger.error(ex);
-		} catch (WrongBindFileFormatException ex) {
-			logger.error(ex);
-		} catch (TableBindingNotRegisteredException ex) {
-			logger.error(ex);
-		} catch (IOException ex) {
-			logger.error(ex);
-		}
+            trans.insertValues(newPb);
 
-	}                              
-    
+            tm.setEditable(newPb.name);
+            tm.setEditable(newPb.login);
+            tm.add(newPb);
+            pbEntries.add(newPb);
+            oldPbs.add(newPb.getCopy());
+
+        } catch (SQLException ex) {
+
+            logger.error(ex);
+        } catch (UnsupportedDBDataTypeException ex) {
+
+            logger.error(ex);
+        } catch (WrongBindFileFormatException ex) {
+            logger.error(ex);
+        } catch (TableBindingNotRegisteredException ex) {
+            logger.error(ex);
+        } catch (IOException ex) {
+            logger.error(ex);
+        }
+
+    }
+
     @Override
     protected boolean canClose() {
         int ret = checkSave(tm);
@@ -419,7 +461,6 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
         }
         return true;
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCancel;
     private javax.swing.JButton buttonChangePwd;
@@ -431,5 +472,4 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
-
 }

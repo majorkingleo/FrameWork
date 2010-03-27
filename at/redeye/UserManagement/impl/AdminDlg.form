@@ -29,7 +29,7 @@
                       <Component id="jScrollPane1" pref="960" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jLabel1" pref="922" max="32767" attributes="0"/>
+                      <Component id="jLabel1" pref="928" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jBHelp" min="-2" pref="32" max="-2" attributes="0"/>
                   </Group>
@@ -40,7 +40,7 @@
                       <Component id="buttonNewUser" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="buttonChangePwd" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="312" max="32767" attributes="0"/>
+                      <EmptySpace pref="399" max="32767" attributes="0"/>
                       <Component id="buttonRead" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="buttonCancel" min="-2" max="-2" attributes="0"/>
@@ -142,6 +142,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonCancelActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="if (wizardAction != null) {&#xd;&#xa;    buttonCancel.setEnabled(false);&#xd;&#xa;    buttonCancel.setVisible(false);&#xd;&#xa;}"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="buttonRead">
       <Properties>
@@ -163,6 +166,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBHelpActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="if (wizardAction != null) {&#xd;&#xa;    jBHelp.setVisible(false);&#xd;&#xa;    jBHelp.setEnabled(false);&#xd;&#xa;}"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="buttonChangePwd">
       <Properties>

@@ -23,6 +23,9 @@ import at.redeye.FrameWork.base.transaction.MySQLTransaction;
 import at.redeye.FrameWork.base.transaction.OracleTransaction;
 import at.redeye.FrameWork.base.transaction.SqLiteTransaction;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.base.wizards.WizardAction;
+import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
+import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.MOMMDbConnectionInterface;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
@@ -47,11 +50,69 @@ public class ConnectionDialog extends BaseDialog {
     StringBuffer DBInstance = new StringBuffer();
     StringBuffer DBPort = new StringBuffer();
     DBBindtypeManager bindtypeManager = null;
+    private WizardClientActionInterface wizardAction = null;
     
     /** Creates new form ConnectionDialog */
+    public ConnectionDialog( Root root, WizardClientActionInterface wizardAction) {
+        super( root , "Datenbankverbindung");
+        this.wizardAction = wizardAction;
+
+        initComponents();
+
+        DBHost.append( root.getSetup().getLocalConfig(Setup.DBHost, "localhost" ) );
+        DBUser.append( root.getSetup().getLocalConfig(Setup.DBUser, "" ) );
+        DBPasswd.append( root.getSetup().getLocalConfig(Setup.DBPasswd, "" ) );
+        DBDatabase.append( root.getSetup().getLocalConfig(Setup.DBDatabase, "" ) );
+        DBInstance.append( root.getSetup().getLocalConfig(Setup.DBInstance, "" ) );
+        DBPort.append( root.getSetup().getLocalConfig(Setup.DBPort, "" ) );
+        DBType = MOMMSupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, MOMMSupportedDBMSTypes.DB_MYSQL.toString() ) );
+
+        bindVar(JTHost, DBHost);
+        bindVar(JCType, DBType);
+        bindVar(JTUser, DBUser);
+        bindVar(JTPasswd, DBPasswd);
+        bindVar(JTDatabase, DBDatabase);
+        bindVar(JTPort, DBPort);
+        bindVar(JTInstance, DBInstance);
+
+        setBindtypeManager( root.getBindtypeManager() );
+
+        JCType.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                JTDatabase.setVisible(true);
+                JTInstance.setEditable(false);
+                JTHost.setEditable(true);
+                JTPort.setEditable(true);
+                JTUser.setEditable(true);
+                JTPasswd.setEditable(true);
+
+                if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_ORACLE )
+                {
+                    JTDatabase.setEditable(false);
+                    JTInstance.setEditable(true);
+
+                } else if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_SQLITE ) {
+
+                    JTDatabase.setEditable(true);
+                    JTInstance.setEditable(false);
+                    JTHost.setEditable(false);
+                    JTPort.setEditable(false);
+                    JTUser.setEditable(false);
+                    JTPasswd.setEditable(false);
+                }
+
+            }
+
+        });
+
+        var_to_gui();
+    }
+
     public ConnectionDialog( Root root ) {
         super( root , "Datenbankverbindung");
-        
+  
         initComponents();
                 
         DBHost.append( root.getSetup().getLocalConfig(Setup.DBHost, "localhost" ) );
@@ -293,6 +354,11 @@ public class ConnectionDialog extends BaseDialog {
             }
         });
 
+        if (wizardAction != null) {
+            JBClose.setEnabled(false);
+            JBClose.setVisible(false);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -306,7 +372,7 @@ public class ConnectionDialog extends BaseDialog {
                         .addComponent(JBTest)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(JBManage)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 137, Short.MAX_VALUE)
                         .addComponent(JBClose))
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
@@ -320,13 +386,13 @@ public class ConnectionDialog extends BaseDialog {
                             .addComponent(JLInstance))
                         .addGap(38, 38, 38)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(JTInstance, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
-                            .addComponent(JTDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
-                            .addComponent(JTUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
-                            .addComponent(JTPort, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
-                            .addComponent(JTHost, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
-                            .addComponent(JCType, 0, 416, Short.MAX_VALUE)
-                            .addComponent(JTPasswd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE))))
+                            .addComponent(JTInstance, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                            .addComponent(JTDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                            .addComponent(JTUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                            .addComponent(JTPort, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                            .addComponent(JTHost, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                            .addComponent(JCType, 0, 436, Short.MAX_VALUE)
+                            .addComponent(JTPasswd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -403,7 +469,8 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
             JOptionPane.OK_OPTION);
             return;
         }
-        root.saveSetup();        
+        root.saveSetup();
+        wizardAction.applyAction(WizardAction.WIZARD_ACTION_NEXT, true);
     }
     
 }//GEN-LAST:event_JBSaveActionPerformed
@@ -548,7 +615,7 @@ public void setBindtypeManager( DBBindtypeManager bindtypeManager )
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton JBClose;
     private javax.swing.JButton JBManage;
-    private javax.swing.JButton JBSave;
+    protected javax.swing.JButton JBSave;
     private javax.swing.JButton JBTest;
     private javax.swing.JComboBox JCType;
     private javax.swing.JLabel JLDatabase;
