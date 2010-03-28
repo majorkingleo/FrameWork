@@ -7,6 +7,8 @@ package at.redeye.FrameWork.base.wizards.impl;
 import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.base.wizards.WizardProperties;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.util.Vector;
 
 /**
@@ -53,15 +55,17 @@ public class Wizard implements WizardClientActionInterface {
 
     protected void handleUpdate() {
         WizardBaseWindow window = allWindows.get(currentWindow);
+        Rectangle bounds = window.getBounds();
         switch (window.getRecentAction()) {
             case WIZARD_ACTION_NEXT:
                 window.onClose();
                 currentWindow++;
                 window = allWindows.get(currentWindow);
-                prepareLegendText(window);
                 if (currentWindow == (allWindows.size() - 1)) {
                     applyAction(WizardAction.WIZARD_ACTION_NEXT, false);
                 }
+                window.setBounds(bounds);
+                prepareLegendText(window);
                 window.controlButtons();
                 window.onInit();
 
@@ -73,6 +77,7 @@ public class Wizard implements WizardClientActionInterface {
                 if (currentWindow == 0) {
                     applyAction(WizardAction.WIZARD_ACTION_PREV, false);
                 }
+                window.setBounds(bounds);
                 prepareLegendText(window);
                 window.controlButtons();
                 window.onInit();

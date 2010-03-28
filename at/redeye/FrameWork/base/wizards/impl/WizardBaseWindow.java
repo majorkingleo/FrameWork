@@ -60,6 +60,8 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
         textAreaHelp.setText(getHelptext());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setBounds(new java.awt.Rectangle(200, 200, 0, 0));
+        setResizable(false);
 
         panelGuestContent.setMinimumSize(new java.awt.Dimension(300, 200));
         panelGuestContent.setLayout(new java.awt.BorderLayout());
@@ -94,7 +96,7 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
         textAreaMenuTree.setBackground(new java.awt.Color(240, 240, 240));
         textAreaMenuTree.setColumns(15);
         textAreaMenuTree.setEditable(false);
-        textAreaMenuTree.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
+        textAreaMenuTree.setFont(new java.awt.Font("Courier New", 1, 14));
         textAreaMenuTree.setLineWrap(true);
         textAreaMenuTree.setRows(5);
         textAreaMenuTree.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(100, 150, 230), null));
@@ -106,7 +108,7 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
         textAreaHelp.setBackground(new java.awt.Color(240, 240, 240));
         textAreaHelp.setColumns(20);
         textAreaHelp.setEditable(false);
-        textAreaHelp.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
+        textAreaHelp.setFont(new java.awt.Font("Courier New", 1, 14));
         textAreaHelp.setLineWrap(true);
         textAreaHelp.setRows(4);
         textAreaHelp.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(100, 150, 230), null));
@@ -242,5 +244,11 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
     }
     
     protected abstract Wizard getParentWizard();
+
+    @Override
+    protected boolean openWithLastWidthAndHeight() {
+        return false;
+    }
+
 
 }
