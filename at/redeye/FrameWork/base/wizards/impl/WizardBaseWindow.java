@@ -182,6 +182,7 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
 
     private void buttonFinishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonFinishActionPerformed
         action = WizardAction.WIZARD_ACTION_FINISH;
+        close();
     }//GEN-LAST:event_buttonFinishActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCancel;
