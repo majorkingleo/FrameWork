@@ -6,15 +6,8 @@
 package at.redeye.FrameWork.base.desktoplauncher;
 
 import at.redeye.FrameWork.base.Setup;
-import at.redeye.FrameWork.utilities.CopyFile;
-import java.io.BufferedInputStream;
+import at.redeye.FrameWork.utilities.DownloadUrl;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.apache.log4j.Logger;
 
 /**
@@ -97,90 +90,6 @@ public class DesktopLauncher
 
     public boolean download_jnlp()
     {
-        URL url;
-        
-        try
-        {        
-            url = new URL( web_start_url );
-        }
-        catch( MalformedURLException ex )
-        {
-            logger.error("invalid Url: " + web_start_url );
-            logger.error(ex);
-            return false;
-        }
-
-        File file = null;
-        OutputStream out = null;
-        BufferedInputStream bis = null;
-        InputStream stream = null;
-
-        boolean failed = true;
-
-        try
-        {
-            file = File.createTempFile( "launch-", ".part" );
-
-            stream = url.openStream();
-
-            out = new FileOutputStream(file);
-
-            bis = new BufferedInputStream( stream );
-
-            byte[] buf = new byte[1024 * 4];
-            int len;
-
-            while ((len = bis.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-
-            File old_one = new File( jnlp_name );
-
-            boolean success = true;
-
-            if( old_one.exists() )
-            {
-              if( !old_one.delete() )
-              {
-                  logger.error("cannot delete file " + jnlp_name );
-                  success = false;
-              }
-            }
-
-            if( success )
-            {
-                if( !file.renameTo(old_one) )
-                {
-                    logger.error("renaming from " + file.getAbsolutePath() + " to " + jnlp_name + " failed!");
-                    logger.error("trying copying");
-
-                    if( !CopyFile.copy(file, old_one) )
-                    {
-                        logger.error("Cannot copy file");
-                        success = false;
-                    }
-                    
-                    file.delete();
-                }
-            }
-
-            if( success )
-                failed = false;
-
-        } catch( IOException ex ) {
-
-            logger.error(ex);
-
-        } finally {
-            try {
-                stream.close();
-                out.close();
-                bis.close();
-            } catch( IOException ex ) {
-                logger.error(ex);
-            }
-        }
-
-        return !failed;
-    }
+        return DownloadUrl.downloadUrl(web_start_url, jnlp_name);
+    }    
 }
