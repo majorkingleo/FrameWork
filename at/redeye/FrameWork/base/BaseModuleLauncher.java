@@ -10,7 +10,9 @@ import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.ProxySelector;
+import java.net.URL;
 import javax.swing.JOptionPane;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -28,6 +30,7 @@ public class BaseModuleLauncher
     public StartupWindow splash = null;
     public static Logger logger = Logger.getRootLogger();
     public Root root;
+    public String[] args;
 
     public BaseModuleLauncher()
     {
@@ -35,6 +38,81 @@ public class BaseModuleLauncher
         // der oracle Treiber über den Proxy zu DB zu verbinden.
         proxy = ProxySelector.getDefault();
         ProxySelector.setDefault(null);
+    }
+
+    public BaseModuleLauncher( String[] args )
+    {
+        // Proxyeinstellungen von Java Ausschalten, sonst versucht sich
+        // der oracle Treiber über den Proxy zu DB zu verbinden.
+        proxy = ProxySelector.getDefault();
+        ProxySelector.setDefault(null);
+        this.args = args;
+    }
+
+    public String getWebStartUrl()
+    {
+        return getWebStartUrl(null);
+    }
+
+    public String getWebStartUrl( String default_url )
+    {
+        String value = getStartupParam("wsu", "webstarturl", "WEBSTARTURL", default_url);
+
+        if( value != null && !value.trim().isEmpty() )
+        {
+            URL arg_url;
+
+            try {
+                arg_url = new URL(value);
+
+                System.out.println("webstarturl: " + value + " is a vali url");
+
+                return value;
+            } catch (MalformedURLException ex) {
+                System.err.println("invalid url specified: " + value);
+                System.err.println(ex);
+            }
+        }
+        
+        return null;
+    }
+
+    public String getStartupParam(String shortname, String longname, String envname )
+    {
+        return getStartupParam( shortname,  longname,  envname, null);
+    }
+
+    public String getStartupParam( String shortname, String longname, String envname, String default_url )
+    {
+        String url = null;
+
+        if( args != null )
+        {
+            boolean next = false;
+
+            for( String arg : args )
+            {
+                if( next )
+                {
+                    return arg;
+                }
+                else if( arg.equalsIgnoreCase("-" + shortname) ||
+                    arg.equalsIgnoreCase("-" + longname ) )
+                {
+                    next = true;
+                }
+            }
+        }
+
+        if( url == null )
+            url = System.getProperty(envname.toUpperCase());
+
+        if( url == null || url.trim().isEmpty() )
+        {
+            return default_url;
+        }
+
+        return url;
     }
 
     public void updateJnlp()
