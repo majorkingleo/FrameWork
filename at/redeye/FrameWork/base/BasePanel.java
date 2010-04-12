@@ -18,22 +18,27 @@ public class BasePanel extends javax.swing.JPanel implements BindVarInterface
 {
     protected BindVarBase bind_vars = new BindVarBase();
 
+    @Override
     public void bindVar(JTextField jtext, StringBuffer var) {
        bind_vars.bindVar(jtext,var);
     }
 
+    @Override
     public void var_to_gui() {
         bind_vars.var_to_gui();
     }
 
+    @Override
     public void gui_to_var() {
         bind_vars.gui_to_var();
     }
 
+    @Override
     public void bindVar(JTextField jtext, DBValue var) {
         bind_vars.bindVar(jtext,var);        
     }
 
+    @Override
     public void bindVar(JCheckBox box, DBFlagInteger var) {
         bind_vars.bindVar(box,var);        
     }

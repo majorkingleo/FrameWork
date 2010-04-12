@@ -6,6 +6,7 @@
 package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
@@ -24,7 +25,7 @@ import org.apache.log4j.RollingFileAppender;
  *
  * @author martin
  */
-public class BaseModuleLauncher
+public abstract class BaseModuleLauncher
 {
     public ProxySelector proxy = null;
     public StartupWindow splash = null;
@@ -65,7 +66,7 @@ public class BaseModuleLauncher
             try {
                 arg_url = new URL(value);
 
-                System.out.println("webstarturl: " + value + " is a vali url");
+                System.out.println("webstarturl: " + value + " is a valid url");
 
                 return value;
             } catch (MalformedURLException ex) {
@@ -203,6 +204,64 @@ public class BaseModuleLauncher
                 }
             }
         };
+    }
+
+    public abstract String getVersion();
+
+    public void setSetupParam( String value, DBConfig config, boolean if_not_exist )
+    {
+        if( value == null )
+            return;
+
+        if( value.trim().isEmpty() )
+            return;
+
+        root.getSetup().setLocalConfig(config.getConfigName(), value, if_not_exist);
+    }
+
+    public void setCommonLoggingLevel()
+    {
+        String do_logging    = getStartupParam( "dl", "do-logging", "LOGGING");
+        String level         = getStartupParam( "ll", "logging-level", "LOGGING_LEVEL");
+        String dir           = getStartupParam( "ld", "logging-dir", "LOGGING_DIR");
+        String force_logging = getStartupParam( "fl", "force-logging", "FORCE_LOGGING");
+
+        String enable_logging_on_new_version = getStartupParam( "", "enable-logging-on-new_version", "ENABLE_LOGGING_ON_NEW_VERSION" );
+
+        if( StringUtils.isYes(enable_logging_on_new_version) )
+        {
+            String version = root.getSetup().getLocalConfig(BaseAppConfigDefinitions.Version);
+
+            if ( version == null ||
+                 !version.equalsIgnoreCase(getVersion()) )
+            {
+                if( !StringUtils.isYes(do_logging) )
+                    do_logging = "true";
+
+                if( !StringUtils.isYes(force_logging) )
+                    force_logging = "true";
+            }
+        }
+
+        root.getSetup().setLocalConfig(BaseAppConfigDefinitions.Version.getConfigName(), getVersion() );
+
+        if (dir != null && dir.equalsIgnoreCase("APPHOME")) {
+            dir = Setup.getAppConfigDir(root.getAppName() + "/log");
+        }
+
+        boolean force = false;
+
+        if (StringUtils.isYes(force_logging)) {
+            force = true;
+        }
+
+        setSetupParam(do_logging, BaseAppConfigDefinitions.DoLogging, force);
+        setSetupParam(level, BaseAppConfigDefinitions.LoggingLevel, force);
+        setSetupParam(dir, BaseAppConfigDefinitions.LoggingDir, force);
+
+        root.getSetup().saveConfig();
+
+        configureLogging();
     }
 
 }

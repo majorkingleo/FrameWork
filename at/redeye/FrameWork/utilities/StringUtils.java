@@ -290,4 +290,27 @@ public class StringUtils {
 
         return s;
     }
+
+    public static boolean isYes(String maybe_a_yes_value)
+    {
+        if( maybe_a_yes_value == null )
+            return false;
+
+        if( maybe_a_yes_value.equalsIgnoreCase("yes") )
+            return true;
+
+        if( maybe_a_yes_value.equalsIgnoreCase("true") )
+            return true;
+
+        if( maybe_a_yes_value.equalsIgnoreCase("1") )
+            return true;
+
+        if( maybe_a_yes_value.equalsIgnoreCase("x") )
+            return true;
+
+        if( maybe_a_yes_value.equalsIgnoreCase("+") )
+            return true;
+
+        return false;
+    }
 }
