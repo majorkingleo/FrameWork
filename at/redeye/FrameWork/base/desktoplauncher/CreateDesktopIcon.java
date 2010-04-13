@@ -20,16 +20,18 @@ public abstract class CreateDesktopIcon
 {
     String icon_png;
     String icon_ico;
+    String icon_gif;
     String app_name;
     String app_url;
     String app_title;
 
     protected static Logger logger = Logger.getLogger(CreateDesktopIcon.class.getName());
 
-    public CreateDesktopIcon( String icon_png, String icon_ico, String app_name, String url, String app_title )
+    public CreateDesktopIcon( String icon_png, String icon_ico, String icon_gif, String app_name, String url, String app_title )
     {
         this.icon_png = icon_png;
         this.icon_ico = icon_ico;
+        this.icon_gif= icon_gif;
         this.app_name = app_name;
         this.app_url = url;
         this.app_title = app_title;
@@ -41,6 +43,7 @@ public abstract class CreateDesktopIcon
     {
         return getInstance("/at/redeye/FrameWork/base/resources/icons/icon.png",
                            "/at/redeye/FrameWork/base/resources/icons/icon.ico",
+                           "/at/redeye/FrameWork/base/resources/icons/icon.gif",
                            app_name,
                            url,
                            app_title);
@@ -61,6 +64,9 @@ public abstract class CreateDesktopIcon
         }
 
         String extension = ".png";
+
+        if( icon_name.endsWith(".gif") )
+            extension = ".gif";
 
         if( Setup.is_win_system() )
             extension = ".ico";
@@ -95,13 +101,13 @@ public abstract class CreateDesktopIcon
         return export_path_name;
     }
 
-    public static CreateDesktopIcon getInstance(  String icon_png, String icon_ico, 
+    public static CreateDesktopIcon getInstance(  String icon_png, String icon_ico, String icon_gif,
                                                   String app_name, String url, String app_title )
     {
         if( Setup.is_win_system() )
-            return new CreateDesktopIconWin(icon_png, icon_ico, app_name, url, app_title);
+            return new CreateDesktopIconWin(icon_png, icon_ico, icon_gif, app_name, url, app_title);
         else if( Setup.is_linux_system() )
-            return new CreateDesktopIconKDE(icon_png, icon_ico, app_name, url, app_title);
+            return new CreateDesktopIconKDE(icon_png, icon_ico, icon_gif, app_name, url, app_title);
 
         return null;
     }

@@ -17,9 +17,9 @@ import net.jimmc.jshortcut.JShellLink;
  */
 public class CreateDesktopIconWin extends CreateDesktopIcon
 {
-    public CreateDesktopIconWin( String png, String ico, String app_name, String url, String app_title )
+    public CreateDesktopIconWin( String png, String ico, String gif, String app_name, String url, String app_title )
     {
-        super( png, ico, app_name, url, app_title );
+        super( png, ico, gif, app_name, url, app_title );
     }
 
     @Override

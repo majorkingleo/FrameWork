@@ -20,17 +20,20 @@ public class DesktopLauncher
     String web_start_url;
     String icon_name_ico;
     String icon_name_png;
+    String icon_name_gif;
     String jnlp_name;
     String app_title;
 
     protected static Logger logger = Logger.getLogger(CreateDesktopIcon.class.getName());
 
-    public DesktopLauncher( String app_name, String web_start_url, String app_title, String icon_name_ico, String icon_name_png )
+    public DesktopLauncher( String app_name, String web_start_url, String app_title, 
+                            String icon_name_ico, String icon_name_png, String icon_name_gif)
     {
         this.app_name = app_name;
         this.web_start_url = web_start_url;
         this.icon_name_ico = icon_name_ico;
         this.icon_name_png = icon_name_png;
+        this.icon_name_gif = icon_name_gif;
         this.jnlp_name = Setup.getAppConfigFile(app_name, "launch.jnlp");
         this.app_title = app_title;
 
@@ -62,7 +65,7 @@ public class DesktopLauncher
         if( icon_name_ico != null &&
             icon_name_png != null )
         {
-             manager = CreateDesktopIcon.getInstance(icon_name_png, icon_name_ico, app_name, jnlp_name, app_title);
+             manager = CreateDesktopIcon.getInstance(icon_name_png, icon_name_ico, icon_name_gif, app_name, jnlp_name, app_title);
         }
         else
         {
