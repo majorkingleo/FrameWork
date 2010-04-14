@@ -28,6 +28,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
@@ -406,4 +407,22 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     {
         setWaitCursor(false);
     }
+
+    public void adjustScrollingSpeed( JScrollPane scroll_panel )
+    {
+        String value = root.getSetup().getLocalConfig(BaseAppConfigDefinitions.ScrollingSpeed);
+
+        Integer inc = 16;
+
+        try {
+            inc = Integer.parseInt(value);
+        } catch( NumberFormatException ex ) {
+            logger.error(ex);
+            logger.error("invalid number " + value + " for vertical scrolling speed");
+            return;
+        }
+
+        scroll_panel.getVerticalScrollBar().setUnitIncrement(inc);
+    }
+
 }
