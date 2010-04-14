@@ -122,7 +122,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         loadStuff();
     }
 
-    /*
+    /**
      * Overload this method, if the window shouldn't open with
      * with the last stored with and height.
      */
@@ -241,15 +241,21 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         this.dispose();
     }
 
+    /**
+     * Schließt das Fenster, ohne die Appliaktion zu beenden, auch wenn
+     * das zu schließende Fenster das Letzte offene ist. Das default
+     * Verhalten der Appliaktion ist, dass beim Schließen des letzten offenen
+     * Fensters die komplette Applikation geschlossen wird.
+     */
     public void closeNoAppExit()
     {
         close();
     }
 
     /**
-     * 
+     * Ermittelt den nächsten Wert für eine gegebene Sequenz
      * @param seqName
-     * @return
+     * @return den nächsten Wert der Sequenz
      * @throws java.sql.SQLException
      * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
      * @throws IOException 
@@ -342,6 +348,16 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         StringUtils.set_defaultAutoLineLenght(Integer.valueOf(root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.DefaultAutoLineBreakWidth)));
     }
 
+    /**
+     * Kontrolliert, ob in der übergebenen Tabelle nur ein Eintrag selektiert
+     * wurde. Wurde mehr als ein Eintrag selektiert, bekommt der User eine
+     * entsprechende Fehlermeldeung aufgeschalten und der Rückgabewert der Funktion
+     * ist false.
+     * @param table eine jTable
+     * @return  <b>true</b> Wenn nur ein Eintrag selektiert wurde und <b>false</b>, wenn
+     * kein, oder mehrere Einträge selektiert wurden. Eine ensprechende Fehlermeldung
+     * ist dabei dem User schon aufgeschalten worden.
+     */
     protected boolean checkAnyAndSingleSelection(JTable table) {
         if (table.getSelectedRowCount() <= 0) {
             JOptionPane.showMessageDialog(null,
@@ -362,39 +378,83 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         return true;
     }
 
+    /**
+     * in jTextField an einen StringBuffer anbinden
+     * @param jtext das Textfeld
+     * @param var   der StringBuffer
+     *
+     * Bei einem Aufruf von var_to_gui(), oder gui_to_var(), wird
+     * dann der demenstprechende Inhalt entweder vom GUI zu Variablen,
+     * oder umgekehrt übertragen.
+     */
     public void bindVar(JTextField jtext, StringBuffer var) {
        bind_vars.bindVar(jtext,var);
     }
 
+    /**
+     * Ein jTextField an eine DBValue anbinden
+     * @param jtext das Textfeld
+     * @param var   die Datenbankvariable
+     *
+     * Bei einem Aufruf von var_to_gui(), oder gui_to_var(), wird
+     * dann der demenstprechende Inhalt entweder vom GUI zu Variablen,
+     * oder umgekehrt übertragen.
+     */
     public void bindVar(JTextField jtext, DBValue var) {
        bind_vars.bindVar(jtext,var);
     }
     
+    /**
+     * Eine JCheckBox an eine DBFlagInteger Variable anbinden
+     * @param jtext die Textbox
+     * @param var   die Datebanvariable
+     *
+     * Bei einem Aufruf von var_to_gui(), oder gui_to_var(), wird
+     * dann der demenstprechende Inhalt entweder vom GUI zu Variablen,
+     * oder umgekehrt übertragen.
+     */
     @Override
     public void bindVar(JCheckBox jtext, DBFlagInteger var) {
        bind_vars.bindVar(jtext,var);
     }
 
+    /**
+     * Alle Werte der angebunden Variablen in die entsprechenden GUI Komponenten übertragen
+     */
     @Override
     public void var_to_gui() {
         bind_vars.var_to_gui();
     }
 
+    /**
+     * Alle Elemnte des GUIs in die angebundenen Datenbankfelder kopieren
+     */
     @Override
     public void gui_to_var() {
         bind_vars.gui_to_var();
     }
 
+    /**
+     * gibt die <b>root</b> Klasse zurück
+     * @return
+     */
     public Root getRoot()
     {
         return root;
     }
 
+    /**
+     * Setzt den Sanduhr Mauscursor
+     */
     public void setWaitCursor()
     {
         setWaitCursor(true);
     }
 
+    /**
+     * Setzt den Sanduhr, oder "normale" Mauscursor
+     * @param state <b>true</b> für die Sanduhr und <b>false</b> für den nurmalen Cursor
+     */
     public void setWaitCursor( boolean state )
     {
         if( state )
@@ -403,11 +463,19 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
             setCursor(Cursor.getDefaultCursor());
     }
 
+    /**
+     * Setzt wieder den "normalen" Mauscursor
+     */
     public void setNormalCursor()
     {
         setWaitCursor(false);
     }
 
+    /**
+     * Konfiguriert das jScrollpanel entsprechen dem im Setup hinterlegten
+     * Geschwindigkeit. Vom User über den Parameter VerticalScrollingSpeed einstellbar.
+     * @param scroll_panel
+     */
     public void adjustScrollingSpeed( JScrollPane scroll_panel )
     {
         String value = root.getSetup().getLocalConfig(BaseAppConfigDefinitions.ScrollingSpeed);
