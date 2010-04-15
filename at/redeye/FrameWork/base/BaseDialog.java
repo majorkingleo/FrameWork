@@ -44,10 +44,22 @@ import org.apache.log4j.Logger;
 public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * reference to the root object
+     */
     protected Root root;
     private Transaction transaction = null;
+
+    /**
+     * title of the dialog
+     */
     protected String title;
     private DBConnection con = null;
+
+    /**
+     * reference to the logger object
+     */
     protected static Logger logger = Logger.getLogger(BaseDialog.class.getName());
     private Transaction seq_transaction = null;
     protected Timer autoRefreshTimer = new Timer();
@@ -63,8 +75,6 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     boolean edited = false;
     protected BindVarBase bind_vars = new BindVarBase();
 
-    protected BaseDialog() {
-    }
 
     public BaseDialog(Root root, String title) {
         this.root = root;
@@ -127,6 +137,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     /**
      * Overload this method, if the window shouldn't open with
      * with the last stored with and height.
+     * @return true if the size of the dialog should be stored
      */
     protected boolean openWithLastWidthAndHeight()
     {
@@ -151,11 +162,13 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         return myrootPane;
     }
 
-    
-    
-
-
-
+    /**     
+     * @return The Transaction object for this dialog
+     * This Transaction object will be automatically closed, on closing this this
+     * dialog. The Transaction object will be only created once in the lifetime
+     * of the dialog. So caching the Transaction object is not required.
+     * <b>Can return null, in case of no database connection.</b>
+     */
     public Transaction getTransaction() {
         if (con == null) {
             con = root.getDBConnection();
@@ -196,6 +209,14 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         return transaction;
     }
 
+    /**
+     * @return A new Transaction object, of the current database connection
+     * This Transactino won't be closed on dialog closing event automatically
+     * You have to close each allocated Transaction object yourself by calling
+     * <b>closeTransaction()</b>
+     *
+     * The Transaction object will by destroyed atomatically on appliaction shutdown
+     */
     public Transaction getNewTransaction() {
         if (root.getDBConnection() == null) {
             return null;
@@ -207,6 +228,11 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         return trans;
     }
 
+    /**
+     * closes a given Transaction object. Rollback is done automatically.
+     * @param tran a valid Transaction object
+     * @throws SQLException if rollback fails
+     */
     public void closeTransaction(Transaction tran) throws SQLException {
         if (root.getDBConnection() == null) {
             return;
@@ -221,6 +247,9 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         root.getDBConnection().closeTransaction(tran);
     }
 
+    /**
+     * closes the current dialog.
+     */
     public void close() {
         root.getSetup().setLocalConfig(title.concat(Setup.WindowX), Integer.toString(this.getX()));
         root.getSetup().setLocalConfig(title.concat(Setup.WindowY), Integer.toString(this.getY()));
@@ -260,7 +289,9 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
      * @return den nächsten Wert der Sequenz
      * @throws java.sql.SQLException
      * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
-     * @throws IOException 
+     * @throws WrongBindFileFormatException
+     * @throws TableBindingNotRegisteredException
+     * @throws IOException
      */
     public int getNewSequenceValue(String seqName) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException {
         if (getTransaction().getDBMSType() == MOMMSupportedDBMSTypes.DB_SQLITE) {
@@ -280,9 +311,9 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     }
 
     /**
-     * @return 1 on Save Data
-     *         0 on Don't Save
-     *        -1 on Cancel
+     * @return 1 on Save Data  <br/>
+     *         0 on Don't Save <br/>
+     *        -1 on Cancel <br/>
      */
     public int checkSave() {
         Object[] options = {"Daten Speichern", "Änderungen verwerfen", "Abbrechen"};
@@ -304,6 +335,16 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         }
     }
 
+    /**
+     * Checks, if data within the table have been change, asks the
+     * user what sould be done (save it, don't save it, or cancel current operation
+     * @param tm TableManipulator object
+     * @return
+     *   1 when the data should by saved <br/>
+     *   0 on saving should be done <br/>
+     *  -1 cancel current operation <br/>
+     * 
+     */
     public int checkSave(TableManipulator tm) {
         tm.stopEditing();
 
@@ -325,6 +366,10 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     protected void doAutoRefresh() {
     }
 
+    /**
+     * to be overrided by subdialogs
+     * @return true if the dialog can be closed
+     */
     protected boolean canClose() {
         return true;
     }
