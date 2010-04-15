@@ -6,6 +6,7 @@ package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
@@ -28,6 +29,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -277,7 +279,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         }
     }
 
-    /*
+    /**
      * @return 1 on Save Data
      *         0 on Don't Save
      *        -1 on Cancel
@@ -478,19 +480,29 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
      */
     public void adjustScrollingSpeed( JScrollPane scroll_panel )
     {
-        String value = root.getSetup().getLocalConfig(BaseAppConfigDefinitions.ScrollingSpeed);
-
-        Integer inc = 16;
-
         try {
-            inc = Integer.parseInt(value);
+            adjustScrollingSpeed(scroll_panel.getVerticalScrollBar(), BaseAppConfigDefinitions.VerticalScrollingSpeed);
+            adjustScrollingSpeed(scroll_panel.getVerticalScrollBar(), BaseAppConfigDefinitions.HorizontalScrollingSpeed);
         } catch( NumberFormatException ex ) {
-            logger.error(ex);
-            logger.error("invalid number " + value + " for vertical scrolling speed");
+            logger.error(ex);            
             return;
         }
-
-        scroll_panel.getVerticalScrollBar().setUnitIncrement(inc);
     }
+
+    private void adjustScrollingSpeed(JScrollBar ScrollBar, DBConfig config)
+    {
+        String value = root.getSetup().getLocalConfig(config);
+
+        Integer i = Integer.parseInt(value);
+
+        if( i  <=  0 )
+        {
+            logger.error("invalid scrolling interval: " + i + " using default value: " + config.getConfigValue() );
+            i = Integer.parseInt(config.getConfigValue());
+        }
+
+        ScrollBar.setUnitIncrement(i);
+    }
+
 
 }
