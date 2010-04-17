@@ -22,11 +22,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JScrollBar;
@@ -75,6 +78,34 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     boolean edited = false;
     protected BindVarBase bind_vars = new BindVarBase();
 
+    /**
+     * All keys ESC, or F1, F2 listeners are registered in this container
+     */
+    protected HashMap<KeyStroke,Vector<Runnable>> listen_key_events = null;    
+    private JRootPane myrootPane;
+    protected Runnable HelpWinRunnable;
+
+    private class ActionKeyListener implements ActionListener
+    {
+        KeyStroke key;
+
+        public ActionKeyListener( KeyStroke key )
+        {
+            this.key = key;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (listen_key_events == null) {
+                return;
+            }
+
+            Vector<Runnable> functions = listen_key_events.get(key);
+
+            for (Runnable runnable : functions) {
+                runnable.run();
+            }
+        }
+      }
 
     public BaseDialog(Root root, String title) {
         this.root = root;
@@ -131,6 +162,18 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         }
         //this.addKeyListener(new ExtKeyListener(this));
 
+        registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                new Runnable() {
+
+                    public void run() {
+                        if (canClose()) {
+                            close();
+                        }
+                    }
+                });
+
+
+
         loadStuff();
     }
 
@@ -144,21 +187,77 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         return true;
     }
 
+    /**
+     * automatically opens the Help Windows, when F1 is pressed
+     * @param runnable This runnable should open the Help Window
+     */
+    public void registerHelpWin( Runnable runnable )
+    {
+        HelpWinRunnable = runnable;
+
+        registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),
+                runnable );
+    }
+
+    /**
+     * opens the registerd Help win by Hand
+     */
+    public void callHelpWin()
+    {
+        if( HelpWinRunnable != null )
+        {
+            setWaitCursor();
+            HelpWinRunnable.run();
+            setNormalCursor();
+        }
+    }
+
+    /**
+     * Registers a listener for a F1, ESC, or somthing global keypressed Event     
+     * @param to_listen_Key Keyboard Key
+     * @param runnable      Method to call
+     */
+    public void registerActionKeyListener( KeyStroke to_listen_Key, Runnable runnable )
+    {
+        if( listen_key_events == null )
+            listen_key_events = new HashMap<KeyStroke,Vector<Runnable>>();
+
+        Vector<Runnable> listeners = listen_key_events.get(to_listen_Key);
+
+        if( listeners == null )
+        {
+            listeners = new Vector<Runnable>();
+            listen_key_events.put(to_listen_Key, listeners);
+
+            registerActionKeyListenerOnRootPane(to_listen_Key);
+        }
+
+        listeners.add(runnable);
+    }
+
+    private void registerActionKeyListenerOnRootPane(KeyStroke key)
+    {
+        if( myrootPane == null )
+            return;
+
+        myrootPane.registerKeyboardAction(new ActionKeyListener(key), key,JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
+
     @Override
     protected JRootPane createRootPane()
     {
-        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        JRootPane myrootPane = super.createRootPane();
-        myrootPane.registerKeyboardAction(new ActionListener() {
+        myrootPane = super.createRootPane();
 
-            public void actionPerformed(ActionEvent e) {
-                if( canClose() )
-                {
-                    close();
-                }
+        // alle im Container beinhalteten listener anhängen
+
+        if( listen_key_events != null )
+        {
+            for( KeyStroke key : listen_key_events.keySet() )
+            {
+                myrootPane.registerKeyboardAction(new ActionKeyListener(key), key,JComponent.WHEN_IN_FOCUSED_WINDOW);
             }
-        }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        
+        }
+
         return myrootPane;
     }
 
