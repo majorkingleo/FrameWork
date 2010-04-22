@@ -29,7 +29,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JScrollBar;

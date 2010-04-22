@@ -264,4 +264,13 @@ public abstract class BaseModuleLauncher
         configureLogging();
     }
 
+    public boolean splashEnabled()
+    {
+        if(StringUtils.isYes(getStartupParam(null, "nosplash", "NOSPLASH") ) )
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
