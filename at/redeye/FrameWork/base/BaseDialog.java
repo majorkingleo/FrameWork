@@ -9,6 +9,7 @@ import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.base.translation.TranslationHelper;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
@@ -171,7 +172,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
                     }
                 });
 
-
+        new TranslationHelper(root,this);
 
         loadStuff();
     }
