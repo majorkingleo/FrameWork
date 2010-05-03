@@ -304,6 +304,8 @@ public abstract class BaseModuleLauncher {
 			return "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
 		} else if (name.equalsIgnoreCase("metal")) {
 			return "javax.swing.plaf.metal.MetalLookAndFeel";
+        } else if (name.equalsIgnoreCase("nimbus")) {
+            return "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
 		} else {
 			return UIManager.getSystemLookAndFeelClassName();
 		}

@@ -114,7 +114,7 @@ public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
 	private boolean passesLookAndFeel(PrmActionEvent event) {
 
-		String[] validStr = { "metal", "system", "motif" };
+		String[] validStr = { "metal", "system", "motif", "nimbus" };
 
 		for (int idx = 0; idx < validStr.length; idx++) {
 
