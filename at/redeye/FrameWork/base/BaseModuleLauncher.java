@@ -15,262 +15,298 @@ import java.net.MalformedURLException;
 import java.net.ProxySelector;
 import java.net.URL;
 import javax.swing.JOptionPane;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 
+import com.sun.java.swing.plaf.motif.MotifLookAndFeel;
+
 /**
- *
+ * 
  * @author martin
  */
-public abstract class BaseModuleLauncher
-{
-    public ProxySelector proxy = null;
-    public StartupWindow splash = null;
-    public static Logger logger = Logger.getRootLogger();
-    public Root root;
-    public String[] args;
+public abstract class BaseModuleLauncher {
+	public ProxySelector proxy = null;
+	public StartupWindow splash = null;
+	public static Logger logger = Logger.getRootLogger();
+	public Root root;
+	public String[] args;
 
-    public BaseModuleLauncher()
-    {
-        // Proxyeinstellungen von Java Ausschalten, sonst versucht sich
-        // der oracle Treiber über den Proxy zu DB zu verbinden.
-        proxy = ProxySelector.getDefault();
-        ProxySelector.setDefault(null);
-    }
+	public BaseModuleLauncher() {
+		// Proxyeinstellungen von Java Ausschalten, sonst versucht sich
+		// der oracle Treiber über den Proxy zu DB zu verbinden.
+		proxy = ProxySelector.getDefault();
+		ProxySelector.setDefault(null);
+	}
 
-    public BaseModuleLauncher( String[] args )
-    {
-        // Proxyeinstellungen von Java Ausschalten, sonst versucht sich
-        // der oracle Treiber über den Proxy zu DB zu verbinden.
-        proxy = ProxySelector.getDefault();
-        ProxySelector.setDefault(null);
-        this.args = args;
-    }
+	public BaseModuleLauncher(String[] args) {
+		// Proxyeinstellungen von Java Ausschalten, sonst versucht sich
+		// der oracle Treiber über den Proxy zu DB zu verbinden.
+		proxy = ProxySelector.getDefault();
+		ProxySelector.setDefault(null);
+		this.args = args;
+	}
 
-    public String getWebStartUrl()
-    {
-        return getWebStartUrl(null);
-    }
+	public String getWebStartUrl() {
+		return getWebStartUrl(null);
+	}
 
-    public String getWebStartUrl( String default_url )
-    {
-        String value = getStartupParam("wsu", "webstarturl", "WEBSTARTURL", default_url);
+	public String getWebStartUrl(String default_url) {
+		String value = getStartupParam("wsu", "webstarturl", "WEBSTARTURL",
+				default_url);
 
-        if( value != null && !value.trim().isEmpty() )
-        {
-            URL arg_url;
+		if (value != null && !value.trim().isEmpty()) {
+			URL arg_url;
 
-            try {
-                arg_url = new URL(value);
+			try {
+				arg_url = new URL(value);
 
-                System.out.println("webstarturl: " + value + " is a valid url");
+				System.out.println("webstarturl: " + value + " is a valid url");
 
-                return value;
-            } catch (MalformedURLException ex) {
-                System.err.println("invalid url specified: " + value);
-                System.err.println(ex);
-            }
-        }
-        
-        return null;
-    }
+				return value;
+			} catch (MalformedURLException ex) {
+				System.err.println("invalid url specified: " + value);
+				System.err.println(ex);
+			}
+		}
 
-    public String getStartupParam(String shortname, String longname, String envname )
-    {
-        return getStartupParam( shortname,  longname,  envname, null);
-    }
+		return null;
+	}
 
-    public String getStartupParam( String shortname, String longname, String envname, String default_url )
-    {
-        String url = null;
+	public String getStartupParam(String shortname, String longname,
+			String envname) {
+		return getStartupParam(shortname, longname, envname, null);
+	}
 
-        if( args != null )
-        {
-            boolean next = false;
+	public String getStartupParam(String shortname, String longname,
+			String envname, String default_url) {
+		String url = null;
 
-            for( String arg : args )
-            {
-                if( next )
-                {
-                    return arg;
-                }
-                else if( arg.equalsIgnoreCase("-" + shortname) ||
-                    arg.equalsIgnoreCase("-" + longname ) )
-                {
-                    next = true;
-                }
-            }
-        }
+		if (args != null) {
+			boolean next = false;
 
-        if( url == null )
-            url = System.getProperty(envname.toUpperCase());
+			for (String arg : args) {
+				if (next) {
+					return arg;
+				} else if (arg.equalsIgnoreCase("-" + shortname)
+						|| arg.equalsIgnoreCase("-" + longname)) {
+					next = true;
+				}
+			}
+		}
 
-        if( url == null || url.trim().isEmpty() )
-        {
-            return default_url;
-        }
+		if (url == null)
+			url = System.getProperty(envname.toUpperCase());
 
-        return url;
-    }
+		if (url == null || url.trim().isEmpty()) {
+			return default_url;
+		}
 
-    public void updateJnlp()
-    {
-        Thread thread = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                if( DesktopLauncher.canCreateDesktopIcon() )
-                {
-                    if( proxy != null )
-                        ProxySelector.setDefault(proxy);
+		return url;
+	}
 
-                    DesktopLauncher launcher = new DesktopLauncher(root.getAppName(),
-                            root.getWebStartUrl() , root.getAppTitle() );
+	public void updateJnlp() {
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				if (DesktopLauncher.canCreateDesktopIcon()) {
+					if (proxy != null)
+						ProxySelector.setDefault(proxy);
 
-                    if( launcher.download_jnlp() )
-                        logger.info("updated jnlp");
-                    else
-                        logger.error("failed updating jnlp");
+					DesktopLauncher launcher = new DesktopLauncher(root
+							.getAppName(), root.getWebStartUrl(), root
+							.getAppTitle());
 
-                    ProxySelector.setDefault(null);
-                }
-            }
-        };
+					if (launcher.download_jnlp())
+						logger.info("updated jnlp");
+					else
+						logger.error("failed updating jnlp");
 
-        thread.start();
-    }
+					ProxySelector.setDefault(null);
+				}
+			}
+		};
 
-    public void configureLogging() {
+		thread.start();
+	}
 
-        PatternLayout layout = new PatternLayout(
-                "%d{ISO8601} %-5p (%F:%L): %m%n");
-        ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+	public void configureLogging() {
 
-        String logFileDir = root.getSetup().getLocalConfig(
-                BaseAppConfigDefinitions.LoggingDir);
-        System.out.println("logFileDir: " + logFileDir);
-        String logFileLevel = root.getSetup().getLocalConfig(
-                BaseAppConfigDefinitions.LoggingLevel);
-        String loggingEnabled = root.getSetup().getLocalConfig(
-                BaseAppConfigDefinitions.DoLogging);
+		PatternLayout layout = new PatternLayout(
+				"%d{ISO8601} %-5p (%F:%L): %m%n");
+		ConsoleAppender consoleAppender = new ConsoleAppender(layout);
 
-        String filename = logFileDir + (logFileDir.isEmpty() ? "" : "/") + "log.OS-" + System.getProperty("user.name", "unknown-user") + ".txt";
+		String logFileDir = root.getSetup().getLocalConfig(
+				BaseAppConfigDefinitions.LoggingDir);
+		System.out.println("logFileDir: " + logFileDir);
+		String logFileLevel = root.getSetup().getLocalConfig(
+				BaseAppConfigDefinitions.LoggingLevel);
+		String loggingEnabled = root.getSetup().getLocalConfig(
+				BaseAppConfigDefinitions.DoLogging);
 
-        System.out.println("Filename: " + filename);
+		String filename = logFileDir + (logFileDir.isEmpty() ? "" : "/")
+				+ "log.OS-" + System.getProperty("user.name", "unknown-user")
+				+ ".txt";
 
-        logger.setLevel(Level.toLevel(logFileLevel));
-        logger.addAppender(consoleAppender);
+		System.out.println("Filename: " + filename);
 
-        if (loggingEnabled.equalsIgnoreCase("ja") ||
-                loggingEnabled.equalsIgnoreCase("yes") ||
-                loggingEnabled.equalsIgnoreCase("true")) {
+		logger.setLevel(Level.toLevel(logFileLevel));
+		logger.addAppender(consoleAppender);
 
-            try {
+		if (loggingEnabled.equalsIgnoreCase("ja")
+				|| loggingEnabled.equalsIgnoreCase("yes")
+				|| loggingEnabled.equalsIgnoreCase("true")) {
 
-                RollingFileAppender fileAppender = new RollingFileAppender(
-                        layout, filename);
-                fileAppender.setAppend(true);
-                fileAppender.setMaxFileSize("3MB");
-                fileAppender.setName(RollingFileAppender.class.getSimpleName());
+			try {
 
-                logger.addAppender(fileAppender);
+				RollingFileAppender fileAppender = new RollingFileAppender(
+						layout, filename);
+				fileAppender.setAppend(true);
+				fileAppender.setMaxFileSize("3MB");
+				fileAppender.setName(RollingFileAppender.class.getSimpleName());
 
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        StringUtils.autoLineBreak("Das Logger konnte nicht korrekt initialisiert werden!"),
-                        "User Management", JOptionPane.WARNING_MESSAGE);
+				logger.addAppender(fileAppender);
 
-            }
-        }
+			} catch (IOException e) {
+				JOptionPane
+						.showMessageDialog(
+								null,
+								StringUtils
+										.autoLineBreak("Das Logger konnte nicht korrekt initialisiert werden!"),
+								"User Management", JOptionPane.WARNING_MESSAGE);
 
-    }
+			}
+		}
 
-     public void checkTableVersions() {
-        new AutoLogger(BaseModuleLauncher.class.getCanonicalName()) {
+	}
 
-            @Override
-            public void do_stuff() throws Exception {
+	public void checkTableVersions() {
+		new AutoLogger(BaseModuleLauncher.class.getCanonicalName()) {
 
-                Transaction trans = root.getDBConnection().getDefaultTransaction();
+			@Override
+			public void do_stuff() throws Exception {
 
-                if (trans.isOpen()) {
-                    root.getBindtypeManager().setTransaction(trans);
-                    root.getBindtypeManager().check_table_versions_with_message(root.getUserPermissionLevel());
-                }
-            }
-        };
-    }
+				Transaction trans = root.getDBConnection()
+						.getDefaultTransaction();
 
-    public abstract String getVersion();
+				if (trans.isOpen()) {
+					root.getBindtypeManager().setTransaction(trans);
+					root.getBindtypeManager()
+							.check_table_versions_with_message(
+									root.getUserPermissionLevel());
+				}
+			}
+		};
+	}
 
-    public void setSetupParam( String value, DBConfig config, boolean if_not_exist )
-    {
-        if( value == null )
-            return;
+	public abstract String getVersion();
 
-        if( value.trim().isEmpty() )
-            return;
+	public void setSetupParam(String value, DBConfig config,
+			boolean if_not_exist) {
+		if (value == null)
+			return;
 
-        root.getSetup().setLocalConfig(config.getConfigName(), value, if_not_exist);
-    }
+		if (value.trim().isEmpty())
+			return;
 
-    public void setCommonLoggingLevel()
-    {
-        String do_logging    = getStartupParam( "dl", "do-logging", "LOGGING");
-        String level         = getStartupParam( "ll", "logging-level", "LOGGING_LEVEL");
-        String dir           = getStartupParam( "ld", "logging-dir", "LOGGING_DIR");
-        String force_logging = getStartupParam( "fl", "force-logging", "FORCE_LOGGING");
+		root.getSetup().setLocalConfig(config.getConfigName(), value,
+				if_not_exist);
+	}
 
-        String enable_logging_on_new_version = getStartupParam( "", "enable-logging-on-new_version", "ENABLE_LOGGING_ON_NEW_VERSION" );
+	public void setCommonLoggingLevel() {
+		String do_logging = getStartupParam("dl", "do-logging", "LOGGING");
+		String level = getStartupParam("ll", "logging-level", "LOGGING_LEVEL");
+		String dir = getStartupParam("ld", "logging-dir", "LOGGING_DIR");
+		String force_logging = getStartupParam("fl", "force-logging",
+				"FORCE_LOGGING");
 
-        if( StringUtils.isYes(enable_logging_on_new_version) )
-        {
-            String version = root.getSetup().getLocalConfig(BaseAppConfigDefinitions.Version);
+		String enable_logging_on_new_version = getStartupParam("",
+				"enable-logging-on-new_version",
+				"ENABLE_LOGGING_ON_NEW_VERSION");
 
-            if ( version == null ||
-                 !version.equalsIgnoreCase(getVersion()) )
-            {
-                if( !StringUtils.isYes(do_logging) )
-                    do_logging = "true";
+		if (StringUtils.isYes(enable_logging_on_new_version)) {
+			String version = root.getSetup().getLocalConfig(
+					BaseAppConfigDefinitions.Version);
 
-                if( !StringUtils.isYes(force_logging) )
-                    force_logging = "true";
-            }
-        }
+			if (version == null || !version.equalsIgnoreCase(getVersion())) {
+				if (!StringUtils.isYes(do_logging))
+					do_logging = "true";
 
-        root.getSetup().setLocalConfig(BaseAppConfigDefinitions.Version.getConfigName(), getVersion() );
+				if (!StringUtils.isYes(force_logging))
+					force_logging = "true";
+			}
+		}
 
-        if (dir != null && dir.equalsIgnoreCase("APPHOME")) {
-            dir = Setup.getAppConfigDir(root.getAppName() + "/log");
-        }
+		root.getSetup().setLocalConfig(
+				BaseAppConfigDefinitions.Version.getConfigName(), getVersion());
 
-        boolean force = false;
+		if (dir != null && dir.equalsIgnoreCase("APPHOME")) {
+			dir = Setup.getAppConfigDir(root.getAppName() + "/log");
+		}
 
-        if (StringUtils.isYes(force_logging)) {
-            force = true;
-        }
+		boolean force = false;
 
-        setSetupParam(do_logging, BaseAppConfigDefinitions.DoLogging, force);
-        setSetupParam(level, BaseAppConfigDefinitions.LoggingLevel, force);
-        setSetupParam(dir, BaseAppConfigDefinitions.LoggingDir, force);
+		if (StringUtils.isYes(force_logging)) {
+			force = true;
+		}
 
-        root.getSetup().saveConfig();
+		setSetupParam(do_logging, BaseAppConfigDefinitions.DoLogging, force);
+		setSetupParam(level, BaseAppConfigDefinitions.LoggingLevel, force);
+		setSetupParam(dir, BaseAppConfigDefinitions.LoggingDir, force);
 
-        configureLogging();
-    }
+		root.getSetup().saveConfig();
 
-    public boolean splashEnabled()
-    {
-        if(StringUtils.isYes(getStartupParam(null, "nosplash", "NOSPLASH") ) )
-        {
-            return false;
-        }
+		configureLogging();
+	}
 
-        return true;
-    }
+	public boolean splashEnabled() {
+		if (StringUtils.isYes(getStartupParam(null, "nosplash", "NOSPLASH"))) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * This method sets the LookAndFeel which the user has parameterized. It may
+	 * be called after the PrmInit was done, but it has to be done before the UI
+	 * starts.
+	 */
+	public void setLookAndFeel(Root root) {
+
+		String config = root.getSetup().getLocalConfig(
+				FrameWorkConfigDefinitions.LookAndFeel);
+
+		logger.debug("Found LookAndFeel PRM value: <" + config + ">");
+
+		try {
+			UIManager.setLookAndFeel(getLookAndFeelStrByName(config));
+		} catch (ClassNotFoundException e) {
+			logger.error(e.getMessage());
+		} catch (InstantiationException e) {
+			logger.error(e.getMessage());
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+		} catch (UnsupportedLookAndFeelException e) {
+			logger.error(e.getMessage());
+		}
+	}
+
+	private String getLookAndFeelStrByName(String name) {
+
+		if (name.equalsIgnoreCase("motif")) {
+			return "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+		} else if (name.equalsIgnoreCase("metal")) {
+			return "javax.swing.plaf.metal.MetalLookAndFeel";
+		} else {
+			return UIManager.getSystemLookAndFeelClassName();
+		}
+	}
+
 }
