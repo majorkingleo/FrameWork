@@ -14,7 +14,9 @@ import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
  */
 public class WizardStepFinished extends WizardBaseWindow {
 
-    private WizardPanelFinished finish = null;
+    
+	private static final long serialVersionUID = 1L;
+	private WizardPanelFinished finish = null;
     private Wizard parentWizard = null;
 
     public WizardStepFinished(Root root, Wizard parent) {

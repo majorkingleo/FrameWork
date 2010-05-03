@@ -18,7 +18,9 @@ import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
 public class WizardStepDBSetup extends WizardBaseWindow implements WizardWindowInterface {
 
 
-    private ConnectionDialog dlg;
+   
+	private static final long serialVersionUID = 1L;
+	private ConnectionDialog dlg;
     private Wizard parentWizard = null;
 
 

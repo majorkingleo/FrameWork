@@ -13,7 +13,11 @@ import java.util.Properties;
  */
 public class WizardProperties extends Properties  {
 
-    private String wizardSmallLogoPath = "";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String wizardSmallLogoPath = "";
     private String wizardMainLogoPath = "";
 
     private String buttonNextText = "Weiter";

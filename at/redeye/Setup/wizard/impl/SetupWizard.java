@@ -13,35 +13,34 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * 
  * @author Mario
  */
 
 public class SetupWizard {
 
-    private static Logger logger = Logger.getLogger (SetupWizard.class.getSimpleName());
+	private static Logger logger = Logger.getLogger(SetupWizard.class
+			.getSimpleName());
 
-    public static void main (String[] args) {
+	public static void main(String[] args) {
 
-        BasicConfigurator.configure();
-        WizardProperties props = new WizardProperties();
-        props.setButtonNextText("Vorwärts");
-        Root root = new LocalRoot("RedEye Labs Setup Wizard");
-        Wizard wizard = new Wizard(props);
-        WizardStepDBSetup dbSetup = new WizardStepDBSetup(root, wizard);
-        WizardStepWelcome welcome = new WizardStepWelcome(root, wizard);
-        WizardStepUserData user = new WizardStepUserData(root, wizard);
-        WizardStepFinished finish = new WizardStepFinished(root, wizard);
+		BasicConfigurator.configure();
+		WizardProperties props = new WizardProperties();
+		props.setButtonNextText("Vorwärts");
+		Root root = new LocalRoot("RedEye Labs Setup Wizard");
+		Wizard wizard = new Wizard(props);
+		WizardStepDBSetup dbSetup = new WizardStepDBSetup(root, wizard);
+		WizardStepWelcome welcome = new WizardStepWelcome(root, wizard);
+		WizardStepUserData user = new WizardStepUserData(root, wizard);
+		WizardStepFinished finish = new WizardStepFinished(root, wizard);
 
-        
-        wizard.addWindow(welcome);
-        wizard.addWindow(dbSetup);
-        wizard.addWindow(user);
-        wizard.addWindow(finish);
+		wizard.addWindow(welcome);
+		wizard.addWindow(dbSetup);
+		wizard.addWindow(user);
+		wizard.addWindow(finish);
+		logger.trace("Starting wizard");
+		wizard.start();
 
-        wizard.start();
-        
-
-    }
+	}
 
 }

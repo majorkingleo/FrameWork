@@ -17,7 +17,8 @@ import java.awt.Dimension;
  */
 public class WizardStepUserData extends WizardBaseWindow implements WizardWindowInterface {
 
-    private AdminDlg dlg = null;
+	private static final long serialVersionUID = 1L;
+	private AdminDlg dlg = null;
     private Wizard parentWizard = null;
 
     public WizardStepUserData(Root root, Wizard parent) {

@@ -4,12 +4,12 @@
  */
 package at.redeye.FrameWork.base.wizards.impl;
 
+import java.awt.Rectangle;
+import java.util.Vector;
+
 import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.base.wizards.WizardProperties;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.util.Vector;
 
 /**
  *
