@@ -22,6 +22,7 @@ public interface PrmDefaultChecksInterface {
     public final static long PRM_IS_SHORTTIME       = 0x0040;
     public final static long PRM_IS_DATE            = 0x0080;
     public final static long PRM_IS_DATETIME        = 0x0100;
+    public final static long PRM_IS_LOOKANDFEEL 	= 0x0200;
 
     public boolean doChecks (PrmActionEvent event);
 
