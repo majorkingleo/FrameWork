@@ -58,8 +58,8 @@ public class WizardStepFinished extends WizardBaseWindow {
     }
 
     public void onClose() {
-        super.close();
         parentWizard.setWizardStatus(WizardStatus.CLOSED);
+        super.close();
     }
 
     public void onInit() {

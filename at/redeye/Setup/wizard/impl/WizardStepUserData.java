@@ -8,6 +8,7 @@ import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.wizards.WizardWindowInterface;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
+import at.redeye.FrameWork.base.wizards.impl.WizardListener.WizardStatus;
 import at.redeye.UserManagement.impl.AdminDlg;
 import java.awt.Dimension;
 
@@ -46,6 +47,7 @@ public class WizardStepUserData extends WizardBaseWindow implements WizardWindow
     }
 
     public void onClose() {
+    	parentWizard.setWizardStatus(WizardStatus.CLOSED);
         super.close();
     }
 
