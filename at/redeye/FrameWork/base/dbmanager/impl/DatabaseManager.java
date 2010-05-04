@@ -47,6 +47,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	}
 
 	public void setTransaction(Transaction trans) {
+		
 		this.trans = trans;
 
 		dbmstype = trans.getDBMSType();
@@ -102,6 +103,12 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	}
 
 	public boolean tableExists(String table) throws SQLException {
+		
+		// For the very first time
+		if (showTables == null) {
+			return false;
+		}
+		
 		Collection<String> table_list = showTables.showTables(trans);
 
 		for (String s : table_list)
