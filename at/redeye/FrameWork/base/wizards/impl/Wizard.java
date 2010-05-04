@@ -78,7 +78,9 @@ public class Wizard implements WizardClientActionInterface,
 			window.onInit();
 
 			break;
+			
 		case WIZARD_ACTION_PREV:
+			
 			window.onClose();
 			currentWindow--;
 			window = allWindows.get(currentWindow);
@@ -90,8 +92,20 @@ public class Wizard implements WizardClientActionInterface,
 			window.controlButtons();
 			window.onInit();
 			break;
+			
+		case WIZARD_ACTION_FINISH: 
+			
+			window.onClose();
+			break;
+			
+		case WIZARD_ACTION_CLOSE: 
+			
+			window.onClose();
+			break;
 
 		}
+		
+		
 	}
 
 	private void prepareLegendText(WizardBaseWindow window) {
@@ -142,7 +156,8 @@ public class Wizard implements WizardClientActionInterface,
 
 	@Override
 	public void updateWizardListeners(WizardStatus currentWizardStatus) {
-
+		
+		System.out.println("UPDATE WIZARD LISTENER");
 		for (WizardListener currentListener : allWizardListeners) {
 			currentListener.onStateChange(currentWizardStatus);
 		}
