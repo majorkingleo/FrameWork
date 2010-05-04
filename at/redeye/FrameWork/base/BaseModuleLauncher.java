@@ -220,6 +220,7 @@ public abstract class BaseModuleLauncher {
 	}
 
 	public void setCommonLoggingLevel() {
+		
 		String do_logging = getStartupParam("dl", "do-logging", "LOGGING");
 		String level = getStartupParam("ll", "logging-level", "LOGGING_LEVEL");
 		String dir = getStartupParam("ld", "logging-dir", "LOGGING_DIR");
@@ -262,7 +263,9 @@ public abstract class BaseModuleLauncher {
 
 		root.getSetup().saveConfig();
 
-		configureLogging();
+		// I think this is too much...
+		
+		//configureLogging();
 	}
 
 	public boolean splashEnabled() {
