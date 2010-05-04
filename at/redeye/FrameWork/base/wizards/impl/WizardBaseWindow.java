@@ -168,8 +168,7 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
 
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         action = WizardAction.WIZARD_ACTION_CLOSE;
-        close();
-
+        getParentWizard().handleUpdate();
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     private void buttonPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPrevActionPerformed
@@ -180,12 +179,11 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
     private void buttonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNextActionPerformed
         action = WizardAction.WIZARD_ACTION_NEXT;
         getParentWizard().handleUpdate();
-
     }//GEN-LAST:event_buttonNextActionPerformed
 
     private void buttonFinishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonFinishActionPerformed
         action = WizardAction.WIZARD_ACTION_FINISH;
-        close();
+        getParentWizard().handleUpdate();
     }//GEN-LAST:event_buttonFinishActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCancel;
