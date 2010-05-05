@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.base;
 
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -37,29 +38,29 @@ public abstract class AutoLogger {
             do_stuff();
             failed = false;
         } catch (SQLException ex) {               
-            logger.error("Exception: " + ex.toString());
-            thrown_ex = ex;
-            ex.printStackTrace();
+            logger.error("Exception: " + ex );
+            logger.error(StringUtils.ExceptionToString(ex));
+            thrown_ex = ex;            
         } catch (TableBindingNotRegisteredException ex) {
             logger.error("Exception: " + ex.toString());
+            logger.error(StringUtils.ExceptionToString(ex));
             thrown_ex = ex;
-            ex.printStackTrace();
         } catch (UnsupportedDBDataTypeException ex) {
             logger.error("Exception: " + ex.toString());
+            logger.error(StringUtils.ExceptionToString(ex));
             thrown_ex = ex;
-            ex.printStackTrace();
         } catch (WrongBindFileFormatException ex) {
             logger.error("Exception: " + ex.toString());
-            thrown_ex = ex;
-            ex.printStackTrace();
+            logger.error(StringUtils.ExceptionToString(ex));
+            thrown_ex = ex;            
         } catch (CloneNotSupportedException ex) {
             logger.error("Exception: " + ex.toString());
-            thrown_ex = ex;
-            ex.printStackTrace();
+            logger.error(StringUtils.ExceptionToString(ex));
+            thrown_ex = ex;            
         } catch ( Exception ex ) {
             logger.error("Exception: " + ex.toString());
-            thrown_ex = ex;
-            ex.printStackTrace();
+            logger.error(StringUtils.ExceptionToString(ex));
+            thrown_ex = ex;            
         }
     }
             

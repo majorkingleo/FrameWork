@@ -48,27 +48,27 @@ public abstract class AutoMBox
         } catch (SQLException ex) {               
             logger.error("Exception: " + ex.toString());
             logger.error("Exception: " + ex.getMessage());
+            logger.error(StringUtils.ExceptionToString(ex));
             thrown_ex = ex;
-            ex.printStackTrace();
         } catch (TableBindingNotRegisteredException ex) {
             logger.error("Exception: " + ex.toString());
+            logger.error(StringUtils.ExceptionToString(ex));
             thrown_ex = ex;
-            ex.printStackTrace();
         } catch (UnsupportedDBDataTypeException ex) {
             logger.error("Exception: " + ex.toString());
+            logger.error(StringUtils.ExceptionToString(ex));
             thrown_ex = ex;
-            ex.printStackTrace();
         } catch (WrongBindFileFormatException ex) {
             logger.error("Exception: " + ex.toString());
+            logger.error(StringUtils.ExceptionToString(ex));
             thrown_ex = ex;
-            ex.printStackTrace();
         } catch (CloneNotSupportedException ex) {
             logger.error("Exception: " + ex.toString());
-            thrown_ex = ex;
-            ex.printStackTrace();              
+            logger.error(StringUtils.ExceptionToString(ex));
+            thrown_ex = ex;            
         } catch (Exception ex) {
             logger.error("Exception: " + ex.toString() + "\n" + ex.getLocalizedMessage() );
-            ex.printStackTrace();
+            logger.error(StringUtils.ExceptionToString(ex));
             
             thrown_ex = ex;            
         }
