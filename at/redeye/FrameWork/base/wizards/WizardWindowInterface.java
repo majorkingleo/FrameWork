@@ -15,7 +15,7 @@ public interface WizardWindowInterface {
     public boolean allowJumpPrevWindow();
     public boolean allowJumpToEnd ();
     public boolean allowCloseBeforeEnd ();
-    public void onClose ();
+    public void onClose ( WizardAction current_step );
     public void onInit ();
     public WizardAction getRecentAction ();
 }

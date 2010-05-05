@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
 
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
@@ -20,6 +19,7 @@ import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.utilities.MD5Calc;
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
@@ -35,8 +35,7 @@ import at.redeye.UserManagement.bindtypes.DBPb;
  */
 public class AdminDlg extends BaseDialog {
 
-    private TableManipulator tm;
-    private static Logger logger = Logger.getLogger(AdminDlg.class.getSimpleName());
+    private TableManipulator tm;    
     private static final long serialVersionUID = 1L;
     private final static String menuTitle = "Administration Benutzerdaten";
     private Vector<DBStrukt> pbEntries;
@@ -437,6 +436,8 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
         } catch (SQLException ex) {
 
             logger.error(ex);
+            logger.error(StringUtils.ExceptionToString(ex));
+
         } catch (UnsupportedDBDataTypeException ex) {
 
             logger.error(ex);

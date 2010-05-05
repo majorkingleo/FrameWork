@@ -29,7 +29,7 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
 	private static final long serialVersionUID = 1L;
 	private HashMap<WizardAction, Boolean> actionControl;
     private WizardAction action;
-    
+    private boolean closeActionCalled = false;
 
     /** Creates new form WizardBaseWindow */
     public WizardBaseWindow(Root root, String title) {
@@ -40,6 +40,16 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
         actionControl.put(WizardAction.WIZARD_ACTION_PREV, allowJumpPrevWindow());
         actionControl.put(WizardAction.WIZARD_ACTION_FINISH, allowJumpToEnd());
         initComponents();
+
+
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                    action = WizardAction.WIZARD_ACTION_CLOSE;
+                    getParentWizard().handleUpdate();
+            }
+        });
     }
 
     /** This method is called from within the constructor to

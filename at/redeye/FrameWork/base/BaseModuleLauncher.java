@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.ProxySelector;
 import java.net.URL;
 import javax.swing.JOptionPane;
-import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -25,7 +24,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 
-import com.sun.java.swing.plaf.motif.MotifLookAndFeel;
 
 /**
  * 
@@ -275,6 +273,12 @@ public abstract class BaseModuleLauncher {
 
 		return true;
 	}
+
+        public void closeSplash()
+        {
+            if( splash != null )
+                splash.close();
+        }
 
 	/**
 	 * This method sets the LookAndFeel which the user has parameterized. It may

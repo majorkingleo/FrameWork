@@ -26,10 +26,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="960" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="1101" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jLabel1" pref="928" max="32767" attributes="0"/>
+                      <Component id="jLabel1" pref="1063" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jBHelp" min="-2" pref="32" max="-2" attributes="0"/>
                   </Group>

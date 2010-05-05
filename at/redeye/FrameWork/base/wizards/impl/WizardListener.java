@@ -7,6 +7,12 @@ public interface WizardListener {
 		CLOSED
 	}
 	
-	public void onStateChange (WizardStatus currentWizardStatus);
+        /**
+         * Keeps the listener informed about what's going on
+         * @param currentWizardStatus
+         * @return return <b>true</b> if you wan't to be keep informed on future events
+         * when returning <b>false</b>, the listener will be deregistered
+         */
+        public boolean onStateChange(WizardStatus currentWizardStatus);
 
 }

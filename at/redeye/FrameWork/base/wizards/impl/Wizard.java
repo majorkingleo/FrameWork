@@ -12,6 +12,8 @@ import at.redeye.FrameWork.base.wizards.WizardAttachInterface;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.base.wizards.WizardProperties;
 import at.redeye.FrameWork.base.wizards.impl.WizardListener.WizardStatus;
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * 
@@ -21,10 +23,12 @@ import at.redeye.FrameWork.base.wizards.impl.WizardListener.WizardStatus;
 public class Wizard implements WizardClientActionInterface,
 		WizardAttachInterface {
 
-	private Vector<WizardListener> allWizardListeners = new Vector<WizardListener>();
+	private Collection<WizardListener> allWizardListeners = new LinkedList<WizardListener>();
 	private Vector<WizardBaseWindow> allWindows = new Vector<WizardBaseWindow>();
 	private WizardProperties props = null;
-	
+
+        private boolean beeing_in_update_state = false;
+        private Vector<WizardListener> toRemoveListeners = new Vector<WizardListener>();;
 
 	int currentWindow = 0;
 
@@ -63,10 +67,12 @@ public class Wizard implements WizardClientActionInterface,
 		WizardBaseWindow window = allWindows.get(currentWindow);
 		Rectangle bounds = window.getBounds();
 
-		switch (window.getRecentAction()) {
+                WizardAction action = window.getRecentAction();
+
+		switch (action) {
 
 		case WIZARD_ACTION_NEXT:
-			window.onClose();
+			window.onClose(action);
 			currentWindow++;
 			window = allWindows.get(currentWindow);
 			if (currentWindow == (allWindows.size() - 1)) {
@@ -76,12 +82,13 @@ public class Wizard implements WizardClientActionInterface,
 			prepareLegendText(window);
 			window.controlButtons();
 			window.onInit();
+                        window.toFront();
 
 			break;
 			
 		case WIZARD_ACTION_PREV:
 			
-			window.onClose();
+			window.onClose(action);
 			currentWindow--;
 			window = allWindows.get(currentWindow);
 			if (currentWindow == 0) {
@@ -91,16 +98,19 @@ public class Wizard implements WizardClientActionInterface,
 			prepareLegendText(window);
 			window.controlButtons();
 			window.onInit();
+                        window.toFront();
 			break;
 			
 		case WIZARD_ACTION_FINISH: 
-			
-			window.onClose();
+
+                        setWizardStatus(WizardStatus.CLOSED);
+			window.onClose(action);
 			break;
 			
 		case WIZARD_ACTION_CLOSE: 
-			
-			window.onClose();
+
+                        setWizardStatus(WizardStatus.CLOSED);
+			window.onClose(action);
 			break;
 
 		}
@@ -150,17 +160,42 @@ public class Wizard implements WizardClientActionInterface,
 
 	@Override
 	public void removeWizardListener(WizardListener listener) {
-		allWizardListeners.remove(listener);
-
+                        
+            if( !beeing_in_update_state )
+            {
+                allWizardListeners.remove(listener);
+            }
+            else
+            {
+                toRemoveListeners.add(listener);
+            }
 	}
 
 	@Override
 	public void updateWizardListeners(WizardStatus currentWizardStatus) {
-		
-		System.out.println("UPDATE WIZARD LISTENER");
-		for (WizardListener currentListener : allWizardListeners) {
-			currentListener.onStateChange(currentWizardStatus);
-		}
+
+            beeing_in_update_state = true;
+
+            System.out.println("UPDATE WIZARD LISTENER");
+            for (WizardListener currentListener : allWizardListeners) {
+                if( currentListener.onStateChange(currentWizardStatus) == false )
+                {
+                    if( !toRemoveListeners.contains(currentListener) )
+                        toRemoveListeners.add(currentListener);
+                }
+            }
+
+            beeing_in_update_state = false;
+
+            /*
+             * Das müss ma so machen, weil wenn beim updateEvent einer sich nun
+             * deregistrieren will, und removeWizardListener aufruft kommts zu einer
+             * ConcurrentModificationException un nix passiert.
+             */
+            for( WizardListener listener : toRemoveListeners )
+            {
+                removeWizardListener(listener);
+            }
 
 	}
 

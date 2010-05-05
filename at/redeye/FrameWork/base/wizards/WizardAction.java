@@ -10,6 +10,9 @@ package at.redeye.FrameWork.base.wizards;
  */
 public enum WizardAction {
 
-    WIZARD_ACTION_PREV, WIZARD_ACTION_NEXT, WIZARD_ACTION_CLOSE, WIZARD_ACTION_FINISH,
+    WIZARD_ACTION_PREV,
+    WIZARD_ACTION_NEXT,
+    WIZARD_ACTION_CLOSE,
+    WIZARD_ACTION_FINISH,
 }
 

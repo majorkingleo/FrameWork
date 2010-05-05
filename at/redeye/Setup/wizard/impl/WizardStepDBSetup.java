@@ -7,6 +7,7 @@ package at.redeye.Setup.wizard.impl;
 
 import at.redeye.FrameWork.base.ConnectionDialog;
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardWindowInterface;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
@@ -47,8 +48,7 @@ public class WizardStepDBSetup extends WizardBaseWindow implements WizardWindowI
         return true;
     }
 
-    public void onClose() {
-    	parentWizard.setWizardStatus(WizardStatus.CLOSED);
+    public void onClose(WizardAction current_action) {
         super.close();
     }
 

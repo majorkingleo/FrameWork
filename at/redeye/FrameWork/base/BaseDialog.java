@@ -121,7 +121,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         this.addWindowListener(new java.awt.event.WindowAdapter() {
 
             @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
+            public void windowClosing(java.awt.event.WindowEvent e) {                
                 if (canClose()) {
                     close();
                 }

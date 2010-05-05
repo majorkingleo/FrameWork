@@ -5,6 +5,7 @@
 package at.redeye.Setup.wizard.impl;
 
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
 
@@ -52,7 +53,7 @@ public class WizardStepWelcome extends WizardBaseWindow {
         return true;
     }
 
-    public void onClose() {
+    public void onClose(WizardAction current_action) {
         super.close();
     }
 
