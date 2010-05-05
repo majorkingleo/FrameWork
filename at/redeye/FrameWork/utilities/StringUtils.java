@@ -278,11 +278,37 @@ public class StringUtils {
         return str.toString();
     }
 
+    /**
+     * converts a double into a string, by removing useless zeros from the end
+     * of the string
+     * eg:
+     * <ul>
+     *  <li>12.2340000 => 12.234</li>
+     *  <li>0.03 => 0.03</li>
+     *  <li>12.000 => 12</li>
+     * </ul>
+     * @param d
+     * @param rouding  precision
+     * @return
+     */
+
     public static String FormatDouble( double d, int rounding )
     {
         return FormatDouble(Rounding.RndDouble(d, rounding));
     }
 
+    /**
+     * converts a double into a string, by removing useless zeros from the end
+     * of the string
+     * eg:
+     * <ul>
+     *  <li>12.2340000 => 12.234</li>
+     *  <li>0.03 => 0.03</li>
+     *  <li>12.000 => 12</li>
+     * </ul>
+     * @param d the number
+     * @return
+     */
     public static String FormatDouble( double d )
     {
         String s = String.format("%f",d);
@@ -293,6 +319,11 @@ public class StringUtils {
         return s;
     }
 
+    /**
+     * Finds out, if the given string has the meaning of 'Yes'
+     * @param maybe_a_yes_value
+     * @return true, false
+     */
     public static boolean isYes(String maybe_a_yes_value)
     {
         if( maybe_a_yes_value == null )
@@ -316,7 +347,11 @@ public class StringUtils {
         return false;
     }
 
-
+    /**
+    * Converts the complete Backtrace of an Exception into a String
+    * @param ex
+    * @return Backtrace of the Exception
+    */
     public static String ExceptionToString( Exception ex )
     {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
