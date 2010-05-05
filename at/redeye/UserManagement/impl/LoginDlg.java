@@ -36,8 +36,6 @@ public class LoginDlg extends BaseDialog {
 	/** Creates new form LoginDlg */
 	private static final String dlgName = "Login Dialog";
 	private UserManagementInterface um;
-	private static Logger logger = Logger.getLogger(LoginDlg.class
-			.getSimpleName());
 
 	/** Creates new form LoginDlg */
 	public LoginDlg(Root root, UserManagementInterface um) {
@@ -45,6 +43,13 @@ public class LoginDlg extends BaseDialog {
 		this.um = um;
 		initComponents();
 	}
+
+    @Override
+    public boolean openWithLastWidthAndHeight()
+    {
+        // ansonsten wird das Loginfenster immer größer. Keine Ahnung warum.
+        return false;
+    }
 
 	/**
 	 * This method is called from within the constructor to initialize the form.
