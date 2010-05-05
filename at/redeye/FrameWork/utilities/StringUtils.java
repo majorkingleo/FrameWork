@@ -4,6 +4,8 @@
  */
 package at.redeye.FrameWork.utilities;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Vector;
 
 /**
@@ -312,5 +314,17 @@ public class StringUtils {
             return true;
 
         return false;
+    }
+
+
+    public static String ExceptionToString( Exception ex )
+    {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        PrintStream s = new PrintStream(bos);
+        ex.printStackTrace(s);
+        s.flush();
+        
+        return bos.toString();
     }
 }
