@@ -103,30 +103,35 @@ public class ConnectionDialog extends BaseDialog {
                         wizardAction.applyAction(WizardAction.WIZARD_ACTION_NEXT, false);
                 }
 
-                JTDatabase.setVisible(true);
-                JTInstance.setVisible(false);
-                JTHost.setVisible(true);
-                JTPort.setVisible(true);
-                JTUser.setVisible(true);
-                JTPasswd.setVisible(true);
+                JTDatabase.setEditable(true);
+                JTHost.setEditable(true);
+                JTPort.setEditable(true);
+                JTUser.setEditable(true);
+                JTPasswd.setEditable(true);
+
+                logger.info("selectd item: " + JCType.getSelectedItem());
 
                 if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_ORACLE )
                 {
-                    JTDatabase.setVisible(false);
-                    JTInstance.setVisible(true);
+                    logger.info("Oracle");
+                    JTDatabase.setEditable(false);
+                    JTInstance.setEditable(true);
 
                 } else if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_SQLITE ||
                            JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_JAVADB ) {
 
-                    JTDatabase.setVisible(true);
-                    JTInstance.setVisible(false);
-                    JTHost.setVisible(false);
-                    JTPort.setVisible(false);
-                    JTUser.setVisible(false);
-                    JTPasswd.setVisible(false);
+                    logger.info("file database");
+                    JTDatabase.setEditable(true);
+                    JTInstance.setEditable(false);
+                    JTHost.setEditable(false);
+                    JTPort.setEditable(false);
+                    JTUser.setEditable(false);
+                    JTPasswd.setEditable(false);
 
+                } else {
+                    logger.info("something else");
+                    JTInstance.setEditable(false);
                 }
-
             }
 
         });
@@ -340,9 +345,9 @@ public class ConnectionDialog extends BaseDialog {
                         .addComponent(JBTest)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(JBManage)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                         .addComponent(JBClose))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -354,13 +359,13 @@ public class ConnectionDialog extends BaseDialog {
                             .addComponent(JLInstance))
                         .addGap(38, 38, 38)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(JTInstance, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                            .addComponent(JTDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                            .addComponent(JTUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                            .addComponent(JTPort, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                            .addComponent(JTHost, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                            .addComponent(JCType, 0, 381, Short.MAX_VALUE)
-                            .addComponent(JTPasswd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))))
+                            .addComponent(JTInstance, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .addComponent(JTDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .addComponent(JTUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .addComponent(JTPort, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .addComponent(JTHost, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                            .addComponent(JCType, 0, 385, Short.MAX_VALUE)
+                            .addComponent(JTPasswd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -394,7 +399,7 @@ public class ConnectionDialog extends BaseDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLInstance)
                     .addComponent(JTInstance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -593,9 +598,9 @@ public void setBindtypeManager( DBBindtypeManager bindtypeManager )
     this.bindtypeManager = bindtypeManager;
     
     if( this.bindtypeManager != null )
-        JBManage.setVisible(true);
+        JBManage.setEnabled(true);
     else
-        JBManage.setVisible(false);
+        JBManage.setEnabled(false);
 }
 
 
