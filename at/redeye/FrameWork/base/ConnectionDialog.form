@@ -31,10 +31,10 @@
                       <Component id="JBTest" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JBManage" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="137" max="32767" attributes="0"/>
+                      <EmptySpace pref="27" max="32767" attributes="0"/>
                       <Component id="JBClose" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jSeparator1" alignment="0" pref="543" max="32767" attributes="0"/>
+                  <Component id="jSeparator1" alignment="0" pref="523" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -47,13 +47,13 @@
                       </Group>
                       <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="JTInstance" alignment="0" pref="436" max="32767" attributes="0"/>
-                          <Component id="JTDatabase" alignment="0" pref="436" max="32767" attributes="0"/>
-                          <Component id="JTUser" alignment="1" pref="436" max="32767" attributes="0"/>
-                          <Component id="JTPort" alignment="0" pref="436" max="32767" attributes="0"/>
-                          <Component id="JTHost" alignment="0" pref="436" max="32767" attributes="0"/>
-                          <Component id="JCType" alignment="0" pref="436" max="32767" attributes="0"/>
-                          <Component id="JTPasswd" alignment="1" pref="436" max="32767" attributes="0"/>
+                          <Component id="JTInstance" alignment="0" pref="381" max="32767" attributes="0"/>
+                          <Component id="JTDatabase" alignment="0" pref="381" max="32767" attributes="0"/>
+                          <Component id="JTUser" alignment="1" pref="381" max="32767" attributes="0"/>
+                          <Component id="JTPort" alignment="0" pref="381" max="32767" attributes="0"/>
+                          <Component id="JTHost" alignment="0" pref="381" max="32767" attributes="0"/>
+                          <Component id="JCType" alignment="0" pref="381" max="32767" attributes="0"/>
+                          <Component id="JTPasswd" alignment="1" pref="381" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -99,7 +99,7 @@
                   <Component id="JLInstance" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="JTInstance" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="33" max="32767" attributes="0"/>
+              <EmptySpace pref="15" max="32767" attributes="0"/>
               <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">

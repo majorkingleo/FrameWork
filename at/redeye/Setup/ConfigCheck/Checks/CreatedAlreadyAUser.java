@@ -1,0 +1,64 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package at.redeye.Setup.ConfigCheck.Checks;
+
+import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.Setup.ConfigCheck.ConfigCheck;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.UserManagement.bindtypes.DBPb;
+import java.util.Vector;
+
+/**
+ *
+ * @author martin
+ */
+public class CreatedAlreadyAUser extends ConfigCheck
+{
+    public CreatedAlreadyAUser( Root root )
+    {
+        super( root, "is there already a user in the dabase");
+    }
+
+    @Override
+    public boolean doIHaveRequiredFeature()
+    {
+        Transaction trans = root.getDBConnection().getDefaultTransaction();
+
+        Vector<MOMMDBDataType> args = new Vector<MOMMDBDataType>();
+
+        args.add(MOMMDBDataType.DB_TYPE_LONG);
+
+        Vector<Vector<?>> res;
+
+        DBPb pb = new DBPb();
+
+        try
+        {
+            res = trans.getStmtExecInterface().fetchColumnValue("select count(*) from " + trans.markTable(pb), args);
+            trans.rollback();
+        } catch( Exception ex ) {
+            logger.error(StringUtils.ExceptionToString(ex));
+            return false;
+        }
+
+        if( res == null  ||
+            res.isEmpty() )
+        {
+            logger.error("rsult set is empty??");
+            return false;
+        }
+
+        Long count = (Long)res.get(0).get(0);
+
+        if( count > 0 )
+            return true;
+
+        return false;
+    }
+
+}

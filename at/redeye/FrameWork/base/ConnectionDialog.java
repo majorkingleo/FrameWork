@@ -11,8 +11,6 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
@@ -25,8 +23,9 @@ import at.redeye.FrameWork.base.transaction.SqLiteTransaction;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
-import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.Setup.ConfigCheck.CheckConfigBase;
+import at.redeye.Setup.ConfigCheck.Checks.HaveDbConnection;
 import at.redeye.SqlDBInterface.SqlDBConnection.MOMMDbConnectionInterface;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMDBConnector;
@@ -59,62 +58,19 @@ public class ConnectionDialog extends BaseDialog {
 
         initComponents();
 
-        DBHost.append( root.getSetup().getLocalConfig(Setup.DBHost, "localhost" ) );
-        DBUser.append( root.getSetup().getLocalConfig(Setup.DBUser, "" ) );
-        DBPasswd.append( root.getSetup().getLocalConfig(Setup.DBPasswd, "" ) );
-        DBDatabase.append( root.getSetup().getLocalConfig(Setup.DBDatabase, "" ) );
-        DBInstance.append( root.getSetup().getLocalConfig(Setup.DBInstance, "" ) );
-        DBPort.append( root.getSetup().getLocalConfig(Setup.DBPort, "" ) );
-        DBType = MOMMSupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, MOMMSupportedDBMSTypes.DB_MYSQL.toString() ) );
-
-        bindVar(JTHost, DBHost);
-        bindVar(JCType, DBType);
-        bindVar(JTUser, DBUser);
-        bindVar(JTPasswd, DBPasswd);
-        bindVar(JTDatabase, DBDatabase);
-        bindVar(JTPort, DBPort);
-        bindVar(JTInstance, DBInstance);
-
-        setBindtypeManager( root.getBindtypeManager() );
-
-        JCType.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-                JTDatabase.setVisible(true);
-                JTInstance.setEditable(false);
-                JTHost.setEditable(true);
-                JTPort.setEditable(true);
-                JTUser.setEditable(true);
-                JTPasswd.setEditable(true);
-
-                if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_ORACLE )
-                {
-                    JTDatabase.setEditable(false);
-                    JTInstance.setEditable(true);
-
-                } else if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_SQLITE ) {
-
-                    JTDatabase.setEditable(true);
-                    JTInstance.setEditable(false);
-                    JTHost.setEditable(false);
-                    JTPort.setEditable(false);
-                    JTUser.setEditable(false);
-                    JTPasswd.setEditable(false);
-                }
-
-            }
-
-        });
-
-        var_to_gui();
+        initCommon();
     }
 
     public ConnectionDialog( Root root ) {
         super( root , "Datenbankverbindung");
   
         initComponents();
-                
+
+        initCommon();
+    }
+
+    private void initCommon()
+    {
         DBHost.append( root.getSetup().getLocalConfig(Setup.DBHost, "localhost" ) );
         DBUser.append( root.getSetup().getLocalConfig(Setup.DBUser, "" ) );
         DBPasswd.append( root.getSetup().getLocalConfig(Setup.DBPasswd, "" ) );
@@ -122,7 +78,7 @@ public class ConnectionDialog extends BaseDialog {
         DBInstance.append( root.getSetup().getLocalConfig(Setup.DBInstance, "" ) );
         DBPort.append( root.getSetup().getLocalConfig(Setup.DBPort, "" ) );
         DBType = MOMMSupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, MOMMSupportedDBMSTypes.DB_MYSQL.toString() ) );
-        
+
         bindVar(JTHost, DBHost);
         bindVar(JCType, DBType);
         bindVar(JTUser, DBUser);
@@ -130,39 +86,51 @@ public class ConnectionDialog extends BaseDialog {
         bindVar(JTDatabase, DBDatabase);
         bindVar(JTPort, DBPort);
         bindVar(JTInstance, DBInstance);
-        
+
         setBindtypeManager( root.getBindtypeManager() );
-        
+
         JCType.addActionListener(new ActionListener() {
 
+            boolean initial = true;
+
             public void actionPerformed(ActionEvent e) {
-                                                
-                JTDatabase.setVisible(true);                                
-                JTInstance.setEditable(false);                
-                JTHost.setEditable(true);                
-                JTPort.setEditable(true);                
-                JTUser.setEditable(true);                
-                JTPasswd.setEditable(true);
-                    
-                if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_ORACLE )
-                {                    
-                    JTDatabase.setEditable(false);                        
-                    JTInstance.setEditable(true);
-                    
-                } else if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_SQLITE ) {
-                                        
-                    JTDatabase.setEditable(true);                    
-                    JTInstance.setEditable(false);                    
-                    JTHost.setEditable(false);                    
-                    JTPort.setEditable(false);                    
-                    JTUser.setEditable(false);                    
-                    JTPasswd.setEditable(false);
+
+                if( wizardAction != null )
+                {
+                    if( initial )
+                        initial = false;
+                    else
+                        wizardAction.applyAction(WizardAction.WIZARD_ACTION_NEXT, false);
                 }
-                                
+
+                JTDatabase.setVisible(true);
+                JTInstance.setVisible(false);
+                JTHost.setVisible(true);
+                JTPort.setVisible(true);
+                JTUser.setVisible(true);
+                JTPasswd.setVisible(true);
+
+                if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_ORACLE )
+                {
+                    JTDatabase.setVisible(false);
+                    JTInstance.setVisible(true);
+
+                } else if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_SQLITE ||
+                           JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_JAVADB ) {
+
+                    JTDatabase.setVisible(true);
+                    JTInstance.setVisible(false);
+                    JTHost.setVisible(false);
+                    JTPort.setVisible(false);
+                    JTUser.setVisible(false);
+                    JTPasswd.setVisible(false);
+
+                }
+
             }
-            
+
         });
-        
+
         var_to_gui();
     }
 
@@ -372,9 +340,9 @@ public class ConnectionDialog extends BaseDialog {
                         .addComponent(JBTest)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(JBManage)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 137, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                         .addComponent(JBClose))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -386,13 +354,13 @@ public class ConnectionDialog extends BaseDialog {
                             .addComponent(JLInstance))
                         .addGap(38, 38, 38)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(JTInstance, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
-                            .addComponent(JTDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
-                            .addComponent(JTUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
-                            .addComponent(JTPort, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
-                            .addComponent(JTHost, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
-                            .addComponent(JCType, 0, 436, Short.MAX_VALUE)
-                            .addComponent(JTPasswd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE))))
+                            .addComponent(JTInstance, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                            .addComponent(JTDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                            .addComponent(JTUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                            .addComponent(JTPort, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                            .addComponent(JTHost, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                            .addComponent(JCType, 0, 381, Short.MAX_VALUE)
+                            .addComponent(JTPasswd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -426,7 +394,7 @@ public class ConnectionDialog extends BaseDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLInstance)
                     .addComponent(JTInstance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -470,55 +438,44 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
             return;
         }
         root.saveSetup();
-        wizardAction.applyAction(WizardAction.WIZARD_ACTION_NEXT, true);
+
+        CheckConfigBase check_config = new CheckConfigBase(root);
+
+        check_config.addCheck(new HaveDbConnection((root)));
+
+        if( check_config.shouldPopUpWizard() )
+        {
+            setupDatabase(false);
+        }
+
+        if( wizardAction != null )
+        {
+            wizardAction.applyAction(WizardAction.WIZARD_ACTION_NEXT, true);
+        }
     }
     
 }//GEN-LAST:event_JBSaveActionPerformed
 
-private void JBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBCloseActionPerformed
-     
-        close();
-}//GEN-LAST:event_JBCloseActionPerformed
-
-private void JBTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTestActionPerformed
-// TODO add your handling code here:
+private boolean setupDatabase( boolean success_message )
+{
     Connection con = try_connect();
-    
+
     if( con == null )
     {
-        JOptionPane.showMessageDialog(null, 
-            "Fehler beim Herstellen der Verbindung", 
-            "Error",
-            JOptionPane.WARNING_MESSAGE);
-    } else {
-        
-        JOptionPane.showMessageDialog(null, 
-            "Die Verbindung konnte hergestellt werden.", 
-            "Erfolg",
-            JOptionPane.INFORMATION_MESSAGE);
-    }
-}//GEN-LAST:event_JBTestActionPerformed
-
-private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBManageActionPerformed
-// TODO add your handling code here:
-    
-    Connection con = try_connect();
-    
-    if( con == null )
-    {
-        JOptionPane.showMessageDialog(null, 
-            "Fehler beim Herstellen der Verbindung", 
+        JOptionPane.showMessageDialog(null,
+            "Fehler beim Herstellen der Verbindung",
             "Error",
             JOptionPane.OK_OPTION);
+        return false;
     }
     else
     {
         Transaction t = null;
-        
+
         try {
             con.close();
 
-            ConnectionDefinition connparams = getDefinition();            
+            ConnectionDefinition connparams = getDefinition();
 
 			switch (connparams.getDBMSType()) {
 			case DB_MSSQL:
@@ -537,14 +494,13 @@ private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
                 t = new SqLiteTransaction(connparams);
                 break;
 			default:
-				Logger.getLogger(DBConnection.class.getName()).log(
-						Level.SEVERE, "Unsupported DBMS!");
-				return;
+				logger.error("Unsupported DBMS!");
+				return false;
 			}
 
             bindtypeManager.setTransaction(t);
-            
-            
+
+
             if( bindtypeManager.can_support_db() == false )
             {
                 JOptionPane.showMessageDialog(null,
@@ -553,51 +509,82 @@ private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
                         "um dieses Programm ausführen zu können."),
                         "Fehler",
                         JOptionPane.OK_OPTION);
-            } 
-            else 
-            {            
-                boolean success = bindtypeManager.autocreate();
+            }
+            else
+            {
+                boolean successful_created = bindtypeManager.autocreate();
 
-                if( !success )
+                if( !successful_created )
                 {
-                    t.rollback();                    
-                } else {                
-                    t.commit();                    
+                    t.rollback();
+                } else {
+                    t.commit();
 
-                    JOptionPane.showMessageDialog(null,
-                            StringUtils.autoLineBreak(
-                            "Die Datenbank konnte erfolgreich eingerichtet werden."),
-                            "Erfolg",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    return;
+                    if (success_message) {
+                        JOptionPane.showMessageDialog(null,
+                                StringUtils.autoLineBreak(
+                                "Die Datenbank konnte erfolgreich eingerichtet werden."),
+                                "Erfolg",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    return true;
                 }
             }
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(StringUtils.ExceptionToString(ex));
         } catch (SQLException ex) {
-            Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(StringUtils.ExceptionToString(ex));
         } catch (MissingConnectionParamException ex) {
-            Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(StringUtils.ExceptionToString(ex));
         } catch (UnSupportedDatabaseException ex) {
-            Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(StringUtils.ExceptionToString(ex));
         } finally {
-            
+
             if( t != null )
             {
                 try {
                     t.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(ConnectionDialog.class.getName()).log(Level.SEVERE, null, ex);
+                     logger.error(StringUtils.ExceptionToString(ex));
                 }
             }
         }
+
+        JOptionPane.showMessageDialog(null,
+            "Fehler beim Einrichten der Datenbank",
+            "Fehler",
+            JOptionPane.OK_OPTION);
+        return false;
+    }
+}
+
+private void JBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBCloseActionPerformed
+     
+        close();
+}//GEN-LAST:event_JBCloseActionPerformed
+
+private void JBTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTestActionPerformed
+
+    Connection con = try_connect();
+    
+    if( con == null )
+    {
+        JOptionPane.showMessageDialog(null, 
+            "Fehler beim Herstellen der Verbindung", 
+            "Error",
+            JOptionPane.WARNING_MESSAGE);
+    } else {
         
         JOptionPane.showMessageDialog(null, 
-            "Fehler beim Einrichten der Datenbank", 
-            "Fehler",
-            JOptionPane.OK_OPTION);            
+            "Die Verbindung konnte hergestellt werden.", 
+            "Erfolg",
+            JOptionPane.INFORMATION_MESSAGE);
     }
+}//GEN-LAST:event_JBTestActionPerformed
+
+private void JBManageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBManageActionPerformed
     
+    setupDatabase(true);
 }//GEN-LAST:event_JBManageActionPerformed
 
 

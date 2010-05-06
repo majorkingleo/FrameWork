@@ -16,7 +16,6 @@ import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
-import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.utilities.MD5Calc;
 import at.redeye.FrameWork.utilities.StringUtils;
@@ -40,8 +39,7 @@ public class AdminDlg extends BaseDialog {
     private final static String menuTitle = "Administration Benutzerdaten";
     private Vector<DBStrukt> pbEntries;
     private Vector<DBStrukt> oldPbs;
-    private UserManagementInterface um;
-    private Transaction trans;
+    private UserManagementInterface um;    
     private WizardClientActionInterface wizardAction = null;
 
     /**
@@ -79,8 +77,7 @@ public class AdminDlg extends BaseDialog {
             tm.hide(pb.locked);
         }
 
-        tm.prepareTable();
-        trans = super.getTransaction();
+        tm.prepareTable();        
         feed_table();
         tm.autoResize();
 
@@ -114,8 +111,7 @@ public class AdminDlg extends BaseDialog {
             tm.hide(pb.locked);
         }
 
-        tm.prepareTable();
-        trans = super.getTransaction();
+        tm.prepareTable();        
         feed_table();
         tm.autoResize();
 
@@ -312,7 +308,7 @@ public class AdminDlg extends BaseDialog {
 
         Set<Integer> editedRows = tm.getEditedRows();
 
-        MOMMTypeRegistrationInterface regi = trans.getTypeRegistration();
+        MOMMTypeRegistrationInterface regi = getTransaction().getTypeRegistration();
         MD5Calc md5 = new MD5Calc("MD5");
 
         for (Integer i : editedRows) {
@@ -355,8 +351,8 @@ public class AdminDlg extends BaseDialog {
             pb.hist.setAeHist(root.getUserName());
 
             try {
-                trans.updateValues(pb);
-                trans.commit();
+                getTransaction().updateValues(pb);
+                getTransaction().commit();
             } catch (SQLException sqlex) {
                 logger.error(getTransaction().getSql());
                 logger.error(sqlex);
@@ -406,11 +402,7 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
 
 }//GEN-LAST:event_buttonChangePwdActionPerformed
 
-    private void buttonNewUserActionPerformed(java.awt.event.ActionEvent evt) {
-
-        if (trans == null) {
-            trans = super.getTransaction();
-        }
+    private void buttonNewUserActionPerformed(java.awt.event.ActionEvent evt) {        
 
         try {
             int nextVal = getNewSequenceValue("UM_ID_SEQ");
@@ -425,11 +417,15 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
 
             newPb.hist.setAnHist(root.getUserName());
 
-            trans.insertValues(newPb);
+            getTransaction().insertValues(newPb);
 
             tm.setEditable(newPb.name);
             tm.setEditable(newPb.login);
             tm.add(newPb);
+
+            if( pbEntries == null )
+                pbEntries = new Vector<DBStrukt>();
+
             pbEntries.add(newPb);
             oldPbs.add(newPb.getCopy());
 

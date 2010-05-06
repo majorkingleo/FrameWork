@@ -123,12 +123,16 @@ public class UserDataHandling implements UserManagementInterface {
 
             case UM_LOGIN_DIALOG:
 
-                new LoginDlg(root, this).setVisible(true);
+                LoginDlg login_dlg = new LoginDlg(root, this);
+                login_dlg.setVisible(true);
+                login_dlg.toFront();
                 break;
 
             case UM_ADMINISTRATION_DIALOG:
 
-                new AdminDlg(root).setVisible(true);
+                AdminDlg admin_dlg = new AdminDlg(root);
+                admin_dlg.setVisible(true);
+                admin_dlg.toFront();
                 break;
             default:
                 break;

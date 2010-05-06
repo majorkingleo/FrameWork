@@ -34,7 +34,7 @@ public class CreateDesktopIconKDE extends CreateDesktopIcon
             return false;
         }
 
-        boolean use_gif = true;
+        boolean use_gif = false;
 
         String icon_name;
 
@@ -61,7 +61,7 @@ public class CreateDesktopIconKDE extends CreateDesktopIcon
             FileOutputStream fout = new FileOutputStream( ini_file );
 
             StringBuffer out = new StringBuffer();
-
+            
             out.append("[Desktop Entry]\n");
 
             out.append("Icon=");
