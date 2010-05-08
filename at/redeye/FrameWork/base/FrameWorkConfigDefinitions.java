@@ -29,11 +29,11 @@ public class FrameWorkConfigDefinitions {
     public static DBConfig ImagePreviewInFileOpen = new DBConfig("ImagePreviewinFileOpen", "false", "Soll im Datei öffnen Dialogen die Bildervorschau angezeigt werden?", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
     public static DBConfig AllowAutoLogin = new DBConfig("AllowAutoLogin", "false", "Ist eine automatische Anmeldung generell zulässig?", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
     public static DBConfig AutoLoginUser = new DBConfig("AutoLoginUser", "", "Legt den Login fest, mit dem die automatische Anmeldung durchgeführt wird.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_HAS_VALUE));
-    public static DBConfig LookAndFeel = new DBConfig ("LookAndFeel", "System", "Bestimmt das Aussehen der Benutzoberfläche. Mögliche Werte sind <System>, <Motif>, <Nimbus> oder <Metal>", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LOOKANDFEEL));
+    public static DBConfig LookAndFeel = new DBConfig ("LookAndFeel", "System", "Bestimmt das Aussehen der Benutzoberfläche. Mögliche Werte sind \"System\", \"Motif\", \"Nimbus\" oder \"Metal\"", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LOOKANDFEEL));
 
     public static void registerDefinitions() {
-        GlobalConfigDefinitions.add_help_path("/at/momm/FrameWork/framework/resources/Help/Params/");
-        LocalConfigDefinitions.add_help_path("/at/momm/FrameWork/framework/resources/Help/Params/");
+        GlobalConfigDefinitions.add_help_path("/at/redeye/FrameWork/framework/resources/Help/Params/");
+        LocalConfigDefinitions.add_help_path("/at/redeye/FrameWork/framework/resources/Help/Params/");
 
         addLocal(HelpParamColorEven);
         addLocal(HelpParamColorOdd);

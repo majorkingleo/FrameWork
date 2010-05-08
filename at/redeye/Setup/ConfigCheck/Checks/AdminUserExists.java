@@ -9,6 +9,7 @@ import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.Setup.ConfigCheck.ConfigCheck;
+import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import at.redeye.UserManagement.bindtypes.DBPermissionLevel;
 import java.util.Vector;
@@ -35,8 +36,10 @@ public class AdminUserExists extends ConfigCheck
         {
             Vector<DBPb> res = trans.fetchTable2(pb,
                     "where " + trans.markColumn(pb.locked) + "=0 and " +
-                    trans.markColumn(pb.plevel) + "=" + DBPermissionLevel.PERMISSIONLEVEL.Administrator.ordinal() );
+                    trans.markColumn(pb.plevel) + "="  + UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN);
             trans.rollback();
+
+            System.out.println(trans.getSql());
 
             if( res.isEmpty() )
                 return false;

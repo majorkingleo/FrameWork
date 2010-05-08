@@ -12,6 +12,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
+import java.util.TreeMap;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,34 +30,54 @@ public class PrmDBInit {
 
     public void initDb() {
 
-        try {
-            
-            Transaction trans = root.getDBConnection().getNewTransaction();
-            Set<String> keys = GlobalConfigDefinitions.entries.keySet();
-            for (String key : keys) {
-                DBConfig prm = root.getSetup().getConfig(key);
-                if (prm == null) {
-                    prm = GlobalConfigDefinitions.get(key);
-                    prm.hist.setAnHist("ModuleLauncher");
-                    if (trans.insertValues(prm) != 1) {
-                        logger.error("Failed to insert PRM <" + prm.getConfigName().toString() + ">\n");
+        if( root.getDBConnection() != null )
+        {
+            try {
+
+                Transaction trans = root.getDBConnection().getNewTransaction();
+                Set<String> keys = GlobalConfigDefinitions.entries.keySet();
+                for (String key : keys) {
+                    DBConfig prm = root.getSetup().getConfig(key);
+                    if (prm == null) {
+                        prm = GlobalConfigDefinitions.get(key);
+                        prm.hist.setAnHist("ModuleLauncher");
+                        if (trans.insertValues(prm) != 1) {
+                            logger.error("Failed to insert PRM <" + prm.getConfigName().toString() + ">\n");
+                        }
+                        trans.commit();
+                        logger.info("PRM <" + prm.getConfigName().toString() + "> successfully inserted!");
+                    } else {
+                        logger.debug("PRM <" + prm.getConfigName().toString() + "> already exists in database!");
                     }
-                    trans.commit();
-                    logger.info("PRM <" + prm.getConfigName().toString() + "> successfully inserted!");
-                } else {
-                    logger.debug("PRM <" + prm.getConfigName().toString() + "> already exists in database!");
                 }
+                trans.rollback();
+                root.getDBConnection().closeTransaction(trans);
+            } catch (SQLException se) {
+                logger.error("SQL-Error: " + se.getMessage());
+            } catch (WrongBindFileFormatException we) {
+                logger.error("Bind-Error: " + we.getMessage());
+            } catch (UnsupportedDBDataTypeException ute) {
+                logger.error("Wrong binding: " + ute.getMessage());
+            } catch (IOException ioe) {
+                logger.error("I/O error: " + ioe.getMessage());
             }
-            trans.rollback();
-            root.getDBConnection().closeTransaction(trans);
-        } catch (SQLException se) {
-            logger.error("SQL-Error: " + se.getMessage());
-        } catch (WrongBindFileFormatException we) {
-            logger.error("Bind-Error: " + we.getMessage());
-        } catch (UnsupportedDBDataTypeException ute) {
-            logger.error("Wrong binding: " + ute.getMessage());
-        } catch (IOException ioe) {
-            logger.error("I/O error: " + ioe.getMessage());
         }
+
+
+        Set<String> keys = LocalConfigDefinitions.entries.keySet();
+
+        TreeMap<String, DBConfig> vals = new TreeMap<String, DBConfig>();
+
+        for (String key : keys) {
+            vals.put(key, LocalConfigDefinitions.get(key));
+        }
+
+        for (String key : keys) {
+            DBConfig c = (DBConfig) vals.get(key).getCopy();
+            String val = root.getSetup().getLocalConfig(c.getConfigName(), c.getConfigValue());
+            root.getSetup().setLocalConfig(c.getConfigName(), c.getConfigValue(), true);
+        }
+
+        root.saveSetup();
     }
 }

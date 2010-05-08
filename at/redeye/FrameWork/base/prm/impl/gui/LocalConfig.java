@@ -177,16 +177,11 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
-    java.awt.EventQueue.invokeLater(new Runnable() {
+    HelpWinHook hook = new ConfigParamHook(root, "LOCALSETTINGSHOOOK", false,
+            LocalConfigDefinitions.help_search_path);
 
-        public void run() {
+    invokeDialog(new HelpWin(root, "/at/redeye/FrameWork/base/resources/Help/", "LocalConfig", hook));
 
-            HelpWinHook hook = new ConfigParamHook(root, "LOCALSETTINGSHOOOK", false,
-                    LocalConfigDefinitions.help_search_path);
-
-            new HelpWin(root, "/at/redeye/FrameWork/base/resources/Help/", "LocalConfig", hook).setVisible(true);
-        }
-    });
 }//GEN-LAST:event_jBHelpActionPerformed
 
 private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
