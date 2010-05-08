@@ -39,7 +39,10 @@ public class CreatedAlreadyAUser extends ConfigCheck
 
         try
         {
-            res = trans.getStmtExecInterface().fetchColumnValue("select count(*) from " + trans.markTable(pb), args);
+            res = trans.getStmtExecInterface().fetchColumnValue(
+                    "select count(*) from " + trans.markTable(pb) + " where " +
+                    trans.markColumn(pb.locked) + "=0",
+                    args);
             trans.rollback();
         } catch( Exception ex ) {
             logger.error(StringUtils.ExceptionToString(ex));
