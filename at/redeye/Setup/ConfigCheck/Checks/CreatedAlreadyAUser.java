@@ -52,7 +52,7 @@ public class CreatedAlreadyAUser extends ConfigCheck
         if( res == null  ||
             res.isEmpty() )
         {
-            logger.error("rsult set is empty??");
+            logger.error("result set is empty??");
             return false;
         }
 

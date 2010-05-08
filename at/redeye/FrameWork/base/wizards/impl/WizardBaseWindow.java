@@ -262,5 +262,9 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
         return false;
     }
 
+    public void setRecentAction(WizardAction a)
+    {
+        action = a;
+    }
 
 }

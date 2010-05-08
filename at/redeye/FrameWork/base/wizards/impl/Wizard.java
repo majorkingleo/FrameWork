@@ -62,7 +62,7 @@ public class Wizard implements WizardClientActionInterface,
 
 	}
 
-	protected void handleUpdate() {
+	public void handleUpdate() {
 
 		WizardBaseWindow window = allWindows.get(currentWindow);
 		Rectangle bounds = window.getBounds();
