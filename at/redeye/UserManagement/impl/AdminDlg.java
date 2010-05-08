@@ -53,40 +53,20 @@ public class AdminDlg extends BaseDialog {
         super(root, menuTitle);
         this.wizardAction = wizardAction;
         initComponents();
-        DBPb pb = new DBPb();
-        oldPbs = new Vector<DBStrukt>();
-        um = new UserDataHandling(root);
-        tm = new TableManipulator(root, jTable1, pb);
 
-        tm.hide(pb.id);
-        tm.hide(pb.hist.an_user);
-        tm.hide(pb.hist.an_zeit);
-        tm.hide(pb.hist.lo_user);
-        tm.hide(pb.hist.lo_zeit);
-
-        if (root.getUserPermissionLevel() == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
-            tm.setEditable(pb.locked);
-            tm.setEditable(pb.surname);
-            tm.setEditable(pb.title);
-            tm.setEditable(pb.plevel);
-            tm.setEditable(pb.pwd);
-            tm.setEditable(pb.login);
-            tm.setEditable(pb.name);
-        } else {
-            tm.hide(pb.pwd);
-            tm.hide(pb.locked);
-        }
-
-        tm.prepareTable();        
-        feed_table();
-        tm.autoResize();
-
+        initCommon();
     }
 
 
     public AdminDlg(Root root) {
         super(root, menuTitle);
         initComponents();
+
+        initCommon();
+    }
+
+    private void initCommon()
+    {
         DBPb pb = new DBPb();
         oldPbs = new Vector<DBStrukt>();
         um = new UserDataHandling(root);
@@ -111,13 +91,12 @@ public class AdminDlg extends BaseDialog {
             tm.hide(pb.locked);
         }
 
-        tm.prepareTable();        
+        tm.prepareTable();
         feed_table();
         tm.autoResize();
-
     }
 
-    void feed_table() {
+    public void feed_table() {
 
         try {
             tm.clear();
@@ -382,23 +361,14 @@ public class AdminDlg extends BaseDialog {
 
 private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 // TODO add your handling code here:
-
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-            new HelpWin(root, "/at/redeye/UserManagement/resources/Help/", "AdminDlg").setVisible(true);
-        }
-    });
+        
+        invokeDialog(new HelpWin(root, "/at/redeye/UserManagement/resources/Help/", "AdminDlg"));
+        
 }//GEN-LAST:event_jBHelpActionPerformed
 
 private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonChangePwdActionPerformed
 
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-            new PwdEditDlg(root, (DBPb) pbEntries.get(0)).setVisible(true);
-        }
-    });
+    invokeDialog(new PwdEditDlg(root, (DBPb) pbEntries.get(0)));
 
 }//GEN-LAST:event_buttonChangePwdActionPerformed
 

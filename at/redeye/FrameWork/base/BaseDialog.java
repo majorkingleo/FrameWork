@@ -30,6 +30,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JScrollBar;
@@ -648,5 +649,16 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         ScrollBar.setUnitIncrement(i);
     }
 
-
+    /**
+     * Little helper function that sets the frame visible and
+     * push it to front, by useing the wait cursor.
+     * @param frame
+     */
+    public void invokeDialog( JFrame frame )
+    {
+        setWaitCursor();
+        frame.setVisible(true);
+        frame.toFront();
+        setNormalCursor();
+    }
 }

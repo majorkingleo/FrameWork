@@ -62,6 +62,7 @@ public class WizardStepUserData extends WizardBaseWindow implements WizardWindow
         super.panelGuestContent.add(dlg.getRootPane());
         super.panelGuestContent.setPreferredSize(new Dimension(300, 200));
         super.panelGuestContent.updateUI();
+        dlg.feed_table();
     }
 
     @Override
