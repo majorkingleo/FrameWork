@@ -83,8 +83,10 @@ public abstract class BaseModuleLauncher {
 	}
 
 	public String getStartupParam(String shortname, String longname,
-			String envname, String default_url) {
-		String url = null;
+			String envname, String default_value) {
+
+                shortname = "-" + shortname;
+                longname = "-" + longname;
 
 		if (args != null) {
 			boolean next = false;
@@ -92,19 +94,28 @@ public abstract class BaseModuleLauncher {
 			for (String arg : args) {
 				if (next) {
 					return arg;
-				} else if (arg.equalsIgnoreCase("-" + shortname)
-						|| arg.equalsIgnoreCase("-" + longname)) {
+				} else if (arg.equalsIgnoreCase( shortname)
+				           || arg.equalsIgnoreCase(longname)) {
 					next = true;
 				}
 			}
 		}
-
-		if (url == null)
-			url = System.getProperty(envname.toUpperCase());
+		
+		String url = System.getProperty(envname.toUpperCase());
 
 		if (url == null || url.trim().isEmpty()) {
-			return default_url;
+                        String sdev = default_value;
+                        if( sdev == null )
+                            sdev = "(null)";
+
+                        System.out.println(envname + "=" +  sdev + " (default)" );
+			return default_value;
 		}
+
+                if( url != null )    
+                {
+                   System.out.println( envname + "=" + url);
+                }
 
 		return url;
 	}
@@ -317,5 +328,34 @@ public abstract class BaseModuleLauncher {
 			return UIManager.getSystemLookAndFeelClassName();
 		}
 	}
+
+    /**
+     * initialises the default params for the database
+     * vars, if they are not already existing
+     */
+    public void initDBConnectionFromParams() {
+        boolean always_overwrite = StringUtils.isYes(getStartupParam(null, "dboverwrite",
+                Setup.USE_DB_CONNECTION_ALWAYS_FROM_JNLP));
+
+        initIfSet(Setup.DBDatabase, always_overwrite);
+        initIfSet(Setup.DBHost, always_overwrite);
+        initIfSet(Setup.DBInstance, always_overwrite);
+        initIfSet(Setup.DBPasswd, always_overwrite);
+        initIfSet(Setup.DBPort, always_overwrite);
+        initIfSet(Setup.DBType, always_overwrite);
+        initIfSet(Setup.DBUser, always_overwrite);
+
+        root.saveSetup();
+    }
+
+        private void initIfSet( String param, boolean always_over_write )
+        {
+            String val = getStartupParam(param, param, param);
+
+            if( val != null )
+            {
+                root.getSetup().setLocalConfig(param, val, !always_over_write);
+            }
+        }
 
 }

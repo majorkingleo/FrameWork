@@ -96,8 +96,14 @@ public class LocalRoot extends Root {
         
         int port = 0;
         
-        if( !sport.isEmpty() )
-            port = Integer.parseInt(sport);
+        if( !sport.isEmpty() ) {
+            try {
+                port = Integer.parseInt(sport);
+            } catch( NumberFormatException ex ) {
+                logger.error("invalid database port: "  + sport );
+                return false;
+            }
+        }
         
         if( dbtype == MOMMSupportedDBMSTypes.DB_ORACLE )
             database = instance;

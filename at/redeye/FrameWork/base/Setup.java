@@ -16,23 +16,24 @@ import org.apache.log4j.Logger;
  * @author martin
  */
 public abstract class Setup {
+
+    static public final String USE_DB_CONNECTION_ALWAYS_FROM_JNLP="USE_DB_CONNECTION_ALWAYS_FROM_JNLP";
+    static public final String DBType = "DBType";
+    static public final String DBHost = "DBHost";
+    static public final String DBInstance = "DBInstance";
+    static public final String DBPort = "DBPort";
+    static public final String DBUser = "DBUser";
+    static public final String DBPasswd = "DBPasswd";
+    static public final String DBDatabase = "DBDatabase";
+    static public final String H1IPAddress = "H1IPAddress";
+    static public final String H1Port = "H1Port";
+    static public final String H1LTSAP = "H1LTSAP";
+    static public final String H1RTSAP = "H1RTSAP";
     
-    static public String DBType = "DBType";
-    static public String DBHost = "DBHost";
-    static public String DBInstance = "DBInstance";
-    static public String DBPort = "DBPort";
-    static public String DBUser = "DBUser";
-    static public String DBPasswd = "DBPasswd";
-    static public String DBDatabase = "DBDatabase";
-    static public String H1IPAddress = "H1IPAddress";
-    static public String H1Port = "H1Port";
-    static public String H1LTSAP = "H1LTSAP";
-    static public String H1RTSAP = "H1RTSAP";
-    
-    static public String WindowX = "WindowX";
-    static public String WindowY = "WindowY";
-    static public String WindowWidth = "WindowWidth";
-    static public String WindowHeight = "WindowHeight";
+    static public final String WindowX = "WindowX";
+    static public final String WindowY = "WindowY";
+    static public final String WindowWidth = "WindowWidth";
+    static public final String WindowHeight = "WindowHeight";
 
     public static Logger logger = Logger.getLogger(Setup.class);
     
@@ -105,9 +106,21 @@ public abstract class Setup {
     public abstract DBConfig getConfig( String key);
 
     public abstract DBConfig getLocalConfig(String key);
-    
-    public abstract void setLocalConfig( String key, String value, boolean if_not_exists );
-    
+
+    /**
+     * set a local parameter in the config file
+     * @param key   key element
+     * @param value your data
+     * @param if_not_exists set it to true and the parameter won't be overwritten,
+     * if it already exists.
+     */
+    public abstract void setLocalConfig(String key, String value, boolean if_not_exists);
+
+    /**
+     * set a local parameter in the config file
+     * @param key   key element
+     * @param value your data
+     */
     public abstract void setLocalConfig( String key, String value );
         
     public abstract void setConfig( String key, String value, boolean if_not_exists );
@@ -115,7 +128,11 @@ public abstract class Setup {
     public abstract void setConfig( String key, String value );
     
     public void saveConfig() {}
-    
+
+    /**
+     * @return true if this is the first start of this appliaction for this computer.
+     * simple checks, if the config file, of the appliaction already existed before, or not.
+     */
     public boolean initialRun()
     {
         return false;
