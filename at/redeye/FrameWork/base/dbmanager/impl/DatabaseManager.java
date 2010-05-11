@@ -25,9 +25,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.UserManagement.UserManagementInterface;
-import com.mysql.jdbc.Driver;
-import java.sql.DriverManager;
-import java.util.Enumeration;
+import java.util.HashMap;
 
 /**
  * 
@@ -41,6 +39,9 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	protected ShowTables showTables = null;
 	protected Vector<DBStrukt> tables = new Vector<DBStrukt>();    
 
+        HashMap<String,String> table_versions;
+        Collection<String> table_list;
+
 	public DatabaseManager() {
 
 	}
@@ -49,8 +50,16 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		setTransaction(trans);
 	}
 
+        private void clearCache()
+        {
+            table_versions = null;
+            table_list = null;
+        }
+
 	public void setTransaction(Transaction trans) {
-		
+
+            clearCache();
+
 		this.trans = trans;
 
 		dbmstype = trans.getDBMSType();
@@ -111,8 +120,9 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		if (showTables == null) {
 			return false;
 		}
-		
-		Collection<String> table_list = showTables.showTables(trans);
+
+                if( table_list == null )
+                    table_list = showTables.showTables(trans);
 
 		for (String s : table_list)
 			if (s.equalsIgnoreCase(table))
@@ -130,6 +140,19 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		if (!tableExists(vers.getName()))
 			return null;
 
+                if( table_versions == null )
+                {
+                    table_versions = new HashMap<String,String>();
+
+                    Vector<DBTableVersion> versions = trans.fetchTable2(new DBTableVersion());
+
+                    for( DBTableVersion version_entry : versions )
+                    {
+                        table_versions.put(version_entry.table.getValue().toUpperCase(),version_entry.version.getValue());
+                    }
+                }
+
+                /* old code
 		DBTableVersion binddesc = new DBTableVersion();
 
 		binddesc.table.loadFromString(table);
@@ -139,8 +162,9 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 		if (res.size() > 0)
 			return ((DBTableVersion) res.get(0)).version.toString();
+                */
 
-		return null;
+                return table_versions.get(table.toUpperCase());
 	}
 
     @Override
@@ -174,8 +198,12 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
         
         if( !backupTable( strukt.getName(), table_name) )        
             return false;
+
+        // new table in the DB add it to the Cache
+        if( table_list != null )
+            table_list.add(table_name);
       
-        String sql = "";
+        String sql = new String();
         
         for( int i = fromVersion; i < strukt.getVersion(); i++ )
         {
@@ -287,7 +315,11 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 			
 		}
 
-		return true;
+            if (table_versions != null) {
+                table_versions.put(name, version.toString());
+            }
+
+            return true;
 	}
 
 	public void register(DBStrukt strukt) {
@@ -345,49 +377,50 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
     public boolean check_table_versions() 
     {
-        AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {                        
-            
-			@Override
-			public void do_stuff() throws Exception {
+        AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {
 
-				for (final DBStrukt strukt : tables) {
-					logger.debug("Checking Table: " + strukt.getName());
-                    
-                    String sversion = getTableVersion( strukt.getName() );
-                    
-                    if( sversion == null )
-                    {
+            @Override
+            public void do_stuff() throws Exception {
+
+                for (final DBStrukt strukt : tables) {
+                    logger.debug("Checking Table: " + strukt.getName());
+
+                    String sversion = getTableVersion(strukt.getName());
+
+                    if (sversion == null) {
                         logger.error("Not entry of Table " + strukt.getName() + " or table TABLEVERSION itsself does not exists");
                         setFailed();
                         break;
                     }
-                    
-                    int iversion = 0;
-                    
-                    if( sversion.equals("0.1") )
-                        iversion = 1;
-                    else
-                        iversion = Integer.parseInt(sversion);
-                    
-                    boolean success = false;
-                    
-                    if( iversion == strukt.getVersion() )
-                        success = true;
-                    					
-					if (!success) {
-						setFailed();
-						logger.debug(String.format("Table %s has version '%d' (string: %s) in Database and '%d' in Application Code. Updating Table is required.",
-								strukt.getName(), iversion, sversion, strukt.getVersion() ) );
-					}
-				}
-			}
-		};
 
-		if (al.isFailed()) {
-			System.out.println("Last Sql: " + trans.getSql());
-			return false;
-		}
-        
+                    int iversion = 0;
+
+                    if (sversion.equals("0.1")) {
+                        iversion = 1;
+                    } else {
+                        iversion = Integer.parseInt(sversion);
+                    }
+
+                    boolean success = false;
+
+                    if (iversion == strukt.getVersion()) {
+                        success = true;
+                    }
+
+                    if (!success) {
+                        setFailed();
+                        logger.debug(String.format("Table %s has version '%d' (string: %s) in Database and '%d' in Application Code. Updating Table is required.",
+                                strukt.getName(), iversion, sversion, strukt.getVersion()));
+                    }
+                }
+            }
+        };
+
+        if (al.isFailed()) {
+            System.out.println("Last Sql: " + trans.getSql());
+            return false;
+        }
+
         return true;
     }
 
