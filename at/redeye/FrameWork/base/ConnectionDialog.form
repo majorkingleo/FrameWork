@@ -53,7 +53,7 @@
                           <Component id="JTPort" alignment="0" pref="385" max="32767" attributes="0"/>
                           <Component id="JTHost" alignment="0" pref="385" max="32767" attributes="0"/>
                           <Component id="JCType" alignment="0" pref="385" max="32767" attributes="0"/>
-                          <Component id="JTPasswd" alignment="1" pref="385" max="32767" attributes="0"/>
+                          <Component id="JTPasswd" alignment="0" pref="385" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -184,21 +184,25 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="jTextField2"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new HideContentWhenDisabled()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="JTUser">
       <Properties>
         <Property name="text" type="java.lang.String" value="jTextField3"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="JTPasswd">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField4"/>
-      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new HideContentWhenDisabled()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JTextField" name="JTDatabase">
       <Properties>
         <Property name="text" type="java.lang.String" value="jTextField5"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new HideContentWhenDisabled()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="JCType">
       <Properties>
@@ -221,6 +225,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="jTextField1"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new HideContentWhenDisabled()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="JLPort">
       <Properties>
@@ -231,6 +238,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="jTextField1"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new HideContentWhenDisabled()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="JBManage">
       <Properties>
@@ -242,6 +252,14 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBManageActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="JTPasswd">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jPasswordField1"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new HideContentWhenDisabledPasswd()"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

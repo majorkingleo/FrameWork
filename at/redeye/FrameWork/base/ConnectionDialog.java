@@ -24,6 +24,8 @@ import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.FrameWork.widgets.HideContentWhenDisabled;
+import at.redeye.FrameWork.widgets.HideContentWhenDisabledPasswd;
 import at.redeye.Setup.ConfigCheck.CheckConfigBase;
 import at.redeye.Setup.ConfigCheck.Checks.HaveDbConnection;
 import at.redeye.SqlDBInterface.SqlDBConnection.MOMMDbConnectionInterface;
@@ -71,9 +73,13 @@ public class ConnectionDialog extends BaseDialog {
 
     private void initCommon()
     {
+        String passwd =  root.getSetup().getLocalConfig(Setup.DBPasswd, "" );
+
+        passwd = EncryptedDBPasswd.tryDecryptDBPassword(passwd, root.getAppName());
+
         DBHost.append( root.getSetup().getLocalConfig(Setup.DBHost, "localhost" ) );
         DBUser.append( root.getSetup().getLocalConfig(Setup.DBUser, "" ) );
-        DBPasswd.append( root.getSetup().getLocalConfig(Setup.DBPasswd, "" ) );
+        DBPasswd.append( passwd );
         DBDatabase.append( root.getSetup().getLocalConfig(Setup.DBDatabase, "" ) );
         DBInstance.append( root.getSetup().getLocalConfig(Setup.DBInstance, "" ) );
         DBPort.append( root.getSetup().getLocalConfig(Setup.DBPort, "" ) );
@@ -255,16 +261,16 @@ public class ConnectionDialog extends BaseDialog {
         JLUser = new javax.swing.JLabel();
         JLPasswd = new javax.swing.JLabel();
         JLDatabase = new javax.swing.JLabel();
-        JTHost = new javax.swing.JTextField();
-        JTUser = new javax.swing.JTextField();
-        JTPasswd = new javax.swing.JTextField();
-        JTDatabase = new javax.swing.JTextField();
+        JTHost = new HideContentWhenDisabled();
+        JTUser = new HideContentWhenDisabled();
+        JTDatabase = new HideContentWhenDisabled();
         JCType = new javax.swing.JComboBox();
         JLInstance = new javax.swing.JLabel();
-        JTInstance = new javax.swing.JTextField();
+        JTInstance = new HideContentWhenDisabled();
         JLPort = new javax.swing.JLabel();
-        JTPort = new javax.swing.JTextField();
+        JTPort = new HideContentWhenDisabled();
         JBManage = new javax.swing.JButton();
+        JTPasswd = new HideContentWhenDisabledPasswd();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -306,8 +312,6 @@ public class ConnectionDialog extends BaseDialog {
 
         JTUser.setText("jTextField3");
 
-        JTPasswd.setText("jTextField4");
-
         JTDatabase.setText("jTextField5");
 
         JCType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -327,6 +331,8 @@ public class ConnectionDialog extends BaseDialog {
                 JBManageActionPerformed(evt);
             }
         });
+
+        JTPasswd.setText("jPasswordField1");
 
         if (wizardAction != null) {
             JBClose.setEnabled(false);
@@ -366,7 +372,7 @@ public class ConnectionDialog extends BaseDialog {
                             .addComponent(JTPort, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                             .addComponent(JTHost, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                             .addComponent(JCType, 0, 385, Short.MAX_VALUE)
-                            .addComponent(JTPasswd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))))
+                            .addComponent(JTPasswd, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -430,7 +436,21 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
         root.getSetup().setLocalConfig(Setup.DBDatabase, DBDatabase.toString());
         root.getSetup().setLocalConfig(Setup.DBHost, DBHost.toString());
         root.getSetup().setLocalConfig(Setup.DBUser, DBUser.toString());
-        root.getSetup().setLocalConfig(Setup.DBPasswd, DBPasswd.toString());
+
+        String passwd = DBPasswd.toString();
+
+        String enc_passwd = EncryptedDBPasswd.encryptDBPassword(passwd, root.getAppName());
+
+        if( enc_passwd == null )
+        {
+            JOptionPane.showMessageDialog(null,
+            "Das Datenbankpasswort konnte nicht verschlüsselt werden!",
+            "Error",
+            JOptionPane.OK_OPTION);
+            return;
+        }
+
+        root.getSetup().setLocalConfig(Setup.DBPasswd, enc_passwd );
         root.getSetup().setLocalConfig(Setup.DBPort, DBPort.toString());
         root.getSetup().setLocalConfig(Setup.DBInstance, DBInstance.toString());
         root.getSetup().setLocalConfig(Setup.DBType, DBType.toString());
@@ -620,7 +640,7 @@ public void setBindtypeManager( DBBindtypeManager bindtypeManager )
     private javax.swing.JTextField JTDatabase;
     private javax.swing.JTextField JTHost;
     private javax.swing.JTextField JTInstance;
-    private javax.swing.JTextField JTPasswd;
+    private javax.swing.JPasswordField JTPasswd;
     private javax.swing.JTextField JTPort;
     private javax.swing.JTextField JTUser;
     private javax.swing.JLabel jLabel1;

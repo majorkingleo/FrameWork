@@ -7,6 +7,7 @@ package at.redeye.FrameWork.base;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import javax.swing.JCheckBox;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 /**
@@ -54,6 +55,37 @@ public interface BindVarInterface {
             return value;
         }
     }
+
+     static class PasswdStringPair extends Pair
+     {
+        JPasswordField textfield;
+        StringBuffer value;
+
+        public PasswdStringPair(JPasswordField textfield, StringBuffer value) {
+            this.textfield = textfield;
+            this.value = value;
+        }
+
+        public void gui_to_var() {
+            value.delete(0, value.length());
+            value.append(textfield.getPassword());
+        }
+
+        public void var_to_gui() {
+            textfield.setText(value.toString());
+        }
+
+        @Override
+        public JTextField get_first() {
+            return textfield;
+        }
+
+        @Override
+        public StringBuffer get_second() {
+            return value;
+        }
+    }
+
 
     static class TextDBStringPair extends Pair {
 

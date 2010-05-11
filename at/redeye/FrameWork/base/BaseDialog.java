@@ -32,6 +32,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -535,6 +536,19 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
      * oder umgekehrt übertragen.
      */
     public void bindVar(JTextField jtext, StringBuffer var) {
+       bind_vars.bindVar(jtext,var);
+    }
+
+    /**
+     * in jTextField an einen StringBuffer anbinden
+     * @param jtext das Textfeld
+     * @param var   der StringBuffer
+     *
+     * Bei einem Aufruf von var_to_gui(), oder gui_to_var(), wird
+     * dann der demenstprechende Inhalt entweder vom GUI zu Variablen,
+     * oder umgekehrt übertragen.
+     */
+    public void bindVar(JPasswordField jtext, StringBuffer var) {
        bind_vars.bindVar(jtext,var);
     }
 

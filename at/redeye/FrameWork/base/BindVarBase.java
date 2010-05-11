@@ -13,6 +13,7 @@ import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import java.util.Vector;
 import javax.swing.JCheckBox;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 /**
@@ -24,6 +25,10 @@ public class BindVarBase
     public Vector<Pair> pairs = new Vector<Pair>();
     
     public void bindVar(JTextField jtext, StringBuffer var) {
+        pairs.add(new TextStringPair(jtext, var));
+    }
+
+    public void bindVar(JPasswordField jtext, StringBuffer var) {
         pairs.add(new TextStringPair(jtext, var));
     }
 

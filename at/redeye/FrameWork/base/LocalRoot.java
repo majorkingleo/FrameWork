@@ -93,7 +93,12 @@ public class LocalRoot extends Root {
         MOMMSupportedDBMSTypes dbtype = MOMMSupportedDBMSTypes.valueOf(setup.getLocalConfig(Setup.DBType, MOMMSupportedDBMSTypes.DB_MYSQL.toString()));
         String instance = setup.getLocalConfig(Setup.DBInstance, "");
         String sport = setup.getLocalConfig(Setup.DBPort, "0");
-        
+
+        if( !passwd.isEmpty() )
+        {
+            passwd = EncryptedDBPasswd.tryDecryptDBPassword(passwd, getAppName());
+        }
+
         int port = 0;
         
         if( !sport.isEmpty() ) {
