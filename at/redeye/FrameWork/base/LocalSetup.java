@@ -11,17 +11,23 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.prm.impl.LocalConfigDefinitions;
 import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMSqlDriverException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import java.io.File;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -155,49 +161,46 @@ public class LocalSetup extends Setup {
         return true;
     }
     
-    public boolean loadGlobalProps()
-    {
+    public boolean loadGlobalProps() {
         final DBConnection conn = root.getDBConnection();
-        
-        if( conn == null )
-            return false;
-        
-        AutoLogger al = new AutoLogger("LocalSetup")
-        {
 
-            @Override
-            public void do_stuff() throws Exception {
-                
-                result = new Boolean(false);
-                
-                Transaction trans = conn.getNewTransaction();
-        
-                Vector<DBStrukt> all = trans.fetchTable(new DBConfig() );
-                
-                for( int i = 0; i < all.size(); i++ )
-                {
-                    DBConfig c = (DBConfig)all.get(i);
-                    
-                    if( global_config == null )
-                        global_config = new HashMap<String,DBConfig>();
-                    
-                    global_config.put(c.getConfigName(), c);
-                }                                
-                                
-                conn.closeTransaction(trans);
-                
-                if( global_config == null )
-                {
-                    // Noch kein Eintrag in der DB vorhanden...
-                    global_config = new HashMap<String,DBConfig>();
+        if (conn == null) {
+            return false;
+        }
+
+        boolean result = false;
+
+        try {
+            Transaction trans = conn.getNewTransaction();
+
+            Vector<DBStrukt> all = trans.fetchTable(new DBConfig());
+
+            for (int i = 0; i < all.size(); i++) {
+                DBConfig c = (DBConfig) all.get(i);
+
+                if (global_config == null) {
+                    global_config = new HashMap<String, DBConfig>();
                 }
-                
-                result = new Boolean(true);
+
+                global_config.put(c.getConfigName(), c);
             }
-            
-        };
-                
-        return (Boolean)al.result;
+
+            conn.closeTransaction(trans);
+
+            if (global_config == null) {
+                // Noch kein Eintrag in der DB vorhanden...
+                global_config = new HashMap<String, DBConfig>();
+            }
+
+            result = true;
+
+        } catch (MOMMSqlDriverException ex) {
+            logger.error(StringUtils.ExceptionToString(ex));        
+        } catch (SQLException ex) {
+            logger.error(StringUtils.ExceptionToString(ex));
+        }
+
+        return result;
     }
     
     public boolean saveGlobalProps()

@@ -105,7 +105,7 @@ public abstract class Transaction {
 
 	public Vector<DBStrukt> fetchTable(DBStrukt binddesc) throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-			WrongBindFileFormatException, CloneNotSupportedException {
+			WrongBindFileFormatException {
 		return fetchTable(binddesc, "");
 	}
 

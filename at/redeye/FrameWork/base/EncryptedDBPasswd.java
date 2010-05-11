@@ -6,6 +6,8 @@
 package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.utilities.DesEncrypt;
+import at.redeye.FrameWork.utilities.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -13,6 +15,8 @@ import at.redeye.FrameWork.utilities.DesEncrypt;
  */
 public class EncryptedDBPasswd
 {
+    protected static Logger logger = Logger.getLogger(EncryptedDBPasswd.class.getName());
+
    public static String encryptDBPassword( final String DBPasswd, final String password )
    {
        final StringBuffer buf = new StringBuffer();
@@ -36,23 +40,15 @@ public class EncryptedDBPasswd
 
    public static String decryptDBPassword(final String DBPasswd, final String password )
    {
-       final StringBuffer buf = new StringBuffer();
+       try {
+           DesEncrypt cipher = new DesEncrypt(password);
+           String str = cipher.decrypt(DBPasswd);
 
-       AutoLogger al = new AutoLogger(EncryptedDBPasswd.class.getName())
-       {
-           public void do_stuff() throws Exception
-           {
-                DesEncrypt cipher = new DesEncrypt( password );
-                String str = cipher.decrypt(DBPasswd);
-
-                buf.append(str);
-           }
-       };
-
-       if( al.isFailed() )
+           return str;
+       } catch (Exception ex) {
+           logger.error(StringUtils.ExceptionToString(ex));
            return null;
-
-       return buf.toString();
+       }
    }
 
    public static String tryDecryptDBPassword(String DBPasswd, String password )
