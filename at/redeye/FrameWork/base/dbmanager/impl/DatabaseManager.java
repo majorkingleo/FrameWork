@@ -25,6 +25,9 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.UserManagement.UserManagementInterface;
+import com.mysql.jdbc.Driver;
+import java.sql.DriverManager;
+import java.util.Enumeration;
 
 /**
  * 
@@ -428,6 +431,36 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
         }
         
         return true;
+    }
+
+    public boolean is_dbms_driver_loaded(MOMMSupportedDBMSTypes dbmstype)
+    {
+       String name;
+       
+       try
+       {       
+           switch (dbmstype) {
+               case DB_MSSQL:
+                   name = net.sourceforge.jtds.jdbc.Driver.class.getName();
+                   break;
+               case DB_MYSQL:
+                   name = com.mysql.jdbc.Driver.class.getName();
+                   break;
+               case DB_ORACLE:
+                   name = oracle.jdbc.OracleDriver.class.getName();
+                   break;
+               case DB_SQLITE:
+                   name = org.sqlite.JDBC.class.getName();
+                   break;
+               case DB_JAVADB:
+                   name = org.apache.derby.jdbc.EmbeddedDriver.class.getName();
+                   break;
+           }
+       } catch( NoClassDefFoundError ex ) {
+           return false;
+       }
+
+       return true;
     }
     
     

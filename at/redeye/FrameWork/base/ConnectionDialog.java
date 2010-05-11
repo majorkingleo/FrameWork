@@ -79,15 +79,15 @@ public class ConnectionDialog extends BaseDialog {
         DBPort.append( root.getSetup().getLocalConfig(Setup.DBPort, "" ) );
         DBType = MOMMSupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, MOMMSupportedDBMSTypes.DB_MYSQL.toString() ) );
 
+        setBindtypeManager( root.getBindtypeManager() );        
+
         bindVar(JTHost, DBHost);
         bindVar(JCType, DBType);
         bindVar(JTUser, DBUser);
         bindVar(JTPasswd, DBPasswd);
         bindVar(JTDatabase, DBDatabase);
         bindVar(JTPort, DBPort);
-        bindVar(JTInstance, DBInstance);
-
-        setBindtypeManager( root.getBindtypeManager() );
+        bindVar(JTInstance, DBInstance);        
 
         JCType.addActionListener(new ActionListener() {
 
@@ -147,7 +147,8 @@ public class ConnectionDialog extends BaseDialog {
         
         for( MOMMSupportedDBMSTypes t2 : tt )
         {
-            box.addItem(t2);
+            if( bindtypeManager.is_dbms_driver_loaded(t2) )
+                box.addItem(t2);
         }
         
         class TypePair extends Pair
