@@ -14,8 +14,10 @@ import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardWindowInterface;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -24,12 +26,30 @@ import javax.swing.BorderFactory;
 public abstract class WizardBaseWindow extends BaseDialog implements WizardWindowInterface {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private HashMap<WizardAction, Boolean> actionControl;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private HashMap<WizardAction, Boolean> actionControl;
     private WizardAction action;
     private boolean closeActionCalled = false;
+
+    class OnWinClose extends java.awt.event.WindowAdapter
+            implements Runnable
+    {
+        private void do_close() {
+            action = WizardAction.WIZARD_ACTION_CLOSE;
+            getParentWizard().handleUpdate();
+        }
+
+        public void run() {
+            do_close();
+        }
+
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent e) {
+            do_close();
+        }
+    }
 
     /** Creates new form WizardBaseWindow */
     public WizardBaseWindow(Root root, String title) {
@@ -42,14 +62,8 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
         initComponents();
 
 
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                    action = WizardAction.WIZARD_ACTION_CLOSE;
-                    getParentWizard().handleUpdate();
-            }
-        });
+        this.addWindowListener( new OnWinClose() );
+        registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), new OnWinClose());
     }
 
     /** This method is called from within the constructor to
