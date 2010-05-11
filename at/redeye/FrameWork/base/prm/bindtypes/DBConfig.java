@@ -29,11 +29,13 @@ public class DBConfig extends DBStrukt implements PrmAttachInterface
     public DBString  value = new DBString( "value", "Wert", 100 );
     public DBString  descr  = new DBString( "description", "Beschreibung", 250 );
     public DBHistory hist  = new DBHistory("hist");
-    
+
+    protected boolean changed = false;
+
     public DBConfig()
     {
-        super(TABLENAME);         
-        
+        super(TABLENAME);
+
         register();
     }                
     
@@ -216,7 +218,19 @@ public class DBConfig extends DBStrukt implements PrmAttachInterface
     }
 
     
-    
+    public boolean hasChanged()
+    {
+        return changed;
+    }
 
+    public void setChanged()
+    {
+        changed = true;
+    }
+
+    public void setChanged( boolean state )
+    {
+        changed = state;
+    }
     
 }

@@ -220,17 +220,20 @@ public class LocalSetup extends Setup {
                 Transaction trans = conn.getNewTransaction();
                                                 
                 Set<String> keys = global_config.keySet();
-                System.out.println ();
+
                 for( String key : keys )
                 {                                       
                     DBConfig c = global_config.get(key);
-                    PrmActionEvent event = new PrmActionEvent();
-                    event.setParameterName(c.name);
-                    event.setOldPrmValue(c.getOldValue());
-                    event.setNewPrmValue(c.value);
-                    event.setPossibleVals(c.getPossibleValues());
-                    DefaultInsertOrUpdater.insertOrUpdateValuesWithPrimKey(trans, c);
-                    c.updateListeners(event);
+                    if (c.hasChanged()) {
+                        PrmActionEvent event = new PrmActionEvent();
+                        event.setParameterName(c.name);
+                        event.setOldPrmValue(c.getOldValue());
+                        event.setNewPrmValue(c.value);
+                        event.setPossibleVals(c.getPossibleValues());
+                        DefaultInsertOrUpdater.insertOrUpdateValuesWithPrimKey(trans, c);
+                        c.updateListeners(event);
+                        c.setChanged(false);
+                    }
                 }
                 
                 trans.commit();                  
@@ -315,16 +318,19 @@ public class LocalSetup extends Setup {
             if( c != null )
             {
                 c.setConfigValue(value);
+                c.setChanged();
                 global_config.put(key, c);
                 return;
             }
             
             c = new DBConfig(key,value);
+            c.setChanged();
             global_config.put(key, c);
             return;
             
         } else {
-            
+
+            c.setChanged();
             c.setConfigValue(value);
         }
     }
