@@ -1,5 +1,6 @@
 package at.redeye.UserManagement;
 
+import at.redeye.FrameWork.base.BaseDialog;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -32,6 +33,40 @@ public interface UserManagementInterface {
             TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
             WrongBindFileFormatException, CloneNotSupportedException;
 
+    /**
+     * Checks if username and password are ok
+     * @param login
+     * @param pwd
+     * @param autoLoginRequested
+     * @param calling_dialog only for wait cursor, can be null
+     * @return a PB record on success, or null on fail
+     * @throws InvalidLoginException
+     * @throws SQLException
+     * @throws UnsupportedDBDataTypeException
+     * @throws TableBindingNotRegisteredException
+     * @throws WrongBindFileFormatException
+     * @throws CloneNotSupportedException
+     * @throws UserLockedException
+     */
+    public DBPb checkUserData(String login, String pwd, boolean autoLoginRequested, BaseDialog calling_dialog)
+            throws InvalidLoginException, SQLException,
+            UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
+            WrongBindFileFormatException, CloneNotSupportedException, UserLockedException;
+
+   /**
+     * Checks if username and password are ok
+     * @param login
+     * @param pwd
+     * @param autoLoginRequested
+     * @return a PB record on success, or null on fail
+     * @throws InvalidLoginException
+     * @throws SQLException
+     * @throws UnsupportedDBDataTypeException
+     * @throws TableBindingNotRegisteredException
+     * @throws WrongBindFileFormatException
+     * @throws CloneNotSupportedException
+     * @throws UserLockedException
+     */
     public DBPb checkUserData(String login, String pwd, boolean autoLoginRequested)
             throws InvalidLoginException, SQLException,
             UnsupportedDBDataTypeException, TableBindingNotRegisteredException,

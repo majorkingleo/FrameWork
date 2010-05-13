@@ -1,5 +1,6 @@
 package at.redeye.UserManagement.impl;
 
+import at.redeye.FrameWork.base.BaseDialog;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -40,7 +41,31 @@ public class UserDataHandling implements UserManagementInterface {
         registeredListener = new Vector<UserManagementListener>();
     }
 
-    public DBPb checkUserData(String login, String pwd, boolean autoLoginRequested)
+    public DBPb checkUserData(String login, String pwd, boolean autoLoginRequested )
+            throws InvalidLoginException, SQLException,
+            UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
+            WrongBindFileFormatException, CloneNotSupportedException,
+            UserLockedException
+    {
+       return checkUserData(login,pwd,autoLoginRequested,null);
+    }
+
+    /**
+     * Checks if username and password are ok
+     * @param login
+     * @param pwd
+     * @param autoLoginRequested
+     * @param calling_dialog only for wait cursor, can be null
+     * @return a PB record on success, or null on fail
+     * @throws InvalidLoginException
+     * @throws SQLException
+     * @throws UnsupportedDBDataTypeException
+     * @throws TableBindingNotRegisteredException
+     * @throws WrongBindFileFormatException
+     * @throws CloneNotSupportedException
+     * @throws UserLockedException
+     */
+    public DBPb checkUserData(String login, String pwd, boolean autoLoginRequested, BaseDialog calling_dialog)
             throws InvalidLoginException, SQLException,
             UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
             WrongBindFileFormatException, CloneNotSupportedException,
@@ -83,9 +108,16 @@ public class UserDataHandling implements UserManagementInterface {
             return null;
         }
 
+        if( calling_dialog != null )
+            calling_dialog.setWaitCursor();
+
         Vector<DBStrukt> pbrecords = getAllUserData();
         String encPwd = null;
         DBPb currpb = null;
+
+       if( calling_dialog != null )
+            calling_dialog.setNormalCursor();
+
         if (pbrecords.size() > 0) {
 
             boolean found = false;
@@ -259,7 +291,7 @@ public class UserDataHandling implements UserManagementInterface {
 
         DBPb pb;
         try {
-            pb = checkUserData(autoLoginUser, "", true);
+            pb = checkUserData(autoLoginUser, "", true,null);
             if (pb == null) {
                 return false;
             }
