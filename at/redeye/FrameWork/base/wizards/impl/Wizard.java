@@ -72,6 +72,9 @@ public class Wizard implements WizardClientActionInterface,
 		switch (action) {
 
 		case WIZARD_ACTION_NEXT:
+
+                    do {
+
 			window.onClose(action);
 			currentWindow++;
 			window = allWindows.get(currentWindow);
@@ -84,9 +87,13 @@ public class Wizard implements WizardClientActionInterface,
 			window.onInit();
                         window.toFront();
 
+                    } while( window.skipThisStep() );
+
 			break;
 			
 		case WIZARD_ACTION_PREV:
+
+                    do {
 			
 			window.onClose(action);
 			currentWindow--;
@@ -99,7 +106,9 @@ public class Wizard implements WizardClientActionInterface,
 			window.controlButtons();
 			window.onInit();
                         window.toFront();
-			break;
+
+                    } while( window.skipThisStep() );
+                    break;
 			
 		case WIZARD_ACTION_FINISH: 
 
@@ -155,6 +164,7 @@ public class Wizard implements WizardClientActionInterface,
 
 	@Override
 	public void addWizardListener(WizardListener listener) {
+            if( listener != null )
 		allWizardListeners.add(listener);
 	}
 
@@ -176,7 +186,8 @@ public class Wizard implements WizardClientActionInterface,
 
             beeing_in_update_state = true;
 
-            System.out.println("UPDATE WIZARD LISTENER");
+            System.out.println("UPDATE WIZARD LISTENER");          
+
             for (WizardListener currentListener : allWizardListeners) {
                 if( currentListener.onStateChange(currentWizardStatus) == false )
                 {

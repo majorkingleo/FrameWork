@@ -21,6 +21,7 @@ import at.redeye.UserManagement.UserManagementDialogs;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.UserManagementListener;
 import at.redeye.UserManagement.bindtypes.DBPb;
+import java.util.HashMap;
 
 public class UserDataHandling implements UserManagementInterface {
 
@@ -60,8 +61,21 @@ public class UserDataHandling implements UserManagementInterface {
                     new ConnectionDialog(root).setVisible(true);
                     break;
                 case 1:
+                {
+                    HashMap<String, Object> map = new HashMap<String, Object>();
+                    DBPb pb = new DBPb();
+                    map.put("name", "Initiales Setup");
+                    map.put("pwd", "  ---  ");
+                    map.put("login", "admin");
+                    map.put("plevel",
+                            UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN);
+                    map.put("locked", UserManagementInterface.UM_ACCOUNT_LOCKED);
+                    pb.consume(map);
+                    root.setAktivUser(pb);
+
                     requestDialog(UserManagementDialogs.UM_ADMINISTRATION_DIALOG);
                     break;
+                }
                 default:
                     return null;
             }

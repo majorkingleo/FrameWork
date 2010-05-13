@@ -11,8 +11,10 @@ import at.redeye.FrameWork.base.BindVarInterface.TextDBStringPair;
 import at.redeye.FrameWork.base.BindVarInterface.TextStringPair;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.UserManagement.bindtypes.DBPermissionLevelInteger;
 import java.util.Vector;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 

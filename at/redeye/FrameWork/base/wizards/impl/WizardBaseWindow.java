@@ -32,6 +32,7 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
     private HashMap<WizardAction, Boolean> actionControl;
     private WizardAction action;
     private boolean closeActionCalled = false;
+    private boolean should_this_step_be_skipped;
 
     class OnWinClose extends java.awt.event.WindowAdapter
             implements Runnable
@@ -64,6 +65,8 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
 
         this.addWindowListener( new OnWinClose() );
         registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), new OnWinClose());
+
+        should_this_step_be_skipped = false;
     }
 
     /** This method is called from within the constructor to
@@ -120,11 +123,12 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
             }
         });
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         textAreaMenuTree.setBackground(new java.awt.Color(240, 240, 240));
         textAreaMenuTree.setColumns(15);
         textAreaMenuTree.setEditable(false);
         textAreaMenuTree.setFont(new java.awt.Font("Courier New", 1, 14));
-        textAreaMenuTree.setLineWrap(true);
         textAreaMenuTree.setRows(5);
         textAreaMenuTree.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(100, 150, 230), null));
         jScrollPane1.setViewportView(textAreaMenuTree);
@@ -135,9 +139,10 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
         textAreaHelp.setBackground(new java.awt.Color(240, 240, 240));
         textAreaHelp.setColumns(20);
         textAreaHelp.setEditable(false);
-        textAreaHelp.setFont(new java.awt.Font("Courier New", 1, 14));
+        textAreaHelp.setFont(new java.awt.Font("Courier New", 1, 14)); // NOI18N
         textAreaHelp.setLineWrap(true);
         textAreaHelp.setRows(4);
+        textAreaHelp.setWrapStyleWord(true);
         textAreaHelp.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(100, 150, 230), null));
         jScrollPane2.setViewportView(textAreaHelp);
 
@@ -279,6 +284,16 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
     public void setRecentAction(WizardAction a)
     {
         action = a;
+    }
+
+    public boolean skipThisStep()
+    {
+        return should_this_step_be_skipped;
+    }
+
+    public void setSkipThisStep( boolean state )
+    {
+        should_this_step_be_skipped = state;
     }
 
 }

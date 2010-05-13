@@ -41,6 +41,7 @@ public class AdminDlg extends BaseDialog {
     private Vector<DBStrukt> oldPbs;
     private UserManagementInterface um;    
     private WizardClientActionInterface wizardAction = null;
+    public static final String UM_ID_SEQ = "UM_ID_SEQ";
 
     /**
      * Creates new form AdminDlg
@@ -243,9 +244,9 @@ public class AdminDlg extends BaseDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 960, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 807, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -255,7 +256,7 @@ public class AdminDlg extends BaseDialog {
                         .addComponent(buttonNewUser)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonChangePwd)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 399, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 143, Short.MAX_VALUE)
                         .addComponent(buttonRead)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonCancel)))
@@ -375,7 +376,7 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
     private void buttonNewUserActionPerformed(java.awt.event.ActionEvent evt) {        
 
         try {
-            int nextVal = getNewSequenceValue("UM_ID_SEQ");
+            int nextVal = getNewSequenceValue(UM_ID_SEQ);
 
             DBPb newPb = new DBPb();
 
