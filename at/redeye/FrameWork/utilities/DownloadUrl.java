@@ -73,11 +73,13 @@ public class DownloadUrl
 
             if( success )
             {
+                // umbenennen über verschiedene Verzeichnisse hinweg funktioniert anscheinend eh nie
+                /*
                 if( !file.renameTo(old_one) )
                 {
                     logger.error("renaming from " + file.getAbsolutePath() + " to " + to + " failed!");
                     logger.error("trying copying");
-
+                */
                     if( !CopyFile.copy(file, old_one) )
                     {
                         logger.error("Cannot copy file");
@@ -85,7 +87,7 @@ public class DownloadUrl
                     }
 
                     file.delete();
-                }
+                //}
             }
 
             if( success )
