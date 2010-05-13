@@ -24,6 +24,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -79,6 +81,8 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
 
     boolean edited = false;
     protected BindVarBase bind_vars = new BindVarBase();
+    protected List<Runnable> onCloseListeners;
+    protected CloseSubDialogHelper close_subdialog_helper;
 
     /**
      * All keys ESC, or F1, F2 listeners are registered in this container
@@ -86,6 +90,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
     protected HashMap<KeyStroke,Vector<Runnable>> listen_key_events = null;    
     private JRootPane myrootPane;
     protected Runnable HelpWinRunnable;
+    protected UniqueDialogHelper unique_dialog_helper;
 
     private class ActionKeyListener implements ActionListener
     {
@@ -369,7 +374,17 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         } catch (SQLException ex) {
             logger.error(ex);
         }
+
         root.informWindowClosed(this);
+
+        if( onCloseListeners != null )
+        {
+            for( Runnable run : onCloseListeners)
+                run.run();
+
+            onCloseListeners.clear();
+        }
+
         this.dispose();
     }
 
@@ -674,5 +689,83 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface {
         frame.setVisible(true);
         frame.toFront();
         setNormalCursor();
+    }
+
+    /**
+     * Little helper function that sets the frame visible and
+     * push it to front, by useing the wait cursor.
+     * @param frame
+     */
+    public void invokeDialog( BaseDialog dlg )
+    {
+        setWaitCursor();
+        dlg.setVisible(true);
+        dlg.toFront();
+
+        if( close_subdialog_helper == null )
+            close_subdialog_helper = new CloseSubDialogHelper(this);
+
+        if( closeSubdialogsOnClose() )
+            close_subdialog_helper.closeSubDialog(dlg);
+
+        setNormalCursor();
+    }
+
+    public void invokeDialogUnique( BaseDialog dialog )
+    {
+        setWaitCursor();
+
+        if( unique_dialog_helper == null )
+            unique_dialog_helper = new UniqueDialogHelper();
+
+        if( close_subdialog_helper == null )
+            close_subdialog_helper = new CloseSubDialogHelper(this);
+
+        BaseDialog d_unique = unique_dialog_helper.invokeUniqueDialog(dialog);
+        d_unique.setVisible(true);
+        d_unique.toFront();
+
+        if( closeSubdialogsOnClose() )
+            close_subdialog_helper.closeSubDialog(dialog);
+
+        setNormalCursor();
+    }
+
+    /**
+     * @return should return a unique identifier for this dialog,
+     * by default it's the Classname + "/" + title
+     */
+    public String getUniqueIdentifier()
+    {
+        return this.getClass().getName() + "/" + getTitle();
+    }
+
+    public void registerOnCloseListener( Runnable runnable )
+    {
+        if( runnable == null )
+            return;
+
+        if( onCloseListeners == null )
+            onCloseListeners = new LinkedList<Runnable>();
+
+        onCloseListeners.add(runnable);
+    }
+
+    public void deregisterOnCloseListener( Runnable runnable )
+    {
+        if( onCloseListeners == null )
+            return;
+
+        int index = onCloseListeners.indexOf(runnable);
+
+        if( index == -1 )
+            return;
+
+        onCloseListeners.remove(index);
+    }
+
+    public boolean closeSubdialogsOnClose()
+    {
+        return true;
     }
 }
