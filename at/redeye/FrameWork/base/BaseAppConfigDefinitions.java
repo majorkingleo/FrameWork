@@ -20,7 +20,7 @@ import org.apache.log4j.Level;
 public class BaseAppConfigDefinitions
 {
     public static DBConfig DoLogging = new DBConfig("Log-Meldungen Schreiben", "NEIN", "Sollen Logmeldungn in einer LogDatei mitgeschrieben werden.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
-    public static DBConfig LoggingDir = new DBConfig("Log-Verzeichnis", "", "Verzeichnis in das die Logdateien geschrieben werden sollen.");
+    public static DBConfig LoggingDir = new DBConfig("Log-Verzeichnis", "APPHOME", "Verzeichnis in das die Logdateien geschrieben werden sollen.");
     private static String [] validLevels = {"MML", Level.DEBUG.toString(), Level.TRACE.toString(), Level.ALL.toString(), Level.INFO.toString()};
     public static DBConfig LoggingLevel = new DBConfig("Log-Level", "DEBUG", "Schwellwert für die Informationen in der Logdatei.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_HAS_VALUE), validLevels);
     public static DBConfig Version = new DBConfig("Programm-Version", "0", "Programmversion mit der die Einstellungen zuletzt gespeichert wurden." );

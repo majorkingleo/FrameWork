@@ -41,6 +41,7 @@ public abstract class BaseModuleLauncher {
 		// der oracle Treiber über den Proxy zu DB zu verbinden.
 		proxy = ProxySelector.getDefault();
 		ProxySelector.setDefault(null);
+                BaseConfigureLogging();
 	}
 
 	public BaseModuleLauncher(String[] args) {
@@ -49,6 +50,7 @@ public abstract class BaseModuleLauncher {
 		proxy = ProxySelector.getDefault();
 		ProxySelector.setDefault(null);
 		this.args = args;
+                BaseConfigureLogging();
 	}
 
 	public String getWebStartUrl() {
@@ -145,11 +147,25 @@ public abstract class BaseModuleLauncher {
 		thread.start();
 	}
 
+        protected void BaseConfigureLogging()
+        {
+            PatternLayout layout = new PatternLayout(
+                    "%d{ISO8601} %-5p (%F:%L): %m%n");
+
+            ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+
+            logger.setLevel(Level.ALL);
+            logger.addAppender(consoleAppender);
+        }
+
 	public void configureLogging() {
 
+            logger.removeAllAppenders();
+
 		PatternLayout layout = new PatternLayout(
-				"%d{ISO8601} %-5p (%F:%L): %m%n");
-		ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+				"%d{ISO8601} %-5p (%F:%L): %m%n");		
+
+                ConsoleAppender consoleAppender = new ConsoleAppender(layout);
 
 		String logFileDir = root.getSetup().getLocalConfig(
 				BaseAppConfigDefinitions.LoggingDir);
@@ -159,6 +175,9 @@ public abstract class BaseModuleLauncher {
 		String loggingEnabled = root.getSetup().getLocalConfig(
 				BaseAppConfigDefinitions.DoLogging);
 
+                if( logFileDir.equals("APPHOME") )
+                    logFileDir = Setup.getAppConfigDir(root.getAppName() + "/log");
+
 		String filename = logFileDir + (logFileDir.isEmpty() ? "" : "/")
 				+ "log.OS-" + System.getProperty("user.name", "unknown-user")
 				+ ".txt";
@@ -166,7 +185,8 @@ public abstract class BaseModuleLauncher {
 		System.out.println("Filename: " + filename);
 
 		logger.setLevel(Level.toLevel(logFileLevel));
-		logger.addAppender(consoleAppender);
+                logger.addAppender(consoleAppender);
+
 
 		if (loggingEnabled.equalsIgnoreCase("ja")
 				|| loggingEnabled.equalsIgnoreCase("yes")
@@ -274,7 +294,7 @@ public abstract class BaseModuleLauncher {
 
 		// I think this is too much...
 		
-		//configureLogging();
+		configureLogging();
 	}
 
 	public boolean splashEnabled() {
