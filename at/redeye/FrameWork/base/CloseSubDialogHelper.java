@@ -11,14 +11,14 @@ package at.redeye.FrameWork.base;
  */
 public class CloseSubDialogHelper
 {
-    BaseDialog parent;
+    BaseDialogBase parent;
 
-    CloseSubDialogHelper(BaseDialog parent)
+    CloseSubDialogHelper(BaseDialogBase parent)
     {
         this.parent = parent;
     }
 
-    public void closeSubDialog( final BaseDialog dialog )
+    public void closeSubDialog( final BaseDialogBase dialog )
     {
         parent.registerOnCloseListener(new Runnable() {
 

@@ -13,11 +13,11 @@ import java.util.HashMap;
  */
 public class UniqueDialogHelper
 {
-    HashMap<String,BaseDialog> dialogs = new HashMap<String,BaseDialog>();
+    HashMap<String,BaseDialogBase> dialogs = new HashMap<String,BaseDialogBase>();
 
-    public BaseDialog invokeUniqueDialog( final BaseDialog dialog )
+    public BaseDialogBase invokeUniqueDialog( final BaseDialogBase dialog )
     {
-        BaseDialog d = dialogs.get(dialog.getUniqueIdentifier());
+        BaseDialogBase d = dialogs.get(dialog.getUniqueIdentifier());
 
         if( d == null )
         {

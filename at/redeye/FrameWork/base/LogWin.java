@@ -17,7 +17,6 @@ package at.redeye.FrameWork.base;
  */
 public class LogWin extends BaseDialog {
 
-    /** Creates new form LogWin */
     public LogWin(Root root, String title)
     {
         super(root, title);
@@ -81,6 +80,7 @@ public class LogWin extends BaseDialog {
         JText.setColumns(20);
         JText.setLineWrap(true);
         JText.setRows(5);
+        JText.setWrapStyleWord(true);
         jScrollPane1.setViewportView(JText);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

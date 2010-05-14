@@ -419,7 +419,7 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
     }
 
     @Override
-    protected boolean canClose() {
+    public boolean canClose() {
         int ret = checkSave(tm);
 
         if (ret == 1) {

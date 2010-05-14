@@ -7,6 +7,8 @@ package at.redeye.FrameWork.base.translation;
 
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.BaseDialogBase;
+import at.redeye.FrameWork.base.BaseDialogBaseHelper;
 import at.redeye.FrameWork.base.Root;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -27,7 +29,7 @@ import javax.swing.KeyStroke;
  */
 public class TranslationHelper
 {
-     BaseDialog base_dlg;
+     BaseDialogBase base_dlg;
      Root  root;
      ExtractStrings extract_strings;
 
@@ -61,7 +63,7 @@ public class TranslationHelper
          }
      }
 
-     public TranslationHelper(Root root, BaseDialog base_dlg)
+     public TranslationHelper(Root root, BaseDialogBase base_dlg)
      {
          this.root = root;
          this.base_dlg = base_dlg;
@@ -69,6 +71,15 @@ public class TranslationHelper
         base_dlg.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), new OpenTransDialog() );
         base_dlg.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), new SwitchTrans_DE_EN() );
      }
+
+    public TranslationHelper(Root root, BaseDialogBase base_dlg, BaseDialogBaseHelper helper)
+    {
+        this.root = root;
+        this.base_dlg = base_dlg;
+
+        helper.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), new OpenTransDialog() );
+        helper.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), new SwitchTrans_DE_EN() );
+    }
 
     private void switchTranslation( String new_trans ) throws FileNotFoundException, IOException
     {
@@ -94,7 +105,7 @@ public class TranslationHelper
         }
 
         if( extract_strings == null )
-            extract_strings = new ExtractStrings(base_dlg);
+            extract_strings = new ExtractStrings(base_dlg.getContainer());
 
         HashMap<String,Vector<JComponent>> all = extract_strings.getComponents();
 

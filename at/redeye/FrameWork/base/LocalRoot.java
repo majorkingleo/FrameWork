@@ -27,7 +27,7 @@ public class LocalRoot extends Root {
     protected DBConnection db_connection;    
     protected DBPb userEntry=null;
     protected DBManager dbmanager=null;
-    protected Vector<JFrame> dialogs = new Vector<JFrame>();
+    protected Vector<BaseDialogBase> dialogs = new Vector<BaseDialogBase>();
     protected boolean appExitAllowed = true;
     private static Logger logger = Logger.getLogger(LocalRoot.class);
     
@@ -134,13 +134,13 @@ public class LocalRoot extends Root {
     }
     
     @Override
-    public void informWindowOpened( JFrame dlg )
+    public void informWindowOpened( BaseDialogBase dlg )
     {
         dialogs.add(dlg);
     }
     
     @Override
-    public void informWindowClosed( JFrame dlg )
+    public void informWindowClosed( BaseDialogBase dlg )
     {
         dialogs.remove(dlg);
         
@@ -163,26 +163,15 @@ public class LocalRoot extends Root {
     }
 
     @Override
-    public void closeAllWindowsExceptThisOne( JFrame dlg )
+    public void closeAllWindowsExceptThisOne( BaseDialogBase dlg )
     {
-        Vector<JFrame> dlgs = new Vector<JFrame>();
+        Vector<BaseDialogBase> dlgs = new Vector<BaseDialogBase>();
         dlgs.addAll(dialogs);
 
-        for( JFrame frame : dlgs )
+        for( BaseDialogBase frame : dlgs )
         {
             if( frame != dlg )
-            {
-                if( frame instanceof BaseDialog )
-                {
-                    BaseDialog base_dialog = (BaseDialog) frame;
-                    base_dialog.closeNoAppExit();
-                }
-                else
-                {
-                    frame.dispose();
-                    dialogs.remove(frame);
-                }
-            }
+                frame.closeNoAppExit();
         }
     }
     

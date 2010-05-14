@@ -277,7 +277,7 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
     protected abstract Wizard getParentWizard();
 
     @Override
-    protected boolean openWithLastWidthAndHeight() {
+    public boolean openWithLastWidthAndHeight() {
         return false;
     }
 

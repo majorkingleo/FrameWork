@@ -9,6 +9,7 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.UserManagement.UserManagementInterface;
+import java.awt.Window;
 import javax.swing.JFrame;
 
 /**
@@ -40,9 +41,9 @@ public abstract class Root {
     public abstract DBConnection getDBConnection();
     public abstract boolean loadDBConnectionFromSetup();
     
-    public void informWindowOpened( JFrame dlg ) {}
-    public void informWindowClosed( JFrame dlg ) {}
-    public void closeAllWindowsExceptThisOne( JFrame dlg ) {}
+    public void informWindowOpened( BaseDialogBase dlg ) {}
+    public void informWindowClosed( BaseDialogBase dlg ) {}
+    public void closeAllWindowsExceptThisOne( BaseDialogBase dlg ) {}
     public void closeAllWindowsNoAppExit() {}
 
     public void appExit() {}

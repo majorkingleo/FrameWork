@@ -50,7 +50,7 @@ public class ImageStorage extends BaseDialog implements CanCloseInterface {
     }
 
     @Override
-    protected boolean canClose() 
+    public boolean canClose()
     {
         return DefaultCanClose.DefaultCanClose(this);
     }

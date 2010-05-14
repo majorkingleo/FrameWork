@@ -12,8 +12,8 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.awt.Container;
-
 import java.awt.Window;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.JCheckBox;
@@ -31,17 +31,28 @@ import org.apache.log4j.Logger;
  *
  * @author martin
  */
-public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, BaseDialogBase {
+public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInterface, BaseDialogBase {
 
     private static final long serialVersionUID = 1L;
 
-    public BaseDialogBaseHelper helper;
+    BaseDialogBaseHelper helper;
     JRootPane myrootPane;
-    public static Logger logger = Logger.getLogger(BaseDialog.class.getName());
-    public Root root;
+    protected static Logger logger = Logger.getLogger(BaseDialogDialog.class.getName());
+    protected Root root;
 
-    public BaseDialog(Root root, String title) {
+    public BaseDialogDialog(Root root, String title) 
+    {
+        super();
         this.root = root;
+
+        helper = new BaseDialogBaseHelper(this,root,title,myrootPane);
+    }
+
+    public BaseDialogDialog(JFrame owner, Root root, String title)
+    {
+        super(owner);
+        this.root = root;
+
         helper = new BaseDialogBaseHelper(this,root,title,myrootPane);
     }
 
@@ -84,7 +95,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
 
     private void registerActionKeyListenerOnRootPane(KeyStroke key)
     {
-       helper.registerActionKeyListenerOnRootPane(key);
+        helper.registerActionKeyListenerOnRootPane(key);
     }
 
     @Override
@@ -206,8 +217,8 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
     }
 
     public void clearEdited() {
-        helper.clearEdited();
-    }    
+        helper.setEdited(false);
+    }
 
     /**
      * Kontrolliert, ob in der übergebenen Tabelle nur ein Eintrag selektiert
@@ -219,8 +230,9 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      * kein, oder mehrere Einträge selektiert wurden. Eine ensprechende Fehlermeldung
      * ist dabei dem User schon aufgeschalten worden.
      */
-    public boolean checkAnyAndSingleSelection(JTable table) {
-        return helper.checkAnyAndSingleSelection(table);
+    public boolean checkAnyAndSingleSelection(JTable table)
+    {
+       return helper.checkAnyAndSingleSelection(table);
     }
 
     /**
@@ -233,7 +245,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      * oder umgekehrt übertragen.
      */
     public void bindVar(JTextField jtext, StringBuffer var) {
-       helper.bindVar(jtext, var);
+       helper.bindVar(jtext,var);
     }
 
     /**
@@ -273,7 +285,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      */
     @Override
     public void bindVar(JCheckBox jtext, DBFlagInteger var) {
-       helper.bindVar(jtext,var);
+       helper.bindVar(jtext, var);
     }
 
     /**
@@ -323,7 +335,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      */
     public void setNormalCursor()
     {
-        helper.setWaitCursor(false);
+        helper.setNormalCursor();
     }
 
     /**
@@ -334,7 +346,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
     public void adjustScrollingSpeed( JScrollPane scroll_panel )
     {
         helper.adjustScrollingSpeed(scroll_panel);
-    }   
+    }
 
     /**
      * Little helper function that sets the frame visible and
@@ -354,16 +366,6 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
     public void invokeDialog( BaseDialogBase dlg )
     {
         helper.invokeDialog(dlg);
-    }
-
-    /**
-     * Little helper function that sets the frame visible and
-     * push it to front, by useing the wait cursor.
-     * @param frame
-     */
-    public void invokeDialog( BaseDialog dlg )
-    {
-        helper.invokeDialog((BaseDialogBase)dlg);
     }
 
     public void invokeDialogUnique( BaseDialogBase dialog )
@@ -400,11 +402,8 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
         return this;
     }
 
-    public Window getWindow() {
-        return this;
-    }
-
     public void invokeDialogModal(BaseDialogDialog dlg) {
         helper.invokeDialogModal(dlg);
     }
+
 }
