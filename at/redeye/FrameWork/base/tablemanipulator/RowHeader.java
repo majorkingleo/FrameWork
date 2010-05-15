@@ -9,9 +9,12 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import javax.swing.AbstractListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
@@ -27,7 +30,7 @@ public class RowHeader
     static class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 
         JTable table;
-        Font font;
+        Font font;        
 
         RowHeaderRenderer(JTable table) {
             this.table = table;
@@ -38,7 +41,7 @@ public class RowHeader
             setForeground(header.getForeground());
             setBackground(header.getBackground());
             font = header.getFont();
-            setFont(font);
+            setFont(font);            
 
             if( table.getRowCount() > 0 )
                 setText(String.format(" %d ",table.getRowCount()));
@@ -48,7 +51,7 @@ public class RowHeader
                 int index, boolean isSelected, boolean cellHasFocus) {
 
             // weil sonst wird plötzlich die Schrift fett
-            setFont(font);
+            setFont(font);            
 
             if( value == null )
                 setText( "" );
@@ -71,7 +74,7 @@ public class RowHeader
             if( dim.width == 0 )
                 dim.width = 50;
 
-            setPreferredSize(dim);
+            setPreferredSize(dim);            
         }
     }
 
@@ -105,10 +108,13 @@ public class RowHeader
     JList list;
     JScrollPane scroll;
     boolean visible_state = true;
+    boolean vertical_scroll_bar_visible = false;
+    Runnable visible_state_listener;
 
-    public RowHeader( JTable table )
+    public RowHeader( JTable table, final Runnable visible_state_listener )
     {
         this.table = table;
+        this.visible_state_listener = visible_state_listener;
 
          scroll = null;
 
@@ -133,6 +139,27 @@ public class RowHeader
             //rowHeader.setFixedCellWidth(20);
 
             scroll.setRowHeaderView(list);
+
+            JScrollBar scroll_bar = scroll.getVerticalScrollBar();
+
+            if( scroll_bar != null )
+            {
+                scroll_bar.addComponentListener(new ComponentListener() {
+
+                    public void componentResized(ComponentEvent e) {}
+                    public void componentMoved(ComponentEvent e) {}
+
+                    public void componentShown(ComponentEvent e) {
+                        vertical_scroll_bar_visible = true;
+                        visible_state_listener.run();
+                    }
+
+                    public void componentHidden(ComponentEvent e) {
+                        vertical_scroll_bar_visible = false;
+                        visible_state_listener.run();
+                    }
+                });
+            }
         }
     }
 
@@ -174,5 +201,10 @@ public class RowHeader
         }
 
         updateUI();
+    }
+
+    boolean isScrollBarVisible()
+    {
+        return vertical_scroll_bar_visible;
     }
 }

@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JTable;
+import javax.swing.LookAndFeel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -28,6 +29,7 @@ import at.redeye.FrameWork.utilities.StringUtils;
 import java.awt.Color;
 import java.util.HashSet;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -59,7 +61,12 @@ public class TableManipulator {
         this.root = root;
         table.setModel(model);        
         table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));
-        header = new RowHeader( table );
+        header = new RowHeader( table,  new Runnable() {
+
+            public void run() {
+                checkRowHeaderLimit();
+            }
+        } );
         
         TableEditorStopper.ensureEditingStopWhenTableLosesFocus(table);
         readShowHeaderLimit();
@@ -113,7 +120,12 @@ public class TableManipulator {
         this.model = new NormalTableModel(tabledesign);        
         table.setModel(model);
         table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));
-        header = new RowHeader( table );
+        header = new RowHeader( table, new Runnable() {
+
+            public void run() {
+                checkRowHeaderLimit();
+            }
+        } );
     }
 
     public void autoResize()
@@ -188,8 +200,19 @@ public class TableManipulator {
 
         if( max_height > 0 )
         {
+            int correction = 1;
+
+            LookAndFeel look_and_feel = UIManager.getLookAndFeel();
+
+            if( look_and_feel != null )
+            {
+                logger.info("look and feel: " + look_and_feel.getID() );
+                if( look_and_feel.getID().equals("Nimbus") )
+                    correction = 3;
+            }
+
             System.out.println(String.format("height: %d",max_height) );
-            header.setCellHeight(max_height-1);
+            header.setCellHeight(max_height-correction);
         }
  /*
         for (int i = 0; i < table.getColumnCount(); i++) {
@@ -547,7 +570,8 @@ public class TableManipulator {
         }
         else
         {
-            if (table.getRowCount() < auto_show_row_header) {
+            if (table.getRowCount() < auto_show_row_header &&
+                !header.isScrollBarVisible() ) {
                 header.setVisible(false);
             } else {
                 header.setVisible(true);
