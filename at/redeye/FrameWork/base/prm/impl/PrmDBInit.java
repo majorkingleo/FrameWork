@@ -74,7 +74,6 @@ public class PrmDBInit {
 
         for (String key : keys) {
             DBConfig c = (DBConfig) vals.get(key).getCopy();
-            String val = root.getSetup().getLocalConfig(c.getConfigName(), c.getConfigValue());
             root.getSetup().setLocalConfig(c.getConfigName(), c.getConfigValue(), true);
         }
 

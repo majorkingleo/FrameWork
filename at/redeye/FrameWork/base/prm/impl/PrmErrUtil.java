@@ -4,11 +4,10 @@
  */
 package at.redeye.FrameWork.base.prm.impl;
 
-import at.redeye.FrameWork.base.BaseDialog;
-import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
-import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
 
 /**
  *
