@@ -11,7 +11,10 @@ package at.redeye.SqlDBInterface.SqlDBIO.impl;
  */
 public class MOMMSqlDriverException extends Exception
 {
-    public MOMMSqlDriverException()
+    
+	private static final long serialVersionUID = 1L;
+
+	public MOMMSqlDriverException()
     {
         super();
     }
