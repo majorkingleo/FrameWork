@@ -43,7 +43,7 @@ public class RowHeaderTest extends BaseDialog {
 
         Vector<DBConfig> data = new Vector<DBConfig>();
 
-        for( i = 0 ; i < 100; i++ )
+        for( i = 0 ; i < 19; i++ )
         {
             DBConfig c = new DBConfig();
 
@@ -236,6 +236,11 @@ public class RowHeaderTest extends BaseDialog {
         if( row != -1 )
         {
             tm.remove(row);
+        } else {
+            row = table.getRowCount() - 1;
+
+            if( row >= 0 )
+              tm.remove(row);
         }
 
     }//GEN-LAST:event_jButton2ActionPerformed
