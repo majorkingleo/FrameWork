@@ -4,14 +4,14 @@
  */
 package at.redeye.Setup.wizard.impl;
 
+import java.awt.Dimension;
+
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardWindowInterface;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
-import at.redeye.FrameWork.base.wizards.impl.WizardListener.WizardStatus;
 import at.redeye.UserManagement.impl.AdminDlg;
-import java.awt.Dimension;
 
 /**
  *

@@ -26,7 +26,7 @@ public class ConfigParamHook implements HelpWinHook
     String keyword;
     Root root;
     boolean global;
-    TreeMap config;
+    TreeMap<String, DBConfig> config;
     Collection<String>  search_path;
     private static Logger logger = Logger.getLogger(ConfigParamHook.class.getName());
     String color_even;

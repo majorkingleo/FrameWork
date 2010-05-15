@@ -11,7 +11,6 @@ import at.redeye.FrameWork.base.wizards.WizardAction;
 import at.redeye.FrameWork.base.wizards.WizardWindowInterface;
 import at.redeye.FrameWork.base.wizards.impl.Wizard;
 import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
-import at.redeye.FrameWork.base.wizards.impl.WizardListener.WizardStatus;
 
 /**
  *

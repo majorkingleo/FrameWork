@@ -11,7 +11,6 @@ import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.Setup.ConfigCheck.ConfigCheck;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
-import at.redeye.UserManagement.bindtypes.DBPermissionLevel;
 import java.util.Vector;
 
 /**
