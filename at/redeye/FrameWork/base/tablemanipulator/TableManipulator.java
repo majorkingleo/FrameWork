@@ -7,6 +7,7 @@ package at.redeye.FrameWork.base.tablemanipulator;
 
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Vector;
@@ -22,6 +23,7 @@ import at.redeye.FrameWork.base.bindtypes.DBEnumAsInteger;
 import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.utilities.StringUtils;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -29,6 +31,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -44,6 +47,9 @@ public class TableManipulator {
     NormalTableModel model;    
     boolean allEditable = false;
     Root root;
+    RowHeader header;
+    int auto_show_row_header = 20;
+    private static Logger logger = Logger.getLogger(TableManipulator.class.getName());
     
     public TableManipulator( Root root, JTable table, TableDesign tabledesign )
     {
@@ -53,19 +59,23 @@ public class TableManipulator {
         this.root = root;
         table.setModel(model);        
         table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));
+        header = new RowHeader( table );
         
         TableEditorStopper.ensureEditingStopWhenTableLosesFocus(table);
+        readShowHeaderLimit();
     }
     
     public TableManipulator( Root root, JTable table, DBStrukt binddesc )
     {
         this.root = root;
+        readShowHeaderLimit();
         configure( table, binddesc, false );
     }
     
     public TableManipulator( Root root, JTable table, DBStrukt binddesc, boolean allEditable )
     {
         this.root = root;
+        readShowHeaderLimit();
         configure( table, binddesc, allEditable );
     }   
 
@@ -102,8 +112,8 @@ public class TableManipulator {
         this.table = table;
         this.model = new NormalTableModel(tabledesign);        
         table.setModel(model);
-        table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));                
-        
+        table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));
+        header = new RowHeader( table );
     }
 
     public void autoResize()
@@ -119,6 +129,8 @@ public class TableManipulator {
  
         int margin_default = Integer.valueOf(smargin_default);
         int margin_editable = Integer.valueOf(smargin_editable);
+
+        int max_height = 0;
 
         for (int i = 0; i < table.getColumnCount(); i++) {
             int                     vColIndex = i;
@@ -136,13 +148,17 @@ public class TableManipulator {
             Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
  
             int width_header = comp.getPreferredSize().width;
- 
+
             // Get maximum width of column data
             for (int r = 0; r < table.getRowCount(); r++) {
                 renderer = table.getCellRenderer(r, vColIndex);
                 comp     = renderer.getTableCellRendererComponent(table, table.getValueAt(r, vColIndex), false, false,
                         r, vColIndex);
-                width = Math.max(width, comp.getPreferredSize().width);
+
+                Dimension dim = comp.getPreferredSize();
+
+                width = Math.max(width, dim.width);
+                max_height = Math.max(max_height, dim.height);
             }
 
 
@@ -169,6 +185,12 @@ public class TableManipulator {
  
         // table.setAutoCreateRowSorter(true);
         table.getTableHeader().setReorderingAllowed(false);
+
+        if( max_height > 0 )
+        {
+            System.out.println(String.format("height: %d",max_height) );
+            header.setCellHeight(max_height-1);
+        }
  /*
         for (int i = 0; i < table.getColumnCount(); i++) {
             TableColumn column = table.getColumnModel().getColumn(i);
@@ -184,7 +206,7 @@ public class TableManipulator {
     {
         Vector<DBValue> values = binddesc.getAllValues();
         
-        addRow( values );
+        addRow( values );        
     }
     
     public void add(DBStrukt strukt, boolean set_edited ) 
@@ -201,8 +223,11 @@ public class TableManipulator {
         {
             Vector<DBValue> values = s.getAllValues();        
             
-            addRow( values );
+            addRow( values, false );
         }
+
+        checkRowHeaderLimit();
+        header.updateUI();
     }
     
     public void prepareTable()
@@ -233,9 +258,14 @@ public class TableManipulator {
             }
         }                       
     }
-        
-    
+
     public void addRow( Vector<?> data )
+    {
+        addRow(data,true);
+    }
+
+    
+    private void addRow( Vector<?> data, boolean update_ui )
     {
         /* Wir müssen hier einen 2. Vector anlegen,
          * da der eine an die Tabelle angebunden wird
@@ -265,6 +295,11 @@ public class TableManipulator {
         
         model.addRow(table_copy);
         tabledesign.rows.add(db_copy);
+
+        if( update_ui ) {
+            checkRowHeaderLimit();
+            header.updateUI();
+        }
     }
     
     public void clear()
@@ -277,6 +312,9 @@ public class TableManipulator {
         tabledesign.edited_rows.clear();
         tabledesign.rows.clear();
         tabledesign.coloredCells.clear();
+
+        checkRowHeaderLimit();
+        header.updateUI();
     }
     
     public void remove( int row )
@@ -306,6 +344,9 @@ public class TableManipulator {
         }
         
         tabledesign.edited_rows = er;
+
+        checkRowHeaderLimit();
+        header.updateUI();
     }
     
     public Set<Integer> getEditedRows()
@@ -460,9 +501,13 @@ public class TableManipulator {
     public void updateUI()
     {        
         model.fireTableDataChanged();
+        header.updateUI();
         //table.updateUI();
     }
 
+    /**
+     * @return -1 if nothing was selected
+     */
     public int getSelectedRow()
     {
         return table.getSelectedRow();
@@ -470,5 +515,57 @@ public class TableManipulator {
 
     public TableDesign getTabledesign() {
         return tabledesign;
+    }
+
+    public void showRowHeader(boolean selected)
+    {
+        if( selected )
+            showRowHeader();
+        else
+            hideRowHeader();
+    }
+
+    public void showRowHeader()
+    {
+        header.setVisible(true);
+    }
+
+    public void hideRowHeader()
+    {
+        header.setVisible(false);
+    }
+
+    private void checkRowHeaderLimit()
+    {
+        if( auto_show_row_header < 0 )
+            return;
+        else if( auto_show_row_header == 0 )
+            return;
+
+        if( table.getRowCount() < auto_show_row_header )
+            header.setVisible(false);
+        else
+            header.setVisible(true);
+    }
+
+    private void readShowHeaderLimit()
+    {
+        try {
+            auto_show_row_header = Integer.parseInt(root.getSetup().getLocalConfig(
+                    FrameWorkConfigDefinitions.SpreadSheetRowHeaderLimit));
+
+        } catch ( NumberFormatException ex ) {
+            logger.error(StringUtils.ExceptionToString(ex));
+        }
+    }
+
+    public void disableAutoRowHeader()
+    {
+        auto_show_row_header = -1;
+    }
+
+    public void enableAutoRowHeader()
+    {
+        readShowHeaderLimit();
     }
 }
