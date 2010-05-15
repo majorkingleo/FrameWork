@@ -44,6 +44,10 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
 
         tm.hide(config.hist.lo_user);
         tm.hide(config.hist.lo_zeit);
+        tm.hide(config.hist.an_zeit);
+        tm.hide(config.hist.an_user);
+        tm.hide(config.hist.ae_zeit);
+        tm.hide(config.hist.ae_user);
 
         tm.setEditable(config.value);
 
