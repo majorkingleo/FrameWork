@@ -20,6 +20,7 @@ import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -41,7 +42,7 @@ public class RowHeader
             setForeground(header.getForeground());
             setBackground(header.getBackground());
             font = header.getFont();
-            setFont(font);            
+            setFont(font);
 
             if( table.getRowCount() > 0 )
                 setText(String.format(" %d ",table.getRowCount()));
@@ -51,7 +52,7 @@ public class RowHeader
                 int index, boolean isSelected, boolean cellHasFocus) {
 
             // weil sonst wird plötzlich die Schrift fett
-            setFont(font);            
+            setFont(font);           
 
             if( value == null )
                 setText( "" );
@@ -60,7 +61,15 @@ public class RowHeader
             
             return this;
         }
-
+/*
+        @Override
+        public Dimension getPreferredSize()
+        {
+            Dimension dim = super.getPreferredSize();
+            System.out.println(dim);
+            return dim;
+        }
+*/
         private void setPreferedHeight(int height)
         {
             if( table.getRowCount() > 0 )
@@ -172,6 +181,14 @@ public class RowHeader
         else
             list.setFixedCellWidth(-1);
   */
+        /*
+        if( table.getRowCount() > 0 )
+        {
+            TableCellRenderer renderer = table.getCellRenderer(0, 0);
+            Component comp = renderer.getTableCellRendererComponent(table, table.getValueAt(0, 0), false, false, 0, 0);
+
+            System.out.println("Height: " + comp.getPreferredSize().height);
+        }*/
 
         list.updateUI();
         scroll.updateUI();
@@ -179,8 +196,16 @@ public class RowHeader
 
     public void setCellHeight( int height )
     {
+        
         if( header != null )
             header.setPreferedHeight( height );
+
+        
+        /*
+        if( list != null )
+            list.setFixedCellHeight(height);
+         * 
+         */
     }
 
     void setVisible(boolean state)

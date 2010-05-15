@@ -8,6 +8,7 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Vector;
@@ -19,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.Setup;
 import at.redeye.FrameWork.base.bindtypes.DBEnum;
 import at.redeye.FrameWork.base.bindtypes.DBEnumAsInteger;
 import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
@@ -27,6 +29,7 @@ import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.utilities.StringUtils;
 
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -170,6 +173,9 @@ public class TableManipulator {
                 Dimension dim = comp.getPreferredSize();
 
                 width = Math.max(width, dim.width);
+
+                // System.out.println("hieght: " + dim.height + " row: " + (r +1) + " col: " + (i+1) );
+
                 max_height = Math.max(max_height, dim.height);
             }
 
@@ -200,18 +206,43 @@ public class TableManipulator {
 
         if( max_height > 0 )
         {
-            int correction = 1;
+
+            int correction = 0;
 
             LookAndFeel look_and_feel = UIManager.getLookAndFeel();
 
             if( look_and_feel != null )
             {
                 logger.info("look and feel: " + look_and_feel.getID() );
-                if( look_and_feel.getID().equals("Nimbus") )
-                    correction = 3;
+
+                if( Setup.is_linux_system() )
+                {
+                    correction = 1;
+
+                    if( look_and_feel.getID().equals("Nimbus") )
+                        correction = 3;
+                }
+                else if( Setup.is_win_7_system() )
+                {
+                    correction=2;
+
+                    if( look_and_feel.getID().equals("Nimbus") )
+                        correction = 4;
+                    else if( look_and_feel.getID().equals("Windows") )
+                        correction = 0;
+                }
+                else
+                {
+                    correction=2;
+
+                    if( look_and_feel.getID().equals("Nimbus") )
+                        correction = 3;
+                    else if( look_and_feel.getID().equals("Windows") )
+                        correction = 0;                    
+                }
             }
 
-            System.out.println(String.format("height: %d",max_height) );
+            //System.out.println(String.format("height: %d",max_height) );
             header.setCellHeight(max_height-correction);
         }
  /*

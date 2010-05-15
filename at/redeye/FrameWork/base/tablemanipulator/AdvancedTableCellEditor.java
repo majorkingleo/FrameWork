@@ -61,6 +61,8 @@ public class AdvancedTableCellEditor extends AbstractCellEditor implements Table
         component.enable_complete(true);        
         component.setBackground(Color.YELLOW);
 
+        System.out.println("comp size: " + component.getPreferredSize());
+
         if (tabledesign.colls.get(last_col).validator != null) {
             if (value instanceof DBValue) {
                 String sc = tabledesign.colls.get(last_col).validator.formatData(value);
