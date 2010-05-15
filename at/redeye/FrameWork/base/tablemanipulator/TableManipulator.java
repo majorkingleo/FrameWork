@@ -538,14 +538,21 @@ public class TableManipulator {
     private void checkRowHeaderLimit()
     {
         if( auto_show_row_header < 0 )
-            return;
-        else if( auto_show_row_header == 0 )
-            return;
-
-        if( table.getRowCount() < auto_show_row_header )
+        {
             header.setVisible(false);
+        }
+        else if( auto_show_row_header == 0 )
+        {
+             header.setVisible(true);
+        }
         else
-            header.setVisible(true);
+        {
+            if (table.getRowCount() < auto_show_row_header) {
+                header.setVisible(false);
+            } else {
+                header.setVisible(true);
+            }
+        }
     }
 
     private void readShowHeaderLimit()
