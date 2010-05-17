@@ -8,7 +8,6 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Vector;
@@ -29,7 +28,6 @@ import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.utilities.StringUtils;
 
 import java.awt.Color;
-import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -52,7 +50,7 @@ public class TableManipulator {
     NormalTableModel model;    
     boolean allEditable = false;
     Root root;
-    RowHeader header;
+    RowHeader row_header;
     int auto_show_row_header = 20;
     private static Logger logger = Logger.getLogger(TableManipulator.class.getName());
     
@@ -64,7 +62,7 @@ public class TableManipulator {
         this.root = root;
         table.setModel(model);        
         table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));
-        header = new RowHeader( table,  new Runnable() {
+        row_header = new RowHeader( table,  new Runnable() {
 
             public void run() {
                 checkRowHeaderLimit();
@@ -123,7 +121,7 @@ public class TableManipulator {
         this.model = new NormalTableModel(tabledesign);        
         table.setModel(model);
         table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));
-        header = new RowHeader( table, new Runnable() {
+        row_header = new RowHeader( table, new Runnable() {
 
             public void run() {
                 checkRowHeaderLimit();
@@ -222,7 +220,7 @@ public class TableManipulator {
                     if( look_and_feel.getID().equals("Nimbus") )
                         correction = 3;
                 }
-                else if( Setup.is_win_7_system() )
+                else // Windows
                 {
                     correction=2;
 
@@ -231,19 +229,10 @@ public class TableManipulator {
                     else if( look_and_feel.getID().equals("Windows") )
                         correction = 0;
                 }
-                else
-                {
-                    correction=2;
-
-                    if( look_and_feel.getID().equals("Nimbus") )
-                        correction = 3;
-                    else if( look_and_feel.getID().equals("Windows") )
-                        correction = 0;                    
-                }
             }
 
             //System.out.println(String.format("height: %d",max_height) );
-            header.setCellHeight(max_height-correction);
+            row_header.setCellHeight(max_height-correction);
         }
  /*
         for (int i = 0; i < table.getColumnCount(); i++) {
@@ -281,7 +270,7 @@ public class TableManipulator {
         }
 
         checkRowHeaderLimit();
-        header.updateUI();
+        row_header.updateUI();
     }
     
     public void prepareTable()
@@ -352,7 +341,7 @@ public class TableManipulator {
 
         if( update_ui ) {
             checkRowHeaderLimit();
-            header.updateUI();
+            row_header.updateUI();
         }
     }
     
@@ -368,7 +357,7 @@ public class TableManipulator {
         tabledesign.coloredCells.clear();
 
         checkRowHeaderLimit();
-        header.updateUI();
+        row_header.updateUI();
     }
     
     public void remove( int row )
@@ -400,7 +389,7 @@ public class TableManipulator {
         tabledesign.edited_rows = er;
 
         checkRowHeaderLimit();
-        header.updateUI();
+        row_header.updateUI();
     }
     
     public Set<Integer> getEditedRows()
@@ -555,7 +544,7 @@ public class TableManipulator {
     public void updateUI()
     {        
         model.fireTableDataChanged();
-        header.updateUI();
+        row_header.updateUI();
         //table.updateUI();
     }
 
@@ -581,31 +570,31 @@ public class TableManipulator {
 
     public void showRowHeader()
     {
-        header.setVisible(true);
+        row_header.setVisible(true);
     }
 
     public void hideRowHeader()
     {
-        header.setVisible(false);
+        row_header.setVisible(false);
     }
 
     private void checkRowHeaderLimit()
     {
         if( auto_show_row_header < 0 )
         {
-            header.setVisible(false);
+            row_header.setVisible(false);
         }
         else if( auto_show_row_header == 0 )
         {
-             header.setVisible(true);
+             row_header.setVisible(true);
         }
         else
         {
             if (table.getRowCount() < auto_show_row_header &&
-                !header.isScrollBarVisible() ) {
-                header.setVisible(false);
+                !row_header.isScrollBarVisible() ) {
+                row_header.setVisible(false);
             } else {
-                header.setVisible(true);
+                row_header.setVisible(true);
             }
         }
     }
