@@ -20,7 +20,6 @@ import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -61,15 +60,7 @@ public class RowHeader
             
             return this;
         }
-/*
-        @Override
-        public Dimension getPreferredSize()
-        {
-            Dimension dim = super.getPreferredSize();
-            System.out.println(dim);
-            return dim;
-        }
-*/
+
         private void setPreferedHeight(int height)
         {
             if( table.getRowCount() > 0 )
@@ -174,38 +165,20 @@ public class RowHeader
 
     public void updateUI()
     {
-        //header.updateUI();
-/*
-        if( table.getRowCount() == 0 )
-            list.setFixedCellWidth(10);
-        else
-            list.setFixedCellWidth(-1);
-  */
-        /*
-        if( table.getRowCount() > 0 )
-        {
-            TableCellRenderer renderer = table.getCellRenderer(0, 0);
-            Component comp = renderer.getTableCellRendererComponent(table, table.getValueAt(0, 0), false, false, 0, 0);
-
-            System.out.println("Height: " + comp.getPreferredSize().height);
-        }*/
-
         list.updateUI();
         scroll.updateUI();
     }
 
     public void setCellHeight( int height )
     {
-        
+        /*
         if( header != null )
             header.setPreferedHeight( height );
-
-        
-        /*
+         */
+        // obriger code funktioniert eh sehr gut, aber
+        // performanter ist dieser hier.
         if( list != null )
             list.setFixedCellHeight(height);
-         * 
-         */
     }
 
     void setVisible(boolean state)

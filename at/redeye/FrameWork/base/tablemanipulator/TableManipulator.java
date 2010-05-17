@@ -5,8 +5,12 @@
 
 package at.redeye.FrameWork.base.tablemanipulator;
 
+import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.BaseDialogBase;
+import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.util.Collection;
 import java.util.Set;
@@ -15,7 +19,6 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.LookAndFeel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import at.redeye.FrameWork.base.Root;
@@ -28,10 +31,12 @@ import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.utilities.StringUtils;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.util.HashSet;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
@@ -71,6 +76,7 @@ public class TableManipulator {
         
         TableEditorStopper.ensureEditingStopWhenTableLosesFocus(table);
         readShowHeaderLimit();
+        addCloseListener();
     }
     
     public TableManipulator( Root root, JTable table, DBStrukt binddesc )
@@ -78,6 +84,7 @@ public class TableManipulator {
         this.root = root;
         readShowHeaderLimit();
         configure( table, binddesc, false );
+        addCloseListener();
     }
     
     public TableManipulator( Root root, JTable table, DBStrukt binddesc, boolean allEditable )
@@ -85,6 +92,7 @@ public class TableManipulator {
         this.root = root;
         readShowHeaderLimit();
         configure( table, binddesc, allEditable );
+        addCloseListener();
     }   
 
     protected boolean isHidden( int i )
@@ -131,10 +139,11 @@ public class TableManipulator {
 
     public void autoResize()
     {
-        autoResizeColWidth( table, model );
+        autoResizeColWidth( table );
+        setUserColWidth();
     }
     
-     public void autoResizeColWidth(JTable table, DefaultTableModel model) {
+     public void autoResizeColWidth(JTable table ) {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);        
  
         String smargin_default = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.SpreadSheetMarginReadOnly);
@@ -618,5 +627,131 @@ public class TableManipulator {
     public void enableAutoRowHeader()
     {
         readShowHeaderLimit();
+    }
+
+    private void addCloseListener()
+    {
+        BaseDialogBase base = getBaseDialog();
+
+        if( base == null )
+            return;
+
+        base.registerOnCloseListener(new Runnable() {
+
+            public void run() {
+                saveTableHeaderSize();
+            }
+        });
+    }
+
+    private BaseDialogBase getBaseDialog()
+    {
+        Container parent = table;
+        
+        do
+        {
+            parent = parent.getParent();
+            
+            if( parent instanceof BaseDialog ||
+                parent instanceof BaseDialogDialog )
+            {
+                return (BaseDialogBase) parent;
+            }
+            
+        } while( parent != null );
+        
+        return null;
+    }
+
+    private String getUniqueSaveIdForTable()
+    {
+        BaseDialogBase base = getBaseDialog();
+
+        if( base == null )
+            return null;
+
+        return base.getUniqueIdentifier() + "_Table_";
+    }
+
+    public void saveTableHeaderSize()
+    {
+        if( binddesc == null )
+        {
+            logger.error("save Table size without a binddesc not testet yet");
+            return;
+        }
+
+        String uid = getUniqueSaveIdForTable();
+
+        if( uid == null )
+        {
+            logger.error("die Tabelle befindet sich nicht in einem BaseDialog sichern nicht möglich!");
+        }
+
+        uid += binddesc.getName();
+
+        JTableHeader header = table.getTableHeader();
+
+        logger.info("saving cols width for binddesc: " + binddesc.getName() );
+
+        Setup setup = root.getSetup();
+
+        for( int j = 0; j < table.getColumnCount(); j++ )
+        {
+            Rectangle col_rect = header.getHeaderRect(j);
+
+            TableDesign.Coll col =  tabledesign.colls.get(j);
+
+            logger.info(j + ": " + col_rect.width + " " +col.Title + " => " +  col.dbval.getName() );
+
+            String col_uid = uid + "_" + col.dbval.getName();
+
+            setup.setLocalConfig(col_uid, String.valueOf(col_rect.width));
+        }
+    }
+
+    private void setUserColWidth()
+    {
+        if( binddesc == null )
+        {
+            logger.error("save Table size without a binddesc not testet yet");
+            return;
+        }
+
+        String uid = getUniqueSaveIdForTable();
+
+        if( uid == null )
+        {
+            logger.error("die Tabelle befindet sich nicht in einem BaseDialog sichern nicht möglich!");
+        }
+
+        uid += binddesc.getName();
+        Setup setup = root.getSetup();
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            DefaultTableColumnModel colModel  = (DefaultTableColumnModel) table.getColumnModel();
+            TableColumn             tcol       = colModel.getColumn(i);
+
+            int width = 0;
+
+            TableDesign.Coll col =  tabledesign.colls.get(i);
+
+            String col_uid = uid + "_" + col.dbval.getName();
+
+            String val = setup.getLocalConfig(col_uid,"");
+
+            if( val.isEmpty() )
+                continue;
+
+            try
+            {
+                width = Integer.parseInt(val);
+            } catch( NumberFormatException ex ) {
+                logger.error(StringUtils.ExceptionToString(ex));
+            }
+
+            if( width > 5 )
+                tcol.setPreferredWidth(width);
+        }
     }
 }

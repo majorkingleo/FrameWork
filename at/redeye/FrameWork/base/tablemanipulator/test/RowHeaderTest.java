@@ -41,8 +41,13 @@ public class RowHeaderTest extends BaseDialog {
 
         tm = new TableManipulator(root, table, config);
 
-        tm.setEditable(config.name);
+        tm.hide(config.hist.an_user);
+        tm.hide(config.hist.an_zeit);
+        tm.hide(config.hist.lo_user);
+        tm.hide(config.hist.lo_zeit);
 
+        tm.setEditable(config.name);
+        
         Vector<DBConfig> data = new Vector<DBConfig>();
 
         for( i = 0 ; i < 19; i++ )
@@ -308,7 +313,7 @@ public class RowHeaderTest extends BaseDialog {
     * @param args the command line RowHeaderTest
     */
     private static Root main_root;
-    private static String StyleName = "system";
+    private static String StyleName = "metal";
 
     public static void main(String args[]) {
 

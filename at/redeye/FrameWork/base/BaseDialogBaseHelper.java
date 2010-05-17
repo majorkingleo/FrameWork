@@ -577,8 +577,6 @@ public class BaseDialogBaseHelper implements BindVarInterface
             logger.error(ex);
         }
 
-        root.informWindowClosed(parent);
-
         if( onCloseListeners != null )
         {
             for( Runnable run : onCloseListeners)
@@ -586,6 +584,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
 
             onCloseListeners.clear();
         }
+
+        root.informWindowClosed(parent);
 
         parent.dispose();
     }
