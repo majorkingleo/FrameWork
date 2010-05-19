@@ -6,7 +6,6 @@
 package at.redeye.FrameWork.base.translation;
 
 import at.redeye.FrameWork.base.AutoLogger;
-import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.BaseDialogBase;
 import at.redeye.FrameWork.base.BaseDialogBaseHelper;
 import at.redeye.FrameWork.base.Root;
@@ -36,7 +35,9 @@ public class TranslationHelper
      class OpenTransDialog implements Runnable
      {
          public void run() {
-             new TranslationDialog(root, (JFrame)base_dlg, base_dlg.getClass().getName()).setVisible(true);
+             base_dlg.invokeDialogUnique(
+                new TranslationDialog(root, (JFrame)base_dlg, base_dlg.getClass().getName())
+             );
          }
      }
 
