@@ -458,7 +458,13 @@ public class BaseDialogBaseHelper implements BindVarInterface
             int value = getTransaction().getNewSequenceValue(seqName, 1234567);
             return value;
         } else {
-            if (seq_transaction == null) {
+
+            if( seq_transaction!= null && !seq_transaction.isOpen() ) {
+                closeTransaction(seq_transaction);
+                seq_transaction = null;
+            }
+
+            if (seq_transaction == null ) {
                 seq_transaction = getNewTransaction();
             }
 
@@ -550,7 +556,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
             return;
         }
 
-        tran.rollback();
+        if( tran.isOpen() )
+            tran.rollback();
 
         root.getDBConnection().closeTransaction(tran);
     }

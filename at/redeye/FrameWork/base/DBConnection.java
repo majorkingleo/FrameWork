@@ -214,7 +214,8 @@ public class DBConnection {
 
 		try {
 
-			trans.close();
+                    	if (trans.isOpen())
+                            trans.close();
 
 			if (trans.isOpen())
 				return false;

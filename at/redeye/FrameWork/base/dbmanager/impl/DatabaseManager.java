@@ -236,12 +236,12 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
     }
 
     @Override
-	public boolean createTable(DBStrukt strukt) throws SQLException 
-    {
-		String sql = createSql.createSqlforTable(strukt);
-		
-		return execSql( sql );
-	}
+    public boolean createTable(DBStrukt strukt) throws SQLException {
+        table_list = null; // cache leeren
+        String sql = createSql.createSqlforTable(strukt);
+
+        return execSql(sql);
+    }
 
     @Override
 	public boolean autoCreateTable(DBStrukt strukt) throws SQLException,
@@ -256,7 +256,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 				if (!createTable(vers)) {
 					return false;
 				} else {
-					return autoCreateTable(strukt);
+                                    return autoCreateTable(strukt);
 				}
 			} else {
 				if (tableExists(strukt.getName())) {
