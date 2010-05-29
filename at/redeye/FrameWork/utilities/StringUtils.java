@@ -329,6 +329,9 @@ public class StringUtils {
         if( maybe_a_yes_value == null )
             return false;
 
+        if( maybe_a_yes_value.equalsIgnoreCase("ja") )
+            return true;
+        
         if( maybe_a_yes_value.equalsIgnoreCase("yes") )
             return true;
 
