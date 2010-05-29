@@ -64,6 +64,7 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface, PrmLi
                 c.setCustomChecks(GlobalConfigDefinitions.get(key).getCustomChecks());
                 c.setDefaultChecks(GlobalConfigDefinitions.get(key).getDefaultChecks());
                 c.setPossibleValues(GlobalConfigDefinitions.get(key).getPossibleValues());
+                c.addAllPrmListeners(GlobalConfigDefinitions.get(key));
             } else {
                 logger.warn ("PRM " + key + " not found in LocalSetup!");
             }
