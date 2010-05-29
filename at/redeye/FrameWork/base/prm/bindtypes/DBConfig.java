@@ -162,6 +162,11 @@ public class DBConfig extends DBStrukt implements PrmAttachInterface
         prmListeners.remove(listener);
     }
 
+    public void addAllPrmListeners( DBConfig  other )
+    {
+        prmListeners.addAll(other.prmListeners);
+    }
+
     @Override
     public void updateListeners(PrmActionEvent prmActionEvent) {
 
