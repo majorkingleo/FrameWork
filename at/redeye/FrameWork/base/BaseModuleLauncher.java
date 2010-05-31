@@ -363,7 +363,8 @@ public abstract class BaseModuleLauncher {
         initIfSet(Setup.DBPasswd, always_overwrite);
         initIfSet(Setup.DBPort, always_overwrite);
         initIfSet(Setup.DBType, always_overwrite);
-        initIfSet(Setup.DBUser, always_overwrite);
+        initIfSet(Setup.DBUser, always_overwrite);        
+        initIfSet(Setup.EncryptAllDBSettings,always_overwrite);
 
         root.saveSetup();
     }

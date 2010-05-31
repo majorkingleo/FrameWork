@@ -14,7 +14,6 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import java.util.Vector;
-import javax.swing.JFrame;
 import org.apache.log4j.Logger;
 
 /**
@@ -94,10 +93,12 @@ public class LocalRoot extends Root {
         String instance = setup.getLocalConfig(Setup.DBInstance, "");
         String sport = setup.getLocalConfig(Setup.DBPort, "0");
 
-        if( !passwd.isEmpty() )
-        {
-            passwd = EncryptedDBPasswd.tryDecryptDBPassword(passwd, getAppName());
-        }
+        passwd   = EncryptedDBPasswd.tryDecryptDBPassword(passwd,   getAppName());
+        database = EncryptedDBPasswd.tryDecryptDBPassword(database, getAppName());
+        host     = EncryptedDBPasswd.tryDecryptDBPassword(host,     getAppName());
+        user     = EncryptedDBPasswd.tryDecryptDBPassword(user,     getAppName());
+        instance = EncryptedDBPasswd.tryDecryptDBPassword(instance, getAppName());
+        sport    = EncryptedDBPasswd.tryDecryptDBPassword(sport,    getAppName());
 
         int port = 0;
         

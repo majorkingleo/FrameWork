@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
  */
 public class EncryptedDBPasswd
 {
-    protected static Logger logger = Logger.getLogger(EncryptedDBPasswd.class.getName());
+   protected static Logger logger = Logger.getLogger(EncryptedDBPasswd.class.getName());
 
    public static String encryptDBPassword( final String DBPasswd, final String password )
    {
@@ -40,6 +40,9 @@ public class EncryptedDBPasswd
 
    public static String decryptDBPassword(final String DBPasswd, final String password )
    {
+       if( (DBPasswd.length() % 4) != 0 )
+           return null; // sicher kein Base64 encodeter String
+
        try {
            DesEncrypt cipher = new DesEncrypt(password);
            String str = cipher.decrypt(DBPasswd);
@@ -53,6 +56,9 @@ public class EncryptedDBPasswd
 
    public static String tryDecryptDBPassword(String DBPasswd, String password )
    {
+       if( DBPasswd.isEmpty() )
+           return DBPasswd;
+
        String res = decryptDBPassword(DBPasswd, password);
 
        if( res == null )

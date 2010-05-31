@@ -25,6 +25,7 @@ public abstract class Setup {
     static public final String DBUser = "DBUser";
     static public final String DBPasswd = "DBPasswd";
     static public final String DBDatabase = "DBDatabase";
+    static public final String EncryptAllDBSettings = "ENCRYPT_ALL_DB_SETTINGS";
     static public final String H1IPAddress = "H1IPAddress";
     static public final String H1Port = "H1Port";
     static public final String H1LTSAP = "H1LTSAP";

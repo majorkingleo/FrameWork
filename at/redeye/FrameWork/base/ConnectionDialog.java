@@ -77,12 +77,12 @@ public class ConnectionDialog extends BaseDialog {
 
         passwd = EncryptedDBPasswd.tryDecryptDBPassword(passwd, root.getAppName());
 
-        DBHost.append( root.getSetup().getLocalConfig(Setup.DBHost, "localhost" ) );
-        DBUser.append( root.getSetup().getLocalConfig(Setup.DBUser, "" ) );
+        DBHost.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBHost, "localhost" ) , root.getAppName()) );
+        DBUser.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBUser, "" ), root.getAppName()) );
         DBPasswd.append( passwd );
-        DBDatabase.append( root.getSetup().getLocalConfig(Setup.DBDatabase, "" ) );
-        DBInstance.append( root.getSetup().getLocalConfig(Setup.DBInstance, "" ) );
-        DBPort.append( root.getSetup().getLocalConfig(Setup.DBPort, "" ) );
+        DBDatabase.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBDatabase, "" ), root.getAppName() ));
+        DBInstance.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBInstance, "" ), root.getAppName() ));
+        DBPort.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBPort, "" ), root.getAppName() ));
         DBType = MOMMSupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, MOMMSupportedDBMSTypes.DB_MYSQL.toString() ) );
 
         setBindtypeManager( root.getBindtypeManager() );        
@@ -420,6 +420,28 @@ public class ConnectionDialog extends BaseDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+private String encrypt( StringBuffer buf )
+{
+    String s = buf.toString();
+
+    if( s.isEmpty() )
+        return s;
+
+    if( StringUtils.isYes( root.getSetup().getLocalConfig(Setup.EncryptAllDBSettings, "false")) )
+    {
+        String encoded = EncryptedDBPasswd.encryptDBPassword(buf.toString(), root.getAppName());
+
+        if( encoded == null )
+            return s;
+        else
+            return encoded;
+    }
+    else
+    {
+        return buf.toString();
+    }
+}
+
 private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBSaveActionPerformed
 
     Connection con = try_connect();
@@ -433,9 +455,9 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     }
     else
     {
-        root.getSetup().setLocalConfig(Setup.DBDatabase, DBDatabase.toString());
-        root.getSetup().setLocalConfig(Setup.DBHost, DBHost.toString());
-        root.getSetup().setLocalConfig(Setup.DBUser, DBUser.toString());
+        root.getSetup().setLocalConfig(Setup.DBDatabase, encrypt(DBDatabase));
+        root.getSetup().setLocalConfig(Setup.DBHost, encrypt(DBHost));
+        root.getSetup().setLocalConfig(Setup.DBUser, encrypt(DBUser));
 
         String passwd = DBPasswd.toString();
 
@@ -451,8 +473,8 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
         }
 
         root.getSetup().setLocalConfig(Setup.DBPasswd, enc_passwd );
-        root.getSetup().setLocalConfig(Setup.DBPort, DBPort.toString());
-        root.getSetup().setLocalConfig(Setup.DBInstance, DBInstance.toString());
+        root.getSetup().setLocalConfig(Setup.DBPort, encrypt(DBPort));
+        root.getSetup().setLocalConfig(Setup.DBInstance, encrypt(DBInstance));
         root.getSetup().setLocalConfig(Setup.DBType, DBType.toString());
         
         if( !root.loadDBConnectionFromSetup() )
