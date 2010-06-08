@@ -615,7 +615,7 @@ public class TableManipulator {
                     FrameWorkConfigDefinitions.SpreadSheetRowHeaderLimit));
 
         } catch ( NumberFormatException ex ) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
         }
     }
 
@@ -747,7 +747,7 @@ public class TableManipulator {
             {
                 width = Integer.parseInt(val);
             } catch( NumberFormatException ex ) {
-                logger.error(StringUtils.ExceptionToString(ex));
+                logger.error(StringUtils.exceptionToString(ex));
             }
 
             if( width > 5 )

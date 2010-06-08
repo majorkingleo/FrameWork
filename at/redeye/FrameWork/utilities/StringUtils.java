@@ -142,13 +142,13 @@ public class StringUtils {
         final int searchWindowLengthPreferedSigns = 20;
         final int searchWindowLengthSpaceSigns = 50;
 
-        if (length < searchWindowLengthPreferedSigns / 2 ||
-                length >= what.length() ||
-                searchWindowLengthPreferedSigns / 2 >= what.length()) {
+        if (length < searchWindowLengthPreferedSigns / 2
+                || length >= what.length()
+                || searchWindowLengthPreferedSigns / 2 >= what.length()) {
             // Doesn't make sense
             return what;
         }
-        
+
         char[] in = what.toCharArray();
         StringBuilder str = new StringBuilder();
 
@@ -160,9 +160,9 @@ public class StringUtils {
 
             if (walker % length == 0) {
 
-            //   System.out.println("Want to break at: " +
-            //          in[walker - 2] + in[walker - 1] + ">" +
-            //          in[walker] + "<" + in[walker + 1] + in[walker + 2]);
+                //   System.out.println("Want to break at: " +
+                //          in[walker - 2] + in[walker - 1] + ">" +
+                //          in[walker] + "<" + in[walker + 1] + in[walker + 2]);
 
                 // try to find a sign in search window
                 boolean found = false;
@@ -178,16 +178,14 @@ public class StringUtils {
 
                         if (in[walker + index] == myPreferedSigns[signidx]) {
                             str.append(new String(in, 0, walker + index + 1));
-                            str.append("\n");                            
+                            str.append("\n");
 
                             // mob hier stand 2 aber damit verwerfen wir das nächste Zeichen. auch nicht gut
                             walker += 1; // jump over break sign
 
                             // spaces überspringen
-                            for( int i = 0 ; i < mySpaceSigns.length; i++ )
-                            {
-                                if( in[walker+1] == mySpaceSigns[i] )
-                                {
+                            for (int i = 0; i < mySpaceSigns.length; i++) {
+                                if (in[walker + 1] == mySpaceSigns[i]) {
                                     walker++;
                                 }
                             }
@@ -207,10 +205,8 @@ public class StringUtils {
                             walker += 1; // jump over break sign
 
                             // spaces überspringen
-                            for( int i = 0 ; i < mySpaceSigns.length; i++ )
-                            {
-                                if( in[walker+1] == mySpaceSigns[i] )
-                                {
+                            for (int i = 0; i < mySpaceSigns.length; i++) {
+                                if (in[walker + 1] == mySpaceSigns[i]) {
                                     walker++;
                                 }
                             }
@@ -291,10 +287,8 @@ public class StringUtils {
      * @param rouding  precision
      * @return
      */
-
-    public static String FormatDouble( double d, int rounding )
-    {
-        return FormatDouble(Rounding.RndDouble(d, rounding));
+    public static String formatDouble(double d, int rounding) {
+        return formatDouble(Rounding.rndDouble(d, rounding));
     }
 
     /**
@@ -309,12 +303,11 @@ public class StringUtils {
      * @param d the number
      * @return
      */
-    public static String FormatDouble( double d )
-    {
-        String s = String.format("%f",d);
-        s = strip_post(s,"0");
-        s = strip_post(s,".");
-        s = strip_post(s,",");
+    public static String formatDouble(double d) {
+        String s = String.format("%f", d);
+        s = strip_post(s, "0");
+        s = strip_post(s, ".");
+        s = strip_post(s, ",");
 
         return s;
     }
@@ -324,45 +317,87 @@ public class StringUtils {
      * @param maybe_a_yes_value
      * @return true, false
      */
-    public static boolean isYes(String maybe_a_yes_value)
-    {
-        if( maybe_a_yes_value == null )
+    public static boolean isYes(String maybe_a_yes_value) {
+        if (maybe_a_yes_value == null) {
             return false;
 
-        if( maybe_a_yes_value.equalsIgnoreCase("ja") )
-            return true;
-        
-        if( maybe_a_yes_value.equalsIgnoreCase("yes") )
+
+        }
+        if (maybe_a_yes_value.equalsIgnoreCase("ja")) {
             return true;
 
-        if( maybe_a_yes_value.equalsIgnoreCase("true") )
+
+        }
+        if (maybe_a_yes_value.equalsIgnoreCase("yes")) {
             return true;
 
-        if( maybe_a_yes_value.equalsIgnoreCase("1") )
+
+        }
+        if (maybe_a_yes_value.equalsIgnoreCase("true")) {
             return true;
 
-        if( maybe_a_yes_value.equalsIgnoreCase("x") )
+
+        }
+        if (maybe_a_yes_value.equalsIgnoreCase("1")) {
             return true;
 
-        if( maybe_a_yes_value.equalsIgnoreCase("+") )
+
+        }
+        if (maybe_a_yes_value.equalsIgnoreCase("x")) {
             return true;
 
+
+        }
+        if (maybe_a_yes_value.equalsIgnoreCase("+")) {
+            return true;
+
+            
+        }
         return false;
     }
 
     /**
-    * Converts the complete Backtrace of an Exception into a String
-    * @param ex
-    * @return Backtrace of the Exception
-    */
-    public static String ExceptionToString( Exception ex )
-    {
+     * Converts the complete Backtrace of an Exception into a String
+     * @param ex
+     * @return Backtrace of the Exception
+     */
+    public static String exceptionToString(Exception ex) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         PrintStream s = new PrintStream(bos);
         ex.printStackTrace(s);
         s.flush();
-        
+
         return bos.toString();
+    }
+
+    /**
+     * The method cuts off the requested number of lines from source string.<br>
+     * Processed are the indicaters <b>\r<\b> and <b>\n<\b>
+     *
+     * @param sourceString The string that shall be processed.
+     * @param lines That number of lines those shall be skipped.
+     * @return The rest of string afer the line cut off.
+     */
+    public static String skipLeadingLines(String sourceString, int lines) {
+
+        String truncatedString;
+        int lbCounter = 0;
+        int idx = 0;
+
+        char[] arr = sourceString.toCharArray();
+
+
+        for (idx = 0; idx < arr.length; idx++) {
+            if (lbCounter == lines) {
+                break;
+            }
+            if (arr[idx] == '\n' || arr[idx] == '\r') {
+                lbCounter++;
+            }
+        }
+
+        truncatedString = String.valueOf(arr, idx, (arr.length - idx));
+        return truncatedString;
     }
 }

@@ -8,7 +8,7 @@ package at.redeye.FrameWork.utilities;
  */
 public class Rounding {
 
-	public static Double RndDouble(Double d, int digits) {
+	public static Double rndDouble(Double d, int digits) {
 
 		long exp = (long) Math.pow(10, digits);
 

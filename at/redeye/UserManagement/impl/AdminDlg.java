@@ -403,7 +403,7 @@ private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//G
         } catch (SQLException ex) {
 
             logger.error(ex);
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
 
         } catch (UnsupportedDBDataTypeException ex) {
 

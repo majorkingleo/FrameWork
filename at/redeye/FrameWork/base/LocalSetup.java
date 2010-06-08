@@ -195,9 +195,9 @@ public class LocalSetup extends Setup {
             result = true;
 
         } catch (MOMMSqlDriverException ex) {
-            logger.error(StringUtils.ExceptionToString(ex));        
+            logger.error(StringUtils.exceptionToString(ex));
         } catch (SQLException ex) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
         }
 
         return result;

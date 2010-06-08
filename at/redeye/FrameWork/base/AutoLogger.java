@@ -39,27 +39,27 @@ public abstract class AutoLogger {
             failed = false;
         } catch (SQLException ex) {               
             logger.error("Exception: " + ex );
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
             thrown_ex = ex;            
         } catch (TableBindingNotRegisteredException ex) {
             logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
             thrown_ex = ex;
         } catch (UnsupportedDBDataTypeException ex) {
             logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
             thrown_ex = ex;
         } catch (WrongBindFileFormatException ex) {
             logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
             thrown_ex = ex;            
         } catch (CloneNotSupportedException ex) {
             logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
             thrown_ex = ex;            
         } catch ( Exception ex ) {
             logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
             thrown_ex = ex;            
         }
     }

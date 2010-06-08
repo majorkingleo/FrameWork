@@ -579,13 +579,13 @@ private boolean setupDatabase( boolean success_message )
                 }
             }
         } catch (ClassNotFoundException ex) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
         } catch (SQLException ex) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
         } catch (MissingConnectionParamException ex) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
         } catch (UnSupportedDatabaseException ex) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
         } finally {
 
             if( t != null )
@@ -593,7 +593,7 @@ private boolean setupDatabase( boolean success_message )
                 try {
                     t.close();
                 } catch (SQLException ex) {
-                     logger.error(StringUtils.ExceptionToString(ex));
+                     logger.error(StringUtils.exceptionToString(ex));
                 }
             }
         }

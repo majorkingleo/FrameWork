@@ -506,7 +506,7 @@ public class BaseDialogBaseHelper implements BindVarInterface
                     transaction = null;
                 }
             } catch (SQLException ex) {
-                logger.error(StringUtils.ExceptionToString(ex));
+                logger.error(StringUtils.exceptionToString(ex));
             }
         }
 

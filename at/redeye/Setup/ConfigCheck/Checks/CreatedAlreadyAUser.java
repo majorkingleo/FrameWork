@@ -45,7 +45,7 @@ public class CreatedAlreadyAUser extends ConfigCheck
                     args);
             trans.rollback();
         } catch( Exception ex ) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
             return false;
         }
 

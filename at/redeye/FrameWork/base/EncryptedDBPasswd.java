@@ -49,7 +49,7 @@ public class EncryptedDBPasswd
 
            return str;
        } catch (Exception ex) {
-           logger.error(StringUtils.ExceptionToString(ex));
+           logger.error(StringUtils.exceptionToString(ex));
            return null;
        }
    }

@@ -46,7 +46,7 @@ public class AdminUserExists extends ConfigCheck
             return true;
 
         } catch( Exception ex ) {
-            logger.error(StringUtils.ExceptionToString(ex));
+            logger.error(StringUtils.exceptionToString(ex));
             return false;
         }
     }
