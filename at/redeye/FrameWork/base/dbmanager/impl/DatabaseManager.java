@@ -326,6 +326,10 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		tables.add(strukt);
 	}
 
+        /**
+         * automatically creates the entire database
+         * @return return true on success, false on failure
+         */
 	public boolean autocreate() {               
         
 		AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {                        
@@ -494,6 +498,10 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
        }
 
        return true;
+    }
+
+    public Vector<DBStrukt> getRegisteredTables() {
+        return tables;
     }
     
     

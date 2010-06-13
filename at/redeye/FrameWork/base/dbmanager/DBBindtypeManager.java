@@ -8,6 +8,7 @@ package at.redeye.FrameWork.base.dbmanager;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import java.util.Vector;
 
 /**
  *
@@ -33,4 +34,9 @@ public interface DBBindtypeManager {
      * @return
      */
     public boolean is_dbms_driver_loaded( MOMMSupportedDBMSTypes dbmstype );
+
+    /**     
+     * @return all registered Bindtypes
+     */
+    public Vector<DBStrukt> getRegisteredTables();
 }
