@@ -244,7 +244,7 @@ private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 }//GEN-LAST:event_jBSaveActionPerformed
 
 private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBLoadActionPerformed
-// TODO add your handling code here:
+
     
     JFileChooser fc = new JFileChooser();
     
