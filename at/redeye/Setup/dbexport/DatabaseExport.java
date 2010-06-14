@@ -7,7 +7,6 @@ package at.redeye.Setup.dbexport;
 
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
-import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.impl.DatabaseManager;
 import at.redeye.FrameWork.base.dbmanager.impl.bindtypes.DBTableVersion;
@@ -15,7 +14,6 @@ import at.redeye.FrameWork.base.transaction.DerbyTransaction;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.DeleteDir;
 import at.redeye.FrameWork.utilities.StringUtils;
-import at.redeye.FrameWork.utilities.TempDir;
 import at.redeye.FrameWork.utilities.Zip;
 import at.redeye.Setup.dbexport.DatabaseExport.CannotCreateTempDatabase;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
@@ -57,6 +55,7 @@ public class DatabaseExport
     Transaction trans_temp;
     Transaction trans_source;
     File temp_db_dir;
+    ProgressListener listener = null;
 
     /**
      * exports a databse to a zip file, by using a derby database.
@@ -71,15 +70,30 @@ public class DatabaseExport
         this.root = root;
     }
 
+    public void setProgressListener( ProgressListener progress_listener )
+    {
+        listener = progress_listener;
+    }
+
+    protected void fireEvent( String event )
+    {
+        if( listener != null )
+            listener.setStage(event);
+    }
 
     public void doExport() throws IOException, CannotCreateTempDatabase, ClassNotFoundException, SQLException, MissingConnectionParamException, UnSupportedDatabaseException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
     {
         trans_source = root.getDBConnection().getNewTransaction();
 
+        fireEvent( "erzeuge temporäre Datenbank" );
+
         trans_temp = createTempDatabase();
         DBBindtypeManager bindtype_manager = root.getBindtypeManager();
 
         Vector<DBStrukt> tables = bindtype_manager.getRegisteredTables();
+
+        if( listener != null )
+            listener.setOverallCounter(tables.size());
 
         DatabaseManager manager_temp = new DatabaseManager(trans_temp);
 
@@ -88,6 +102,8 @@ public class DatabaseExport
             manager_temp.register(table);
         }
 
+        fireEvent( "richte Datenbank ein" );
+
         if( manager_temp.autocreate() == false )
         {
             throw new CannotCreateTempDatabase("Autocreating database failed!");
@@ -95,8 +111,12 @@ public class DatabaseExport
 
         DBTableVersion table_version = new DBTableVersion();
 
+        int count = 0;
+
         for( DBStrukt table : tables )
         {
+            fireEvent( "lese Tabelle " + table.getName());
+
             if( table.getName().equals(table_version.getName()) )
                 continue;
 
@@ -105,6 +125,7 @@ public class DatabaseExport
 
             logger.info("fetched " + res.size() + " values");
 
+            fireEvent( "schreibe Tabelle " + table.getName());
             for( DBStrukt res_table : res )
             {
                 int result = trans_temp.insertValues(res_table);
@@ -116,13 +137,24 @@ public class DatabaseExport
                 }
 
                 trans_temp.commit();
+
+                if( listener != null && !listener.canContinue() )
+                    break;
             }
+
+            if( listener != null && !listener.canContinue() )
+               break;
+
+            if( listener != null )
+                listener.setCounter(++count);
         }
 
        trans_temp.commit();
        trans_temp.close();
 
        trans_temp = null;
+
+       fireEvent("Komprimieren der Datenbank");
 
        Zip.zip(temp_db_dir, target_file_name);
     }

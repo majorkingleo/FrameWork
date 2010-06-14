@@ -14,7 +14,7 @@ import at.redeye.FrameWork.base.Root;
  */
 public class DoDBExport {
 
-    public static void exportDB(Root root, String file_name)
+    public static void exportDBSilent(Root root, String file_name)
     {
         final DatabaseExport export = new DatabaseExport(root, file_name);
 
