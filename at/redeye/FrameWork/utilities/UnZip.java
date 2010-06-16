@@ -34,6 +34,11 @@ public class UnZip
         z.close();
     }
 
+    public static void unzip(File target_dir, String zip_file_name) throws FileNotFoundException, IOException
+    {
+        unzip( target_dir, new File(zip_file_name) );
+    }
+
     private static void unzip(File target_dir, ZipInputStream z) throws IOException
     {
         ZipEntry entry;

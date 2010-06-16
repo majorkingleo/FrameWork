@@ -62,6 +62,9 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 		this.trans = trans;
 
+                if( trans == null )
+                    return;
+
 		dbmstype = trans.getDBMSType();
 
 		switch (dbmstype) {
@@ -323,7 +326,19 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	}
 
 	public void register(DBStrukt strukt) {
-		tables.add(strukt);
+
+            // doppelte Einträge vermeiden
+            // kann passieren, wenn erneut eingelogt wird.
+            for( int i = 0; i < tables.size(); i++ )
+            {
+                if( tables.get(i).getName().equals(strukt.getName()) )
+                {
+                    tables.remove(i);
+                    break;
+                }
+            }
+
+            tables.add(strukt);
 	}
 
         /**
@@ -502,6 +517,13 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
     public Vector<DBStrukt> getRegisteredTables() {
         return tables;
+    }
+
+    public boolean drop_table(DBStrukt strukt) throws SQLException {
+
+        table_list = null; // cache leeren
+
+        return execSql( "drop table " + trans.markTable(strukt) );
     }
     
     

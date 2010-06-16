@@ -13,9 +13,12 @@ package at.redeye.Setup.dbexport;
 
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.BaseDialogBase;
+import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.utilities.StringUtils;
 import java.io.File;
+import javax.print.attribute.standard.Finishings;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -23,35 +26,38 @@ import javax.swing.JOptionPane;
  *
  * @author martin
  */
-public class ExportDialog extends BaseDialog implements ProgressListener {
+public class ImportDialog extends BaseDialogDialog implements ProgressListener {
 
     /** Creates new form ExportDialog */
 
-    Thread exporter;
+    Thread importer;
     boolean do_abort = false;
-    DatabaseExport export;
-    DBExImpFactory factory;
+    DatabaseImport db_import;
+    boolean success = false;
+    Runnable finnished_listener = null;
 
-    public ExportDialog( Root root ) {
-        super( root, "Datenbankexport" );
+    public ImportDialog( Root root ) {
+        super( root, "Datenbankimport" );
         initComponents();
+
+        doImport();
     }
 
-    public void setExImportFactory(DBExImpFactory factory)
+    public void setFinishedListener( Runnable listener )
     {
-        this.factory = factory;
+        finnished_listener = listener;
     }
 
-    public void doExport()
+    private void doImport()
     {
         JFileChooser fc = new JFileChooser();
 
-        int ret = fc.showSaveDialog(this);
+        int ret = fc.showOpenDialog(this);
 
         if( ret == JFileChooser.CANCEL_OPTION ||
             ret == JFileChooser.ERROR_OPTION )
         {
-            close();
+            close_later();
             return;
         }
 
@@ -59,44 +65,47 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
 
         if( file == null )
         {
-            close();
+            close_later();
             return;
         }
 
-        if( factory == null )
-            factory = new DBExImpFactory();
+        db_import = new DatabaseImport(root, file.getPath() );
 
-        export = factory.getNewExporter(root, file.getPath() );
+        db_import.setProgressListener(this);
 
-        export.setProgressListener(this);
+        final BaseDialogDialog dialog = this;
 
-        final BaseDialog dialog = this;
-
-        exporter = new Thread() {
+        importer = new Thread() {
 
             @Override
             public void run()
             {
-                AutoMBox mb = new AutoMBox(ExportDialog.class.getName())
+                AutoMBox mb = new AutoMBox(ImportDialog.class.getName())
                 {
 
                     @Override
                     public void do_stuff() throws Exception {
 
-                        export.doExport();
+                        db_import.doImport();
 
-                        export.close();
+                        db_import.close();
 
-                        JOptionPane.showMessageDialog(dialog, "Die Datenbank wurde erfolgreich exportiert!");
+                        success = true;
+                        JOptionPane.showMessageDialog(dialog, "Die Datenbank wurde erfolgreich importiert!");
                     }
                 };
 
                 close();
+
+                if( finnished_listener != null )
+                    finnished_listener.run();
             }
 
         };
 
-        exporter.start();
+        importer.start();
+
+        return;
     }
 
     /** This method is called from within the constructor to
@@ -122,7 +131,7 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
             }
         });
 
-        jLabel1.setText("Datenbankexport:");
+        jLabel1.setText("Datenbankimport:");
 
         jLTable.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
 
@@ -158,19 +167,19 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
 
-        if( exporter != null )
+        if( importer != null )
         {
             do_abort = true;
 
             try {
-                exporter.join(10000);
+                importer.join(10000);
                 logger.info("waited 10 seconds, thread didn't died, killing it.");
 
-                export.close();
-                exporter.join();
+                db_import.close();
+                importer.join();
                 
-                exporter = null;
-                export = null;
+                importer = null;
+                db_import = null;
             } catch( InterruptedException ex ) {
                 logger.error( StringUtils.exceptionToString(ex));
             }
@@ -200,6 +209,18 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
 
     synchronized public boolean canContinue() {
         return !do_abort;
+    }
+
+    private void close_later() {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                close();
+                
+                if( finnished_listener != null )
+                    finnished_listener.run();
+            }
+        });
     }
 
 }

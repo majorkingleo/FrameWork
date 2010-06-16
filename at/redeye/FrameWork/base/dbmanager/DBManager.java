@@ -29,5 +29,6 @@ public interface DBManager {
     public boolean migrateTable( DBStrukt strukt, Integer fromVersion ) throws SQLException;
     public boolean createTable( DBStrukt strukt ) throws SQLException;
     public boolean autoCreateTable( DBStrukt strukt ) throws SQLException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, CloneNotSupportedException, WrongBindFileFormatException, IOException;
-    public boolean db_supports_all_requested_features() throws SQLException;    
+    public boolean db_supports_all_requested_features() throws SQLException;
+    public boolean drop_table( DBStrukt strukt ) throws SQLException;
 }

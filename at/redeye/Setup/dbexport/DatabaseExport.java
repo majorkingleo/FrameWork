@@ -128,7 +128,7 @@ public class DatabaseExport
             fireEvent( "schreibe Tabelle " + table.getName());
             for( DBStrukt res_table : res )
             {
-                int result = trans_temp.insertValues(res_table);
+                int result = insertValues(res_table);
 
                 if( result != 1 )
                 {
@@ -222,5 +222,10 @@ public class DatabaseExport
         }
 
         return true;
+    }
+
+    public int insertValues( DBStrukt strukt ) throws UnsupportedDBDataTypeException, WrongBindFileFormatException, SQLException, IOException
+    {
+        return trans_temp.insertValues(strukt);
     }
 }

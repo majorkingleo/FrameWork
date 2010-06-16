@@ -63,7 +63,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Datenbankexport:"/>
+        <Property name="text" type="java.lang.String" value="Datenbankimport:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLTable">

@@ -16,6 +16,10 @@ public class DeleteDir {
     static public boolean deleteDirectory(File path) {
         if (path.exists()) {
             File[] files = path.listFiles();
+            
+            if( files == null )
+                return true;
+
             for (File file : files) {
                 if (file.isDirectory()) {
                     deleteDirectory(file);
