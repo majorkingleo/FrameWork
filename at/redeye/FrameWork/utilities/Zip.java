@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.utilities;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,7 +34,7 @@ public class Zip
 
     public static void zip( File file_or_dir, File zip_name ) throws FileNotFoundException, IOException
     {
-        ZipOutputStream z = new ZipOutputStream(new FileOutputStream(zip_name.getAbsolutePath()));
+        ZipOutputStream z = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zip_name.getAbsolutePath())));
 
         z.setLevel(9);
 
@@ -82,7 +83,7 @@ public class Zip
     public static void main( String argv[] )
     {
         try {
-            zip(new File("/home/martin/.ooo3"), new File( "/home/martin/ooo3.zip"));
+            zip(new File("/home/martin/Dropbox"), new File( "/home/martin/ooo3.zip"));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Zip.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
