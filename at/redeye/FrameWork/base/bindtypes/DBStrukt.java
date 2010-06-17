@@ -32,6 +32,7 @@ public abstract class DBStrukt {
     protected String strukt_name;
     protected String title = new String();
     public Vector<DBValue> elements = new Vector<DBValue>();
+    public HashMap<String,DBValue> element_by_name = new HashMap<String,DBValue>();
     public Vector<DBStrukt> sub_strukts = new Vector<DBStrukt>();
     protected Integer version = null;
     protected Vector<Pair<Integer,DBValue>>  elements_with_version = new Vector<Pair<Integer,DBValue>>();    
@@ -54,12 +55,14 @@ public abstract class DBStrukt {
     public void add( DBValue value )
     {
         elements.add( value );
+        element_by_name.put(value.getName().toUpperCase(), value);
     }
 
     
     public void add( DBValue value, Integer version )
     {
         elements.add( value );
+        element_by_name.put(value.getName().toUpperCase(), value);
         elements_with_version.add(new Pair(version,value));
 
         if( this.version == null )
@@ -341,7 +344,11 @@ public abstract class DBStrukt {
 
 
     private DBValue getValueByName(String key) 
-    {        
+    {
+        return element_by_name.get(key.toUpperCase());
+
+        /*
+
         for( int i  = 0; i < elements.size(); i++ )
         {
             if( key.equalsIgnoreCase(elements.get(i).getName()) )
@@ -349,6 +356,7 @@ public abstract class DBStrukt {
         }
 
         return null;
+         */
     }
 
 
