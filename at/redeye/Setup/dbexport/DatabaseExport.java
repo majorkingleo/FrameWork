@@ -125,22 +125,49 @@ public class DatabaseExport
 
             logger.info("fetched " + res.size() + " values");
 
-            fireEvent( "schreibe Tabelle " + table.getName());
+            String exp_format = "Exportiere Tabelle %s (%d von %d)";
+
+            fireEvent( String.format(exp_format, table.getName(), 0, res.size()));
+
+            int row_counter = 0;
+
             for( DBStrukt res_table : res )
             {
-                int result = insertValues(res_table);
+                int result = 0;
+                row_counter++;
+
+                try
+                {
+                    result = insertValues(res_table);
+                } catch( SQLException ex ) {
+                    logger.error(StringUtils.exceptionToString(ex));
+                    logger.error("Last Sql:  " + trans_temp.getSql());
+                    throw ex;
+                }
 
                 if( result != 1 )
                 {
                     logger.info("result of insert is: " +  result);
                     throw new CannotCreateTempDatabase("result of insert is: " +  result);
-                }
+                }                
 
-                trans_temp.commit();
+                if( row_counter % 100 == 0 )
+                {
+                   if( row_counter % 1000 == 0 )
+                   {
+                    // commits sind relativ teuer, daher nur alle 1000 mal
+                    trans_temp.commit();
+                   }
+
+                    logger.info("counter: " + row_counter);
+                    fireEvent( String.format(exp_format, table.getName(), row_counter, res.size()));
+                }
 
                 if( listener != null && !listener.canContinue() )
                     break;
             }
+
+            trans_temp.commit();
 
             if( listener != null && !listener.canContinue() )
                break;

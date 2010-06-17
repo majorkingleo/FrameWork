@@ -87,7 +87,8 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
 
                         export.close();
 
-                        JOptionPane.showMessageDialog(dialog, "Die Datenbank wurde erfolgreich exportiert!");
+                        if( !do_abort )
+                            JOptionPane.showMessageDialog(dialog, "Die Datenbank wurde erfolgreich exportiert!");
                     }
                 };
 
@@ -163,11 +164,10 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
             do_abort = true;
 
             try {
-                exporter.join(10000);
+                exporter.join(2000);
                 logger.info("waited 10 seconds, thread didn't died, killing it.");
 
-                export.close();
-                exporter.join();
+                export.close();              
                 
                 exporter = null;
                 export = null;

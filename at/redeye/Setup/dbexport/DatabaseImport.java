@@ -27,6 +27,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 
@@ -110,6 +111,31 @@ public class DatabaseImport
         if( listener != null )
            listener.setOverallCounter(count);
 
+       // konrolliere, ob das auch nur annähernd die richtige Datenbank sein kann
+       DatabaseManager manager_temp = new DatabaseManager(trans_temp);
+
+       Collection<String> source_tables = manager_temp.getTables();
+
+       for( DBStrukt table : tables )
+       {
+           boolean found = false;
+
+           for( String source_table : source_tables )
+           {
+               if( table.getName().equals(source_table) )
+               {
+                   found = true;
+                   break;
+               }
+           }
+
+           if( !found )
+           {
+               throw new CannotOpenTempDatabase("Tabelle " + table.getName() + " konnte in Quelldatenbank nicht gefunden werden. " +
+                       "Import abgebrochen, keine Daten wurden importiert, oder gelöscht");
+           }
+       }
+
        count = 0;
 
        for( DBStrukt table : tables )
@@ -145,11 +171,31 @@ public class DatabaseImport
 
            Vector<DBStrukt> imp_table = trans_temp.fetchTable(table);
 
+           String imp_format = "Importiere Tabelle %s (%d von %d)";
+
+           fireEvent(String.format(imp_format,table.getName(),0,imp_table.size()));
+
+           int row_counter = 0;
+
            for( DBStrukt it : imp_table )
            {
-               trans_target.insertValues(it);
-               trans_target.commit();
+               trans_target.insertValues(it);               
+
+               row_counter++;
+
+               if( row_counter % 100 == 0 )
+               {
+                   if( row_counter % 1000 == 0 )
+                   {
+                    // commits sind relativ teuer, daher nur alle 1000 mal
+                    trans_target.commit();
+                   }
+
+                   fireEvent(String.format(imp_format,table.getName(),row_counter,imp_table.size()));
+               }
            }
+
+           trans_target.commit();
 
            if( listener != null )
                 listener.setCounter(++count);
