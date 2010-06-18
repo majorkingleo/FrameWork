@@ -20,8 +20,8 @@ import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.utilities.MD5Calc;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -288,7 +288,7 @@ public class AdminDlg extends BaseDialog {
 
         Set<Integer> editedRows = tm.getEditedRows();
 
-        MOMMTypeRegistrationInterface regi = getTransaction().getTypeRegistration();
+        TypeRegistrationInterface regi = getTransaction().getTypeRegistration();
         MD5Calc md5 = new MD5Calc("MD5");
 
         for (Integer i : editedRows) {
@@ -296,8 +296,8 @@ public class AdminDlg extends BaseDialog {
             DBPb pb = (DBPb) pbEntries.get(i);
 
             if (!regi.getAllRegisteredTables().containsKey(pb.getName())) {
-                HashMap<String, MOMMColumnAttribute> colls = pb.getHashMap();
-                HashMap<String, HashMap<String, MOMMColumnAttribute>> table = new HashMap<String, HashMap<String, MOMMColumnAttribute>>();
+                HashMap<String, ColumnAttribute> colls = pb.getHashMap();
+                HashMap<String, HashMap<String, ColumnAttribute>> table = new HashMap<String, HashMap<String, ColumnAttribute>>();
 
                 table.put(pb.getName(), colls);
 

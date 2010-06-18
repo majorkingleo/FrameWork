@@ -4,10 +4,10 @@
 package at.redeye.SqlDBInterface.SqlDBIO.impl;
 
 /**
- * @author Sabrina und Mario
+ * @author Mario Mattl
  *
  */
-public class UnsupportedDBDataTypeException extends MOMMSqlDriverException {
+public class UnsupportedDBDataTypeException extends SqlDriverException {
 
 	public UnsupportedDBDataTypeException() {
 		super();

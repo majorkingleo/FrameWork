@@ -5,11 +5,13 @@
 
 package at.redeye.FrameWork.base.desktoplauncher;
 
-import at.redeye.FrameWork.base.Setup;
-import at.redeye.FrameWork.utilities.ReadFile;
 import java.io.File;
 import java.io.IOException;
+
 import net.jimmc.jshortcut.JShellLink;
+
+import at.redeye.FrameWork.base.Setup;
+import at.redeye.FrameWork.utilities.ReadFile;
 
 /**
  *

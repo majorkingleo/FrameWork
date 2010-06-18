@@ -5,7 +5,7 @@
 
 package at.redeye.FrameWork.base.dbmanager.impl;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 
 /**
  *
@@ -27,7 +27,7 @@ public class CreateSqlMySql extends BaseCreateSql {
 	}
     
     @Override
-    protected String createSqlForRow( MOMMColumnAttribute attr ) {
+    protected String createSqlForRow( ColumnAttribute attr ) {
         
         switch( attr.getDatatype() )
         {

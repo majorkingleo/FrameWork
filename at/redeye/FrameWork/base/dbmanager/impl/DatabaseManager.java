@@ -20,7 +20,7 @@ import at.redeye.FrameWork.base.dbmanager.ShowTables;
 import at.redeye.FrameWork.base.dbmanager.impl.bindtypes.DBTableVersion;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -35,7 +35,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 	protected Transaction trans = null;
 	protected BaseCreateSql createSql = null;
-	protected MOMMSupportedDBMSTypes dbmstype = null;
+	protected SupportedDBMSTypes dbmstype = null;
 	protected ShowTables showTables = null;
 	protected Vector<DBStrukt> tables = new Vector<DBStrukt>();    
 
@@ -485,7 +485,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
         return true;
     }
 
-    public boolean is_dbms_driver_loaded(MOMMSupportedDBMSTypes dbmstype)
+    public boolean is_dbms_driver_loaded(SupportedDBMSTypes dbmstype)
     {
        String name;
        

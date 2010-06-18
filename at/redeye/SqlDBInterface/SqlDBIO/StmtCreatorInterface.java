@@ -3,7 +3,7 @@ package at.redeye.SqlDBInterface.SqlDBIO;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 
 
@@ -12,7 +12,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
  * @author Mario Mattl
  * 
  */
-public interface MOMMStmtCreatorInterface {
+public interface StmtCreatorInterface {
 
 	/**
 	 * 
@@ -26,7 +26,7 @@ public interface MOMMStmtCreatorInterface {
 	 * @return The created statement
 	 */
 	public String buildStmtForTable(String[] tablenames, String whereStmt,
-			HashMap<String, MOMMColumnAttribute> columnNames);
+			HashMap<String, ColumnAttribute> columnNames);
 
 	/**
 	 * 

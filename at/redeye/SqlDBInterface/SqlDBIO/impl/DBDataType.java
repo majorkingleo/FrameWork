@@ -1,6 +1,6 @@
 package at.redeye.SqlDBInterface.SqlDBIO.impl;
 
-public enum MOMMDBDataType {
+public enum DBDataType {
 	
 	DB_TYPE_STRING,
 	DB_TYPE_LONG,

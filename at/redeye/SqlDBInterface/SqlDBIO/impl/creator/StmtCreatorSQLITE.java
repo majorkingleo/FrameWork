@@ -1,14 +1,14 @@
-package at.redeye.SqlDBInterface.SqlDBIO.impl;
+package at.redeye.SqlDBInterface.SqlDBIO.impl.creator;
 
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
 
 /**
  *
  * @author martin
  */
-public class MOMMStmtCreatorSQLITE extends MOMMAbstractStmtCreator  {
+public class StmtCreatorSQLITE extends AbstractStmtCreator  {
 
-    protected MOMMStmtCreatorSQLITE(MOMMTypeRegistrationInterface treg_) {
+    protected StmtCreatorSQLITE(TypeRegistrationInterface treg_) {
 		super(treg_);
 		// TODO Auto-generated constructor stub
 	}

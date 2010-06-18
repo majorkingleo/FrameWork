@@ -6,7 +6,7 @@
 package at.redeye.FrameWork.base.dbmanager;
 
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 
 /**
  *
@@ -14,6 +14,6 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
  */
 public interface CreateSql {
     
-    public String createSqlforTable( DBStrukt strukt, MOMMSupportedDBMSTypes dbtype );
+    public String createSqlforTable( DBStrukt strukt, SupportedDBMSTypes dbtype );
     
 }

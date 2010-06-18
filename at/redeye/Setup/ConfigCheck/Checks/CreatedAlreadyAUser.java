@@ -9,7 +9,7 @@ import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.Setup.ConfigCheck.ConfigCheck;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import java.util.Vector;
 
@@ -29,9 +29,9 @@ public class CreatedAlreadyAUser extends ConfigCheck
     {
         Transaction trans = root.getDBConnection().getDefaultTransaction();
 
-        Vector<MOMMDBDataType> args = new Vector<MOMMDBDataType>();
+        Vector<DBDataType> args = new Vector<DBDataType>();
 
-        args.add(MOMMDBDataType.DB_TYPE_LONG);
+        args.add(DBDataType.DB_TYPE_LONG);
 
         Vector<Vector<?>> res;
 

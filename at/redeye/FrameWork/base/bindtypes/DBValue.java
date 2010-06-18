@@ -7,7 +7,7 @@ package at.redeye.FrameWork.base.bindtypes;
 
 import javax.swing.text.PlainDocument;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 
 
 
@@ -33,7 +33,7 @@ public abstract class DBValue {
         this.title = title;
     }
    
-    public abstract MOMMDBDataType getDBType();
+    public abstract DBDataType getDBType();
     public abstract void loadFromDB( Object obj );
     public abstract void loadFromString( String s );
     public abstract boolean acceptString( String s );

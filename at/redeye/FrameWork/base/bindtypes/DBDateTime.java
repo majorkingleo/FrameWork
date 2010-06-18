@@ -4,11 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtExecInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
-
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+
+import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 
 /**
  * 
@@ -43,9 +43,9 @@ public class DBDateTime extends DBValue {
 	}
 
 	@Override
-	public MOMMDBDataType getDBType() {
+	public DBDataType getDBType() {
 		// TODO Auto-generated method stub
-		return MOMMDBDataType.DB_TYPE_DATETIME;
+		return DBDataType.DB_TYPE_DATETIME;
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class DBDateTime extends DBValue {
 	public void loadFromString(String s) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(
-				MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-						+ MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+				StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+						+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 
 		try {
 			value = sdf.parse(s);
@@ -88,20 +88,20 @@ public class DBDateTime extends DBValue {
 
 	public static String getStdString(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat(
-				MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-						+ MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+				StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+						+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 
 		return sdf.format(date);
 	}
 
 	public static String getStdString(DateTime date) {
-		return date.toString(MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-				+ MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+		return date.toString(StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+				+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 	}
 
 	public static String getStdString(DateMidnight date) {
-		return date.toString(MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-				+ MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+		return date.toString(StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+				+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 	}
 
 
@@ -112,7 +112,7 @@ public class DBDateTime extends DBValue {
 	public static String getTimeStr(Date date) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(
-				MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+				StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 
 		return sdf.format(date);
 
@@ -125,14 +125,14 @@ public class DBDateTime extends DBValue {
 	public static String getDateStr(Date value) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(
-				MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT);
+				StmtExecInterface.SQLIF_STD_DATE_FORMAT);
 
 		return sdf.format(value);
 	}
 
 	public static String getDateStr(DateMidnight date) {
 
-		return date.toString(MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT);
+		return date.toString(StmtExecInterface.SQLIF_STD_DATE_FORMAT);
 
 	}
 	

@@ -10,7 +10,7 @@ import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.dbmanager.impl.DatabaseManager;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import java.util.Vector;
@@ -89,7 +89,7 @@ public class LocalRoot extends Root {
         String host = setup.getLocalConfig(Setup.DBHost, "");
         String user = setup.getLocalConfig(Setup.DBUser, "");
         String passwd = setup.getLocalConfig(Setup.DBPasswd, "");
-        MOMMSupportedDBMSTypes dbtype = MOMMSupportedDBMSTypes.valueOf(setup.getLocalConfig(Setup.DBType, MOMMSupportedDBMSTypes.DB_MYSQL.toString()));
+        SupportedDBMSTypes dbtype = SupportedDBMSTypes.valueOf(setup.getLocalConfig(Setup.DBType, SupportedDBMSTypes.DB_MYSQL.toString()));
         String instance = setup.getLocalConfig(Setup.DBInstance, "");
         String sport = setup.getLocalConfig(Setup.DBPort, "0");
 
@@ -111,7 +111,7 @@ public class LocalRoot extends Root {
             }
         }
         
-        if( dbtype == MOMMSupportedDBMSTypes.DB_ORACLE )
+        if( dbtype == SupportedDBMSTypes.DB_ORACLE )
             database = instance;
         
          ConnectionDefinition connparams = new ConnectionDefinition(

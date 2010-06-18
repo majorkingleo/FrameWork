@@ -5,8 +5,8 @@
 
 package at.redeye.FrameWork.base.dbmanager.impl;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import java.util.Vector;
 
 /**
@@ -28,7 +28,7 @@ public class CreateSqlSqlite extends BaseCreateSql {
 	}
 
 	@Override
-	protected String createSqlForRow(MOMMColumnAttribute attr) {
+	protected String createSqlForRow(ColumnAttribute attr) {
         
         String extra = "";
         
@@ -64,9 +64,9 @@ public class CreateSqlSqlite extends BaseCreateSql {
     }
 
     @Override
-    protected String appendNotNullIfSupportedbyNewRows(MOMMColumnAttribute attr) {
+    protected String appendNotNullIfSupportedbyNewRows(ColumnAttribute attr) {
 
-        if( attr.getDatatype() == MOMMDBDataType.DB_TYPE_STRING )
+        if( attr.getDatatype() == DBDataType.DB_TYPE_STRING )
         {
             return " default "+ getDefaultValueVarChar(attr.getWidth()) + " NOT NULL ";
         }

@@ -10,12 +10,12 @@
 
 package at.redeye.FrameWork.base.bindtypes;
 
-import at.redeye.FrameWork.utilities.Pair;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
+import at.redeye.FrameWork.utilities.Pair;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 
 
 
@@ -170,12 +170,12 @@ public abstract class DBStrukt {
 
     
 
-    public HashMap<String, MOMMColumnAttribute> getHashMap()
+    public HashMap<String, ColumnAttribute> getHashMap()
     {
         return getHashMap( "" );
     }    
 
-    protected HashMap<String, MOMMColumnAttribute> getHashMap( String prefix )
+    protected HashMap<String, ColumnAttribute> getHashMap( String prefix )
     {
         return getHashMap( prefix, null );
     }
@@ -194,14 +194,14 @@ public abstract class DBStrukt {
         return false;
     }
     
-    public HashMap<String, MOMMColumnAttribute> getHashMapForVersion( Integer Version )
+    public HashMap<String, ColumnAttribute> getHashMapForVersion( Integer Version )
     {
         return getHashMap("", Version);
     }
     
-    protected HashMap<String, MOMMColumnAttribute> getHashMap( String prefix , Integer Version )
+    protected HashMap<String, ColumnAttribute> getHashMap( String prefix , Integer Version )
     {
-        HashMap<String, MOMMColumnAttribute> colls = new HashMap<String, MOMMColumnAttribute>();      
+        HashMap<String, ColumnAttribute> colls = new HashMap<String, ColumnAttribute>();      
 
         for( int i = 0; i < elements.size(); i++ )   
         {
@@ -213,7 +213,7 @@ public abstract class DBStrukt {
                     continue;
             }
             
-            MOMMColumnAttribute attr = new MOMMColumnAttribute( val.getDBType() );
+            ColumnAttribute attr = new ColumnAttribute( val.getDBType() );
             
             attr.setPrimaryKey(val.isPrimaryKey());
             attr.setHasIndex(val.shouldHaveIndex());
@@ -231,7 +231,7 @@ public abstract class DBStrukt {
         {
             DBStrukt strukt = sub_strukts.get(i);
             
-            HashMap<String, MOMMColumnAttribute> sub_colls = strukt.getHashMap( prefix + strukt.getName() + "_", Version );
+            HashMap<String, ColumnAttribute> sub_colls = strukt.getHashMap( prefix + strukt.getName() + "_", Version );
             
             Set<String> keys = sub_colls.keySet();
             

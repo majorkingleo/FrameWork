@@ -6,7 +6,7 @@
 package at.redeye.FrameWork.base.dbmanager.impl;
 
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +29,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         
         res += "create table " + markColumn(strukt.getName()) + " (";
         
-        HashMap<String, MOMMColumnAttribute> colls = strukt.getHashMap();
+        HashMap<String, ColumnAttribute> colls = strukt.getHashMap();
         
         Set<String> keys = colls.keySet();
         
@@ -37,7 +37,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         {
             String name = it.next();
             
-            MOMMColumnAttribute attr = colls.get( name );
+            ColumnAttribute attr = colls.get( name );
             
             res +=   markColumn(name) + " " + createSqlForRow( attr ) + " NOT NULL";
             
@@ -99,7 +99,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         return res.toString();
     }
     
-    protected abstract String createSqlForRow( MOMMColumnAttribute attr ); 
+    protected abstract String createSqlForRow( ColumnAttribute attr ); 
 
     protected abstract String addStorageInfo() ;
   
@@ -128,7 +128,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         Vector<String> primKeys = new Vector<String>();
         Vector<String> indexKeys = new Vector<String>();                
         
-        HashMap<String, MOMMColumnAttribute> colls = strukt.getHashMapForVersion(Version);
+        HashMap<String, ColumnAttribute> colls = strukt.getHashMapForVersion(Version);
         
         Set<String> keys = colls.keySet();
         
@@ -138,7 +138,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
             
             res += "alter table " + markColumn(strukt.getName()) + " add ";
             
-            MOMMColumnAttribute attr = colls.get( name );
+            ColumnAttribute attr = colls.get( name );
             
             res +=   markColumn(name) + " " + createSqlForRow( attr ) + " " + appendNotNullIfSupportedbyNewRows( attr ) + ";\n";
             
@@ -162,7 +162,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         return res;        
     }
 
-    protected String appendNotNullIfSupportedbyNewRows(MOMMColumnAttribute attr) {
+    protected String appendNotNullIfSupportedbyNewRows(ColumnAttribute attr) {
         return " NOT NULL";
     }
 }

@@ -26,7 +26,7 @@ public class TestApp {
 
     public static void main(String[] args) {
         
-        Root root = new LocalRoot("MOMM");
+        Root root = new LocalRoot("");
         
         BasicConfigurator.configure();
 	try {

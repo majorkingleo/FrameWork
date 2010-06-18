@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.logging.Logger;
+
+import javax.swing.JComponent;
 
 import org.joda.time.DateMidnight;
 
@@ -18,23 +21,21 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.sequence.Sequence;
 import at.redeye.FrameWork.base.sequence.impl.CommonSequence;
-import at.redeye.SqlDBInterface.SqlDBConnection.MOMMDbConnectionInterface;
+import at.redeye.SqlDBInterface.SqlDBConnection.DbConnectionInterface;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMDBConnector;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.DBConnector;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtExecInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDefaultStmtExecuter;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMTypeRegistration;
+import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
-import java.util.logging.Logger;
-import javax.swing.JComponent;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.executor.DefaultStmtExecuter;
 
 /**
  * 
@@ -42,11 +43,11 @@ import javax.swing.JComponent;
  */
 public abstract class Transaction {
 
-	protected MOMMDbConnectionInterface iface;
-	protected MOMMStmtExecInterface executer;
+	protected DbConnectionInterface iface;
+	protected StmtExecInterface executer;
 	protected Connection conn;
 	protected ConnectionDefinition definition;
-	MOMMTypeRegistrationInterface regi;
+	TypeRegistrationInterface regi;
 	protected Sequence sequence;
 
 	protected Transaction() {
@@ -56,14 +57,14 @@ public abstract class Transaction {
 			SQLException, MissingConnectionParamException,
 			UnSupportedDatabaseException {
 		definition = def;
-		iface = new MOMMDBConnector(definition);
+		iface = new DBConnector(definition);
 
 		conn = iface.connectToDatabase();
 
-		executer = (MOMMStmtExecInterface) new MOMMDefaultStmtExecuter(conn,
+		executer = (StmtExecInterface) new DefaultStmtExecuter(conn,
 				definition.getDBMSType());
 
-		regi = new MOMMTypeRegistration(definition.getDBMSType());
+		regi = new TypeRegistration(definition.getDBMSType());
 
 		switch (definition.getDBMSType()) {
 		case DB_ORACLE: /* fall through */
@@ -98,7 +99,7 @@ public abstract class Transaction {
 	}
 
 	public Vector<Vector<?>> fetchColumnValue(String stmt,
-			Vector<MOMMDBDataType> typelist) throws SQLException,
+			Vector<DBDataType> typelist) throws SQLException,
 			UnsupportedDBDataTypeException {
 		return executer.fetchColumnValue(stmt, typelist);
 	}
@@ -113,8 +114,8 @@ public abstract class Transaction {
 			throws UnsupportedDBDataTypeException, WrongBindFileFormatException {
 
 		if (!regi.getAllRegisteredTables().containsKey(binddesc.getName())) {
-			HashMap<String, MOMMColumnAttribute> colls = binddesc.getHashMap();
-			HashMap<String, HashMap<String, MOMMColumnAttribute>> table = new HashMap<String, HashMap<String, MOMMColumnAttribute>>();
+			HashMap<String, ColumnAttribute> colls = binddesc.getHashMap();
+			HashMap<String, HashMap<String, ColumnAttribute>> table = new HashMap<String, HashMap<String, ColumnAttribute>>();
 
 			table.put(binddesc.getName(), colls);
 
@@ -227,11 +228,11 @@ public abstract class Transaction {
 		return executer.insertTableValues(binddesc.getName(), data);
 	}
 
-	public MOMMStmtExecInterface getStmtExecInterface() {
+	public StmtExecInterface getStmtExecInterface() {
 		return executer;
 	}
 
-	public MOMMTypeRegistrationInterface getTypeRegistration() {
+	public TypeRegistrationInterface getTypeRegistration() {
 		return regi;
 	}
 
@@ -283,7 +284,7 @@ public abstract class Transaction {
 		return getPeriodStmt(column1.getName(), column2.getName(), dm);
 	}
 
-	public MOMMSupportedDBMSTypes getDBMSType() {
+	public SupportedDBMSTypes getDBMSType() {
 		return definition.getDBMSType();
 	}
 

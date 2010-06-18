@@ -11,7 +11,7 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseExceptio
  * @author Mario Mattl
  *
  */
-public interface MOMMDbConnectionInterface {
+public interface DbConnectionInterface {
 
 	public Connection connectToDatabase() throws ClassNotFoundException,
 			UnSupportedDatabaseException, SQLException, MissingConnectionParamException;

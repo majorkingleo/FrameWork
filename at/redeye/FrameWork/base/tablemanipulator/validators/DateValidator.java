@@ -11,7 +11,7 @@ import java.util.Date;
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.tablemanipulator.TableValidator;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtExecInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
 
 /**
  *
@@ -24,7 +24,7 @@ public class DateValidator extends TableValidator {
         // System.out.println("HERE");
         DBDateTime val = (DBDateTime) data;
 
-        SimpleDateFormat formater_time = new SimpleDateFormat(MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT);
+        SimpleDateFormat formater_time = new SimpleDateFormat(StmtExecInterface.SQLIF_STD_DATE_FORMAT);
 
         Date time = (Date) val.getValue();
 

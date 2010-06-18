@@ -7,20 +7,20 @@ import java.util.logging.Logger;
 
 import org.sqlite.JDBC;
 
-import at.redeye.SqlDBInterface.SqlDBConnection.MOMMDbConnectionInterface;
+import at.redeye.SqlDBInterface.SqlDBConnection.DbConnectionInterface;
 
 /**
  * @author Mario Mattl
  */
-public abstract class MOMMAbstractDBConnector implements
-		MOMMDbConnectionInterface {
+public abstract class AbstractDBConnector implements
+		DbConnectionInterface {
 
 	private ConnectionDefinition conndef_;
 
 	private static Logger logger = Logger
-			.getLogger(MOMMAbstractDBConnector.class.getSimpleName());
+			.getLogger(AbstractDBConnector.class.getSimpleName());
 
-	public MOMMAbstractDBConnector(ConnectionDefinition conn) {
+	public AbstractDBConnector(ConnectionDefinition conn) {
 		conndef_ = conn;
 	}
 
@@ -141,15 +141,15 @@ public abstract class MOMMAbstractDBConnector implements
 		logger.finest("connected");
 
 		conn.setAutoCommit(false);
-		if (conndef_.getDBMSType() != MOMMSupportedDBMSTypes.DB_SQLITE) {
+		if (conndef_.getDBMSType() != SupportedDBMSTypes.DB_SQLITE) {
 			conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 		}
 
-		if (conndef_.getDBMSType() == MOMMSupportedDBMSTypes.DB_ORACLE) {
+		if (conndef_.getDBMSType() == SupportedDBMSTypes.DB_ORACLE) {
 			conn.prepareStatement(
 				"ALTER SESSION SET NLS_DATE_FORMAT = 'yyyy-mm-dd hh24:mi:ss'")
 				.execute();
-		} else if (conndef_.getDBMSType() == MOMMSupportedDBMSTypes.DB_MSSQL) {
+		} else if (conndef_.getDBMSType() == SupportedDBMSTypes.DB_MSSQL) {
 			conn.prepareStatement("SET LANGUAGE US_ENGLISH").execute();
 			conn.prepareStatement("SET DATEFORMAT ymd").execute();
 		}
@@ -161,7 +161,7 @@ public abstract class MOMMAbstractDBConnector implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see MOMMDBConnection.MOMMDbConnectionInterface#disconnectDatabase()
+	 * @see DBConnection.DbConnectionInterface#disconnectDatabase()
 	 */
 	public void disconnectDatabase(Connection conn) throws SQLException {
 		conn.rollback();

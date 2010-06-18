@@ -18,7 +18,7 @@ import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.UnZip;
 import at.redeye.FrameWork.utilities.Zip;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
@@ -204,7 +204,7 @@ public class DatabaseImport
 
     private Transaction openTempDatabase() throws IOException, CannotOpenTempDatabase, ClassNotFoundException, SQLException, MissingConnectionParamException, UnSupportedDatabaseException
     {        
-        if( !root.getBindtypeManager().is_dbms_driver_loaded(MOMMSupportedDBMSTypes.DB_JAVADB) )
+        if( !root.getBindtypeManager().is_dbms_driver_loaded(SupportedDBMSTypes.DB_JAVADB) )
             throw new CannotOpenTempDatabase("Missing Derby DB Driver, which is required for exporting databases!");
 
         ConnectionDefinition connparams = new ConnectionDefinition(
@@ -213,7 +213,7 @@ public class DatabaseImport
                "",
                "",
                temp_db_dir.getAbsolutePath(),
-               MOMMSupportedDBMSTypes.DB_JAVADB
+               SupportedDBMSTypes.DB_JAVADB
                );
 
         Transaction t = new DerbyTransaction(connparams);

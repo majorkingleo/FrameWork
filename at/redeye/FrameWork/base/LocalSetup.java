@@ -12,7 +12,7 @@ import at.redeye.FrameWork.base.prm.impl.LocalConfigDefinitions;
 import at.redeye.FrameWork.base.prm.impl.PrmActionEvent;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMSqlDriverException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.SqlDriverException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import java.io.File;
@@ -194,7 +194,7 @@ public class LocalSetup extends Setup {
 
             result = true;
 
-        } catch (MOMMSqlDriverException ex) {
+        } catch (SqlDriverException ex) {
             logger.error(StringUtils.exceptionToString(ex));
         } catch (SQLException ex) {
             logger.error(StringUtils.exceptionToString(ex));

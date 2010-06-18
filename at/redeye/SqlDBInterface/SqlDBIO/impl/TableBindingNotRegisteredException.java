@@ -1,6 +1,6 @@
 package at.redeye.SqlDBInterface.SqlDBIO.impl;
 
-public class TableBindingNotRegisteredException extends MOMMSqlDriverException {
+public class TableBindingNotRegisteredException extends SqlDriverException {
 
 	public TableBindingNotRegisteredException() {
 		super();

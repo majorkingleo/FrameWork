@@ -7,7 +7,7 @@ package at.redeye.FrameWork.base.dbmanager.impl;
 
 import at.redeye.FrameWork.base.dbmanager.ShowTables;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 
 import java.sql.SQLException;
@@ -26,8 +26,8 @@ public class ShowTablesMySql implements ShowTables {
         
         String sql = "show tables";
         
-        Vector<MOMMDBDataType> args = new Vector<MOMMDBDataType>();
-	args.add(MOMMDBDataType.DB_TYPE_STRING);
+        Vector<DBDataType> args = new Vector<DBDataType>();
+	args.add(DBDataType.DB_TYPE_STRING);
 	Vector<Vector<?>> res;
         
         /* Eine UnsupportedDBDataTypeException Exception sollte hier ja eher 
@@ -54,9 +54,9 @@ public class ShowTablesMySql implements ShowTables {
         
         String sql = "SHOW VARIABLES LIKE 'have_innodb'";
         
-        Vector<MOMMDBDataType> args = new Vector<MOMMDBDataType>();
-        args.add(MOMMDBDataType.DB_TYPE_STRING);
-        args.add(MOMMDBDataType.DB_TYPE_STRING);
+        Vector<DBDataType> args = new Vector<DBDataType>();
+        args.add(DBDataType.DB_TYPE_STRING);
+        args.add(DBDataType.DB_TYPE_STRING);
         Vector<Vector<?>> res;
         
         /* Eine UnsupportedDBDataTypeException Exception sollte hier ja eher 

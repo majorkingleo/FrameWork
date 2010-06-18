@@ -1,7 +1,7 @@
 /**
  * 
  */
-package at.redeye.SqlDBInterface.SqlDBIO.impl;
+package at.redeye.SqlDBInterface.SqlDBIO.impl.creator;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -10,15 +10,17 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 
 /**
  * @author Mario Mattl
  * 
  */
-public class MOMMStmtCreatorOracle extends MOMMAbstractStmtCreator {
+public class StmtCreatorOracle extends AbstractStmtCreator {
 
-	public MOMMStmtCreatorOracle(MOMMTypeRegistrationInterface registration) {
+	public StmtCreatorOracle(TypeRegistrationInterface registration) {
 
 		super(registration);
 	}
@@ -136,7 +138,7 @@ public class MOMMStmtCreatorOracle extends MOMMAbstractStmtCreator {
 
 			logger.trace("Searching table: " + table);
 
-			HashMap<String, MOMMColumnAttribute> cols = registration_
+			HashMap<String, ColumnAttribute> cols = registration
 					.getRegisteredTableByString(table);
 
 			keys = cols.keySet();
@@ -145,7 +147,7 @@ public class MOMMStmtCreatorOracle extends MOMMAbstractStmtCreator {
 						+ " not found in registration!");
 			}
 			iter = keys.iterator();
-			MOMMColumnAttribute attr = null;
+			ColumnAttribute attr = null;
 			while (iter.hasNext()) {
 				String key = iter.next();
 				attr = cols.get(key);

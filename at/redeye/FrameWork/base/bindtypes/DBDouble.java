@@ -5,7 +5,7 @@
 
 package at.redeye.FrameWork.base.bindtypes;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 
 /**
  *
@@ -26,8 +26,8 @@ public class DBDouble extends DBValue {
     }
     
     @Override
-    public MOMMDBDataType getDBType() {
-        return MOMMDBDataType.DB_TYPE_DOUBLE;
+    public DBDataType getDBType() {
+        return DBDataType.DB_TYPE_DOUBLE;
     }
 
     @Override

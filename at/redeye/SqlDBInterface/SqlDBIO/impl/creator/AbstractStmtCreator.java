@@ -1,4 +1,4 @@
-package at.redeye.SqlDBInterface.SqlDBIO.impl;
+package at.redeye.SqlDBInterface.SqlDBIO.impl.creator;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -10,30 +10,31 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtCreatorInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtExecInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.StmtCreatorInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 
 /**
  * @author Mario Mattl
  * 
  */
-public abstract class MOMMAbstractStmtCreator implements
-		MOMMStmtCreatorInterface {
+public abstract class AbstractStmtCreator implements
+		StmtCreatorInterface {
 
 	protected static Logger logger = Logger
-			.getLogger(MOMMAbstractStmtCreator.class.getSimpleName());
+			.getLogger(AbstractStmtCreator.class.getSimpleName());
 
-	protected MOMMTypeRegistrationInterface registration_;
+	protected TypeRegistrationInterface registration;
 	
 	/**
 	 * Allows to identify a BLOB
 	 */
-	protected static final String BLOB_IDENTIFIER = "###BLOB###";
+	public static final String BLOB_IDENTIFIER = "###BLOB###";
 
-	public MOMMAbstractStmtCreator(MOMMTypeRegistrationInterface registration) {
-		super();
-		this.registration_ = registration;
+	public AbstractStmtCreator(TypeRegistrationInterface registration) {
+		this.registration = registration;
 	}
 	
     protected String markTableAndColumnNameForUpdate(String table, String column) {
@@ -41,7 +42,7 @@ public abstract class MOMMAbstractStmtCreator implements
 	}
 
 	public String buildStmtForTable(String[] tablenames, String whereStmt,
-			HashMap<String, MOMMColumnAttribute> columnNames) {
+			HashMap<String, ColumnAttribute> columnNames) {
 
 		StringBuilder str = new StringBuilder();
 
@@ -76,7 +77,7 @@ public abstract class MOMMAbstractStmtCreator implements
 		StringBuilder str = new StringBuilder();
 		str.append("select ");
 
-		HashMap<String, MOMMColumnAttribute> columnNames = registration_
+		HashMap<String, ColumnAttribute> columnNames = registration
 				.getRegisteredTableByString(tablename);
 
 		Set<String> keys = columnNames.keySet();
@@ -97,7 +98,7 @@ public abstract class MOMMAbstractStmtCreator implements
 		Vector<String> whereCols = new Vector<String>();
 
 		iter = keys.iterator();
-		MOMMColumnAttribute attr = null;
+		ColumnAttribute attr = null;
 		while (iter.hasNext()) {
 			String key = iter.next();
 			attr = columnNames.get(key);
@@ -247,7 +248,7 @@ public abstract class MOMMAbstractStmtCreator implements
 
 			logger.trace("Searching table: " + table);
 
-			HashMap<String, MOMMColumnAttribute> cols = registration_
+			HashMap<String, ColumnAttribute> cols = registration
 					.getRegisteredTableByString(table);
 
 			keys = cols.keySet();
@@ -256,7 +257,7 @@ public abstract class MOMMAbstractStmtCreator implements
 						+ " not found in registration!");
 			}
 			iter = keys.iterator();
-			MOMMColumnAttribute attr = null;
+			ColumnAttribute attr = null;
 			while (iter.hasNext()) {
 				String key = iter.next();
 				attr = cols.get(key);
@@ -318,8 +319,8 @@ public abstract class MOMMAbstractStmtCreator implements
 	public String toDateString(Date date) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(
-				MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-						+ MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+				StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+						+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 		return sdf.format(date);
 
 	}

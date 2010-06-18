@@ -12,7 +12,7 @@ import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.translation.TranslationHelper;
 import at.redeye.FrameWork.utilities.StringUtils;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -454,7 +454,7 @@ public class BaseDialogBaseHelper implements BindVarInterface
      * @throws IOException
      */
     public int getNewSequenceValue(String seqName) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException {
-        if (getTransaction().getDBMSType() == MOMMSupportedDBMSTypes.DB_SQLITE) {
+        if (getTransaction().getDBMSType() == SupportedDBMSTypes.DB_SQLITE) {
             int value = getTransaction().getNewSequenceValue(seqName, 1234567);
             return value;
         } else {

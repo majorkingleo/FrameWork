@@ -1,10 +1,10 @@
-package at.redeye.SqlDBInterface.SqlDBIO.impl;
+package at.redeye.SqlDBInterface.SqlDBIO.impl.creator;
 
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
 
-public class MOMMStmtCreatorDerby extends MOMMAbstractStmtCreator {
+public class StmtCreatorDerby extends AbstractStmtCreator {
 
-	public MOMMStmtCreatorDerby(MOMMTypeRegistrationInterface registration) {
+	public StmtCreatorDerby(TypeRegistrationInterface registration) {
 
 		super(registration);
 	}

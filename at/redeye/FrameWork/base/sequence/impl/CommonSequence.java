@@ -40,8 +40,8 @@ public class CommonSequence implements Sequence {
         
         /*
         
-	Vector<MOMMDBDataType> args = new Vector<MOMMDBDataType>();
-	args.add(MOMMDBDataType.DB_TYPE_INTEGER);
+	Vector<DBDataType> args = new Vector<DBDataType>();
+	args.add(DBDataType.DB_TYPE_INTEGER);
 	Vector<Vector<?>> res;
 
 	String selectStmt = "select NEXTVAL from SEQUENCES where NAME='"+ seqName +"'";

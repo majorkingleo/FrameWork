@@ -5,9 +5,6 @@
 
 package at.redeye.FrameWork.base.bindtypes;
 
-import at.redeye.FrameWork.base.bindtypes.DBEnumAsInteger;
-import at.redeye.FrameWork.base.bindtypes.DBValue;
-
 import java.util.Vector;
 
 /**

@@ -11,20 +11,20 @@ import java.util.Vector;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
-import at.redeye.SqlDBInterface.SqlDBConnection.MOMMDbConnectionInterface;
+import at.redeye.SqlDBInterface.SqlDBConnection.DbConnectionInterface;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMDBConnector;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.DBConnector;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtExecInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDefaultStmtExecuter;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMTypeRegistration;
+import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.executor.DefaultStmtExecuter;
 
 
 public class TestApplication {
@@ -48,12 +48,12 @@ public class TestApplication {
 				"root", 
 				"mysql", 
 				"test", 
-				MOMMSupportedDBMSTypes.DB_MYSQL);
+				SupportedDBMSTypes.DB_MYSQL);
 
 					
-		MOMMDbConnectionInterface connint = new MOMMDBConnector(connparams);
+		DbConnectionInterface connint = new DBConnector(connparams);
 		
-		MOMMTypeRegistrationInterface regi = new MOMMTypeRegistration (connparams.getDBMSType());
+		TypeRegistrationInterface regi = new TypeRegistration (connparams.getDBMSType());
 
 		Vector<Vector<?>> result;
 		Vector<HashMap<String, Object>> result2;
@@ -65,25 +65,25 @@ public class TestApplication {
 			
 			
 			
-			MOMMStmtExecInterface invoker = (MOMMStmtExecInterface) new MOMMDefaultStmtExecuter(
+			StmtExecInterface invoker = (StmtExecInterface) new DefaultStmtExecuter(
 					my_db_conn, connparams.getDBMSType());
 			
 
 			String stmt = "select DUMMY.id, DUMMY.name, DUMMY.adress, INFO.text1, INFO.valid, DUMMY.zeit "+
 				"from DUMMY, INFO where INFO.id = DUMMY.id";
 
-			Vector<MOMMDBDataType> argslist = new Vector<MOMMDBDataType>();
-			argslist.add(MOMMDBDataType.DB_TYPE_INTEGER);
-			argslist.add(MOMMDBDataType.DB_TYPE_STRING);
-			argslist.add(MOMMDBDataType.DB_TYPE_STRING);
-			argslist.add(MOMMDBDataType.DB_TYPE_STRING);
-			argslist.add(MOMMDBDataType.DB_TYPE_BIT);
-			argslist.add(MOMMDBDataType.DB_TYPE_STRING);
+			Vector<DBDataType> argslist = new Vector<DBDataType>();
+			argslist.add(DBDataType.DB_TYPE_INTEGER);
+			argslist.add(DBDataType.DB_TYPE_STRING);
+			argslist.add(DBDataType.DB_TYPE_STRING);
+			argslist.add(DBDataType.DB_TYPE_STRING);
+			argslist.add(DBDataType.DB_TYPE_BIT);
+			argslist.add(DBDataType.DB_TYPE_STRING);
 			
 //			String stmt = "select persnr, count (*) from p2laz group by persnr";
-//			Vector<MOMMDBDataType> argslist = new Vector<MOMMDBDataType>();
-//			argslist.add(MOMMDBDataType.DB_TYPE_STRING);
-//			argslist.add(MOMMDBDataType.DB_TYPE_LONG);
+//			Vector<DBDataType> argslist = new Vector<DBDataType>();
+//			argslist.add(DBDataType.DB_TYPE_STRING);
+//			argslist.add(DBDataType.DB_TYPE_LONG);
 
 			result = invoker.fetchColumnValue(stmt, argslist);
 			String out = "";

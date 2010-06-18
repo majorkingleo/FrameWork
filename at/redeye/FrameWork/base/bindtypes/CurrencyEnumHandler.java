@@ -5,8 +5,9 @@
 
 package at.redeye.FrameWork.base.bindtypes;
 
-import at.redeye.FrameWork.base.bindtypes.DBEnum.EnumHandler;
 import java.util.Vector;
+
+import at.redeye.FrameWork.base.bindtypes.DBEnum.EnumHandler;
 
 /**
  *

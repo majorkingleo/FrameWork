@@ -5,7 +5,7 @@
 package at.redeye.FrameWork.base.prm.impl;
 
 import at.redeye.FrameWork.base.prm.PrmDefaultChecksInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtExecInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import org.apache.log4j.Logger;
@@ -164,7 +164,7 @@ public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
 		if ((checks2Execute & PRM_IS_DATE) != 0) {
 			SimpleDateFormat sdf = new SimpleDateFormat(
-					MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT);
+					StmtExecInterface.SQLIF_STD_DATE_FORMAT);
 			if (!passesDateTime(event, sdf)) {
 				return false;
 			}
@@ -172,7 +172,7 @@ public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
 		if ((checks2Execute & PRM_IS_TIME) != 0) {
 			SimpleDateFormat sdf = new SimpleDateFormat(
-					MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+					StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 			if (!passesDateTime(event, sdf)) {
 				return false;
 			}
@@ -180,7 +180,7 @@ public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
 		if ((checks2Execute & PRM_IS_SHORTTIME) != 0) {
 			SimpleDateFormat sdf = new SimpleDateFormat(
-					MOMMStmtExecInterface.SQLIF_STD_SHORTTIME_FORMAT);
+					StmtExecInterface.SQLIF_STD_SHORTTIME_FORMAT);
 			if (!passesDateTime(event, sdf)) {
 				return false;
 			}
@@ -188,8 +188,8 @@ public class PrmDefaultCheckSuite implements PrmDefaultChecksInterface {
 
 		if ((checks2Execute & PRM_IS_DATETIME) != 0) {
 			SimpleDateFormat sdf = new SimpleDateFormat(
-					MOMMStmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-							+ MOMMStmtExecInterface.SQLIF_STD_TIME_FORMAT);
+					StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+							+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 			if (!passesDateTime(event, sdf)) {
 				return false;
 			}

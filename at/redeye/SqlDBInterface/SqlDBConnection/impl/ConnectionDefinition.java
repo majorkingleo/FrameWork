@@ -15,12 +15,12 @@ public class ConnectionDefinition {
 
 	private String pwd_ = "";
 
-	private MOMMSupportedDBMSTypes dbmstype_;
+	private SupportedDBMSTypes dbmstype_;
 	
 	private String instance_ = "";
 
 	public ConnectionDefinition(String hostname, int port, String username,
-			String pwd, String instance, MOMMSupportedDBMSTypes dbmstype) {
+			String pwd, String instance, SupportedDBMSTypes dbmstype) {
 		super();
 		this.hostname_ = hostname;
 		this.username_ = username;
@@ -31,7 +31,7 @@ public class ConnectionDefinition {
 	}
 	
 	public ConnectionDefinition(String hostname, String username,
-			String pwd, String instance, MOMMSupportedDBMSTypes dbmstype) {
+			String pwd, String instance, SupportedDBMSTypes dbmstype) {
 		super();
 		this.hostname_ = hostname;
 		this.username_ = username;
@@ -99,14 +99,14 @@ public class ConnectionDefinition {
 	/**
 	 * @return the dbmstype_
 	 */
-	public MOMMSupportedDBMSTypes getDBMSType() {
+	public SupportedDBMSTypes getDBMSType() {
 		return dbmstype_;
 	}
 
 	/**
 	 * @param dbmstype the dbmstype to set
 	 */
-	public void setDBMSType(MOMMSupportedDBMSTypes dbmstype) {
+	public void setDBMSType(SupportedDBMSTypes dbmstype) {
 		this.dbmstype_ = dbmstype;
 	}
 

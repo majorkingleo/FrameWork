@@ -1,17 +1,18 @@
 /**
  * 
  */
-package at.redeye.SqlDBInterface.SqlDBIO.impl;
+package at.redeye.SqlDBInterface.SqlDBIO.impl.creator;
 
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
+
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
 
 /**
  * @author Mario Mattl
  * 
  */
-public class MOMMStmtCreatorMSSQL extends MOMMAbstractStmtCreator {
+public class StmtCreatorMSSQL extends AbstractStmtCreator {
 
-	protected MOMMStmtCreatorMSSQL(MOMMTypeRegistrationInterface treg_) {
+	protected StmtCreatorMSSQL(TypeRegistrationInterface treg_) {
 		super(treg_);
 
 	}

@@ -5,7 +5,7 @@ package at.redeye.FrameWork.base.dbmanager.impl;
 
 import java.util.Vector;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 
 /**
  * @author mmattl
@@ -42,7 +42,7 @@ public class CreateSqlMSSql extends BaseCreateSql {
 	}
 
 	@Override
-	protected String createSqlForRow(MOMMColumnAttribute attr) {
+	protected String createSqlForRow(ColumnAttribute attr) {
 		switch (attr.getDatatype()) {
 		case DB_TYPE_STRING:
 			return "VARCHAR(" + attr.getWidth() + ")";

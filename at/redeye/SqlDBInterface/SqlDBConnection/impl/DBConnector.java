@@ -5,9 +5,9 @@ package at.redeye.SqlDBInterface.SqlDBConnection.impl;
  *
  */
 
-public class MOMMDBConnector extends MOMMAbstractDBConnector {
+public class DBConnector extends AbstractDBConnector {
 
-	public MOMMDBConnector(ConnectionDefinition conndef) {
+	public DBConnector(ConnectionDefinition conndef) {
 		super(conndef);
 		// TODO Auto-generated constructor stub
 	}

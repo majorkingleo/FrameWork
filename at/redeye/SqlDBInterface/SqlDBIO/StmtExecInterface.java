@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Vector;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 
@@ -15,7 +15,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
  * @author Mario Mattl
  * 
  */
-public interface MOMMStmtExecInterface {
+public interface StmtExecInterface {
 	
 	
 	public final static String SQLIF_STD_DATE_FORMAT = "yyyy-MM-dd";
@@ -57,7 +57,7 @@ public interface MOMMStmtExecInterface {
 	 * @throws UnsupportedDBDataTypeException
 	 */
 	public Vector<Vector<?>> fetchColumnValue(String stmt,
-			Vector<MOMMDBDataType> typelist) throws SQLException,
+			Vector<DBDataType> typelist) throws SQLException,
 			UnsupportedDBDataTypeException;
 	/**
 	 * 
@@ -142,6 +142,6 @@ public interface MOMMStmtExecInterface {
 	 */
 	public String getLastStmt ();
 	
-	public MOMMStmtCreatorInterface getStmtCreator();
+	public StmtCreatorInterface getStmtCreator();
 	
 }

@@ -3,7 +3,7 @@
  */
 package at.redeye.FrameWork.base.dbmanager.impl;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 
 import java.util.Vector;
 
@@ -37,7 +37,7 @@ public class CreateSqlOracle extends BaseCreateSql {
 		return "\"" + col + "\"";
 	}
 
-	protected String createSqlForRow(MOMMColumnAttribute attr) {
+	protected String createSqlForRow(ColumnAttribute attr) {
 
 		switch (attr.getDatatype()) {
 		case DB_TYPE_STRING:

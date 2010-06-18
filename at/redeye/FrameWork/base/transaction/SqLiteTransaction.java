@@ -4,6 +4,12 @@
 package at.redeye.FrameWork.base.transaction;
 
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
+import org.joda.time.DateMidnight;
 
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.widgets.DBFilterComboBox;
@@ -11,11 +17,6 @@ import at.redeye.FrameWork.widgets.DBFilterEditField;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
-
-import java.util.Date;
-import java.util.Vector;
-import javax.swing.JComponent;
-import org.joda.time.DateMidnight;
 
 /**
  * @author Mario Mattl

@@ -1,7 +1,7 @@
 package at.redeye.SqlDBInterface.SqlDBIO.impl;
 
 
-public class WrongBindFileFormatException extends MOMMSqlDriverException {
+public class WrongBindFileFormatException extends SqlDriverException {
 
 	/**
 	 * 

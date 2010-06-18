@@ -1,64 +1,55 @@
-package at.redeye.SqlDBInterface.SqlDBIO.impl;
+package at.redeye.SqlDBInterface.SqlDBIO.impl.executor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtCreatorInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMStmtExecInterface;
-import at.redeye.SqlDBInterface.SqlDBIO.MOMMTypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBIO.StmtCreatorInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.TypeRegistration;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.creator.AbstractStmtCreator;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.creator.StmtCreatorFactory;
 
-public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface {
+public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 	private Connection conn_;
 
-	private MOMMSupportedDBMSTypes dbmstype_;
+	private SupportedDBMSTypes dbmstype_;
 
-	private MOMMStmtCreatorInterface stmtCreator_;
+	private StmtCreatorInterface stmtCreator_;
 
-	private MOMMTypeRegistrationInterface treg_;
+	private TypeRegistrationInterface treg_;
 
 	private static String lastStmt_ = null;
 
-	public MOMMAbstractStmtExecuter(Connection conn,
-			MOMMSupportedDBMSTypes dbmstype) {
+	public AbstractStmtExecuter(Connection conn,
+			SupportedDBMSTypes dbmstype) {
 		super();
 		this.conn_ = conn;
 		this.dbmstype_ = dbmstype;
-		this.treg_ = new MOMMTypeRegistration(dbmstype_);
-		switch (dbmstype_) {
-		case DB_MYSQL:
-			this.stmtCreator_ = new MOMMStmtCreatorMYSQL(treg_);
-			break;
-		case DB_ORACLE:
-			this.stmtCreator_ = new MOMMStmtCreatorOracle(treg_);
-			break;
-		case DB_SQLITE:
-			this.stmtCreator_ = new MOMMStmtCreatorSQLITE(treg_);
-			break;
-		case DB_MSSQL:
-			this.stmtCreator_ = new MOMMStmtCreatorMSSQL(treg_);
-			break;
-		case DB_JAVADB:
-			this.stmtCreator_ = new MOMMStmtCreatorDerby(treg_);
-			break;
-
-		}
+		this.treg_ = new TypeRegistration(dbmstype_);
+		this.stmtCreator_ = new StmtCreatorFactory<TypeRegistration>().getStmtCreator(dbmstype_);
+		
 
 	}
 
-	protected Object processTypeValue(ResultSet rs, MOMMDBDataType sourceType,
+	protected Object processTypeValue(ResultSet rs, DBDataType sourceType,
 			int index) throws UnsupportedDBDataTypeException, SQLException {
 
 		String result = null;
@@ -117,7 +108,7 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 	 * 
 	 */
 	public Vector<Vector<?>> fetchColumnValue(String stmt,
-			Vector<MOMMDBDataType> typelist) throws SQLException,
+			Vector<DBDataType> typelist) throws SQLException,
 			UnsupportedDBDataTypeException {
 
 		Vector<Vector<?>> wholeOutput = new Vector<Vector<?>>();
@@ -170,10 +161,10 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 		Statement s = conn_.createStatement();
 
 		Vector<HashMap<String, Object>> wholeOutput = new Vector<HashMap<String, Object>>();
-		HashMap<String, MOMMColumnAttribute> typelist = new HashMap<String, MOMMColumnAttribute>();
+		HashMap<String, ColumnAttribute> typelist = new HashMap<String, ColumnAttribute>();
 		HashMap<String, Object> wholeRow = null;
 
-		HashMap<String, HashMap<String, MOMMColumnAttribute>> registeredTables = treg_
+		HashMap<String, HashMap<String, ColumnAttribute>> registeredTables = treg_
 				.getAllRegisteredTables();
 
 		if (tablenames.length < 1)
@@ -223,9 +214,9 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 		String stmt = "";
 		ResultSet rs = null;
 
-		HashMap<String, HashMap<String, MOMMColumnAttribute>> registeredTables = treg_
+		HashMap<String, HashMap<String, ColumnAttribute>> registeredTables = treg_
 				.getAllRegisteredTables();
-		HashMap<String, MOMMColumnAttribute> typelist = null;
+		HashMap<String, ColumnAttribute> typelist = null;
 		HashMap<String, Object> wholeRow = null;
 
 		if (!registeredTables.containsKey(tablename.toUpperCase()))
@@ -414,11 +405,11 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 	 *            the lastStmt to set
 	 */
 	protected void setLastStmt(String lastStmt) {
-		MOMMAbstractStmtExecuter.lastStmt_ = lastStmt;
+		AbstractStmtExecuter.lastStmt_ = lastStmt;
 	}
 
 	protected boolean containsBlob(String stmt) {
-		return stmt.contains(MOMMAbstractStmtCreator.BLOB_IDENTIFIER);
+		return stmt.contains(AbstractStmtCreator.BLOB_IDENTIFIER);
 	}
 
 	protected java.sql.PreparedStatement handleDMLStatement(String stmt,
@@ -427,7 +418,7 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 		PreparedStatement ps;
 
 		if (containsBlob(stmt)) {
-			stmt = stmt.replaceAll(MOMMAbstractStmtCreator.BLOB_IDENTIFIER,
+			stmt = stmt.replaceAll(AbstractStmtCreator.BLOB_IDENTIFIER,
 					"\\?");
 			ps = conn_.prepareStatement(stmt);
 			Set<String> keys = values.keySet();
@@ -448,7 +439,7 @@ public abstract class MOMMAbstractStmtExecuter implements MOMMStmtExecInterface 
 		return ps;
 	}
 	
-	public MOMMStmtCreatorInterface getStmtCreator () {
+	public StmtCreatorInterface getStmtCreator () {
 		return stmtCreator_;
 	}
 

@@ -7,7 +7,7 @@ package at.redeye.FrameWork.base.sequence.impl;
 
 import at.redeye.FrameWork.base.sequence.Sequence;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 
 import java.sql.SQLException;
@@ -22,8 +22,8 @@ public class SequenceOracle implements Sequence {
     public int getNewSequenceValue(String seqName, Transaction trans ) throws SQLException, UnsupportedDBDataTypeException 
     {
         int currValue = 0;
-	Vector<MOMMDBDataType> args = new Vector<MOMMDBDataType>();
-	args.add(MOMMDBDataType.DB_TYPE_INTEGER);
+	Vector<DBDataType> args = new Vector<DBDataType>();
+	args.add(DBDataType.DB_TYPE_INTEGER);
 	Vector<Vector<?>> res;
 
 	String stmt = "select " + seqName + ".nextval from dual";

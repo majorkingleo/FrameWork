@@ -28,10 +28,10 @@ import at.redeye.FrameWork.widgets.HideContentWhenDisabled;
 import at.redeye.FrameWork.widgets.HideContentWhenDisabledPasswd;
 import at.redeye.Setup.ConfigCheck.CheckConfigBase;
 import at.redeye.Setup.ConfigCheck.Checks.HaveDbConnection;
-import at.redeye.SqlDBInterface.SqlDBConnection.MOMMDbConnectionInterface;
+import at.redeye.SqlDBInterface.SqlDBConnection.DbConnectionInterface;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMDBConnector;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.MOMMSupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.DBConnector;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 
@@ -44,7 +44,7 @@ public class ConnectionDialog extends BaseDialog {
     private static final long serialVersionUID = 1L;
     
     StringBuffer DBHost = new StringBuffer();
-    MOMMSupportedDBMSTypes DBType;
+    SupportedDBMSTypes DBType;
     StringBuffer DBUser = new StringBuffer();
     StringBuffer DBPasswd = new StringBuffer();
     StringBuffer DBDatabase = new StringBuffer();
@@ -83,7 +83,7 @@ public class ConnectionDialog extends BaseDialog {
         DBDatabase.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBDatabase, "" ), root.getAppName() ));
         DBInstance.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBInstance, "" ), root.getAppName() ));
         DBPort.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBPort, "" ), root.getAppName() ));
-        DBType = MOMMSupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, MOMMSupportedDBMSTypes.DB_MYSQL.toString() ) );
+        DBType = SupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, SupportedDBMSTypes.DB_MYSQL.toString() ) );
 
         setBindtypeManager( root.getBindtypeManager() );        
 
@@ -117,14 +117,14 @@ public class ConnectionDialog extends BaseDialog {
 
                 logger.info("selectd item: " + JCType.getSelectedItem());
 
-                if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_ORACLE )
+                if( JCType.getSelectedItem() == SupportedDBMSTypes.DB_ORACLE )
                 {
                     logger.info("Oracle");
                     JTDatabase.setEditable(false);
                     JTInstance.setEditable(true);
 
-                } else if( JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_SQLITE ||
-                           JCType.getSelectedItem() == MOMMSupportedDBMSTypes.DB_JAVADB ) {
+                } else if( JCType.getSelectedItem() == SupportedDBMSTypes.DB_SQLITE ||
+                           JCType.getSelectedItem() == SupportedDBMSTypes.DB_JAVADB ) {
 
                     logger.info("file database");
                     JTDatabase.setEditable(true);
@@ -145,13 +145,13 @@ public class ConnectionDialog extends BaseDialog {
         var_to_gui();
     }
 
-    void bindVar( JComboBox box, MOMMSupportedDBMSTypes  t )
+    void bindVar( JComboBox box, SupportedDBMSTypes  t )
     {
         box.removeAllItems();                
         
-        MOMMSupportedDBMSTypes tt[] = MOMMSupportedDBMSTypes.values();
+        SupportedDBMSTypes tt[] = SupportedDBMSTypes.values();
         
-        for( MOMMSupportedDBMSTypes t2 : tt )
+        for( SupportedDBMSTypes t2 : tt )
         {
             if( bindtypeManager.is_dbms_driver_loaded(t2) )
                 box.addItem(t2);
@@ -166,7 +166,7 @@ public class ConnectionDialog extends BaseDialog {
             
             public void gui_to_var()
             {
-                DBType = (MOMMSupportedDBMSTypes)JCType.getSelectedItem();
+                DBType = (SupportedDBMSTypes)JCType.getSelectedItem();
             }
 
             @Override
@@ -187,7 +187,7 @@ public class ConnectionDialog extends BaseDialog {
     {
         String instance;
             
-        if( DBType == MOMMSupportedDBMSTypes.DB_ORACLE )
+        if( DBType == SupportedDBMSTypes.DB_ORACLE )
             instance = DBInstance.toString();
         else
             instance = DBDatabase.toString();
@@ -221,7 +221,7 @@ public class ConnectionDialog extends BaseDialog {
             
             ConnectionDefinition connparams = getDefinition();
             
-            MOMMDbConnectionInterface connint = new MOMMDBConnector(connparams);
+            DbConnectionInterface connint = new DBConnector(connparams);
 
             Connection my_db_conn = connint.connectToDatabase();
 

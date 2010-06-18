@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import at.redeye.FrameWork.base.dbmanager.ShowTables;
 import at.redeye.FrameWork.base.transaction.Transaction;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.MOMMDBDataType;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 
 public class ShowTablesMSSql implements ShowTables {
@@ -18,8 +18,8 @@ public class ShowTablesMSSql implements ShowTables {
 		
 		String sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES";
 		
-		Vector<MOMMDBDataType> args = new Vector<MOMMDBDataType>();
-		args.add(MOMMDBDataType.DB_TYPE_STRING);
+		Vector<DBDataType> args = new Vector<DBDataType>();
+		args.add(DBDataType.DB_TYPE_STRING);
 		Vector<Vector<?>> res;
 
 		/*
