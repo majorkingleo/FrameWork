@@ -28,25 +28,21 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.creator.StmtCreatorFactory;
 
 public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
-	private Connection conn_;
+	private Connection conn;
 
-	private SupportedDBMSTypes dbmstype_;
+	private StmtCreatorInterface stmtCreator;
 
-	private StmtCreatorInterface stmtCreator_;
+	private TypeRegistrationInterface treg;
 
-	private TypeRegistrationInterface treg_;
-
-	private static String lastStmt_ = null;
+	private static String lastStmt = null;
 
 	public AbstractStmtExecuter(Connection conn,
 			SupportedDBMSTypes dbmstype) {
 		super();
-		this.conn_ = conn;
-		this.dbmstype_ = dbmstype;
-		this.treg_ = new TypeRegistration(dbmstype_);
-		this.stmtCreator_ = new StmtCreatorFactory<TypeRegistration>().getStmtCreator(dbmstype_);
+		this.conn = conn;
+		this.treg = new TypeRegistration(dbmstype);
+		this.stmtCreator = new StmtCreatorFactory(treg).getStmtCreator(dbmstype);
 		
-
 	}
 
 	protected Object processTypeValue(ResultSet rs, DBDataType sourceType,
@@ -114,7 +110,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		Vector<Vector<?>> wholeOutput = new Vector<Vector<?>>();
 		Vector<Object> wholeRow = null;
 
-		Statement s = conn_.createStatement();
+		Statement s = conn.createStatement();
 
 		ResultSet rs = null;
 		setLastStmt(stmt);
@@ -158,13 +154,13 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			String whereStmt) throws SQLException,
 			UnsupportedDBDataTypeException, TableBindingNotRegisteredException {
 
-		Statement s = conn_.createStatement();
+		Statement s = conn.createStatement();
 
 		Vector<HashMap<String, Object>> wholeOutput = new Vector<HashMap<String, Object>>();
 		HashMap<String, ColumnAttribute> typelist = new HashMap<String, ColumnAttribute>();
 		HashMap<String, Object> wholeRow = null;
 
-		HashMap<String, HashMap<String, ColumnAttribute>> registeredTables = treg_
+		HashMap<String, HashMap<String, ColumnAttribute>> registeredTables = treg
 				.getAllRegisteredTables();
 
 		if (tablenames.length < 1)
@@ -179,7 +175,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			typelist.putAll(registeredTables.get(table));
 		}
 
-		String stmt = stmtCreator_.buildStmtForTable(tablenames, whereStmt,
+		String stmt = stmtCreator.buildStmtForTable(tablenames, whereStmt,
 				typelist);
 		setLastStmt(stmt);
 		Set<String> keys = typelist.keySet();
@@ -210,11 +206,11 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			HashMap<String, Object> primaryKeyData) throws SQLException,
 			UnsupportedDBDataTypeException, TableBindingNotRegisteredException {
 
-		Statement s = conn_.createStatement();
+		Statement s = conn.createStatement();
 		String stmt = "";
 		ResultSet rs = null;
 
-		HashMap<String, HashMap<String, ColumnAttribute>> registeredTables = treg_
+		HashMap<String, HashMap<String, ColumnAttribute>> registeredTables = treg
 				.getAllRegisteredTables();
 		HashMap<String, ColumnAttribute> typelist = null;
 		HashMap<String, Object> wholeRow = null;
@@ -226,7 +222,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		typelist = registeredTables.get(tablename.toUpperCase());
 
 		Set<String> keys = typelist.keySet();
-		stmt = stmtCreator_.buildStmtForTable(tablename, primaryKeyData);
+		stmt = stmtCreator.buildStmtForTable(tablename, primaryKeyData);
 		setLastStmt(stmt);
 		rs = s.executeQuery(stmt);
 		while (rs.next()) {
@@ -329,7 +325,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 	public int insertValues(String stmt) throws SQLException {
 
-		Statement s = conn_.createStatement();
+		Statement s = conn.createStatement();
 		int rv = 0;
 
 		setLastStmt(stmt);
@@ -341,7 +337,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 	public int updateValues(String stmt) throws SQLException {
 
-		Statement s = conn_.createStatement();
+		Statement s = conn.createStatement();
 		int rv = 0;
 
 		setLastStmt(stmt);
@@ -360,7 +356,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 		PreparedStatement s;
 		int rv = 0;
-		String stmt = stmtCreator_.buildInsertStmtForTable(tablename, values);
+		String stmt = stmtCreator.buildInsertStmtForTable(tablename, values);
 		s = handleDMLStatement(stmt, values);
 		setLastStmt(stmt);
 		rv = s.executeUpdate();
@@ -382,7 +378,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		PreparedStatement s;
 		int rv = 0;
 
-		String stmt = stmtCreator_.buildUpdateStmtForTable(tablename, values,
+		String stmt = stmtCreator.buildUpdateStmtForTable(tablename, values,
 				whereStmt);
 		s = handleDMLStatement(stmt, values);
 		setLastStmt(stmt);
@@ -394,10 +390,10 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	}
 
 	/**
-	 * @return the lastStmt_
+	 * @return the lastStmt
 	 */
 	public String getLastStmt() {
-		return (lastStmt_ == null ? "NOT SET" : lastStmt_);
+		return (lastStmt == null ? "NOT SET" : lastStmt);
 	}
 
 	/**
@@ -405,7 +401,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	 *            the lastStmt to set
 	 */
 	protected void setLastStmt(String lastStmt) {
-		AbstractStmtExecuter.lastStmt_ = lastStmt;
+		AbstractStmtExecuter.lastStmt = lastStmt;
 	}
 
 	protected boolean containsBlob(String stmt) {
@@ -420,7 +416,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		if (containsBlob(stmt)) {
 			stmt = stmt.replaceAll(AbstractStmtCreator.BLOB_IDENTIFIER,
 					"\\?");
-			ps = conn_.prepareStatement(stmt);
+			ps = conn.prepareStatement(stmt);
 			Set<String> keys = values.keySet();
 			Iterator<String> iter = keys.iterator();
 			while (iter.hasNext()) {
@@ -434,13 +430,13 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 				}
 			}
 		} else {
-			ps = conn_.prepareStatement(stmt);
+			ps = conn.prepareStatement(stmt);
 		}
 		return ps;
 	}
 	
 	public StmtCreatorInterface getStmtCreator () {
-		return stmtCreator_;
+		return stmtCreator;
 	}
 
 }

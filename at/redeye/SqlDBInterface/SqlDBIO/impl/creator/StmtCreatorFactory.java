@@ -3,9 +3,18 @@ package at.redeye.SqlDBInterface.SqlDBIO.impl.creator;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
 
-public class StmtCreatorFactory<T extends TypeRegistrationInterface> {
+public class StmtCreatorFactory {
 
-	T typeRegistration;
+	private TypeRegistrationInterface typeRegistration;
+
+	
+
+	public StmtCreatorFactory(TypeRegistrationInterface typeRegistration) {
+		super();
+		this.typeRegistration = typeRegistration;
+	}
+
+
 
 	public AbstractStmtCreator getStmtCreator(SupportedDBMSTypes dbms) {
 		switch (dbms) {
