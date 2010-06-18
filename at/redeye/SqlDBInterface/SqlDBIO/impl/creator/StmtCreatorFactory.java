@@ -7,14 +7,10 @@ public class StmtCreatorFactory {
 
 	private TypeRegistrationInterface typeRegistration;
 
-	
-
 	public StmtCreatorFactory(TypeRegistrationInterface typeRegistration) {
 		super();
 		this.typeRegistration = typeRegistration;
 	}
-
-
 
 	public AbstractStmtCreator getStmtCreator(SupportedDBMSTypes dbms) {
 		switch (dbms) {
