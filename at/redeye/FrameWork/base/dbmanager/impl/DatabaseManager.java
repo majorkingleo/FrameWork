@@ -119,19 +119,22 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 	public boolean tableExists(String table) throws SQLException {
 		
-		// For the very first time
-		if (showTables == null) {
-			return false;
-		}
+            // For the very first time
+            if (showTables == null) {
+                return false;
+            }
 
-                if( table_list == null )
-                    table_list = showTables.showTables(trans);
+            if (table_list == null) {
+                table_list = showTables.showTables(trans);
+            }
 
-		for (String s : table_list)
-			if (s.equalsIgnoreCase(table))
-				return true;
+            for (String s : table_list) {
+                if (s.equalsIgnoreCase(table)) {
+                    return true;
+                }
+            }
 
-		return false;
+            return false;
 	}
 
 	public String getTableVersion(String table) throws SQLException,

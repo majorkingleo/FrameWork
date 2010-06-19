@@ -25,6 +25,7 @@ public abstract class AutoMBox
     protected Exception thrown_ex = null;
     protected boolean failed = true;
     protected boolean do_mbox = true;
+    public boolean logical_failure = false;
     
     public AutoMBox( String className, boolean do_mbox )
     {
@@ -89,6 +90,9 @@ public abstract class AutoMBox
     
     public boolean isFailed()
     {
-        return failed;
+        if( failed || logical_failure )
+            return true;
+
+        return false;
     }
 }

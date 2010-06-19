@@ -14,7 +14,7 @@ import at.redeye.FrameWork.base.Root;
  */
 public class DoDBImport {
 
-    public static void importDBSilent(Root root, String file_name)
+    public static boolean importDBSilent(Root root, String file_name)
     {
         final DatabaseImport db_import = new DatabaseImport(root, file_name);
 
@@ -22,13 +22,15 @@ public class DoDBImport {
 
             @Override
             public void do_stuff() throws Exception {
-
+                logical_failure = true;
                 db_import.doImport();
-
+                logical_failure = false;
             }
         };
 
         db_import.close();
+
+        return !al.isFailed();
     }
 
 }

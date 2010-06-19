@@ -113,7 +113,15 @@ public class LocalRoot extends Root {
         
         if( dbtype == SupportedDBMSTypes.DB_ORACLE )
             database = instance;
-        
+        else if( dbtype == SupportedDBMSTypes.DB_JAVADB )
+        {
+            if( database.startsWith("APPHOME") )
+            {
+                database = database.replace("APPHOME", Setup.getAppConfigDir(app_name) );
+            }
+        }
+
+
          ConnectionDefinition connparams = new ConnectionDefinition(
                     host,
                     port,

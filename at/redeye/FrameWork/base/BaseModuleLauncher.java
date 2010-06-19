@@ -10,6 +10,7 @@ import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
+import at.redeye.Setup.dbexport.AutoImportDB;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProxySelector;
@@ -35,6 +36,7 @@ public abstract class BaseModuleLauncher {
 	public static Logger logger = Logger.getRootLogger();
 	public Root root;
 	public String[] args;
+        public AutoImportDB auto_import_db;
 
 	public BaseModuleLauncher() {
 		// Proxyeinstellungen von Java Ausschalten, sonst versucht sich
@@ -83,6 +85,10 @@ public abstract class BaseModuleLauncher {
 			String envname) {
 		return getStartupParam(shortname, longname, envname, null);
 	}
+
+        public String getStartupParam(String name) {
+            return getStartupParam(name, name, name);
+        }
 
 	public String getStartupParam(String shortname, String longname,
 			String envname, String default_value) {
@@ -369,7 +375,12 @@ public abstract class BaseModuleLauncher {
         root.saveSetup();
     }
 
-        private void initIfSet( String param, boolean always_over_write )
+    /**
+     * Sets a local config param if it is set detected by <b>getStartupParam()</b>
+     * @param param Name of the parameter
+     * @param always_over_write set it to true, if you wan't to override existing settings.
+     */
+        public void initIfSet( String param, boolean always_over_write )
         {
             String val = getStartupParam(param, param, param);
 
@@ -379,4 +390,104 @@ public abstract class BaseModuleLauncher {
             }
         }
 
+        /**
+         * If you wan't using autoimport a DB call this function withing in the constructor
+         * This detects if autoimport is wanted, or not. This first part of the
+         * Autoimport only downloads the database.
+         *
+         * <ul>
+         *  <li><b>AUTOIMPORTDB <i>URL</i></b> must be set</li>
+         *  <li><b>DBDatabase<b> eg: APPHOPME/db for derby</li>
+         *  <li><b>DBType</b> eg: DB_JAVADB for derby</li>
+         *  <li>.... or other Database settings</li>
+         * </ul>
+         *
+         * This function should be called after <b>initDBConnectionFromParams()</b>
+         *
+         * The Function <b>autoImportDBStep2()</b> should then called withing the invoke code
+         * after registering of the tables.
+         *
+         * @return false if something failed
+         */
+        public boolean autoImportDBStep1()
+        {
+            if (proxy != null)
+                ProxySelector.setDefault(proxy);
+
+            auto_import_db = new AutoImportDB(root, this);
+
+            if (auto_import_db.shouldAutoImportDB()) {
+                logger.info("Downloading DEMO Database");
+
+                AutoMBox mb = new AutoMBox(BaseModuleLauncher.class.getName()) {
+
+                    public void do_stuff() throws Exception {
+                        if (!auto_import_db.downloadDB()) {
+                            JOptionPane.showMessageDialog(null, "Fehler beim Herunterladen der Demo Datenbank.");
+                            logical_failure = true;
+                            return;
+                        }
+                    }
+                };
+
+                if (mb.isFailed()) {
+                    ProxySelector.setDefault(null);
+                    return false;
+                } else {
+                    logger.info("Dabase downloaded");
+                }
+            }
+
+            ProxySelector.setDefault(null);
+
+            return true;
+        }
+
+    /**
+     * If you wan't using autoimport a DB call this function withing in the <b>invoke()</b> function.
+     * This detects if autoimport is wanted, or not. The first function
+     * you hopefully calles was <b>autoImportDBStep1()</b> withing the constructor.
+     * This function now really imports the database. The function is listening on following
+     * Parameters:
+     *
+     * <ul>
+     *  <li><b>AUTOIMPORTDB <i>URL</i></b> must be set</li>
+     *  <li><b>AutoLoginUser <i>UserName</i></b> can be preset to automatically the autologin procedure.</li>
+     *  <li><b>DBDatabase<b> eg: APPHOPME/db for derby</li>
+     *  <li><b>DBType</b> eg: DB_JAVADB for derby</li>
+     *  <li>.... or other Database settings</li>
+     * </ul>
+     *
+     * This function should be called after registering the tables.
+     *
+     *
+     * @return false if something failed
+     */
+    public boolean autoImportDBStep2() {
+
+        if (auto_import_db.shouldAutoImportDB()) {
+            logger.info("Importing DEMO Database");
+
+            AutoMBox mb = new AutoMBox(BaseModuleLauncher.class.getName()) {
+
+                public void do_stuff() throws Exception {
+                    if (!auto_import_db.importDB()) {
+                        JOptionPane.showMessageDialog(null, "Fehler beim Importieren der Demo Datenbank.");
+                        logical_failure = true;
+                        return;
+                    }
+                }
+            };
+
+            if (mb.isFailed()) {
+                return false;
+            } else {
+                logger.info("Dabase imported");
+            }
+
+            initIfSet("AutoLoginUser", false);
+        }
+
+        return true;
+    }
 }

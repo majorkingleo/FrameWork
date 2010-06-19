@@ -80,7 +80,10 @@ public class DatabaseImport
     protected void fireEvent( String event )
     {
         if( listener != null )
+        {
+            logger.info(event);
             listener.setStage(event);
+        }
     }
 
     public void doImport() throws IOException, CannotOpenTempDatabase, ClassNotFoundException, SQLException, MissingConnectionParamException, UnSupportedDatabaseException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
