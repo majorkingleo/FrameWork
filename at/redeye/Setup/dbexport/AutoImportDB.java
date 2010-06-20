@@ -35,12 +35,7 @@ public class AutoImportDB
     }
 
     protected boolean shouldAutoImportDB(CheckConfigBase config)
-    {
-        download_url = module_launcher.getStartupParam( AUTOIMPORTDB );
-
-        if( download_url == null || download_url.trim().isEmpty() )
-            return false;        
-
+    {  
         if( config.shouldPopUpWizard() )
             return true;
 
@@ -70,6 +65,11 @@ public class AutoImportDB
     }
 
     public boolean shouldAutoImportDB() {
+
+        download_url = module_launcher.getStartupParam( AUTOIMPORTDB );
+
+        if( download_url == null || download_url.trim().isEmpty() )
+            return false;
 
         if( !root.loadDBConnectionFromSetup() )
         {
