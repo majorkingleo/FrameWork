@@ -73,6 +73,25 @@ public class ConnectionDialog extends BaseDialog {
 
     private void initCommon()
     {
+        setBindtypeManager( root.getBindtypeManager() );
+
+        /* Das ganze dient nur dazu, damit nichts vorbelegt wird,
+         * was in der Combobox dann nicht zur auswahl steht, und dann
+         * werden die Spalten nicht richtig ein, bzw ausgeblendet.
+         */
+        SupportedDBMSTypes tt[] = SupportedDBMSTypes.values();
+
+        SupportedDBMSTypes default_type = SupportedDBMSTypes.DB_MYSQL;
+
+        for( SupportedDBMSTypes t2 : tt )
+        {
+            if( bindtypeManager.is_dbms_driver_loaded(t2) )
+            {
+                default_type = t2;
+                break;
+            }
+        }
+
         String passwd =  root.getSetup().getLocalConfig(Setup.DBPasswd, "" );
 
         passwd = EncryptedDBPasswd.tryDecryptDBPassword(passwd, root.getAppName());
@@ -83,10 +102,8 @@ public class ConnectionDialog extends BaseDialog {
         DBDatabase.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBDatabase, "" ), root.getAppName() ));
         DBInstance.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBInstance, "" ), root.getAppName() ));
         DBPort.append( EncryptedDBPasswd.tryDecryptDBPassword(root.getSetup().getLocalConfig(Setup.DBPort, "" ), root.getAppName() ));
-        DBType = SupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, SupportedDBMSTypes.DB_MYSQL.toString() ) );
-
-        setBindtypeManager( root.getBindtypeManager() );        
-
+        DBType = SupportedDBMSTypes.valueOf(root.getSetup().getLocalConfig(Setup.DBType, default_type.toString() ) );
+              
         bindVar(JTHost, DBHost);
         bindVar(JCType, DBType);
         bindVar(JTUser, DBUser);
@@ -94,6 +111,15 @@ public class ConnectionDialog extends BaseDialog {
         bindVar(JTDatabase, DBDatabase);
         bindVar(JTPort, DBPort);
         bindVar(JTInstance, DBInstance);        
+
+        if( DBType == SupportedDBMSTypes.DB_JAVADB )
+        {
+            if( DBDatabase.toString().trim().isEmpty() )
+            {
+                 DBDatabase.setLength(0);
+                 DBDatabase.append("APPHOME/db");
+            }
+        }
 
         JCType.addActionListener(new ActionListener() {
 
@@ -133,6 +159,12 @@ public class ConnectionDialog extends BaseDialog {
                     JTPort.setEditable(false);
                     JTUser.setEditable(false);
                     JTPasswd.setEditable(false);
+
+                    if( JCType.getSelectedItem() == SupportedDBMSTypes.DB_JAVADB  )
+                    {
+                        if( JTDatabase.getText().isEmpty() )
+                           JTDatabase.setText("APPHOME/db");
+                    }
 
                 } else {
                     logger.info("something else");
@@ -189,7 +221,15 @@ public class ConnectionDialog extends BaseDialog {
             
         if( DBType == SupportedDBMSTypes.DB_ORACLE )
             instance = DBInstance.toString();
-        else
+        else if( DBType == SupportedDBMSTypes.DB_JAVADB )
+        {
+            instance = DBDatabase.toString();
+
+            if( instance.startsWith("APPHOME") )
+            {
+                instance = instance.replace("APPHOME", Setup.getAppConfigDir(root.getAppName()) );
+            }
+        } else
             instance = DBDatabase.toString();
             
         int port = 0;
@@ -493,7 +533,8 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
         if( check_config.shouldPopUpWizard() )
         {
-            setupDatabase(false);
+            if( setupDatabase(false) )
+                root.loadDBConnectionFromSetup();
         }
 
         if( wizardAction != null )
