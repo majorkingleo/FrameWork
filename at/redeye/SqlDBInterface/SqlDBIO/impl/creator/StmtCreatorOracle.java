@@ -50,7 +50,8 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 			// Oracle: Ignore columns that have empty strings
 			String col = iter.next();
 			Object tester = values.get(col);
-			if (tester instanceof String && tester.toString().isEmpty()) {
+			if ((tester instanceof String || tester instanceof Date)
+					&& tester.toString().isEmpty()) {
 				continue;
 			}
 			str.append(markColumnName(col));
@@ -61,34 +62,24 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 		str.append(")");
 		str.append(" values (");
 		iter = keys.iterator();
-		boolean usestring;
+
 		while (iter.hasNext()) {
-			usestring = false;
-			Object ele = values.get(iter.next());
+			String key = iter.next();
+			Object ele = values.get(key);
 			if (ele instanceof String || ele instanceof Date) {
 				if (ele.toString().isEmpty()) {
 					continue;
 				} else {
-					usestring = true;
-					str.append("'");
+					str.append("?");
+					boundColumns.add(key);
 				}
 			}
-			if (ele instanceof Date) {
-				str.append(toDateString((Date)ele));
-			} else {
-				str.append(ele.toString());
-			}
-			if (usestring) {
-				str.append("'");
-			}
+
 			if (iter.hasNext() == true) {
 				str.append(" , ");
 			}
 		}
 		str.append(")");
-
-		logger.debug("\n-> Created INSERT-Statement: " + str.toString());
-
 		return str.toString();
 	}
 
@@ -96,6 +87,10 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 			HashMap<String, Object> values, String whereStmt)
 			throws SQLException, TableBindingNotRegisteredException {
 
+		Vector<String> pkColumns = new Vector<String>();
+
+		// reset columns of recent statement
+		boundColumns.clear();
 		StringBuilder str = new StringBuilder();
 
 		str.append("update ");
@@ -103,29 +98,15 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 
 		Set<String> keys = values.keySet();
 		Iterator<String> iter = keys.iterator();
-		boolean usestring;
+
 		while (iter.hasNext()) {
-			usestring = false;
+
 			String key = iter.next();
 			logger.trace("--> " + key);
 			str.append(markTableName(table) + "." + markColumnName(key));
-			str.append("=");
-			Object ele = values.get(key);
-			if (ele instanceof String || ele instanceof Date) {
-				str.append("'");
-				usestring = true;
+			boundColumns.add(key);
+			str.append("=?");
 
-			}
-			if (ele instanceof String && ele.toString().isEmpty()) {
-				str.append(" ");
-            } else if( ele instanceof Date ) {
-                str.append(toDateString((Date)ele));
-			} else {
-				str.append(ele.toString());
-			}
-			if (usestring) {
-				str.append("'");
-			}
 			if (iter.hasNext() == true) {
 				str.append(" , ");
 			}
@@ -133,8 +114,6 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 		if (whereStmt != null && whereStmt.isEmpty() == false) {
 			str.append(" " + whereStmt);
 		} else {
-
-			Vector<String> whereCols = new Vector<String>();
 
 			logger.trace("Searching table: " + table);
 
@@ -153,57 +132,26 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 				attr = cols.get(key);
 				logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
 				if (attr.isPrimaryKey() == true) {
-					whereCols.add(key);
+					pkColumns.add(key);
+					boundColumns.add(key);
 				}
 			}
-			if (whereCols.size() == 0) {
+			if (pkColumns.size() == 0) {
 				throw new SQLException(
 						"Update impossible:\nNo whereStmt given and no PrimaryKey columns found!");
 			}
 			str.append(" where ");
 
-			String[] tokens;
-			String currcol;
-
-			for (int index = 0; index < whereCols.size(); index++) {
+			for (int index = 0; index < pkColumns.size(); index++) {
 				str.append(markTableName(table) + "."
-						+ markColumnName(whereCols.get(index)) + "=");
-				currcol = whereCols.get(index);
-				Object data = null;
-				if (currcol.contains(".")) {
-					tokens = currcol.split("\\."); // "." has to be escaped!
-					data = values.get(tokens[1]);
-				} else {
-					data = values.get(currcol);
-				}
-				if (data == null) {
-					throw new SQLException(
-							"Update impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing!");
-				}
+						+ markColumnName(pkColumns.get(index)) + "=?");
 
-				usestring = false;
-				if (data instanceof String || data instanceof Date) {
-					usestring = true;
-					str.append("'");
-				}
-				if (data instanceof Date) {
-					str.append(toDateString((Date)data));
-				} else {
-					str.append(data);
-				}
-				if (usestring) {
-					str.append("'");
-				}
-				if (index < (whereCols.size() - 1)) {
+				if (index < (pkColumns.size() - 1)) {
 					str.append(" and ");
 				}
 			}
 		}
-		logger.trace("\n-> Created UPDATE-Statement: " + str.toString());
-
 		return str.toString();
 	}
-
-
 
 }

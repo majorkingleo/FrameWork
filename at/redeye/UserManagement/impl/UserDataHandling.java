@@ -1,6 +1,8 @@
 package at.redeye.UserManagement.impl;
 
 import at.redeye.FrameWork.base.BaseDialog;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -211,7 +213,7 @@ public class UserDataHandling implements UserManagementInterface {
 
     public DBPb getUserData(DBPb pb) throws SQLException,
             TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-            WrongBindFileFormatException, CloneNotSupportedException {
+            WrongBindFileFormatException, CloneNotSupportedException, IOException {
 
         DBConnection conn = root.getDBConnection();
         Transaction tid = conn.getNewTransaction();

@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.StmtCreatorInterface;
 import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
@@ -23,7 +25,6 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.creator.AbstractStmtCreator;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.creator.StmtCreatorFactory;
 
 public abstract class AbstractStmtExecuter implements StmtExecInterface {
@@ -36,13 +37,16 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 	private static String lastStmt = null;
 
-	public AbstractStmtExecuter(Connection conn,
-			SupportedDBMSTypes dbmstype) {
+	protected static Logger logger = Logger
+			.getLogger(AbstractStmtExecuter.class.getSimpleName());
+
+	public AbstractStmtExecuter(Connection conn, SupportedDBMSTypes dbmstype) {
 		super();
 		this.conn = conn;
 		this.treg = new TypeRegistration(dbmstype);
-		this.stmtCreator = new StmtCreatorFactory(treg).getStmtCreator(dbmstype);
-		
+		this.stmtCreator = new StmtCreatorFactory(treg)
+				.getStmtCreator(dbmstype);
+
 	}
 
 	protected Object processTypeValue(ResultSet rs, DBDataType sourceType,
@@ -107,13 +111,14 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			Vector<DBDataType> typelist) throws SQLException,
 			UnsupportedDBDataTypeException {
 
+		long fetchStartTime = System.currentTimeMillis();
 		Vector<Vector<?>> wholeOutput = new Vector<Vector<?>>();
 		Vector<Object> wholeRow = null;
 
 		Statement s = conn.createStatement();
 
 		ResultSet rs = null;
-		setLastStmt(stmt);
+
 		rs = s.executeQuery(stmt);
 
 		while (rs.next()) {
@@ -127,6 +132,9 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		}
 		rs.close();
 		s.close();
+		setLastStmt(buildTimeSuffix(stmt,
+				(System.currentTimeMillis() - fetchStartTime)));
+		logger.trace(lastStmt);
 		return wholeOutput;
 	}
 
@@ -154,7 +162,8 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			String whereStmt) throws SQLException,
 			UnsupportedDBDataTypeException, TableBindingNotRegisteredException {
 
-		Statement s = conn.createStatement();
+		long fetchStartTime = System.currentTimeMillis();
+		PreparedStatement s;
 
 		Vector<HashMap<String, Object>> wholeOutput = new Vector<HashMap<String, Object>>();
 		HashMap<String, ColumnAttribute> typelist = new HashMap<String, ColumnAttribute>();
@@ -177,10 +186,12 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 		String stmt = stmtCreator.buildStmtForTable(tablenames, whereStmt,
 				typelist);
-		setLastStmt(stmt);
+
+		s = conn.prepareStatement(stmt);
+		ResultSet rs = s.executeQuery();
+
 		Set<String> keys = typelist.keySet();
 
-		ResultSet rs = s.executeQuery(stmt);
 		while (rs.next()) {
 
 			wholeRow = new HashMap<String, Object>();
@@ -198,17 +209,24 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		}
 		rs.close();
 		s.close();
+		
+		setLastStmt(buildTimeSuffix(stmt,
+				(System.currentTimeMillis() - fetchStartTime)));
+		
+		logger.trace(lastStmt);
 		return wholeOutput;
 	}
 
 	@Override
 	public HashMap<String, Object> fetchTableValue(String tablename,
 			HashMap<String, Object> primaryKeyData) throws SQLException,
-			UnsupportedDBDataTypeException, TableBindingNotRegisteredException {
+			UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
+			IOException {
 
-		Statement s = conn.createStatement();
+		PreparedStatement s;
 		String stmt = "";
 		ResultSet rs = null;
+		long fetchStartTime = System.currentTimeMillis();
 
 		HashMap<String, HashMap<String, ColumnAttribute>> registeredTables = treg
 				.getAllRegisteredTables();
@@ -223,8 +241,9 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 		Set<String> keys = typelist.keySet();
 		stmt = stmtCreator.buildStmtForTable(tablename, primaryKeyData);
-		setLastStmt(stmt);
-		rs = s.executeQuery(stmt);
+		s = handleStatement(stmt, primaryKeyData);
+		logger.info(s.toString());
+		rs = s.executeQuery();
 		while (rs.next()) {
 
 			wholeRow = new HashMap<String, Object>();
@@ -240,8 +259,12 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			}
 		}
 		rs.close();
-
 		s.close();
+		
+		setLastStmt(buildTimeSuffix(stmt,
+				(System.currentTimeMillis() - fetchStartTime)));
+		
+		logger.trace(lastStmt);
 		return wholeRow;
 	}
 
@@ -354,14 +377,19 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			throw new SQLException("No tablename given");
 		}
 
+		long fetchStartTime = System.currentTimeMillis();
 		PreparedStatement s;
 		int rv = 0;
 		String stmt = stmtCreator.buildInsertStmtForTable(tablename, values);
-		s = handleDMLStatement(stmt, values);
-		setLastStmt(stmt);
-		rv = s.executeUpdate();
+		s = handleStatement(stmt, values);
 
+		rv = s.executeUpdate();
 		s.close();
+		
+		setLastStmt(buildTimeSuffix(stmt,
+				(System.currentTimeMillis() - fetchStartTime)));
+		
+		logger.trace(lastStmt);
 		return rv;
 
 	}
@@ -374,17 +402,22 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		if (tablename.isEmpty()) {
 			throw new SQLException("No tablename given");
 		}
-
+		long fetchStartTime = System.currentTimeMillis();
 		PreparedStatement s;
 		int rv = 0;
 
 		String stmt = stmtCreator.buildUpdateStmtForTable(tablename, values,
 				whereStmt);
-		s = handleDMLStatement(stmt, values);
-		setLastStmt(stmt);
-		rv = s.executeUpdate();
+		
+		s = handleStatement(stmt, values);
 
+		rv = s.executeUpdate();
 		s.close();
+		setLastStmt(buildTimeSuffix(stmt,
+				(System.currentTimeMillis() - fetchStartTime)));
+		
+		logger.trace(lastStmt);
+
 		return rv;
 
 	}
@@ -404,39 +437,80 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		AbstractStmtExecuter.lastStmt = lastStmt;
 	}
 
-	protected boolean containsBlob(String stmt) {
-		return stmt.contains(AbstractStmtCreator.BLOB_IDENTIFIER);
-	}
-
-	protected java.sql.PreparedStatement handleDMLStatement(String stmt,
+	
+	protected PreparedStatement handleStatement(String stmt,
 			HashMap<String, Object> values) throws SQLException, IOException {
 
-		PreparedStatement ps;
+		PreparedStatement ps = conn.prepareStatement(stmt);
+		Vector<String> whereCols = stmtCreator.getCols2Handle();
 
-		if (containsBlob(stmt)) {
-			stmt = stmt.replaceAll(AbstractStmtCreator.BLOB_IDENTIFIER,
-					"\\?");
-			ps = conn.prepareStatement(stmt);
-			Set<String> keys = values.keySet();
-			Iterator<String> iter = keys.iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
-				Object ele = values.get(key);
-				if (ele instanceof byte[]) {
-					byte[] blobData = (byte[]) ele;
-					InputStream is = new ByteArrayInputStream(blobData);
-					ps.setBinaryStream(1, is, blobData.length);
-					is.close();
-				}
+		String currcol;
+		String[] tokens;
+		for (int index = 0; index < whereCols.size(); index++) {
+			currcol = whereCols.get(index);
+			Object data = null;
+			if (currcol.contains(".")) {
+				tokens = currcol.split("\\."); // "." has to be escaped!
+				data = values.get(tokens[1]);
+			} else {
+				data = values.get(currcol);
 			}
-		} else {
-			ps = conn.prepareStatement(stmt);
+			if (data == null) {
+				throw new SQLException(
+					"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing!");
+			}
+			setPreparedStatementTypes(ps, index + 1, data);
+
 		}
 		return ps;
 	}
-	
-	public StmtCreatorInterface getStmtCreator () {
+
+	public StmtCreatorInterface getStmtCreator() {
 		return stmtCreator;
+	}
+
+	protected String buildTimeSuffix(String base, long millis) {
+		StringBuilder str = new StringBuilder(base);
+
+		str.append(" [ duration: ");
+		str.append(millis);
+		str.append(" ms ]");
+
+		return str.toString();
+	}
+
+	protected void setPreparedStatementTypes(PreparedStatement ps, int index,
+			Object data) throws SQLException, IOException {
+
+		logger.trace("Start index " + index + " / " + data);
+		if (data instanceof String) {
+			ps.setString(index, (String) data);
+		} else if (data instanceof Date) {
+			ps.setString(index, (String) stmtCreator.toDateString((Date) data));
+		} else if (data instanceof Float) {
+			ps.setFloat(index, (Float) data);
+		} else if (data instanceof Double) {
+			ps.setDouble(index, (Double) data);
+		} else if (data instanceof Integer) {
+			ps.setInt(index, (Integer) data);
+		} else if (data instanceof Long) {
+			ps.setLong(index, (Long) data);
+		} else if (data instanceof Short) {
+			ps.setShort(index, (Short) data);
+		} else if (data instanceof Boolean) {
+			ps.setBoolean(index, (Boolean) data);
+		} else if (data instanceof Byte) {
+			ps.setByte(index, (Byte) data);
+		} else if (data instanceof byte[]) {
+			byte[] blobData = (byte[]) data;
+			InputStream is = new ByteArrayInputStream(blobData);
+			ps.setBinaryStream(index, is, blobData.length);
+			is.close();
+		} else {
+			throw new SQLException("Unknown data type! Don't know how to handle " + index
+					+ " / " + data);
+		}
+
 	}
 
 }

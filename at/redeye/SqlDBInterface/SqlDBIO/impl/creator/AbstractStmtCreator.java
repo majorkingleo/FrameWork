@@ -27,11 +27,8 @@ public abstract class AbstractStmtCreator implements
 			.getLogger(AbstractStmtCreator.class.getSimpleName());
 
 	protected TypeRegistrationInterface registration;
-	
-	/**
-	 * Allows to identify a BLOB
-	 */
-	public static final String BLOB_IDENTIFIER = "###BLOB###";
+
+	Vector<String> boundColumns = new Vector<String>();
 
 	public AbstractStmtCreator(TypeRegistrationInterface registration) {
 		this.registration = registration;
@@ -44,6 +41,9 @@ public abstract class AbstractStmtCreator implements
 	public String buildStmtForTable(String[] tablenames, String whereStmt,
 			HashMap<String, ColumnAttribute> columnNames) {
 
+		// reset columns of recent statement
+		boundColumns.clear();
+		
 		StringBuilder str = new StringBuilder();
 
 		str.append("select ");
@@ -65,7 +65,7 @@ public abstract class AbstractStmtCreator implements
 		if (whereStmt != null && whereStmt.isEmpty() == false) {
 			str.append(" " + whereStmt);
 		}
-		logger.trace("\n-> Created Statement: " + str.toString());
+		logger.trace("simple select");
 		return str.toString();
 
 	}
@@ -74,6 +74,9 @@ public abstract class AbstractStmtCreator implements
 			HashMap<String, Object> values) throws SQLException,
 			TableBindingNotRegisteredException {
 
+		// reset columns of recent statement
+		boundColumns.clear();
+		
 		StringBuilder str = new StringBuilder();
 		str.append("select ");
 
@@ -95,8 +98,6 @@ public abstract class AbstractStmtCreator implements
 		str.append(" from " + markTableName(tablename.toUpperCase())
 				+ " where ");
 
-		Vector<String> whereCols = new Vector<String>();
-
 		iter = keys.iterator();
 		ColumnAttribute attr = null;
 		while (iter.hasNext()) {
@@ -104,57 +105,38 @@ public abstract class AbstractStmtCreator implements
 			attr = columnNames.get(key);
 			logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
 			if (attr.isPrimaryKey() == true) {
-				whereCols.add(key);
+				boundColumns.add(key);
 			}
 		}
-		if (whereCols.size() == 0) {
+		if (boundColumns.size() == 0) {
 			throw new SQLException(
 					"Select is impossible:\nNo PrimaryKey columns found!");
 		}
 
 		String[] tokens;
 		String currcol;
-		boolean usestring;
-		for (int index = 0; index < whereCols.size(); index++) {
-			currcol = whereCols.get(index);
-			Object data = null;
+		
+		for (int index = 0; index < boundColumns.size(); index++) {
+			currcol = boundColumns.get(index);
 			if (currcol.contains(".")) {
 				tokens = currcol.split("\\."); // "." has to be escaped!
-				data = values.get(tokens[1]);
-				str.append(markColumnName(tokens[1]) + "=");
+				str.append(markColumnName(tokens[1]) + "= ?");
 			} else {
-				data = values.get(currcol);
-				str.append(markColumnName(currcol) + "=");
+				str.append(markColumnName(currcol) + "= ?");
 			}
 
-			if (data == null) {
-				throw new SQLException(
-						"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing!");
-			}
-			usestring = false;
-			if (data instanceof String || data instanceof Date) {
-				usestring = true;
-				str.append("'");
-			}
-			if (data instanceof Date) {
-				str.append(toDateString((Date) data));
-			} else {
-				str.append(data);
-			}
-			if (usestring) {
-				str.append("'");
-			}
-			if (index < (whereCols.size() - 1)) {
-				str.append(" and ");
-			}
+			
 		}
-		logger.trace("\n-> Created Statement: " + str.toString());
+		logger.trace("PK select");
 		return str.toString();
 	}
 
 	public String buildInsertStmtForTable(String table,
 			HashMap<String, Object> values) {
 
+		// reset columns of recent statement
+		boundColumns.clear();
+		
 		StringBuilder str = new StringBuilder();
 
 		str.append("insert into ");
@@ -163,7 +145,9 @@ public abstract class AbstractStmtCreator implements
 		Set<String> keys = values.keySet();
 		Iterator<String> iter = keys.iterator();
 		while (iter.hasNext()) {
-			str.append(markColumnName(iter.next()));
+			String key = iter.next();
+			str.append(markColumnName(key));
+			boundColumns.add(key);
 			if (iter.hasNext() == true) {
 				str.append(" , ");
 			}
@@ -171,35 +155,17 @@ public abstract class AbstractStmtCreator implements
 		str.append(")");
 		str.append(" values (");
 		iter = keys.iterator();
-		boolean usestring;
+		
 		while (iter.hasNext()) {
-			usestring = false;
-			Object ele = values.get(iter.next());
-			if (ele instanceof String || ele instanceof Date) {
-				str.append("'");
-				usestring = true;
-			}
-
-			if (ele instanceof String && ele.toString().isEmpty()) {
-				str.append(" ");
-			} else if (ele instanceof Date) {
-				str.append(toDateString((Date) ele));
-			} else if (ele instanceof byte[]) {
-				str.append(BLOB_IDENTIFIER);
-			} else {
-				str.append(ele.toString());
-			}
-			if (usestring) {
-				str.append("'");
-			}
+			
+			iter.next();
+			str.append("?");
+			
 			if (iter.hasNext() == true) {
 				str.append(" , ");
 			}
 		}
 		str.append(")");
-
-		logger.trace("\n-> Created INSERT-Statement: " + str.toString());
-
 		return str.toString();
 	}
 
@@ -207,6 +173,11 @@ public abstract class AbstractStmtCreator implements
 			HashMap<String, Object> values, String whereStmt)
 			throws SQLException, TableBindingNotRegisteredException {
 
+		Vector<String> pkColumns = new Vector <String>();
+		
+		// reset columns of recent statement
+		boundColumns.clear();
+		
 		StringBuilder str = new StringBuilder();
 
 		str.append("update ");
@@ -214,28 +185,13 @@ public abstract class AbstractStmtCreator implements
 
 		Set<String> keys = values.keySet();
 		Iterator<String> iter = keys.iterator();
-		boolean usestring;
+		
 		while (iter.hasNext()) {
-			usestring = false;
 			String key = iter.next();
 			logger.trace("--> " + key);
 			str.append(markTableAndColumnNameForUpdate(table,key));
-			str.append("=");
-			Object ele = values.get(key);
-			if (ele instanceof String || ele instanceof Date) {
-				str.append("'");
-				usestring = true;
-			}
-			if (ele instanceof Date) {
-				str.append(toDateString((Date) ele));
-			} else if (ele instanceof byte[]) {
-				str.append(BLOB_IDENTIFIER);
-			} else {
-				str.append(ele);
-			}
-			if (usestring) {
-				str.append("'");
-			}
+			str.append("=?");
+			boundColumns.add(key);
 			if (iter.hasNext() == true) {
 				str.append(" , ");
 			}
@@ -243,9 +199,7 @@ public abstract class AbstractStmtCreator implements
 		if (whereStmt != null && whereStmt.isEmpty() == false) {
 			str.append(" " + whereStmt);
 		} else {
-
-			Vector<String> whereCols = new Vector<String>();
-
+			
 			logger.trace("Searching table: " + table);
 
 			HashMap<String, ColumnAttribute> cols = registration
@@ -263,56 +217,26 @@ public abstract class AbstractStmtCreator implements
 				attr = cols.get(key);
 				logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
 				if (attr.isPrimaryKey() == true) {
-					whereCols.add(key);
+					pkColumns.add(key);
+					boundColumns.add(key);
 				}
 			}
-			if (whereCols.size() == 0) {
+			if (pkColumns.size() == 0) {
 				throw new SQLException(
 						"Update impossible:\nNo whereStmt given and no PrimaryKey columns found!");
 			}
 			str.append(" where ");
 
-			String[] tokens;
-			String currcol;
-
-			for (int index = 0; index < whereCols.size(); index++) {
+			for (int index = 0; index < pkColumns.size(); index++) {
+				
 				str.append(markTableName(table) + "."
-						+ markColumnName(whereCols.get(index)) + "=");
-				currcol = whereCols.get(index);
-				Object data = null;
-				if (currcol.contains(".")) {
-					tokens = currcol.split("\\."); // "." has to be escaped!
-					data = values.get(tokens[1]);
-				} else {
-					data = values.get(currcol);
-				}
-				if (data == null) {
-					throw new SQLException(
-							"Update impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing!");
-				}
-
-				usestring = false;
-				if (data instanceof String || data instanceof Date) {
-					usestring = true;
-					str.append("'");
-				}
-				if (data instanceof Date) {
-					str.append(toDateString((Date) data));
-				} else if (data instanceof byte[]) {
-					str.append(BLOB_IDENTIFIER);
-				} else {
-					str.append(data);
-				}
-				if (usestring) {
-					str.append("'");
-				}
-				if (index < (whereCols.size() - 1)) {
+						+ markColumnName(pkColumns.get(index)) + "=?");
+				
+				if (index < (pkColumns.size() - 1)) {
 					str.append(" and ");
 				}
 			}
 		}
-		logger.trace("\n-> Created UPDATE-Statement: " + str.toString());
-
 		return str.toString();
 	}
 
@@ -324,6 +248,11 @@ public abstract class AbstractStmtCreator implements
 		return sdf.format(date);
 
 	}
+	
+	public Vector<String> getCols2Handle () {
+		return boundColumns;
+	}
+	
 	
 	public abstract String markTableName (String tableName);
 	

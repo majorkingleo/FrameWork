@@ -127,7 +127,9 @@ public class AdminDlg extends BaseDialog {
             logger.error(ex);
         } catch (CloneNotSupportedException ex) {
             logger.error(ex);
-        }
+        } catch (IOException ex) {
+        	logger.error(ex);
+		}
     }
 
     /**

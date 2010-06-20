@@ -43,10 +43,11 @@ public interface StmtExecInterface {
 	 * @throws SQLException
 	 * @throws UnsupportedDBDataTypeException
 	 * @throws TableBindingNotRegisteredException
+	 * @throws IOException 
 	 */
 	public HashMap<String, Object> fetchTableValue(String tablename,
 			HashMap<String, Object> primaryKeyData) throws SQLException,
-			UnsupportedDBDataTypeException, TableBindingNotRegisteredException;
+			UnsupportedDBDataTypeException, TableBindingNotRegisteredException, IOException;
 
 	/**
 	 * 

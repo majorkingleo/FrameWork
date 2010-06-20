@@ -1,11 +1,13 @@
 package at.redeye.SqlDBInterface.SqlDBIO;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Vector;
 
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
-
 
 /**
  * 
@@ -35,11 +37,12 @@ public interface StmtCreatorInterface {
 	 * @param values
 	 *            Filled Primary Key data for rows that shall be read
 	 * @return The created statement
-	 * @throws SQLException 
-	 * @throws TableBindingNotRegisteredException 
+	 * @throws SQLException
+	 * @throws TableBindingNotRegisteredException
 	 */
 	public String buildStmtForTable(String tablename,
-			HashMap<String, Object> values) throws SQLException, TableBindingNotRegisteredException;
+			HashMap<String, Object> values) throws SQLException,
+			TableBindingNotRegisteredException;
 
 	/**
 	 * 
@@ -65,14 +68,30 @@ public interface StmtCreatorInterface {
 	 * @return The created statement.
 	 * @throws SQLException
 	 *             If data is invalid or missing.
-	 * @throws TableBindingNotRegisteredException 
+	 * @throws TableBindingNotRegisteredException
 	 */
 	public String buildUpdateStmtForTable(String table,
 			HashMap<String, Object> values, String whereStmt)
 			throws SQLException, TableBindingNotRegisteredException;
-	
-	public String markTableName (String tableName);
-	
-	public String markColumnName (String columnName);
+
+	public String markTableName(String tableName);
+
+	public String markColumnName(String columnName);
+
+	/**
+	 * Get names of columns that are bound to {@link PreparedStatement}
+	 * with an "?". <br>
+	 * Those have to be post-processed
+	 * 
+	 * @return The where-column names of the recent statements creation
+	 */
+	public Vector<String> getCols2Handle();
+
+	/**
+	 * @param date
+	 *            The given date
+	 * @return Formatted date string
+	 */
+	public String toDateString(Date date);
 
 }

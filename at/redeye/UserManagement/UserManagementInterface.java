@@ -1,6 +1,8 @@
 package at.redeye.UserManagement;
 
 import at.redeye.FrameWork.base.BaseDialog;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -31,7 +33,7 @@ public interface UserManagementInterface {
 
     public DBPb getUserData(DBPb pb) throws SQLException,
             TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-            WrongBindFileFormatException, CloneNotSupportedException;
+            WrongBindFileFormatException, CloneNotSupportedException, IOException;
 
     /**
      * Checks if username and password are ok

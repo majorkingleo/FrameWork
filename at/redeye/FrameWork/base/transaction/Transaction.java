@@ -205,7 +205,7 @@ public abstract class Transaction {
 	public boolean fetchTableWithPrimkey(DBStrukt binddesc)
 			throws UnsupportedDBDataTypeException,
 			WrongBindFileFormatException, SQLException,
-			TableBindingNotRegisteredException {
+			TableBindingNotRegisteredException, IOException {
 		registerTable(binddesc);
 
 		HashMap<String, Object> data = binddesc.getHashMapAndData();
