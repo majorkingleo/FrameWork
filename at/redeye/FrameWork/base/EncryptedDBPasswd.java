@@ -40,7 +40,7 @@ public class EncryptedDBPasswd
 
    public static String decryptDBPassword(final String DBPasswd, final String password )
    {
-       if( (DBPasswd.length() % 4) != 0  && (DBPasswd.length() % 8) != 0 )
+       if( (DBPasswd.length() % 4) != 0  || (DBPasswd.length() % 8) != 0 )
            return null; // sicher kein Base64 encodeter String
 
        try {
