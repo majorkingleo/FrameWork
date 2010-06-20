@@ -654,6 +654,13 @@ public class BaseDialogBaseHelper implements BindVarInterface
      * ist dabei dem User schon aufgeschalten worden.
      */
     public boolean checkAnyAndSingleSelection(JTable table) {
+
+        if( table.getRowCount() == 1 )
+        {
+            table.selectAll();
+            return true;
+        }
+
         if (table.getSelectedRowCount() <= 0) {
             JOptionPane.showMessageDialog(null,
                     StringUtils.autoLineBreak("Bitte wählen Sie einen Eintrag aus."),
