@@ -70,7 +70,7 @@ public class JoinTableCell extends TableValidator
                 {
                     DBSqlAsInteger easi = (DBSqlAsInteger) tabledesign.rows.get(row).get(column);
 
-                    easi.query.setExtraSql(" and " + trans.markColumn(JoinedColumn) + "='" + val.getValue() + "'");
+                    easi.query.setExtraSql(" and " + trans.markColumn(JoinedColumn) + "= " + val.getValue() );
 
                     easi.refresh();
 
