@@ -24,6 +24,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -183,7 +184,21 @@ public class DatabaseExport
 
        fireEvent("Komprimieren der Datenbank");
 
-       Zip.zip(temp_db_dir, target_file_name);
+       try {
+        Zip.zip(temp_db_dir, target_file_name);
+       } catch( FileNotFoundException ex ) {
+           /**
+            * Irgendwie kann das bei Derby passieren, dass die Datenbank bereits geschlossen ist,
+            * aber im nachhinein noch die log Dateien weggelöscht werden. Deswegen hier
+            * der 2. Versuch.
+            */
+           
+           logger.error(ex);
+           logger.error("retrying to export");
+           
+           Zip.zip(temp_db_dir, target_file_name);
+       }
+
     }
 
     private Transaction createTempDatabase() throws IOException, CannotCreateTempDatabase, ClassNotFoundException, SQLException, MissingConnectionParamException, UnSupportedDatabaseException
