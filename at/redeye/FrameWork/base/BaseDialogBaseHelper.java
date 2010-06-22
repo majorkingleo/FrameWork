@@ -12,6 +12,7 @@ import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.translation.TranslationHelper;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.FrameWork.widgets.NoticeIfChangedTextField;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
@@ -19,12 +20,12 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class BaseDialogBaseHelper implements BindVarInterface
     };
 
     boolean edited = false;
-    public BindVarBase bind_vars = new BindVarBase();
+    public BindVarInterface bind_vars;
     protected List<Runnable> onCloseListeners;
     protected CloseSubDialogHelper close_subdialog_helper;
 
@@ -383,6 +384,11 @@ public class BaseDialogBaseHelper implements BindVarInterface
 
     public void setEdited(boolean val) {
         edited = val;
+
+        if( edited == false )
+        {
+            setBindVarsChanged(false);
+        }
     }
 
     public void clearEdited() {
@@ -690,7 +696,10 @@ public class BaseDialogBaseHelper implements BindVarInterface
      * oder umgekehrt übertragen.
      */
     public void bindVar(JTextField jtext, StringBuffer var) {
-       bind_vars.bindVar(jtext,var);
+
+        checkBindVars();
+
+        bind_vars.bindVar(jtext,var);
     }
 
     /**
@@ -703,7 +712,10 @@ public class BaseDialogBaseHelper implements BindVarInterface
      * oder umgekehrt übertragen.
      */
     public void bindVar(JPasswordField jtext, StringBuffer var) {
-       bind_vars.bindVar(jtext,var);
+
+        checkBindVars();
+
+        bind_vars.bindVar(jtext,var);
     }
 
     /**
@@ -716,7 +728,10 @@ public class BaseDialogBaseHelper implements BindVarInterface
      * oder umgekehrt übertragen.
      */
     public void bindVar(JTextField jtext, DBValue var) {
-       bind_vars.bindVar(jtext,var);
+
+        checkBindVars();
+
+        bind_vars.bindVar(jtext,var);
     }
 
     /**
@@ -730,7 +745,10 @@ public class BaseDialogBaseHelper implements BindVarInterface
      */
     @Override
     public void bindVar(JCheckBox jtext, DBFlagInteger var) {
-       bind_vars.bindVar(jtext,var);
+
+        checkBindVars();
+
+        bind_vars.bindVar(jtext,var);
     }
 
     /**
@@ -738,6 +756,10 @@ public class BaseDialogBaseHelper implements BindVarInterface
      */
     @Override
     public void var_to_gui() {
+
+       if( bind_vars == null )
+            return;
+
         bind_vars.var_to_gui();
     }
 
@@ -746,6 +768,51 @@ public class BaseDialogBaseHelper implements BindVarInterface
      */
     @Override
     public void gui_to_var() {
+
+       if( bind_vars == null )
+            return;
+
         bind_vars.gui_to_var();
+    }
+
+    public void setBindVarsChanged(boolean state) {
+
+        if( bind_vars == null )
+            return;
+
+        for( Pair pair :  bind_vars.getBindVarPairs() )
+        {
+            if( pair.get_first() instanceof NoticeIfChangedTextField )
+            {
+                NoticeIfChangedTextField text_field = (NoticeIfChangedTextField) pair.get_first();
+
+                text_field.setChanged(state);
+            }
+        }
+    }
+
+    public void setBindVars( BindVarInterface bind_vars )
+    {
+        this.bind_vars = bind_vars;
+    }
+
+    public Collection<Pair> getBindVarPairs() {
+
+        checkBindVars();
+
+        return bind_vars.getBindVarPairs();
+    }
+
+    public void addBindVarPair( Pair pair )
+    {
+        checkBindVars();
+
+        bind_vars.addBindVarPair(pair);
+    }
+
+    protected void checkBindVars()
+    {
+        if( bind_vars == null )
+            bind_vars = new BindVarBase();
     }
 }

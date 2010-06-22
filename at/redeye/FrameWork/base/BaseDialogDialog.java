@@ -12,10 +12,10 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.awt.Container;
-import java.awt.Window;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
@@ -404,6 +404,24 @@ public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInte
 
     public void invokeDialogModal(BaseDialogDialog dlg) {
         helper.invokeDialogModal(dlg);
+    }
+
+    public void setBindVarsChanged(boolean state) {
+        helper.setBindVarsChanged(state);
+    }
+
+    public Collection<Pair> getBindVarPairs() {
+        return helper.getBindVarPairs();
+    }
+
+    public void addBindVarPair( Pair pair )
+    {
+        helper.addBindVarPair(pair);
+    }
+
+    public void setBindVars( BindVarInterface bind_vars )
+    {
+        helper.setBindVars(bind_vars);
     }
 
 }

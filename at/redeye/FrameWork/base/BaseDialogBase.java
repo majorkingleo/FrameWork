@@ -153,4 +153,8 @@ public interface BaseDialogBase
 
     public void closeNoAppExit();
 
+    public void setBindVarsChanged( boolean state );
+
+    public void setBindVars( BindVarInterface bind_vars );
+
 }

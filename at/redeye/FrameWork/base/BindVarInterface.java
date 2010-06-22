@@ -6,6 +6,7 @@ package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import java.util.Collection;
 import javax.swing.JCheckBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -156,4 +157,7 @@ public interface BindVarInterface {
     public void bindVar(JCheckBox jCDefault, DBFlagInteger _default);
     public void var_to_gui();
     public void gui_to_var();
+
+    Collection<Pair> getBindVarPairs();
+    void addBindVarPair( Pair pair );
 }

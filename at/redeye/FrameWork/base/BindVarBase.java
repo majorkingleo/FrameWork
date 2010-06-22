@@ -11,10 +11,9 @@ import at.redeye.FrameWork.base.BindVarInterface.TextDBStringPair;
 import at.redeye.FrameWork.base.BindVarInterface.TextStringPair;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
-import at.redeye.UserManagement.bindtypes.DBPermissionLevelInteger;
+import java.util.Collection;
 import java.util.Vector;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -22,7 +21,7 @@ import javax.swing.JTextField;
  *
  * @author martin
  */
-public class BindVarBase 
+public class BindVarBase implements BindVarInterface
 {
     public Vector<Pair> pairs = new Vector<Pair>();
     
@@ -61,10 +60,19 @@ public class BindVarBase
 
             if( pair.get_second() == val )
             {
-                System.out.println( "vat_to_gui for "  + val.getName() );
+                System.out.println( "var_to_gui for "  + val.getName() );
                 pair.var_to_gui();
                 break;
             }
         }
+    }
+
+    public Collection<Pair> getBindVarPairs() {
+        return pairs;
+    }
+
+    public void addBindVarPair( Pair pair )
+    {
+        pairs.add(pair);
     }
 }

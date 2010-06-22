@@ -7,6 +7,7 @@ package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import java.util.Collection;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
@@ -41,6 +42,15 @@ public class BasePanel extends javax.swing.JPanel implements BindVarInterface
     @Override
     public void bindVar(JCheckBox box, DBFlagInteger var) {
         bind_vars.bindVar(box,var);        
+    }
+
+    public Collection<Pair> getBindVarPairs() {
+        return bind_vars.getBindVarPairs();
+    }
+
+    public void addBindVarPair( Pair pair )
+    {
+        bind_vars.addBindVarPair(pair);
     }
 
 }

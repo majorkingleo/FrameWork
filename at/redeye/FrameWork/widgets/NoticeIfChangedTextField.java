@@ -22,6 +22,7 @@ public class NoticeIfChangedTextField extends AutoCompleteTextField implements I
     Container prev_on_focus = null;
     Color defaultBackgroundColor = null;
     Color editedBackgroundColor = Color.yellow;
+    String orig_text = null;
 
     public NoticeIfChangedTextField()
     {
@@ -52,6 +53,11 @@ public class NoticeIfChangedTextField extends AutoCompleteTextField implements I
             {
                 setChanged(true);
             }
+
+            if( orig_text != null && orig_text.equals(getText()) )
+            {
+                setChanged(false);
+            }
         }
     }
 
@@ -60,9 +66,14 @@ public class NoticeIfChangedTextField extends AutoCompleteTextField implements I
         changed = state;
 
         if( changed )
+        {
             setBackground(editedBackgroundColor);
+        }
         else
+        {
+            orig_text = getText();
             setBackground(defaultBackgroundColor);
+        }
     }
 
     public void setDefaultBackgroundColor( Color color )
@@ -75,6 +86,26 @@ public class NoticeIfChangedTextField extends AutoCompleteTextField implements I
         editedBackgroundColor = color;
     }
 
+    private void checkIfChanged()
+    {
+       if( orig_text == null )
+            return;
+
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+
+             if( orig_text == null )
+                return;
+
+                if( orig_text.equals(getText()) )
+                    setChanged(false);
+                else
+                    setChanged(true);
+            }
+        });
+    }
+
     @Override
     public void setDocument( Document doc )
     {
@@ -83,17 +114,33 @@ public class NoticeIfChangedTextField extends AutoCompleteTextField implements I
 
                 @Override
                 public void insertUpdate(DocumentEvent e) {
-                    setChanged(true);
+
+                    if( orig_text == null )
+                        setChanged(true);
+                    else
+                        checkIfChanged();
+
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent e) {
-                    setChanged(true);
+
+                     checkIfChanged();
+
+                    if( orig_text == null )
+                        setChanged(true);
+                    else
+                        checkIfChanged();
+                    
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent e) {
-                    setChanged(true);
+
+                    if( orig_text == null )
+                        setChanged(true);
+                    else
+                        checkIfChanged();
                 }
             });
         }

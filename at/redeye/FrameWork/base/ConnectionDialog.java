@@ -212,7 +212,7 @@ public class ConnectionDialog extends BaseDialog {
             }
         }
         
-        helper.bind_vars.pairs.add(new TypePair() );
+        helper.bind_vars.addBindVarPair(new TypePair() );
     }
     
     ConnectionDefinition getDefinition()

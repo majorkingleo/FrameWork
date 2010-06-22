@@ -16,6 +16,7 @@ import java.awt.Container;
 import java.awt.Window;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
@@ -406,5 +407,23 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
 
     public void invokeDialogModal(BaseDialogDialog dlg) {
         helper.invokeDialogModal(dlg);
+    }
+
+    public void setBindVarsChanged(boolean state) {
+        helper.setBindVarsChanged(state);
+    }
+
+    public Collection<Pair> getBindVarPairs() {
+        return helper.getBindVarPairs();
+    }
+
+    public void addBindVarPair( Pair pair )
+    {
+        helper.addBindVarPair(pair);
+    }
+
+    public void setBindVars( BindVarInterface bind_vars )
+    {
+        helper.setBindVars(bind_vars);
     }
 }
