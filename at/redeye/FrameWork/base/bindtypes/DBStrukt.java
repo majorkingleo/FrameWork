@@ -30,7 +30,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 public abstract class DBStrukt {
    
     protected String strukt_name;
-    protected String title = new String();
+    protected String title;
     public Vector<DBValue> elements = new Vector<DBValue>();
     public HashMap<String,DBValue> element_by_name = new HashMap<String,DBValue>();
     public Vector<DBStrukt> sub_strukts = new Vector<DBStrukt>();
@@ -40,6 +40,7 @@ public abstract class DBStrukt {
     public DBStrukt( String name )
     {
         this.strukt_name = name;
+        title = new String();
     }
 
     
@@ -81,7 +82,7 @@ public abstract class DBStrukt {
 
     public void consume(HashMap<String, Object> map ) 
     {
-        consume( map, "" );
+        consume( map, null );
     }
 
     
@@ -92,10 +93,15 @@ public abstract class DBStrukt {
         
         for( String key : keys )
         {
-            if( key.length() <= prefix.length() )
+            if( prefix != null && key.length() <= prefix.length() )
                 continue;            
             
-            String k = key.substring(prefix.length());           
+            String k;
+            
+            if( prefix != null )
+                k = key.substring(prefix.length());
+            else
+                k = key;
             
             DBValue val = getValueByName( k );
             
@@ -111,7 +117,11 @@ public abstract class DBStrukt {
 
                 if( k.startsWith( strukt.getName() + "_" ) )
                 {
-                    strukt.consume( map, prefix + strukt.getName() + "_" );
+                    if( prefix != null )
+                        strukt.consume( map, prefix + strukt.getName() + "_" );
+                    else
+                        strukt.consume( map, strukt.getName() + "_" );
+                    
                     break;
                 }
             }
