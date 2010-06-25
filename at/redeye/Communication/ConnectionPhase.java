@@ -1,7 +1,7 @@
 /**
  * 
  */
-package at.redeye.Communication.sps.H1.comm.impl;
+package at.redeye.Communication;
 
 /**
  * @author Mario Mattl

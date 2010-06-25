@@ -12,9 +12,10 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import at.redeye.Communication.ConnectionPhase;
+import at.redeye.Communication.UpdateReason;
 import at.redeye.Communication.sps.H1.comm.IH1CommListener;
 import at.redeye.Communication.sps.H1.comm.IH1Communication;
-import at.redeye.Communication.sps.H1.comm.UpdateReason;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;

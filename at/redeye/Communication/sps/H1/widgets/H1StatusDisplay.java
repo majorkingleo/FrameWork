@@ -10,7 +10,8 @@
  */
 package at.redeye.Communication.sps.H1.widgets;
 
-import at.redeye.Communication.sps.H1.comm.impl.ConnectionPhase;
+import at.redeye.Communication.ConnectionPhase;
+
 import java.awt.Color;
 import java.awt.Graphics;
 

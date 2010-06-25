@@ -8,6 +8,7 @@ import java.net.SocketTimeoutException;
 
 import org.apache.log4j.Logger;
 
+import at.redeye.Communication.ConnectionPhase;
 import at.redeye.Communication.sps.H1.comm.IH1Communication;
 
 /**

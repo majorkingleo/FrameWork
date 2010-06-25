@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
+import at.redeye.Communication.ConnectionPhase;
+
+
 /**
  * @author Mario Mattl
  * 

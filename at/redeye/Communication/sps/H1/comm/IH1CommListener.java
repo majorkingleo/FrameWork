@@ -1,6 +1,6 @@
 package at.redeye.Communication.sps.H1.comm;
 
-import at.redeye.Communication.sps.H1.comm.impl.ConnectionPhase;
+import at.redeye.Communication.ConnectionPhase;
 
 public interface IH1CommListener {
 	

@@ -5,7 +5,8 @@ package at.redeye.Communication.sps.H1.comm;
 
 import java.io.IOException;
 
-import at.redeye.Communication.sps.H1.comm.impl.ConnectionPhase;
+import at.redeye.Communication.ConnectionPhase;
+import at.redeye.Communication.UpdateReason;
 import at.redeye.Communication.sps.H1.comm.impl.H1ConnectionDefinition;
 import at.redeye.Communication.sps.H1.comm.impl.H1ConnectionException;
 

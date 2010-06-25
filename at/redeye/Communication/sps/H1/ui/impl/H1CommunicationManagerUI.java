@@ -16,10 +16,10 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
+import at.redeye.Communication.ConnectionPhase;
 import at.redeye.Communication.sps.H1.comm.IH1CommListener;
 import at.redeye.Communication.sps.H1.comm.IH1Communication;
 import at.redeye.Communication.sps.H1.comm.IH1QueueSender;
-import at.redeye.Communication.sps.H1.comm.impl.ConnectionPhase;
 import at.redeye.Communication.sps.H1.comm.impl.H1ConnectionDefinition;
 import at.redeye.Communication.sps.H1.comm.impl.H1QueueSender;
 import at.redeye.Communication.sps.H1.comm.impl.H1ReceiverThread;

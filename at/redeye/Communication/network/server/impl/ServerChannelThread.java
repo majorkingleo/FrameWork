@@ -1,7 +1,7 @@
 /**
  * 
  */
-package at.redeye.Communication.network;
+package at.redeye.Communication.network.server.impl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
