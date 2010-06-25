@@ -221,7 +221,7 @@ private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
                     getTransaction().markTable(image) +
                     " where " +
                     getTransaction().markColumn(image.id) +
-                    " = '" + content.getId() + "'");
+                    " = " + content.getId() );
             imageList.removeValue(content);            
             setEdited();
         }
