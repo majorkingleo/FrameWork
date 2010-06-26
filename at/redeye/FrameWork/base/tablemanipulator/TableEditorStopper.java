@@ -49,15 +49,38 @@ import javax.swing.table.TableCellEditor;
  */
 public class TableEditorStopper extends FocusAdapter implements PropertyChangeListener
 {
-    public static void ensureEditingStopWhenTableLosesFocus(JTable table)
-    {
-        new TableEditorStopper(table);
-    }
-    private TableEditorStopper(JTable table)
+    private boolean paused = false;
+    private Component focused;
+    private JTable table;
+
+    public TableEditorStopper(JTable table)
     {
         this.table=table;
         table.addPropertyChangeListener("tableCellEditor", this);
     }
+
+    /**
+     * pause listening on property change event
+     * call this function before removing a row
+     */
+    public void doPause()
+    {
+        paused = true;
+    }
+
+    /**
+     * pause listening on property change event
+     * call this function before removing a row
+     */
+    public void doPause(boolean state)
+    {
+        paused = state;
+    }
+
+    void doContinue() {
+        paused = false;
+    }
+
     public void propertyChange(PropertyChangeEvent evt)
     {
         if (focused!=null)
@@ -73,6 +96,9 @@ public class TableEditorStopper extends FocusAdapter implements PropertyChangeLi
     @Override
     public void focusLost(FocusEvent e)
     {
+        if( paused )
+            return;
+
         if (focused!=null)
         {
             focused.removeFocusListener(this);
@@ -86,13 +112,11 @@ public class TableEditorStopper extends FocusAdapter implements PropertyChangeLi
                 focused=null;
                 TableCellEditor editor = table.getCellEditor();
                 if (editor!=null)
-                {
+                {                    
                     editor.stopCellEditing();
                 }
             }
         }
     }
-    private Component focused;
-    private JTable table;
 }
 

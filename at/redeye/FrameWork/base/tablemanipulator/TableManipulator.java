@@ -58,6 +58,7 @@ public class TableManipulator {
     RowHeader row_header;
     int auto_show_row_header = 20;
     private static Logger logger = Logger.getLogger(TableManipulator.class.getName());
+    TableEditorStopper editor_stopper;
     
     public TableManipulator( Root root, JTable table, TableDesign tabledesign )
     {
@@ -74,7 +75,8 @@ public class TableManipulator {
             }
         } );
         
-        TableEditorStopper.ensureEditingStopWhenTableLosesFocus(table);
+        editor_stopper = new TableEditorStopper(table);
+
         readShowHeaderLimit();
         addCloseListener();
     }
@@ -110,8 +112,12 @@ public class TableManipulator {
     {
         this.binddesc = binddesc;
         this.allEditable = allEditable;
-        
-        TableEditorStopper.ensureEditingStopWhenTableLosesFocus(table);
+
+        if( editor_stopper == null )
+        {
+            // ansonten hängen wir mehrere listener drann und das wollen wir nicht.
+            editor_stopper = new TableEditorStopper(table);
+        }
         
         Vector<TableDesign.Coll> vec = new Vector<TableDesign.Coll>();
         
@@ -371,6 +377,9 @@ public class TableManipulator {
     
     public void remove( int row )
     {
+        editor_stopper.doPause();
+        logger.info(("PAUSE PAUSE PAUSE"));
+
         model.removeRow(row);
         tabledesign.rows.remove(row);
         
@@ -399,6 +408,10 @@ public class TableManipulator {
 
         checkRowHeaderLimit();
         row_header.updateUI();
+
+        logger.info(("CONTINUE CONTINUE CONTINUE"));
+
+        editor_stopper.doContinue();
     }
     
     public Set<Integer> getEditedRows()
