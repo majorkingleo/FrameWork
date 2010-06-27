@@ -416,7 +416,8 @@ public abstract class BaseModuleLauncher {
 
             auto_import_db = new AutoImportDB(root, this);
 
-            if (auto_import_db.shouldAutoImportDB()) {
+            if (auto_import_db.shouldAutoImportDB() ||
+                auto_import_db.shouldDownloadDB() ) {
                 logger.info("Downloading DEMO Database");
 
                 AutoMBox mb = new AutoMBox(BaseModuleLauncher.class.getName()) {
