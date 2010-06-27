@@ -193,7 +193,7 @@ private void buttonCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 }//GEN-LAST:event_buttonCloseActionPerformed
 
 private void jBDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBDelActionPerformed
-// TODO add your handling code here:
+
     final ImageListContent content = (ImageListContent) imageList.getSelectedValue();
 
     if( content == null )
