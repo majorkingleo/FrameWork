@@ -13,6 +13,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import at.redeye.Communication.ConnectionPhase;
 import at.redeye.Communication.UpdateReason;
 import at.redeye.Communication.network.client.INetClient;
 import at.redeye.Communication.network.client.INetClientListener;
@@ -27,6 +28,7 @@ public class SimpleNetClient extends Thread implements INetClient {
 	private Socket s;
 	private BufferedOutputStream out;
 	private BufferedInputStream in;
+	private ConnectionPhase phase = ConnectionPhase.Disconnected;
 
 	private int port;
 	private String url = "";
@@ -44,19 +46,24 @@ public class SimpleNetClient extends Thread implements INetClient {
 
 	@Override
 	public void addListener(INetClientListener listener) {
-		// TODO Auto-generated method stub
 
+		if (listener != null) {
+			allListener.add(listener);
+		}
 	}
 
 	@Override
 	public void connect(String url, int port) throws IOException {
-		
+
+		phase = ConnectionPhase.TCPConnectionAttempt;
+
 		s = new Socket(url, port);
 		if (s != null) {
 			out = new BufferedOutputStream(new DataOutputStream(s
 					.getOutputStream()));
 			in = new BufferedInputStream(
 					new DataInputStream(s.getInputStream()));
+			phase = ConnectionPhase.TCPConnected;
 		} else {
 			logger.error("Could not establish connection to <" + url + " / "
 					+ port + ">");
@@ -65,6 +72,8 @@ public class SimpleNetClient extends Thread implements INetClient {
 
 	@Override
 	public void disconnect() throws IOException {
+
+		phase = ConnectionPhase.DisConnectionAttempt;
 		if (in != null) {
 			in.close();
 			in = null;
@@ -77,6 +86,8 @@ public class SimpleNetClient extends Thread implements INetClient {
 			s.close();
 			s = null;
 		}
+		phase = ConnectionPhase.Disconnected;
+		logger.trace("TCP disconnected!");
 	}
 
 	@Override
@@ -100,11 +111,14 @@ public class SimpleNetClient extends Thread implements INetClient {
 	public void transmit(byte[] data) throws IOException {
 		out.write(data);
 		out.flush();
+		logger.trace("Transmit data: " + data);
 	}
 
 	@Override
 	public void updateListener(UpdateReason reason, byte[] data, String message) {
-
+		for (INetClientListener listener : allListener) {
+			listener.actionMessageInbound(data);
+		}
 	}
 
 	@Override
@@ -115,25 +129,32 @@ public class SimpleNetClient extends Thread implements INetClient {
 			connect(url, port);
 
 			while (s.isConnected()) {
+
 				// initially, I must send something
 				transmit(dummy);
-				byte[] data = receive();
-				if (data != null) {
-					StringBuilder str = new StringBuilder();
-					for (int index = 0; index < data.length; index++) {
-						str.append((char) (data[index]));
-					}
 
-					logger.info(str.toString());
-				}
+				byte[] data = receive();
+				logger.trace(StringUtils.byteArrayToString(data));
+				updateListener(null, data, null);
 				sleep(1000);
 			}
 
 		} catch (IOException e) {
 			logger.error(StringUtils.exceptionToString(e));
+			if (s.isClosed() || !s.isConnected() || s.isInputShutdown()
+					|| s.isOutputShutdown()) {
+				phase = ConnectionPhase.Disconnected;
+			}
 		} catch (InterruptedException e) {
 			logger.error(StringUtils.exceptionToString(e));
 		}
+	}
+
+	/**
+	 * @return the phase
+	 */
+	protected ConnectionPhase getPhase() {
+		return phase;
 	}
 
 }
