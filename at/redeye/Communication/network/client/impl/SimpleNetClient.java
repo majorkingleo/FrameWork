@@ -38,10 +38,10 @@ public class SimpleNetClient extends Thread implements INetClient {
 
 	private Vector<INetClientListener> allListener = new Vector<INetClientListener>();
 
-	public SimpleNetClient(String url, int port) {
+	public SimpleNetClient(SimpleNetClientConnectionDefinition conndef) {
 		super();
-		this.port = port;
-		this.url = url;
+		this.port = conndef.getPort();
+		this.url = conndef.getHostname();
 	}
 
 	@Override
