@@ -1,5 +1,6 @@
 package at.redeye.SqlDBInterface.SqlDBIO.impl.executor;
 
+import at.redeye.FrameWork.utilities.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -383,15 +384,26 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		String stmt = stmtCreator.buildInsertStmtForTable(tablename, values);
 		s = handleStatement(stmt, values);
 
-		rv = s.executeUpdate();
-		s.close();
-		
-		setLastStmt(buildTimeSuffix(stmt,
-				(System.currentTimeMillis() - fetchStartTime)));
-		
-		logger.trace(lastStmt);
-		return rv;
+                try
+                {
+                    rv = s.executeUpdate();
+                    s.close();
 
+                } catch( SQLException ex ) {
+
+                    setLastStmt(buildTimeSuffix(stmt,
+				(System.currentTimeMillis() - fetchStartTime)));
+                    logger.error(lastStmt);
+                    logger.error(StringUtils.exceptionToString(ex));
+
+                    throw ex;
+                }
+                
+                setLastStmt(buildTimeSuffix(stmt,
+				(System.currentTimeMillis() - fetchStartTime)));		
+                logger.trace(lastStmt);
+
+		return rv;
 	}
 
 	public int updateTableValues(String tablename,
@@ -411,8 +423,22 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		
 		s = handleStatement(stmt, values);
 
-		rv = s.executeUpdate();
-		s.close();
+                try
+                {
+
+                    rv = s.executeUpdate();
+                    s.close();
+
+                 } catch( SQLException ex ) {
+
+                    setLastStmt(buildTimeSuffix(stmt,
+				(System.currentTimeMillis() - fetchStartTime)));
+                    logger.error(lastStmt);
+                    logger.error(StringUtils.exceptionToString(ex));
+
+                    throw ex;
+                }
+
 		setLastStmt(buildTimeSuffix(stmt,
 				(System.currentTimeMillis() - fetchStartTime)));
 		
