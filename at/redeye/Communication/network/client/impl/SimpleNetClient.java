@@ -56,7 +56,7 @@ public class SimpleNetClient extends Thread implements INetClient {
 	public void connect(String url, int port) throws IOException {
 
 		phase = ConnectionPhase.TCPConnectionAttempt;
-
+		logger.info("Start with " + url + ": " + port);
 		s = new Socket(url, port);
 		if (s != null) {
 			out = new BufferedOutputStream(new DataOutputStream(s
@@ -141,8 +141,8 @@ public class SimpleNetClient extends Thread implements INetClient {
 
 		} catch (IOException e) {
 			logger.error(StringUtils.exceptionToString(e));
-			if (s.isClosed() || !s.isConnected() || s.isInputShutdown()
-					|| s.isOutputShutdown()) {
+			if (s == null || s.isClosed() || !s.isConnected()
+					|| s.isInputShutdown() || s.isOutputShutdown()) {
 				phase = ConnectionPhase.Disconnected;
 			}
 		} catch (InterruptedException e) {
