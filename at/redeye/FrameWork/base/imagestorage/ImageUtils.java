@@ -31,7 +31,9 @@
 
 package at.redeye.FrameWork.base.imagestorage;
 
+import at.redeye.FrameWork.base.imagestorage.bindtypes.DBImage;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -227,4 +229,25 @@ public class ImageUtils {
         g2d.dispose();
         return new ImageIcon(image);
     }
+
+    /**
+     * calculates width and height of an image stream
+     * @param bytes
+     * @param descr
+     * @return Dimensions
+     */
+    public static Dimension calcDimensions( byte bytes[], String descr )
+    {
+        // TODO implement better code for that, without rendering the image
+        ImageIcon image = loadImageIcon(bytes, descr );
+        Dimension dim = new Dimension(image.getIconWidth(),image.getIconHeight());
+
+        return dim;
+    }
+
+    public static Dimension calcDimensions( DBImage img )
+    {
+        return calcDimensions(img.image.value, img.file_name.toString() );
+    }
+
 }

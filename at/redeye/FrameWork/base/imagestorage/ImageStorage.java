@@ -286,8 +286,7 @@ private void jBLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
                 image.image.value = bytes;
 
                 image.id.loadFromCopy(getNewSequenceValue(image.getName()));
-                image.file_name.loadFromString(files[i].getName());
-                image.hist.setAnHist(root.getUserName());
+                image.loadContent(bytes, files[i].getName(), root.getUserName());
 
                 getTransaction().insertValues(image);    
                 setEdited();
