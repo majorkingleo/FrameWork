@@ -164,9 +164,12 @@ public abstract class AbstractDBConnector implements
 	 * @see DBConnection.DbConnectionInterface#disconnectDatabase()
 	 */
 	public void disconnectDatabase(Connection conn) throws SQLException {
+
+            if( !conn.isClosed() )
+            {
 		conn.rollback();
 		conn.close();
-		// TODO Auto-generated method stub
+            }
 
 	}
 
