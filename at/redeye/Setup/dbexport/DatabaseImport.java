@@ -125,6 +125,8 @@ public class DatabaseImport
 
            for( String source_table : source_tables )
            {
+               manager_temp.register(table);
+               
                if( table.getName().equals(source_table) )
                {
                    found = true;
@@ -160,6 +162,11 @@ public class DatabaseImport
 
        if( !root.getBindtypeManager().autocreate() )
             throw new  CannotOpenTempDatabase("Die Datenbank konnte nicht mehr eingerichtet werden" );
+
+       // wenn das ein alter export ist, dann eventuelle Spalten anlegen, damit wir
+       // das graffel importieren können.
+       if( !manager_temp.autocreate() )
+            throw new  CannotOpenTempDatabase("Die Datenbank konnte nicht geladen werden" );
 
        DBTableVersion version = new DBTableVersion();
 
