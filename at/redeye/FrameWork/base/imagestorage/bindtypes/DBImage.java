@@ -55,6 +55,7 @@ public class DBImage extends DBStrukt
         width.loadFromCopy((Integer)dim.width);
         height.loadFromCopy((Integer)dim.height);
         hist.setAnHist(user);
+        file_name.loadFromCopy(descr);
         image.value = bytes;
     }
 
