@@ -247,6 +247,10 @@ public class ImageUtils {
 
     public static Dimension calcDimensions( DBImage img )
     {
+        // I hope in the DB are correct values
+        if( img.width.getValue() > 0 && img.height.getValue() > 0 )
+            return new Dimension( img.width.getValue(), img.height.getValue() );
+
         return calcDimensions(img.image.value, img.file_name.toString() );
     }
 
