@@ -10,9 +10,7 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.image.PixelGrabber;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Map.Entry;
 import java.util.Vector;
 
 /**
