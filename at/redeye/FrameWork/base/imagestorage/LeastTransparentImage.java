@@ -33,6 +33,18 @@ public class LeastTransparentImage
         }
     }
 
+    public static class MinMax
+    {
+        public Image most_transparent;
+        public Image least_transparent;
+
+        public MinMax( Image min, Image max )
+        {
+            this.most_transparent = min;
+            this.least_transparent = max;
+        }
+    }
+
     Component parent;
     MediaTracker tracker;
     ArrayList<Content> images;
@@ -61,6 +73,16 @@ public class LeastTransparentImage
     }
 
     public Image getLeastTransparentImage()
+    {
+        return geMinMaxTransparentImage().least_transparent;
+    }
+
+    public Image getMostTransparentImage()
+    {
+        return geMinMaxTransparentImage().most_transparent;
+    }
+
+    public MinMax geMinMaxTransparentImage()
     {
         try
         {
@@ -101,6 +123,9 @@ public class LeastTransparentImage
         int max = 0;
         Image max_img = null;
 
+        int min = 0;
+        Image min_img = null;
+
         for( Content entry: images )
         {
             if( entry.tranparency >= max )
@@ -108,9 +133,15 @@ public class LeastTransparentImage
                 max_img = entry.img;
                 max = entry.tranparency;
             }
+
+            if( entry.tranparency < min || min == 0 )
+            {
+                min_img = entry.img;
+                min = entry.tranparency;
+            }
         }
 
-        return max_img;
+        return new MinMax(min_img,max_img);
     }
 
 }
