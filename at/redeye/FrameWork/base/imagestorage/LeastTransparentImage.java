@@ -35,10 +35,10 @@ public class LeastTransparentImage
 
     public static class MinMax
     {
-        public Image most_transparent;
-        public Image least_transparent;
+        public Content most_transparent;
+        public Content least_transparent;
 
-        public MinMax( Image min, Image max )
+        public MinMax( Content min, Content max )
         {
             this.most_transparent = min;
             this.least_transparent = max;
@@ -49,11 +49,14 @@ public class LeastTransparentImage
     MediaTracker tracker;
     ArrayList<Content> images;
 
+    MinMax min_max;
+
     public LeastTransparentImage( Component parent )
     {
         this.parent = parent;
         tracker = new MediaTracker(parent);
         images = new ArrayList<Content>();
+        min_max = null;
     }
 
     public void add( DBImage image )
@@ -62,6 +65,8 @@ public class LeastTransparentImage
 
         tracker.addImage(img, image.id.getValue());
         images.add(new Content(image,img));
+
+        min_max = null;
     }
 
     public void addAll( Vector<DBImage> images )
@@ -74,15 +79,47 @@ public class LeastTransparentImage
 
     public Image getLeastTransparentImage()
     {
-        return geMinMaxTransparentImage().least_transparent;
+        check();
+
+        return min_max.least_transparent.img;
     }
 
     public Image getMostTransparentImage()
     {
-        return geMinMaxTransparentImage().most_transparent;
+        check();
+
+        return min_max.most_transparent.img;
     }
 
-    public MinMax geMinMaxTransparentImage()
+    public DBImage getLeastTransparentDBImage()
+    {
+        check();
+
+        return min_max.least_transparent.image;
+    }
+
+    public DBImage getMostTransparentDBImage()
+    {
+        check();
+
+        return min_max.most_transparent.image;
+    }
+
+
+    private void check()
+    {
+       if( min_max == null )
+            min_max = getMinMaxTransparentImage_int();
+    }
+
+    public MinMax getMinMaxTransparentImage()
+    {
+        check();
+
+        return min_max;
+    }
+
+    private MinMax getMinMaxTransparentImage_int()
     {
         try
         {
@@ -121,22 +158,22 @@ public class LeastTransparentImage
         }
 
         int max = 0;
-        Image max_img = null;
+        Content max_img = null;
 
         int min = 0;
-        Image min_img = null;
+        Content min_img = null;
 
         for( Content entry: images )
         {
             if( entry.tranparency >= max )
             {
-                max_img = entry.img;
+                max_img = entry;
                 max = entry.tranparency;
             }
 
             if( entry.tranparency < min || min == 0 )
             {
-                min_img = entry.img;
+                min_img = entry;
                 min = entry.tranparency;
             }
         }
