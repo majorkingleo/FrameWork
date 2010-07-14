@@ -103,7 +103,10 @@ public abstract class AbstractStmtCreator implements
 		while (iter.hasNext()) {
 			String key = iter.next();
 			attr = columnNames.get(key);
-			logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+
+                        if( logger.isTraceEnabled() )
+                            logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+
 			if (attr.isPrimaryKey() == true) {
 				boundColumns.add(key);
 			}
@@ -188,7 +191,10 @@ public abstract class AbstractStmtCreator implements
 		
 		while (iter.hasNext()) {
 			String key = iter.next();
-			logger.trace("--> " + key);
+
+                        if( logger.isTraceEnabled() )
+                            logger.trace("--> " + key);
+
 			str.append(markTableAndColumnNameForUpdate(table,key));
 			str.append("=?");
 			boundColumns.add(key);
@@ -199,7 +205,8 @@ public abstract class AbstractStmtCreator implements
 		if (whereStmt != null && whereStmt.isEmpty() == false) {
 			str.append(" " + whereStmt);
 		} else {
-			
+
+                    if( logger.isTraceEnabled() )
 			logger.trace("Searching table: " + table);
 
 			HashMap<String, ColumnAttribute> cols = registration
@@ -215,7 +222,10 @@ public abstract class AbstractStmtCreator implements
 			while (iter.hasNext()) {
 				String key = iter.next();
 				attr = cols.get(key);
-				logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+
+                                if( logger.isTraceEnabled() )
+                                    logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+
 				if (attr.isPrimaryKey() == true) {
 					pkColumns.add(key);
 					boundColumns.add(key);

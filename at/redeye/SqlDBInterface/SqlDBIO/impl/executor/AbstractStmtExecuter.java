@@ -508,7 +508,9 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	protected void setPreparedStatementTypes(PreparedStatement ps, int index,
 			Object data) throws SQLException, IOException {
 
+            if( logger.isTraceEnabled() )
 		logger.trace("Start index " + index + " / " + data);
+
 		if (data instanceof String) {
 			ps.setString(index, (String) data);
 		} else if (data instanceof Date) {

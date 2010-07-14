@@ -149,8 +149,10 @@ public class LeastTransparentImage
                 int val = pixels[x * y];
                 int alpha = (val >> 24) & 0xFF;
 
+                /*
                 System.out.println(String.format(entry.image.file_name.getValue() + " %X alpha %X",
                         val, alpha));
+                */
 
                 entry.tranparency += alpha;
             }
