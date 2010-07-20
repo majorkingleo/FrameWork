@@ -36,6 +36,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.executor.DefaultStmtExecuter;
+import java.util.ArrayList;
 
 /**
  * 
@@ -177,6 +178,34 @@ public abstract class Transaction {
 
 		return res;
 	}
+        
+    public <T extends DBStrukt> ArrayList<T> fetchTableList(T binddesc)
+            throws SQLException, TableBindingNotRegisteredException,
+            UnsupportedDBDataTypeException, WrongBindFileFormatException {
+        return fetchTableList(binddesc, "");
+    }
+
+    public <T extends DBStrukt> ArrayList<T> fetchTableList(T binddesc, String where)
+            throws SQLException, TableBindingNotRegisteredException,
+            UnsupportedDBDataTypeException, WrongBindFileFormatException {
+
+        registerTable(binddesc);
+
+        String tablenames[] = {binddesc.getName()};
+
+        Vector<HashMap<String, Object>> result = executer.fetchTableValue(
+                tablenames, where);
+
+        ArrayList<T> res = new ArrayList<T>(result.size());
+
+        for (int i = 0; i < result.size(); i++) {
+            DBStrukt strukt = binddesc.getNewOne();
+            strukt.consume(result.get(i));
+            res.add(i, (T) strukt);
+        }
+
+        return res;
+    }
 
 	public String getSql() {
 		return executer.getLastStmt();
