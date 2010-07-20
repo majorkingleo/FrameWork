@@ -5,8 +5,7 @@
 
 package at.redeye.FrameWork.base.reports;
 
-import at.redeye.FrameWork.base.reports.DefaultReportDesign;
-import at.redeye.FrameWork.base.reports.ReportDesign;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -14,6 +13,8 @@ import at.redeye.FrameWork.base.reports.ReportDesign;
  */
 public class BaseReportRenderer 
 {
+    public static Logger logger = Logger.getLogger(BaseReportRenderer.class.getName());
+
     protected ReportDesign design = new DefaultReportDesign();
     protected StringBuilder text = new StringBuilder();
     
