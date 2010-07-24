@@ -116,21 +116,22 @@ public class BaseDialogBaseHelper implements BindVarInterface
 
     BaseDialogBase parent;
 
-    public BaseDialogBaseHelper( final BaseDialogBase parent, Root root, String title, JRootPane myrootPane )
+    public BaseDialogBaseHelper( final BaseDialogBase parent, Root root, String title, JRootPane myrootPane, boolean do_not_inform_root )
     {
         this.parent = parent;
         this.root = root;
         this.title = title;
         this.myrootPane = myrootPane;
 
-        initCommon();
+        initCommon(do_not_inform_root);
     }
 
-    protected void initCommon()
+    protected void initCommon(boolean do_not_inform_root)
     {
         parent.setTitle(title);
 
-        root.informWindowOpened(parent);
+        if( !do_not_inform_root )
+            root.informWindowOpened(parent);
 
         if (logger.isDebugEnabled()) {
             logger.debug(title);

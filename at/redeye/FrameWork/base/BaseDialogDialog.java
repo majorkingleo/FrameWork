@@ -45,7 +45,7 @@ public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInte
         super();
         this.root = root;
 
-        helper = new BaseDialogBaseHelper(this,root,title,myrootPane);
+        helper = new BaseDialogBaseHelper(this,root,title,myrootPane,false);
     }
 
     public BaseDialogDialog(JFrame owner, Root root, String title)
@@ -53,9 +53,17 @@ public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInte
         super(owner);
         this.root = root;
 
-        helper = new BaseDialogBaseHelper(this,root,title,myrootPane);
+        helper = new BaseDialogBaseHelper(this,root,title,myrootPane,false);
     }
 
+
+    public BaseDialogDialog(JFrame owner, Root root, String title, boolean do_not_inform_root)
+    {
+        super(owner);
+        this.root = root;
+
+        helper = new BaseDialogBaseHelper(this,root,title,myrootPane,do_not_inform_root);
+    }
     /**
      * Overload this method, if the window shouldn't open with
      * with the last stored with and height.

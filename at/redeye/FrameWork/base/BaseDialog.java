@@ -43,7 +43,12 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
 
     public BaseDialog(Root root, String title) {
         this.root = root;
-        helper = new BaseDialogBaseHelper(this,root,title,myrootPane);
+        helper = new BaseDialogBaseHelper(this,root,title,myrootPane,false);
+    }
+
+    public BaseDialog(Root root, String title, boolean do_not_inform_root) {
+        this.root = root;
+        helper = new BaseDialogBaseHelper(this,root,title,myrootPane,do_not_inform_root);
     }
 
     /**
