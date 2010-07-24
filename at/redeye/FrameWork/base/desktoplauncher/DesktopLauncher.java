@@ -24,7 +24,7 @@ public class DesktopLauncher
     String jnlp_name;
     String app_title;
 
-    protected static Logger logger = Logger.getLogger(CreateDesktopIcon.class.getName());
+    public static Logger logger = Logger.getLogger(CreateDesktopIcon.class.getName());
 
     public DesktopLauncher( String app_name, String web_start_url, String app_title, 
                             String icon_name_ico, String icon_name_png, String icon_name_gif)
@@ -94,5 +94,15 @@ public class DesktopLauncher
     public boolean download_jnlp()
     {
         return DownloadUrl.downloadUrl(web_start_url, jnlp_name);
-    }    
+    }
+
+    public String getJnlpName()
+    {
+        return jnlp_name;
+    }
+
+    public String getAppName()
+    {
+        return app_name;
+    }
 }
