@@ -6,10 +6,12 @@
 package at.redeye.FrameWork.utilities;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +34,11 @@ public class DownloadUrl
         to = file;
     }
 
-    boolean download()
+    public DownloadUrl(URL url) {
+        from = url;
+    }
+
+    public boolean download()
     {
         File file = null;
         OutputStream out = null;
@@ -128,5 +134,56 @@ public class DownloadUrl
         DownloadUrl durl = new DownloadUrl( from, new File(target) );
 
         return durl.download();
+    }
+
+   public static String downloadUrl(URL url)
+   {
+        DownloadUrl durl = new DownloadUrl( url );
+
+        StringBuffer buf = new StringBuffer();
+
+        if( durl.download(buf) )
+            return buf.toString();
+
+        return null;
+   }
+
+    public boolean download(StringBuffer buffer) {
+        BufferedReader bis = null;
+        InputStream stream = null;
+
+        boolean failed = true;
+
+        try {
+            stream = from.openStream();
+
+            bis = new BufferedReader(new InputStreamReader(stream));
+
+            int len;
+
+            while( bis.ready() )
+            {
+                String line = bis.readLine();                
+
+                buffer.append(line);
+                buffer.append("\n");
+            }
+
+            failed = false;
+
+        } catch (IOException ex) {
+
+            logger.error(ex);
+
+        } finally {
+            try {
+                stream.close();
+                bis.close();
+            } catch (IOException ex) {
+                logger.error(ex);
+            }
+        }
+
+        return !failed;
     }
 }
