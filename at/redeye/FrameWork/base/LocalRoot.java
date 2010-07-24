@@ -9,6 +9,7 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.dbmanager.impl.DatabaseManager;
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.UserManagement.UserManagementInterface;
@@ -29,7 +30,18 @@ public class LocalRoot extends Root {
     protected Vector<BaseDialogBase> dialogs = new Vector<BaseDialogBase>();
     protected boolean appExitAllowed = true;
     private static Logger logger = Logger.getLogger(LocalRoot.class);
-    
+    EncryptedDBPasswd enc;
+    DelayedLoader loader;
+
+    public class DelayedLoader extends Thread
+    {
+        @Override
+        public void run()
+        {
+            enc = new EncryptedDBPasswd(getAppName());
+        }
+    }
+
     public LocalRoot( String app_name )
     {
         super(app_name);
@@ -45,6 +57,9 @@ public class LocalRoot extends Root {
 
     private void init()
     {
+        loader = new DelayedLoader();
+        loader.start();
+
         setup = new LocalSetup( this, app_name );
         dbmanager = new DatabaseManager();
     }
@@ -81,7 +96,32 @@ public class LocalRoot extends Root {
     {
         setDBConnection(null);
     }
-    
+
+    private String decryptPasswd( String passwd )
+    {
+        if( passwd == null || passwd.isEmpty() )
+            return passwd;
+
+        if( (passwd.length() % 4) != 0  )
+            return passwd;
+
+       try {
+            if( enc == null )
+            {
+                long start = System.currentTimeMillis();
+
+                loader.join();
+
+                System.out.println("                       waited for encoder " + (System.currentTimeMillis() - start));
+           }
+
+        } catch ( InterruptedException ex ) {
+            logger.error(StringUtils.exceptionToString(ex));
+        }
+
+        return enc.tryDecryptDBPassword(passwd);
+    }
+
     @Override
     public boolean loadDBConnectionFromSetup()
     {
@@ -91,14 +131,7 @@ public class LocalRoot extends Root {
         String passwd = setup.getLocalConfig(Setup.DBPasswd, "");
         SupportedDBMSTypes dbtype = SupportedDBMSTypes.valueOf(setup.getLocalConfig(Setup.DBType, SupportedDBMSTypes.DB_MYSQL.toString()));
         String instance = setup.getLocalConfig(Setup.DBInstance, "");
-        String sport = setup.getLocalConfig(Setup.DBPort, "0");
-
-        passwd   = EncryptedDBPasswd.tryDecryptDBPassword(passwd,   getAppName());
-        database = EncryptedDBPasswd.tryDecryptDBPassword(database, getAppName());
-        host     = EncryptedDBPasswd.tryDecryptDBPassword(host,     getAppName());
-        user     = EncryptedDBPasswd.tryDecryptDBPassword(user,     getAppName());
-        instance = EncryptedDBPasswd.tryDecryptDBPassword(instance, getAppName());
-        sport    = EncryptedDBPasswd.tryDecryptDBPassword(sport,    getAppName());
+        String sport = setup.getLocalConfig(Setup.DBPort, "0");        
 
         int port = 0;
         
@@ -121,6 +154,12 @@ public class LocalRoot extends Root {
             }
         }
 
+        sport    = decryptPasswd(sport);
+        instance = decryptPasswd(instance);
+        database = decryptPasswd(database);
+        host     = decryptPasswd(host);
+        user     = decryptPasswd(user);
+        passwd   = decryptPasswd(passwd);
 
          ConnectionDefinition connparams = new ConnectionDefinition(
                     host,

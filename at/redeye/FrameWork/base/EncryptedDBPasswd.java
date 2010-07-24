@@ -18,6 +18,51 @@ public class EncryptedDBPasswd
 {
    protected static Logger logger = Logger.getLogger(EncryptedDBPasswd.class.getName());
 
+   DesEncrypt cipher;
+
+   public EncryptedDBPasswd( String password )
+   {
+       try {
+        cipher = new DesEncrypt(password,true);
+       } catch ( Exception ex ) {
+           logger.error(StringUtils.exceptionToString(ex));
+       }
+   }
+
+   public boolean isValid()
+   {
+       return cipher != null;
+   }
+
+   public String tryDecryptDBPassword(String DBPasswd )
+   {
+       if( DBPasswd.isEmpty() || !isValid() )
+           return DBPasswd;
+
+       if( (DBPasswd.length() % 4) != 0 )
+           return DBPasswd;
+
+       String str;
+
+       try {
+        str = cipher.decrypt(DBPasswd);
+
+       } catch( IllegalBlockSizeException ex ) {
+           return DBPasswd;
+       } catch( IllegalArgumentException ex ) {
+           return DBPasswd;
+       } catch ( Exception ex) {
+           logger.error(StringUtils.exceptionToString(ex));
+           return DBPasswd;
+       }
+
+       if( str == null )
+           return DBPasswd;
+
+       return str;
+   }
+   
+
    public static String encryptDBPassword( final String DBPasswd, final String password )
    {
        final StringBuffer buf = new StringBuffer();

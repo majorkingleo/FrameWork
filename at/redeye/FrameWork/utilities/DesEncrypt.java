@@ -39,15 +39,29 @@ public class DesEncrypt
 
     public DesEncrypt( String password ) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, InvalidKeyException, InvalidAlgorithmParameterException
     {
-        KeySpec keySpec = new PBEKeySpec(password.toCharArray(),salt, 19); 
+        init(password,false);
+    }
+
+    public DesEncrypt( String password , boolean decode_only ) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, InvalidKeyException, InvalidAlgorithmParameterException
+    {
+        init(password,decode_only);
+    }
+
+    private void init( String password, boolean decode_only ) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, InvalidKeyException, InvalidAlgorithmParameterException
+    {
+        KeySpec keySpec = new PBEKeySpec(password.toCharArray(),salt, 19);
         SecretKey key = SecretKeyFactory.getInstance( "PBEWithMD5AndDES").generateSecret(keySpec);
-        
-        encode = Cipher.getInstance(key.getAlgorithm()); 
-        decode = Cipher.getInstance(key.getAlgorithm()); 
-        AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, 19); 
-        
-        encode.init(Cipher.ENCRYPT_MODE, key, paramSpec); 
-        decode.init(Cipher.DECRYPT_MODE, key, paramSpec); 
+
+        if( !decode_only )
+            encode = Cipher.getInstance(key.getAlgorithm());
+
+        decode = Cipher.getInstance(key.getAlgorithm());
+        AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, 19);
+
+        if( !decode_only )
+            encode.init(Cipher.ENCRYPT_MODE, key, paramSpec);
+
+        decode.init(Cipher.DECRYPT_MODE, key, paramSpec);
     }
 
     /**
@@ -60,7 +74,7 @@ public class DesEncrypt
      */
     public String encrypt( String str ) throws UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException
     {
-        if (str == null) {
+        if (str == null || encode == null ) {
             return null;
         }
 

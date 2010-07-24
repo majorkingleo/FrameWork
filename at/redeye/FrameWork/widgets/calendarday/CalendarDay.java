@@ -140,6 +140,14 @@ private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     
     public void setInfo(String info) { 
         // System.out.println(info);
+        String text =  jInfo.getText();
+
+        if( text != null )
+        {
+            if( info.equals(text) )
+                return;
+        }
+
         jInfo.setText(info);
     }
 
