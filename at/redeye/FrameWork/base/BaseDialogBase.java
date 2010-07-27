@@ -33,6 +33,20 @@ public interface BaseDialogBase
 
     public String getTitle();
 
+    /**
+     * @param requester The calling object (can be used to implement different behavoir for eg
+     *        saving size of window and table. Can be null
+     *
+     * @return a Dialog identifier for saving some data, eg:
+     * width an height of the dialog.
+     * The default behavior is retuning the dialog title.
+     * This function should be overloaded if some instances of dialogs
+     * should all have the same eg size but it's no possible, because
+     * each one has a different title.
+     */
+
+    public String getUniqueDialogIdentifier(Object requester);
+
     public void addWindowListener(WindowListener windowListener);
 
     public int getWidth();
@@ -71,8 +85,6 @@ public interface BaseDialogBase
     public void invokeDialogModal( BaseDialogDialog dlg );
 
     public void invokeDialogUnique( BaseDialogBase dialog );
-
-    public String getUniqueIdentifier();
 
     public void registerOnCloseListener(Runnable runnable);
 

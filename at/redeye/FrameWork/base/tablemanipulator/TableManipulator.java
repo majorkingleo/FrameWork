@@ -683,7 +683,7 @@ public class TableManipulator {
         if( base == null )
             return null;
 
-        return base.getUniqueIdentifier() + "_Table_";
+        return base.getUniqueDialogIdentifier(this);
     }
 
     public void saveTableHeaderSize()

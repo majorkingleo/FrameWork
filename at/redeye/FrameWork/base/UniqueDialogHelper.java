@@ -15,18 +15,20 @@ public class UniqueDialogHelper
 {
     HashMap<String,BaseDialogBase> dialogs = new HashMap<String,BaseDialogBase>();
 
+    public static final String ID_STRING = "invokeDialogUnique";
+
     public BaseDialogBase invokeUniqueDialog( final BaseDialogBase dialog )
     {
-        BaseDialogBase d = dialogs.get(dialog.getUniqueIdentifier());
+        BaseDialogBase d = dialogs.get(dialog.getUniqueDialogIdentifier(ID_STRING));
 
         if( d == null )
         {
-            dialogs.put(dialog.getUniqueIdentifier(), dialog);
+            dialogs.put(dialog.getUniqueDialogIdentifier(ID_STRING), dialog);
 
             dialog.registerOnCloseListener(new Runnable() {
 
                 public void run() {
-                    dialogs.remove(dialog.getUniqueIdentifier());
+                    dialogs.remove(dialog.getUniqueDialogIdentifier(ID_STRING));
                 }
             });
 

@@ -147,10 +147,12 @@ public class BaseDialogBaseHelper implements BindVarInterface
             }
         });
 
-        int x = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowX), "300"));
-        int y = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowY), "300"));
-        int w = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowWidth), "0"));
-        int h = Integer.parseInt(root.getSetup().getLocalConfig(title.concat(Setup.WindowHeight), "0"));
+        String id = parent.getUniqueDialogIdentifier("SetToLastXYPos");
+
+        int x = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowX), "300"));
+        int y = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowY), "300"));
+        int w = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowWidth), "0"));
+        int h = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowHeight), "0"));
 
         Dimension dim = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -573,10 +575,14 @@ public class BaseDialogBaseHelper implements BindVarInterface
      * closes the current dialog.
      */
     public void close() {
-        root.getSetup().setLocalConfig(title.concat(Setup.WindowX), Integer.toString(parent.getX()));
-        root.getSetup().setLocalConfig(title.concat(Setup.WindowY), Integer.toString(parent.getY()));
-        root.getSetup().setLocalConfig(title.concat(Setup.WindowWidth), Integer.toString(parent.getWidth()));
-        root.getSetup().setLocalConfig(title.concat(Setup.WindowHeight), Integer.toString(parent.getHeight()));
+
+        String id_xy = parent.getUniqueDialogIdentifier("SaveLastXYPos");
+        String id_wh = parent.getUniqueDialogIdentifier("SaveWidthHeight");
+
+        root.getSetup().setLocalConfig(id_xy.concat(Setup.WindowX), Integer.toString(parent.getX()));
+        root.getSetup().setLocalConfig(id_xy.concat(Setup.WindowY), Integer.toString(parent.getY()));
+        root.getSetup().setLocalConfig(id_wh.concat(Setup.WindowWidth), Integer.toString(parent.getWidth()));
+        root.getSetup().setLocalConfig(id_wh.concat(Setup.WindowHeight), Integer.toString(parent.getHeight()));
 
         try {
             if (transaction != null) {
