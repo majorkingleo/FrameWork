@@ -201,7 +201,7 @@ public abstract class BaseModuleLauncher {
 
                     final DesktopLauncher2 launcher = new DesktopLauncher2(root);
 
-                    if (launcher.download_jnlp()) {
+                    if (launcher.download_jnlp_only()) {
                         logger.info("updated jnlp");
 
                         new AutoLogger(BaseModuleLauncher.class.getName()) {
