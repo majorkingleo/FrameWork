@@ -1,0 +1,237 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package at.redeye.FrameWork.base.proxy;
+
+import at.redeye.FrameWork.base.EncryptedDBPasswd;
+import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.utilities.StringUtils;
+import com.btr.proxy.search.ProxySearch;
+import java.awt.Dialog.ModalityType;
+import java.net.Authenticator;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.ProxySelector;
+import java.net.URL;
+import org.apache.log4j.Logger;
+
+/**
+ *
+ * @author martin
+ */
+public class AutoProxyHandler
+{
+    public static Logger logger = Logger.getLogger(AutoProxyHandler.class.getName());
+    public static final String HTTP_PROXY_USER="HTTP_PROXY_USER";
+    public static final String HTTP_PROXY_DOMAIN="HTTP_PROXY_DOMAIN";
+    public static final String HTTP_PROXY_PASS="HTTP_PROXY_PASS";
+
+    private String proxy_user;
+    private String proxy_pass;
+
+    private String saved_proxy_user;
+    private String saved_proxy_pass;
+    private String saved_proxy_domain;
+
+    Root root;
+
+    public AutoProxyHandler(final Root root)
+    {
+        proxy_user = null;
+        proxy_pass = null;
+        this.root = root;
+
+        if( haveProxyVaule() )
+        {
+            ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
+            ProxySelector myProxySelector = proxySearch.getProxySelector();
+
+            ProxySelector.setDefault(myProxySelector);
+        }
+        
+        if ( !loadSavedPassword() ) {
+            if (detectUserAndPassFromEnv()) {
+                logger.info("detected user: " + proxy_user);
+            } else {
+                logger.info("no proxy env detected");
+            }
+        }
+
+        Authenticator.setDefault(new Authenticator() {
+
+             private String last_host;             
+
+
+             void checkWrongPass()
+             {
+                 if( last_host == null )
+                     return;
+
+                 if( proxy_user == null || proxy_pass == null )
+                     return;
+
+                 if( last_host.equals(getRequestingHost()))
+                 {
+                     proxy_user = null;
+                     proxy_pass = null;
+                 }
+             }
+
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {                
+
+                if (getRequestorType() == RequestorType.PROXY) {
+
+                    logger.info("proxy auth request");
+
+                    checkWrongPass();
+
+                    last_host = getRequestingHost();
+
+                    if( proxy_user != null && proxy_pass != null )
+                    {
+                        return new PasswordAuthentication(proxy_user, proxy_pass.toCharArray());
+
+                    } else {
+
+                        logger.info("here");
+
+                        ProxyAuth auth = new ProxyAuth(root, saved_proxy_domain, saved_proxy_user, saved_proxy_pass);
+
+                        logger.info("here");
+
+                        auth.setModalityType(ModalityType.APPLICATION_MODAL);
+                        auth.setModal(true);
+                        auth.toFront();
+
+                        auth.setVisible(true);
+                        
+                        if( !auth.execOk() )
+                        {
+                            return super.getPasswordAuthentication();
+                        }
+
+                        logger.info("here");
+
+                        String user = auth.getUserName();
+                        String domain = auth.getDomain();
+                        String pass = auth.getPassword();
+
+                        if( auth.savePassword() )
+                        {
+                            savePassword(user,domain,pass);
+                        }
+
+                        if( !domain.isEmpty() )
+                        {
+                            proxy_user = domain + "\\" + user;
+                        }
+                        else
+                        {
+                            proxy_user = user;
+                        }
+
+                        proxy_pass = pass;
+
+                        return new PasswordAuthentication(proxy_user, proxy_pass.toCharArray());
+                    }
+
+                } else {
+                    return super.getPasswordAuthentication();
+                }
+            }
+        });
+    }
+
+    public static boolean haveProxyVaule()
+    {
+        try {
+            ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
+
+        } catch ( NoClassDefFoundError ex ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean detectUserAndPassFromEnv()
+    {
+        String env = System.getenv("http_proxy");
+
+        if( env == null )
+        {
+            logger.info("no env is set");
+            return false;
+        }
+
+        URL proxy_url;
+
+        try {
+            proxy_url = new URL( env );
+        } catch( MalformedURLException ex ) {
+            logger.error("malformed url: " + StringUtils.exceptionToString(ex));
+            return false;
+        }
+
+        String auth = proxy_url.getAuthority();
+
+        if( auth == null )
+            return false;
+
+        int index = auth.indexOf('@');
+
+        if( index < 0 )
+            return false;
+
+        auth = auth.substring(0,index);
+
+        String sl[] = auth.split(":");
+
+        if( sl.length != 2 )
+            return false;
+
+        proxy_user = sl[0];
+        proxy_pass = sl[1];
+
+        return true;
+    }
+
+    private void savePassword(String user, String domain, String pass)
+    {
+        root.getSetup().setLocalConfig(HTTP_PROXY_DOMAIN, domain);
+        root.getSetup().setLocalConfig(HTTP_PROXY_USER, user);
+        root.getSetup().setLocalConfig(HTTP_PROXY_PASS, EncryptedDBPasswd.encryptDBPassword(pass, root.getAppName()));
+    }
+
+    private boolean loadSavedPassword()
+    {
+        saved_proxy_domain = root.getSetup().getLocalConfig(HTTP_PROXY_DOMAIN,"");
+        saved_proxy_user = root.getSetup().getLocalConfig(HTTP_PROXY_USER,"");
+        saved_proxy_pass = root.getSetup().getLocalConfig(HTTP_PROXY_PASS,"");
+
+        if( !saved_proxy_user.isEmpty() &&
+            !saved_proxy_pass.isEmpty() )
+        {
+            saved_proxy_pass = EncryptedDBPasswd.decryptDBPassword(saved_proxy_pass,root.getAppName());
+        }
+
+        if( !saved_proxy_user.isEmpty() &&
+            !saved_proxy_domain.isEmpty() )
+        {
+            proxy_user = saved_proxy_domain + "\\" + saved_proxy_user;
+        }
+
+        if( !saved_proxy_pass.isEmpty() )
+            proxy_pass = saved_proxy_pass;
+
+        if( !saved_proxy_user.isEmpty() ||
+            !saved_proxy_pass.isEmpty() )
+            return true;
+
+        return false;
+    }
+
+}

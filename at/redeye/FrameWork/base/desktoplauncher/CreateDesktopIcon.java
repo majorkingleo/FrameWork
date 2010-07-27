@@ -24,6 +24,7 @@ public abstract class CreateDesktopIcon
     String app_name;
     String app_url;
     String app_title;
+    String command;
 
     protected static Logger logger = Logger.getLogger(CreateDesktopIcon.class.getName());
 
@@ -38,6 +39,16 @@ public abstract class CreateDesktopIcon
     }
 
     abstract public boolean createIcon();
+
+    public String getCommand()
+    {
+        return command;
+    }
+
+    public void setCommand(String cmd)
+    {
+        command = cmd;
+    }
 
     public static CreateDesktopIcon getInstance( String app_name, String url, String app_title )
     {

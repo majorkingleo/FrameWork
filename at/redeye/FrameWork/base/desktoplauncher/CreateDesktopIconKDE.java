@@ -19,6 +19,8 @@ public class CreateDesktopIconKDE extends CreateDesktopIcon
     public CreateDesktopIconKDE( String png, String ico, String gif, String app_name, String url, String app_title )
     {
         super( png, ico, gif, app_name, url, app_title );
+
+        setCommand( "javaws '" +  app_url + "'" );
     }
 
     @Override
@@ -60,7 +62,7 @@ public class CreateDesktopIconKDE extends CreateDesktopIcon
         {
             FileOutputStream fout = new FileOutputStream( ini_file );
 
-            StringBuffer out = new StringBuffer();
+            StringBuilder out = new StringBuilder();
             
             out.append("[Desktop Entry]\n");
 
@@ -69,9 +71,8 @@ public class CreateDesktopIconKDE extends CreateDesktopIcon
             out.append("\n");
 
             out.append("Exec=");
-            out.append("javaws '");
-            out.append(app_url);
-            out.append("'\n");
+            out.append(getCommand());
+            out.append("\n");
 
             out.append("Type=Application\nTerminal=false\n");
 

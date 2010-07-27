@@ -6,15 +6,19 @@
 package at.redeye.FrameWork.base;
 
 import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher;
+import at.redeye.FrameWork.base.desktoplauncher.DesktopLauncher2;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.ParseJNLP;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.StartupWindow;
 import at.redeye.Setup.dbexport.AutoImportDB;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.util.Properties;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -30,28 +34,22 @@ import org.apache.log4j.RollingFileAppender;
  * 
  * @author martin
  */
-public abstract class BaseModuleLauncher {
-	public ProxySelector proxy = null;
+public abstract class BaseModuleLauncher {	
 	public StartupWindow splash = null;
 	public static Logger logger = Logger.getRootLogger();
 	public Root root;
 	public String[] args;
         public AutoImportDB auto_import_db;
+        Properties jnlp_properties;
 
 	public BaseModuleLauncher() {
-		// Proxyeinstellungen von Java Ausschalten, sonst versucht sich
-		// der oracle Treiber über den Proxy zu DB zu verbinden.
-		proxy = ProxySelector.getDefault();
-		ProxySelector.setDefault(null);
+
                 BaseConfigureLogging();
 	}
 
 	public BaseModuleLauncher(String[] args) {
-		// Proxyeinstellungen von Java Ausschalten, sonst versucht sich
-		// der oracle Treiber über den Proxy zu DB zu verbinden.
-		proxy = ProxySelector.getDefault();
-		ProxySelector.setDefault(null);
-		this.args = args;
+
+                this.args = args;
                 BaseConfigureLogging();
 	}
 
@@ -108,8 +106,13 @@ public abstract class BaseModuleLauncher {
 				}
 			}
 		}
-		
+
+                parseJNLP();
+
 		String url = System.getProperty(envname.toUpperCase());
+
+                if( url == null && jnlp_properties != null )
+                    url = jnlp_properties.getProperty(envname.toUpperCase());
 
 		if (url == null || url.trim().isEmpty()) {
                         String sdev = default_value;
@@ -128,32 +131,109 @@ public abstract class BaseModuleLauncher {
 		return url;
 	}
 
-	public void updateJnlp() {
-		Thread thread = new Thread() {
-			@Override
-			public void run() {
-				if (DesktopLauncher.canCreateDesktopIcon()) {
-					if (proxy != null)
-						ProxySelector.setDefault(proxy);
+    private void parseJNLP()
+    {
+        if( jnlp_properties != null )
+            return;
 
-					DesktopLauncher launcher = new DesktopLauncher(root
-							.getAppName(), root.getWebStartUrl(), root
-							.getAppTitle());
+        for( String arg : args )
+        {
+            if( arg.endsWith(".jnlp") )
+            {
+                final File jnlp_file = new File( arg );
 
-					if (launcher.download_jnlp())
-						logger.info("updated jnlp");
-					else
-						logger.error("failed updating jnlp");
+                if( jnlp_file.exists() )
+                {
+                    new AutoLogger(BaseModuleLauncher.class.getName()) {
 
-					ProxySelector.setDefault(null);
-				}
-			}
-		};
+                        @Override
+                        public void do_stuff() throws Exception {
+                            ParseJNLP parser = new ParseJNLP(jnlp_file);
 
-		thread.start();
-	}
+                            jnlp_properties = parser.getProperties();
+                        }
+                    };
+                }
+            }
+        }
+    }
 
-        protected void BaseConfigureLogging()
+    public void updateJnlp() {
+        Thread thread = new Thread() {
+
+            @Override
+            public void run() {
+                if (DesktopLauncher.canCreateDesktopIcon()) {
+
+                    DesktopLauncher launcher = new DesktopLauncher(root.getAppName(), root.getWebStartUrl(), root.getAppTitle());
+
+                    if (launcher.download_jnlp()) {
+                        logger.info("updated jnlp");
+                    } else {
+                        logger.error("failed updating jnlp");
+                    }
+                    
+                }
+
+                jnlpUpdated();
+            }
+        };
+
+        thread.start();
+    }
+
+    /**
+     * creates a desktop icon using DesktpLauncher2
+     * DesktopLaunscher2 does not uses Java Webstart to launch the application
+     * it is downloading the jar files. Therefor on the webspace there has to be a file
+     * calles md5.txt which containes all md5 sums of all jar files
+     *
+     * Desktoplauncher2 is downloading each file that dows not exists, or has a
+     * different md5 sum thn the current jar file.
+     */
+    public void updateJnlp2() {
+
+        Thread thread = new Thread() {
+
+            @Override
+            public void run() {
+                if (DesktopLauncher2.canCreateDesktopIcon()) {
+
+                    final DesktopLauncher2 launcher = new DesktopLauncher2(root);
+
+                    if (launcher.download_jnlp()) {
+                        logger.info("updated jnlp");
+
+                        new AutoLogger(BaseModuleLauncher.class.getName()) {
+
+                            @Override
+                            public void do_stuff() throws Exception {
+                                launcher.download_jars();
+                            }
+                        };
+
+                    } else {
+                        logger.error("failed updating jnlp");
+                    }                    
+
+                    jnlpUpdated();
+                }
+            }
+        };
+
+        thread.start();
+    }
+
+    /**
+     * will be called when jnlp update process is completet
+     * overload if required
+     */
+    public void jnlpUpdated()
+    {
+
+    }
+
+        public void BaseConfigureLogging()
         {
             PatternLayout layout = new PatternLayout(
                     "%d{ISO8601} %-5p (%F:%L): %m%n");
@@ -411,9 +491,6 @@ public abstract class BaseModuleLauncher {
          */
         public boolean autoImportDBStep1()
         {
-            if (proxy != null)
-                ProxySelector.setDefault(proxy);
-
             auto_import_db = new AutoImportDB(root, this);
 
             if (auto_import_db.shouldAutoImportDB() ||
@@ -432,14 +509,11 @@ public abstract class BaseModuleLauncher {
                 };
 
                 if (mb.isFailed()) {
-                    ProxySelector.setDefault(null);
                     return false;
                 } else {
                     logger.info("Dabase downloaded");
                 }
             }
-
-            ProxySelector.setDefault(null);
 
             return true;
         }

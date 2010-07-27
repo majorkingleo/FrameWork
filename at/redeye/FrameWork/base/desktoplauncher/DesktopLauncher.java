@@ -57,6 +57,16 @@ public class DesktopLauncher
        return CreateDesktopIcon.isDesktopIconCreatingSupportedByOs();
     }
 
+    public CreateDesktopIcon getInstanceForCreateDesktopIcon( String app_name, String jnlp_name, String app_title )
+    {
+        return CreateDesktopIcon.getInstance(app_name, jnlp_name, app_title);
+    }
+
+    public CreateDesktopIcon getInstanceForCreateDesktopIcon( String png, String ico, String gif, String app_name, String jnlp_name, String app_title )
+    {
+        return CreateDesktopIcon.getInstance(png, ico, gif,app_name, jnlp_name, app_title);
+    }
+
     public boolean createDesktopIcon()
     {
 
@@ -65,11 +75,11 @@ public class DesktopLauncher
         if( icon_name_ico != null &&
             icon_name_png != null )
         {
-             manager = CreateDesktopIcon.getInstance(icon_name_png, icon_name_ico, icon_name_gif, app_name, jnlp_name, app_title);
+             manager = getInstanceForCreateDesktopIcon(icon_name_png, icon_name_ico, icon_name_gif, app_name, jnlp_name, app_title);
         }
         else
         {
-            manager = CreateDesktopIcon.getInstance(app_name, jnlp_name, app_title);
+            manager = getInstanceForCreateDesktopIcon(app_name, jnlp_name, app_title);
         }
 
         if( !has_jnlp() )
@@ -84,7 +94,7 @@ public class DesktopLauncher
         return true;
     }
 
-    private boolean has_jnlp()
+    public boolean has_jnlp()
     {
         File file = new File( jnlp_name );
 
