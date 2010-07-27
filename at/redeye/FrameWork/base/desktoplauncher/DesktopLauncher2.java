@@ -299,6 +299,14 @@ public class DesktopLauncher2 extends DesktopLauncher
         return gen;
     }
 
+    public boolean download_jnlp_only()
+    {
+        if( !super.download_jnlp() )
+           return false;
+
+        return true;
+    }
+
     @Override
     public boolean download_jnlp()
     {
