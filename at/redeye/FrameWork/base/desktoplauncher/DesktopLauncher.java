@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.base.desktoplauncher;
 
+import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
 import at.redeye.FrameWork.utilities.DownloadUrl;
 import java.io.File;
@@ -47,6 +48,18 @@ public class DesktopLauncher
         this.web_start_url = web_start_url;
         this.jnlp_name = Setup.getAppConfigFile(app_name, "launch.jnlp");
         this.app_title = app_title;
+
+        if( app_title == null )
+            this.app_title = this.app_name;
+    }
+
+    public DesktopLauncher(Root root)
+    {
+
+        this.app_name = root.getAppName();
+        this.web_start_url = root.getWebStartUrl();
+        this.jnlp_name = Setup.getAppConfigFile(app_name, "launch.jnlp");
+        this.app_title = root.getAppTitle();
 
         if( app_title == null )
             this.app_title = this.app_name;

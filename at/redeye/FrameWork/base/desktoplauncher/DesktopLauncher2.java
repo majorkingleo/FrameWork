@@ -11,6 +11,7 @@ import at.redeye.FrameWork.base.Setup;
 import at.redeye.FrameWork.utilities.DownloadUrl;
 import at.redeye.FrameWork.utilities.MD5Calc;
 import at.redeye.FrameWork.utilities.ParseJNLP;
+import at.redeye.FrameWork.utilities.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.derby.iapi.util.StringUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -295,6 +297,24 @@ public class DesktopLauncher2 extends DesktopLauncher
         gen.setCommand(getCommand());
 
         return gen;
+    }
+
+    @Override
+    public boolean download_jnlp()
+    {
+        if( !super.download_jnlp() )
+           return false;
+
+        try
+        {
+            if( !download_jars() )
+                return false;
+        } catch( Exception ex ) {
+            logger.error(StringUtils.exceptionToString(ex));
+            return false;
+        }
+
+        return true;
     }
 
     @Override
