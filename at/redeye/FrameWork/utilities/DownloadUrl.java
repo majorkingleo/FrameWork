@@ -161,10 +161,10 @@ public class DownloadUrl
 
             int len;
 
-            while( bis.ready() )
-            {
-                String line = bis.readLine();                
+            String line;
 
+            while( (line = bis.readLine()) != null )
+            {
                 buffer.append(line);
                 buffer.append("\n");
             }
