@@ -9,6 +9,7 @@ import at.redeye.FrameWork.base.EncryptedDBPasswd;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.utilities.StringUtils;
 import com.btr.proxy.search.ProxySearch;
+import com.btr.proxy.selector.whitelist.UseProxyWhiteListSelector;
 import java.awt.Dialog.ModalityType;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
@@ -34,8 +35,10 @@ public class AutoProxyHandler
     private String saved_proxy_user;
     private String saved_proxy_pass;
     private String saved_proxy_domain;
+    private String saved_proxy_pass_enc;
 
     Root root;
+
 
     public AutoProxyHandler(final Root root)
     {
@@ -43,12 +46,14 @@ public class AutoProxyHandler
         proxy_pass = null;
         this.root = root;
 
-        if( haveProxyVaule() )
+        if( haveProxyVole() )
         {
+            logger.info("proxy vole available");
             ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
             ProxySelector myProxySelector = proxySearch.getProxySelector();
-
             ProxySelector.setDefault(myProxySelector);
+        } else {
+            logger.info("proxy vole NOT available");
         }
         
         if ( !loadSavedPassword() ) {
@@ -85,6 +90,15 @@ public class AutoProxyHandler
                 if (getRequestorType() == RequestorType.PROXY) {
 
                     logger.info("proxy auth request");
+
+                    if( saved_proxy_pass_enc != null && !saved_proxy_pass_enc.isEmpty() )
+                    {
+                        saved_proxy_pass = EncryptedDBPasswd.decryptDBPassword(saved_proxy_pass,root.getAppName());
+                        saved_proxy_pass_enc = null;
+
+                        if( !saved_proxy_pass.isEmpty() )
+                            proxy_pass = saved_proxy_pass;
+                    }
 
                     checkWrongPass();
 
@@ -145,7 +159,7 @@ public class AutoProxyHandler
         });
     }
 
-    public static boolean haveProxyVaule()
+    public static boolean haveProxyVole()
     {
         try {
             ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
@@ -215,7 +229,7 @@ public class AutoProxyHandler
         if( !saved_proxy_user.isEmpty() &&
             !saved_proxy_pass.isEmpty() )
         {
-            saved_proxy_pass = EncryptedDBPasswd.decryptDBPassword(saved_proxy_pass,root.getAppName());
+            saved_proxy_pass_enc = saved_proxy_pass;
         }
 
         if( !saved_proxy_user.isEmpty() &&
@@ -232,6 +246,16 @@ public class AutoProxyHandler
             return true;
 
         return false;
+    }
+
+    public void exludeFromProxy( String url )
+    {
+        ProxySelector sel = ProxySelector.getDefault();
+
+        if( sel != null && haveProxyVole() )
+        {
+            new UseProxyWhiteListSelector(url, sel );
+        }
     }
 
 }

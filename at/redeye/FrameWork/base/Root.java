@@ -8,9 +8,8 @@ package at.redeye.FrameWork.base;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
+import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
 import at.redeye.UserManagement.UserManagementInterface;
-import java.awt.Window;
-import javax.swing.JFrame;
 
 /**
  *
@@ -102,5 +101,14 @@ public abstract class Root {
     {
         return app_title;
     }
-            
+
+    public void waitUntilNetworkIsReady()
+    {
+
+    }
+
+    public void noProxyFor(String address)
+    {
+        
+    }
 }

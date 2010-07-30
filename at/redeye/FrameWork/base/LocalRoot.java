@@ -9,6 +9,7 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.dbmanager.impl.DatabaseManager;
+import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
@@ -31,7 +32,9 @@ public class LocalRoot extends Root {
     protected boolean appExitAllowed = true;
     private static Logger logger = Logger.getLogger(LocalRoot.class);
     EncryptedDBPasswd enc;
-    DelayedLoader loader;
+    DelayedLoader loader_encryption;
+    DelayedProxyLoader loader_proxy;
+    AutoProxyHandler proxy_handler;
 
     public class DelayedLoader extends Thread
     {
@@ -39,6 +42,22 @@ public class LocalRoot extends Root {
         public void run()
         {
             enc = new EncryptedDBPasswd(getAppName());
+        }
+    }
+
+    public class DelayedProxyLoader extends Thread
+    {
+        Root root;
+
+        DelayedProxyLoader(Root root)
+        {
+            this.root = root;
+        }
+
+        @Override
+        public void run()
+        {
+            proxy_handler = new AutoProxyHandler(root);
         }
     }
 
@@ -57,11 +76,16 @@ public class LocalRoot extends Root {
 
     private void init()
     {
-        loader = new DelayedLoader();
-        loader.start();
+        loader_encryption = new DelayedLoader();
+        loader_encryption.start();
 
         setup = new LocalSetup( this, app_name );
+
+        loader_proxy = new DelayedProxyLoader(this);
+        loader_proxy.start();
+
         dbmanager = new DatabaseManager();
+        
     }
 
     @Override
@@ -110,7 +134,7 @@ public class LocalRoot extends Root {
             {
                 long start = System.currentTimeMillis();
 
-                loader.join();
+                loader_encryption.join();
 
                 System.out.println("                       waited for encoder " + (System.currentTimeMillis() - start));
            }
@@ -171,6 +195,8 @@ public class LocalRoot extends Root {
                     );
          
          DBConnection con = new DBConnection();
+
+         waitUntilNetworkIsReady();
 
          if( con.open(connparams) )
          {
@@ -289,5 +315,28 @@ public class LocalRoot extends Root {
         }
         
         return (Integer)userEntry.id.getValue();
+    }
+
+    @Override
+    public void noProxyFor(String address)
+    {
+        waitUntilNetworkIsReady();
+
+        proxy_handler.exludeFromProxy(address);
+    }
+
+    @Override
+    public void waitUntilNetworkIsReady()
+    {
+        if( proxy_handler == null && loader_proxy != null )
+        {
+            try {
+                loader_proxy.join();
+            } catch( InterruptedException ex ) {
+                logger.error(StringUtils.exceptionToString(ex));
+            }
+        }
+
+        loader_proxy = null;
     }
 }

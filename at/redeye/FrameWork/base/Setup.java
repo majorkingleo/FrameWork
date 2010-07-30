@@ -53,6 +53,11 @@ public abstract class Setup {
         return System.getProperty("os.name").equals("Linux");
     }
 
+    public static boolean is_64bit_system()
+    {
+        return System.getProperty("os.arch").contains("64");
+    }    
+
     public static String getHiddenUserHomeFileName( String name )
     {
         String config_path = System.getProperty("user.home");
