@@ -16,7 +16,6 @@ import at.redeye.Setup.dbexport.AutoImportDB;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.ProxySelector;
 import java.net.URL;
 import java.util.Properties;
 import javax.swing.JOptionPane;
@@ -165,6 +164,8 @@ public abstract class BaseModuleLauncher {
             public void run() {
                 if (DesktopLauncher.canCreateDesktopIcon()) {
 
+                    root.waitUntilNetworkIsReady();
+                    
                     DesktopLauncher launcher = new DesktopLauncher(root.getAppName(), root.getWebStartUrl(), root.getAppTitle());
 
                     if (launcher.download_jnlp()) {
@@ -198,6 +199,8 @@ public abstract class BaseModuleLauncher {
             @Override
             public void run() {
                 if (DesktopLauncher2.canCreateDesktopIcon()) {
+
+                    root.waitUntilNetworkIsReady();
 
                     final DesktopLauncher2 launcher = new DesktopLauncher2(root);
 
@@ -500,6 +503,9 @@ public abstract class BaseModuleLauncher {
                 AutoMBox mb = new AutoMBox(BaseModuleLauncher.class.getName()) {
 
                     public void do_stuff() throws Exception {
+
+                        root.waitUntilNetworkIsReady();
+
                         if (!auto_import_db.downloadDB()) {
                             JOptionPane.showMessageDialog(null, "Fehler beim Herunterladen der Demo Datenbank.");
                             logical_failure = true;
