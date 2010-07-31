@@ -1,11 +1,10 @@
 package at.redeye.UserManagement;
 
-import at.redeye.FrameWork.base.BaseDialog;
-
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Vector;
+import java.util.List;
 
+import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
@@ -16,71 +15,79 @@ import at.redeye.UserManagement.impl.UserLockedException;
 
 public interface UserManagementInterface {
 
-    public final int UM_PERMISSIONLEVEL_NORMAL = 1;
-    public final int UM_PERMISSIONLEVEL_PRIVILEGED = 2;
-    public final int UM_PERMISSIONLEVEL_ADMIN = 3;
-    public final int UM_ACCOUNT_LOCKED = 1;
-    public final int UM_ACCOUNT_UNLOCKED = 0;
+	public final int UM_PERMISSIONLEVEL_NORMAL = 1;
+	public final int UM_PERMISSIONLEVEL_PRIVILEGED = 2;
+	public final int UM_PERMISSIONLEVEL_ADMIN = 3;
+	public final int UM_ACCOUNT_LOCKED = 1;
+	public final int UM_ACCOUNT_UNLOCKED = 0;
 
-    public void requestDialog(UserManagementDialogs dialog);
+	public void requestDialog(UserManagementDialogs dialog);
 
-    public boolean tryAutoLogin ();
-    public void setAutoLogin ( boolean state );
+	public boolean tryAutoLogin();
 
-    public Vector<DBStrukt> getAllUserData() throws SQLException,
-            TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-            WrongBindFileFormatException, CloneNotSupportedException;
+	public void setAutoLogin(boolean state);
 
-    public DBPb getUserData(DBPb pb) throws SQLException,
-            TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-            WrongBindFileFormatException, CloneNotSupportedException, IOException;
+	public List<DBStrukt> getAllUserData() throws SQLException,
+			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
+			WrongBindFileFormatException, CloneNotSupportedException;
 
-    /**
-     * Checks if username and password are ok
-     * @param login
-     * @param pwd
-     * @param autoLoginRequested
-     * @param calling_dialog only for wait cursor, can be null
-     * @return a PB record on success, or null on fail
-     * @throws InvalidLoginException
-     * @throws SQLException
-     * @throws UnsupportedDBDataTypeException
-     * @throws TableBindingNotRegisteredException
-     * @throws WrongBindFileFormatException
-     * @throws CloneNotSupportedException
-     * @throws UserLockedException
-     */
-    public DBPb checkUserData(String login, String pwd, boolean autoLoginRequested, BaseDialog calling_dialog)
-            throws InvalidLoginException, SQLException,
-            UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
-            WrongBindFileFormatException, CloneNotSupportedException, UserLockedException;
+	public DBPb getUserData(DBPb pb) throws SQLException,
+			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
+			WrongBindFileFormatException, CloneNotSupportedException,
+			IOException;
 
-   /**
-     * Checks if username and password are ok
-     * @param login
-     * @param pwd
-     * @param autoLoginRequested
-     * @return a PB record on success, or null on fail
-     * @throws InvalidLoginException
-     * @throws SQLException
-     * @throws UnsupportedDBDataTypeException
-     * @throws TableBindingNotRegisteredException
-     * @throws WrongBindFileFormatException
-     * @throws CloneNotSupportedException
-     * @throws UserLockedException
-     */
-    public DBPb checkUserData(String login, String pwd, boolean autoLoginRequested)
-            throws InvalidLoginException, SQLException,
-            UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
-            WrongBindFileFormatException, CloneNotSupportedException, UserLockedException;
+	/**
+	 * Checks if username and password are ok
+	 * 
+	 * @param login
+	 * @param pwd
+	 * @param autoLoginRequested
+	 * @param calling_dialog
+	 *            only for wait cursor, can be null
+	 * @return a PB record on success, or null on fail
+	 * @throws InvalidLoginException
+	 * @throws SQLException
+	 * @throws UnsupportedDBDataTypeException
+	 * @throws TableBindingNotRegisteredException
+	 * @throws WrongBindFileFormatException
+	 * @throws CloneNotSupportedException
+	 * @throws UserLockedException
+	 */
+	public DBPb checkUserData(String login, String pwd,
+			boolean autoLoginRequested, BaseDialog calling_dialog)
+			throws InvalidLoginException, SQLException,
+			UnsupportedDBDataTypeException, TableBindingNotRegisteredException,
+			WrongBindFileFormatException, CloneNotSupportedException,
+			UserLockedException;
 
-    public void setLogo(String logoPath);
+	/**
+	 * Checks if username and password are ok
+	 * 
+	 * @param login
+	 * @param pwd
+	 * @param autoLoginRequested
+	 * @return a PB record on success, or null on fail
+	 * @throws InvalidLoginException
+	 * @throws SQLException
+	 * @throws UnsupportedDBDataTypeException
+	 * @throws TableBindingNotRegisteredException
+	 * @throws WrongBindFileFormatException
+	 * @throws CloneNotSupportedException
+	 * @throws UserLockedException
+	 */
+	public DBPb checkUserData(String login, String pwd,
+			boolean autoLoginRequested) throws InvalidLoginException,
+			SQLException, UnsupportedDBDataTypeException,
+			TableBindingNotRegisteredException, WrongBindFileFormatException,
+			CloneNotSupportedException, UserLockedException;
 
-    public String getLogo();
+	public void setLogo(String logoPath);
 
-    public void addUMListener(UserManagementListener listener);
+	public String getLogo();
 
-    public void removeUMListener(UserManagementListener listener);
+	public void addUMListener(UserManagementListener listener);
 
-    public void updateListeners();
+	public void removeUMListener(UserManagementListener listener);
+
+	public void updateListeners();
 }

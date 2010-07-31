@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
@@ -79,13 +79,13 @@ public interface StmtCreatorInterface {
 	public String markColumnName(String columnName);
 
 	/**
-	 * Get names of columns that are bound to {@link PreparedStatement}
-	 * with an "?". <br>
+	 * Get names of columns that are bound to {@link PreparedStatement} with an
+	 * "?". <br>
 	 * Those have to be post-processed
 	 * 
 	 * @return The where-column names of the recent statements creation
 	 */
-	public Vector<String> getCols2Handle();
+	public List<String> getCols2Handle();
 
 	/**
 	 * @param date

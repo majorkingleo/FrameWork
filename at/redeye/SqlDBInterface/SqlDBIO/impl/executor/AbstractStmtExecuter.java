@@ -1,6 +1,5 @@
 package at.redeye.SqlDBInterface.SqlDBIO.impl.executor;
 
-import at.redeye.FrameWork.utilities.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,14 +8,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.StmtCreatorInterface;
 import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
@@ -108,13 +110,13 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	 * @return A vector (rows) of vectors (columns)
 	 * 
 	 */
-	public Vector<Vector<?>> fetchColumnValue(String stmt,
-			Vector<DBDataType> typelist) throws SQLException,
-			UnsupportedDBDataTypeException {
+	@Override
+	public List<List<?>> fetchColumnValue(String stmt, List<DBDataType> typelist)
+			throws SQLException, UnsupportedDBDataTypeException {
 
 		long fetchStartTime = System.currentTimeMillis();
-		Vector<Vector<?>> wholeOutput = new Vector<Vector<?>>();
-		Vector<Object> wholeRow = null;
+		ArrayList<List<?>> wholeOutput = new ArrayList<List<?>>();
+		List<Object> wholeRow = null;
 
 		Statement s = conn.createStatement();
 
@@ -123,7 +125,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		rs = s.executeQuery(stmt);
 
 		while (rs.next()) {
-			wholeRow = new Vector<Object>();
+			wholeRow = new ArrayList<Object>();
 			for (int index = 0; index < typelist.size(); index++) {
 
 				wholeRow.add(processTypeValue(rs, typelist.get(index),
@@ -159,7 +161,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	 *             if requested table has no registered binding <br>
 	 */
 
-	public Vector<HashMap<String, Object>> fetchTableValue(String[] tablenames,
+	public List<HashMap<String, Object>> fetchTableValue(String[] tablenames,
 			String whereStmt) throws SQLException,
 			UnsupportedDBDataTypeException, TableBindingNotRegisteredException {
 
@@ -201,8 +203,10 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			int counter = 1;
 			while (iter.hasNext()) {
 				String currkey = iter.next();
-				wholeRow.put(currkey, processTypeValue(rs, typelist
-						.get(currkey).getDatatype(), counter));
+				wholeRow.put(
+						currkey,
+						processTypeValue(rs, typelist.get(currkey)
+								.getDatatype(), counter));
 				counter++;
 
 			}
@@ -210,10 +214,10 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		}
 		rs.close();
 		s.close();
-		
+
 		setLastStmt(buildTimeSuffix(stmt,
 				(System.currentTimeMillis() - fetchStartTime)));
-		
+
 		logger.trace(lastStmt);
 		return wholeOutput;
 	}
@@ -253,18 +257,20 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			int counter = 1;
 			while (iter.hasNext()) {
 				String currkey = iter.next();
-				wholeRow.put(currkey, processTypeValue(rs, typelist
-						.get(currkey).getDatatype(), counter));
+				wholeRow.put(
+						currkey,
+						processTypeValue(rs, typelist.get(currkey)
+								.getDatatype(), counter));
 				counter++;
 
 			}
 		}
 		rs.close();
 		s.close();
-		
+
 		setLastStmt(buildTimeSuffix(stmt,
 				(System.currentTimeMillis() - fetchStartTime)));
-		
+
 		logger.trace(lastStmt);
 		return wholeRow;
 	}
@@ -278,7 +284,8 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	 *            A Vector (rows) of HashMaps (columns)
 	 * @return A String for displaying all rows
 	 */
-	public String printFetchTableOutput(Vector<HashMap<String, Object>> rs) {
+	@Override
+	public String printFetchTableOutput(List<HashMap<String, Object>> rs) {
 
 		StringBuilder str = new StringBuilder();
 		HashMap<String, Object> row = null;
@@ -384,24 +391,23 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		String stmt = stmtCreator.buildInsertStmtForTable(tablename, values);
 		s = handleStatement(stmt, values);
 
-                try
-                {
-                    rv = s.executeUpdate();
-                    s.close();
+		try {
+			rv = s.executeUpdate();
+			s.close();
 
-                } catch( SQLException ex ) {
+		} catch (SQLException ex) {
 
-                    setLastStmt(buildTimeSuffix(stmt,
+			setLastStmt(buildTimeSuffix(stmt,
+					(System.currentTimeMillis() - fetchStartTime)));
+			logger.error(lastStmt);
+			logger.error(StringUtils.exceptionToString(ex));
+
+			throw ex;
+		}
+
+		setLastStmt(buildTimeSuffix(stmt,
 				(System.currentTimeMillis() - fetchStartTime)));
-                    logger.error(lastStmt);
-                    logger.error(StringUtils.exceptionToString(ex));
-
-                    throw ex;
-                }
-                
-                setLastStmt(buildTimeSuffix(stmt,
-				(System.currentTimeMillis() - fetchStartTime)));		
-                logger.trace(lastStmt);
+		logger.trace(lastStmt);
 
 		return rv;
 	}
@@ -420,28 +426,27 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 		String stmt = stmtCreator.buildUpdateStmtForTable(tablename, values,
 				whereStmt);
-		
+
 		s = handleStatement(stmt, values);
 
-                try
-                {
+		try {
 
-                    rv = s.executeUpdate();
-                    s.close();
+			rv = s.executeUpdate();
+			s.close();
 
-                 } catch( SQLException ex ) {
+		} catch (SQLException ex) {
 
-                    setLastStmt(buildTimeSuffix(stmt,
-				(System.currentTimeMillis() - fetchStartTime)));
-                    logger.error(lastStmt);
-                    logger.error(StringUtils.exceptionToString(ex));
+			setLastStmt(buildTimeSuffix(stmt,
+					(System.currentTimeMillis() - fetchStartTime)));
+			logger.error(lastStmt);
+			logger.error(StringUtils.exceptionToString(ex));
 
-                    throw ex;
-                }
+			throw ex;
+		}
 
 		setLastStmt(buildTimeSuffix(stmt,
 				(System.currentTimeMillis() - fetchStartTime)));
-		
+
 		logger.trace(lastStmt);
 
 		return rv;
@@ -463,12 +468,11 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		AbstractStmtExecuter.lastStmt = lastStmt;
 	}
 
-	
 	protected PreparedStatement handleStatement(String stmt,
 			HashMap<String, Object> values) throws SQLException, IOException {
 
 		PreparedStatement ps = conn.prepareStatement(stmt);
-		Vector<String> whereCols = stmtCreator.getCols2Handle();
+		List<String> whereCols = stmtCreator.getCols2Handle();
 
 		String currcol;
 		String[] tokens;
@@ -483,7 +487,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			}
 			if (data == null) {
 				throw new SQLException(
-					"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing!");
+						"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing!");
 			}
 			setPreparedStatementTypes(ps, index + 1, data);
 
@@ -508,8 +512,8 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	protected void setPreparedStatementTypes(PreparedStatement ps, int index,
 			Object data) throws SQLException, IOException {
 
-            if( logger.isTraceEnabled() )
-		logger.trace("Start index " + index + " / " + data);
+		if (logger.isTraceEnabled())
+			logger.trace("Start index " + index + " / " + data);
 
 		if (data instanceof String) {
 			ps.setString(index, (String) data);
@@ -535,8 +539,9 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			ps.setBinaryStream(index, is, blobData.length);
 			is.close();
 		} else {
-			throw new SQLException("Unknown data type! Don't know how to handle " + index
-					+ " / " + data);
+			throw new SQLException(
+					"Unknown data type! Don't know how to handle " + index
+							+ " / " + data);
 		}
 
 	}

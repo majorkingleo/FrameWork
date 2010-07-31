@@ -8,9 +8,9 @@ package at.redeye.UserManagement.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
 
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
@@ -34,412 +34,455 @@ import at.redeye.UserManagement.bindtypes.DBPb;
  */
 public class AdminDlg extends BaseDialog {
 
-    private TableManipulator tm;    
-    private static final long serialVersionUID = 1L;
-    private final static String menuTitle = "Administration Benutzerdaten";
-    private Vector<DBStrukt> pbEntries;
-    private Vector<DBStrukt> oldPbs;
-    private UserManagementInterface um;    
-    private WizardClientActionInterface wizardAction = null;
-    public static final String UM_ID_SEQ = "UM_ID_SEQ";
+	private TableManipulator tm;
+	private static final long serialVersionUID = 1L;
+	private final static String menuTitle = "Administration Benutzerdaten";
+	private List<DBStrukt> pbEntries;
+	private List<DBStrukt> oldPbs;
+	private UserManagementInterface um;
+	private WizardClientActionInterface wizardAction = null;
+	public static final String UM_ID_SEQ = "UM_ID_SEQ";
 
-    /**
-     * Creates new form AdminDlg
-     *
-     * @param root
-     *            Root class
-     */
+	/**
+	 * Creates new form AdminDlg
+	 * 
+	 * @param root
+	 *            Root class
+	 */
 
-    public AdminDlg(Root root, WizardClientActionInterface wizardAction) {
-        super(root, menuTitle);
-        this.wizardAction = wizardAction;
-        initComponents();
+	public AdminDlg(Root root, WizardClientActionInterface wizardAction) {
+		super(root, menuTitle);
+		this.wizardAction = wizardAction;
+		initComponents();
 
-        initCommon();
-    }
+		initCommon();
+	}
 
+	public AdminDlg(Root root) {
+		super(root, menuTitle);
+		initComponents();
 
-    public AdminDlg(Root root) {
-        super(root, menuTitle);
-        initComponents();
+		initCommon();
+	}
 
-        initCommon();
-    }
+	private void initCommon() {
+		DBPb pb = new DBPb();
+		oldPbs = new Vector<DBStrukt>();
+		um = new UserDataHandling(root);
+		tm = new TableManipulator(root, jTable1, pb);
 
-    private void initCommon()
-    {
-        DBPb pb = new DBPb();
-        oldPbs = new Vector<DBStrukt>();
-        um = new UserDataHandling(root);
-        tm = new TableManipulator(root, jTable1, pb);
+		tm.hide(pb.id);
+		tm.hide(pb.hist.an_user);
+		tm.hide(pb.hist.an_zeit);
+		tm.hide(pb.hist.lo_user);
+		tm.hide(pb.hist.lo_zeit);
 
-        tm.hide(pb.id);
-        tm.hide(pb.hist.an_user);
-        tm.hide(pb.hist.an_zeit);
-        tm.hide(pb.hist.lo_user);
-        tm.hide(pb.hist.lo_zeit);
-
-        if (root.getUserPermissionLevel() == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
-            tm.setEditable(pb.locked);
-            tm.setEditable(pb.surname);
-            tm.setEditable(pb.title);
-            tm.setEditable(pb.plevel);
-            tm.setEditable(pb.pwd);
-            tm.setEditable(pb.login);
-            tm.setEditable(pb.name);
-        } else {
-            tm.hide(pb.pwd);
-            tm.hide(pb.locked);
-        }
-
-        tm.prepareTable();
-        feed_table();
-        tm.autoResize();
-    }
-
-    public void feed_table() {
-
-        try {
-            tm.clear();
-            oldPbs.clear();
-            if (root.getUserPermissionLevel() ==
-                    UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
-                pbEntries = um.getAllUserData();
-                for (int index = 0; index < pbEntries.size(); index++) {
-                    DBStrukt strukt = pbEntries.get(index);
-                    oldPbs.add(strukt.getCopy());
-                }
-            } else {
-                pbEntries = new Vector<DBStrukt>();
-                DBPb pb = new DBPb();
-                pb.id.loadFromCopy(root.getUserId());
-                pbEntries.add(um.getUserData(pb));
-            }
-            tm.addAll(pbEntries);
-
-        } catch (SQLException ex) {
-            logger.error(ex);
-        } catch (TableBindingNotRegisteredException ex) {
-            logger.error(ex);
-        } catch (UnsupportedDBDataTypeException ex) {
-            logger.error(ex);
-        } catch (WrongBindFileFormatException ex) {
-            logger.error(ex);
-        } catch (CloneNotSupportedException ex) {
-            logger.error(ex);
-        } catch (IOException ex) {
-        	logger.error(ex);
+		if (root.getUserPermissionLevel() == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+			tm.setEditable(pb.locked);
+			tm.setEditable(pb.surname);
+			tm.setEditable(pb.title);
+			tm.setEditable(pb.plevel);
+			tm.setEditable(pb.pwd);
+			tm.setEditable(pb.login);
+			tm.setEditable(pb.name);
+		} else {
+			tm.hide(pb.pwd);
+			tm.hide(pb.locked);
 		}
-    }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    // <editor-fold defaultstate="collapsed"
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+		tm.prepareTable();
+		feed_table();
+		tm.autoResize();
+	}
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        buttonOK = new javax.swing.JButton();
-        buttonNewUser = new javax.swing.JButton();
-        buttonCancel = new javax.swing.JButton();
-        buttonRead = new javax.swing.JButton();
-        jBHelp = new javax.swing.JButton();
-        buttonChangePwd = new javax.swing.JButton();
+	public void feed_table() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+		try {
+			tm.clear();
+			oldPbs.clear();
+			if (root.getUserPermissionLevel() == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+				pbEntries = um.getAllUserData();
+				for (int index = 0; index < pbEntries.size(); index++) {
+					DBStrukt strukt = pbEntries.get(index);
+					oldPbs.add(strukt.getCopy());
+				}
+			} else {
+				pbEntries = new Vector<DBStrukt>();
+				DBPb pb = new DBPb();
+				pb.id.loadFromCopy(root.getUserId());
+				pbEntries.add(um.getUserData(pb));
+			}
+			tm.addAll(pbEntries);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+		} catch (SQLException ex) {
+			logger.error(ex);
+		} catch (TableBindingNotRegisteredException ex) {
+			logger.error(ex);
+		} catch (UnsupportedDBDataTypeException ex) {
+			logger.error(ex);
+		} catch (WrongBindFileFormatException ex) {
+			logger.error(ex);
+		} catch (CloneNotSupportedException ex) {
+			logger.error(ex);
+		} catch (IOException ex) {
+			logger.error(ex);
+		}
+	}
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Administration Benutzerstammdaten");
+	/**
+	 * This method is called from within the constructor to initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is always
+	 * regenerated by the Form Editor.
+	 */
+	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
+	// desc="Generated Code">//GEN-BEGIN:initComponents
+	private void initComponents() {
 
-        buttonOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/button_ok.gif"))); // NOI18N
-        buttonOK.setText("Speichern");
-        buttonOK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonOKActionPerformed(evt);
-            }
-        });
-        if (root.getUserPermissionLevel() !=
-            UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
-            buttonOK.setEnabled(false);
-        }
+		jScrollPane1 = new javax.swing.JScrollPane();
+		jTable1 = new javax.swing.JTable();
+		jLabel1 = new javax.swing.JLabel();
+		buttonOK = new javax.swing.JButton();
+		buttonNewUser = new javax.swing.JButton();
+		buttonCancel = new javax.swing.JButton();
+		buttonRead = new javax.swing.JButton();
+		jBHelp = new javax.swing.JButton();
+		buttonChangePwd = new javax.swing.JButton();
 
-        buttonNewUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/bookmark.png"))); // NOI18N
-        buttonNewUser.setText("Neu");
-        buttonNewUser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonNewUserActionPerformed(evt);
-            }
-        });
-        if (root.getUserPermissionLevel() !=
-            UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
-            buttonNewUser.setEnabled(false);
-        }
+		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        buttonCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
-        buttonCancel.setText("Schließen");
-        buttonCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonCancelActionPerformed(evt);
-            }
-        });
+		jTable1.setModel(new javax.swing.table.DefaultTableModel(
+				new Object[][] { { null, null, null, null },
+						{ null, null, null, null }, { null, null, null, null },
+						{ null, null, null, null } }, new String[] { "Title 1",
+						"Title 2", "Title 3", "Title 4" }));
+		jScrollPane1.setViewportView(jTable1);
 
-        buttonRead.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/reload.png"))); // NOI18N
-        buttonRead.setText("Aktualisieren");
-        buttonRead.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonReadActionPerformed(evt);
-            }
-        });
+		jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24));
+		jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+		jLabel1.setText("Administration Benutzerstammdaten");
 
-        jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
-        jBHelp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBHelpActionPerformed(evt);
-            }
-        });
+		buttonOK.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/button_ok.gif"))); // NOI18N
+		buttonOK.setText("Speichern");
+		buttonOK.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				buttonOKActionPerformed(evt);
+			}
+		});
+		if (root.getUserPermissionLevel() != UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+			buttonOK.setEnabled(false);
+		}
 
-        buttonChangePwd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/unlock.png"))); // NOI18N
-        buttonChangePwd.setText("Passwort ändern");
-        buttonChangePwd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonChangePwdActionPerformed(evt);
-            }
-        });
+		buttonNewUser.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/bookmark.png"))); // NOI18N
+		buttonNewUser.setText("Neu");
+		buttonNewUser.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				buttonNewUserActionPerformed(evt);
+			}
+		});
+		if (root.getUserPermissionLevel() != UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+			buttonNewUser.setEnabled(false);
+		}
 
-        if (wizardAction != null) {
-            buttonCancel.setEnabled(false);
-            buttonCancel.setVisible(false);
-        }
-        if (wizardAction != null) {
-            jBHelp.setVisible(false);
-            jBHelp.setEnabled(false);
-        }
-        if (root.getUserPermissionLevel() ==
-            UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
-            buttonChangePwd.setEnabled(false);
-        }
+		buttonCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
+		buttonCancel.setText("Schließen");
+		buttonCancel.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				buttonCancelActionPerformed(evt);
+			}
+		});
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 807, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jBHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(buttonOK)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonNewUser)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonChangePwd)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 143, Short.MAX_VALUE)
-                        .addComponent(buttonRead)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonCancel)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jBHelp)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(buttonOK)
-                    .addComponent(buttonNewUser)
-                    .addComponent(buttonCancel)
-                    .addComponent(buttonRead)
-                    .addComponent(buttonChangePwd))
-                .addContainerGap())
-        );
+		buttonRead.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/reload.png"))); // NOI18N
+		buttonRead.setText("Aktualisieren");
+		buttonRead.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				buttonReadActionPerformed(evt);
+			}
+		});
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+		jBHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/at/redeye/FrameWork/base/resources/icons/help.png"))); // NOI18N
+		jBHelp.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jBHelpActionPerformed(evt);
+			}
+		});
 
-	private void buttonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOKActionPerformed
+		buttonChangePwd
+				.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+						"/at/redeye/FrameWork/base/resources/icons/unlock.png"))); // NOI18N
+		buttonChangePwd.setText("Passwort ändern");
+		buttonChangePwd.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				buttonChangePwdActionPerformed(evt);
+			}
+		});
 
-        Set<Integer> editedRows = tm.getEditedRows();
+		if (wizardAction != null) {
+			buttonCancel.setEnabled(false);
+			buttonCancel.setVisible(false);
+		}
+		if (wizardAction != null) {
+			jBHelp.setVisible(false);
+			jBHelp.setEnabled(false);
+		}
+		if (root.getUserPermissionLevel() == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+			buttonChangePwd.setEnabled(false);
+		}
 
-        TypeRegistrationInterface regi = getTransaction().getTypeRegistration();
-        MD5Calc md5 = new MD5Calc("MD5");
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
+				getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setHorizontalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						layout.createSequentialGroup()
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.LEADING)
+												.addGroup(
+														layout.createSequentialGroup()
+																.addContainerGap()
+																.addComponent(
+																		jScrollPane1,
+																		javax.swing.GroupLayout.DEFAULT_SIZE,
+																		845,
+																		Short.MAX_VALUE))
+												.addGroup(
+														javax.swing.GroupLayout.Alignment.TRAILING,
+														layout.createSequentialGroup()
+																.addComponent(
+																		jLabel1,
+																		javax.swing.GroupLayout.DEFAULT_SIZE,
+																		807,
+																		Short.MAX_VALUE)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+																.addComponent(
+																		jBHelp,
+																		javax.swing.GroupLayout.PREFERRED_SIZE,
+																		32,
+																		javax.swing.GroupLayout.PREFERRED_SIZE))
+												.addGroup(
+														layout.createSequentialGroup()
+																.addContainerGap()
+																.addComponent(
+																		buttonOK)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(
+																		buttonNewUser)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(
+																		buttonChangePwd)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+																		143,
+																		Short.MAX_VALUE)
+																.addComponent(
+																		buttonRead)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(
+																		buttonCancel)))
+								.addContainerGap()));
+		layout.setVerticalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup()
+								.addContainerGap()
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(jBHelp)
+												.addComponent(
+														jLabel1,
+														javax.swing.GroupLayout.PREFERRED_SIZE,
+														55,
+														javax.swing.GroupLayout.PREFERRED_SIZE))
+								.addGap(15, 15, 15)
+								.addComponent(jScrollPane1,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										317, Short.MAX_VALUE)
+								.addGap(18, 18, 18)
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.BASELINE)
+												.addComponent(buttonOK)
+												.addComponent(buttonNewUser)
+												.addComponent(buttonCancel)
+												.addComponent(buttonRead)
+												.addComponent(buttonChangePwd))
+								.addContainerGap()));
 
-        for (Integer i : editedRows) {
+		pack();
+	}// </editor-fold>//GEN-END:initComponents
 
-            DBPb pb = (DBPb) pbEntries.get(i);
+	private void buttonOKActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_buttonOKActionPerformed
 
-            if (!regi.getAllRegisteredTables().containsKey(pb.getName())) {
-                HashMap<String, ColumnAttribute> colls = pb.getHashMap();
-                HashMap<String, HashMap<String, ColumnAttribute>> table = new HashMap<String, HashMap<String, ColumnAttribute>>();
+		Set<Integer> editedRows = tm.getEditedRows();
 
-                table.put(pb.getName(), colls);
+		TypeRegistrationInterface regi = getTransaction().getTypeRegistration();
+		MD5Calc md5 = new MD5Calc("MD5");
 
-                try {
-                    regi.registerTableBindings(table);
+		for (Integer i : editedRows) {
 
-                } catch (UnsupportedDBDataTypeException e) {
+			DBPb pb = (DBPb) pbEntries.get(i);
 
-                    logger.error(e);
-                } catch (WrongBindFileFormatException e) {
+			if (!regi.getAllRegisteredTables().containsKey(pb.getName())) {
+				HashMap<String, ColumnAttribute> colls = pb.getHashMap();
+				HashMap<String, HashMap<String, ColumnAttribute>> table = new HashMap<String, HashMap<String, ColumnAttribute>>();
 
-                    logger.error(e);
-                }
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("Edited row id: " + pb.id + " [" + pb.name + " " + pb.surname + "]");
-            }
+				table.put(pb.getName(), colls);
 
-            DBPb oldpb = (DBPb) oldPbs.get(i);
+				try {
+					regi.registerTableBindings(table);
 
-            logger.error(oldpb.pwd + " / " + pb.pwd);
-            if (oldpb != null && !pb.pwd.toString().equals(oldpb.pwd.toString())) {
+				} catch (UnsupportedDBDataTypeException e) {
 
-                String encPwd = md5.calcChecksum(pb.pwd.toString());
-                if (logger.isDebugEnabled()) {
-                    logger.debug("PWD changed [ " + encPwd + " vs. " + oldpb.pwd.toString() + " -> start encryption");
-                }
-                pb.pwd.loadFromCopy(encPwd);
-            }
+					logger.error(e);
+				} catch (WrongBindFileFormatException e) {
 
-            pb.hist.setAeHist(root.getUserName());
+					logger.error(e);
+				}
+			}
+			if (logger.isDebugEnabled()) {
+				logger.debug("Edited row id: " + pb.id + " [" + pb.name + " "
+						+ pb.surname + "]");
+			}
 
-            try {
-                getTransaction().updateValues(pb);
-                getTransaction().commit();
-            } catch (SQLException sqlex) {
-                logger.error(getTransaction().getSql());
-                logger.error(sqlex);
-            } catch (UnsupportedDBDataTypeException ex) {
-                logger.error(ex);
-            } catch (WrongBindFileFormatException ex) {
-                logger.error(ex);
-            } catch (TableBindingNotRegisteredException ex) {
-                logger.error(ex);
-            } catch (IOException ex) {
-                logger.error(ex);
-            }
+			DBPb oldpb = (DBPb) oldPbs.get(i);
 
-        }
-        feed_table();
-	}//GEN-LAST:event_buttonOKActionPerformed
+			logger.error(oldpb.pwd + " / " + pb.pwd);
+			if (oldpb != null
+					&& !pb.pwd.toString().equals(oldpb.pwd.toString())) {
 
-	private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        // TODO add your handling code here:
-        close();
-	}//GEN-LAST:event_buttonCancelActionPerformed
+				String encPwd = md5.calcChecksum(pb.pwd.toString());
+				if (logger.isDebugEnabled()) {
+					logger.debug("PWD changed [ " + encPwd + " vs. "
+							+ oldpb.pwd.toString() + " -> start encryption");
+				}
+				pb.pwd.loadFromCopy(encPwd);
+			}
 
-	private void buttonReadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonReadActionPerformed
-        // TODO add your handling code here:
-        feed_table();
-	}//GEN-LAST:event_buttonReadActionPerformed
+			pb.hist.setAeHist(root.getUserName());
 
-private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
-// TODO add your handling code here:
-        
-        invokeDialog(new HelpWin(root, "/at/redeye/UserManagement/resources/Help/", "AdminDlg"));
-        
-}//GEN-LAST:event_jBHelpActionPerformed
+			try {
+				getTransaction().updateValues(pb);
+				getTransaction().commit();
+			} catch (SQLException sqlex) {
+				logger.error(getTransaction().getSql());
+				logger.error(sqlex);
+			} catch (UnsupportedDBDataTypeException ex) {
+				logger.error(ex);
+			} catch (WrongBindFileFormatException ex) {
+				logger.error(ex);
+			} catch (TableBindingNotRegisteredException ex) {
+				logger.error(ex);
+			} catch (IOException ex) {
+				logger.error(ex);
+			}
 
-private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonChangePwdActionPerformed
+		}
+		feed_table();
+	}// GEN-LAST:event_buttonOKActionPerformed
 
-    invokeDialog(new PwdEditDlg(root, (DBPb) pbEntries.get(0)));
+	private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_buttonCancelActionPerformed
+		// TODO add your handling code here:
+		close();
+	}// GEN-LAST:event_buttonCancelActionPerformed
 
-}//GEN-LAST:event_buttonChangePwdActionPerformed
+	private void buttonReadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_buttonReadActionPerformed
+		// TODO add your handling code here:
+		feed_table();
+	}// GEN-LAST:event_buttonReadActionPerformed
 
-    private void buttonNewUserActionPerformed(java.awt.event.ActionEvent evt) {        
+	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBHelpActionPerformed
+	// TODO add your handling code here:
 
-        try {
-            int nextVal = getNewSequenceValue(UM_ID_SEQ);
+		invokeDialog(new HelpWin(root,
+				"/at/redeye/UserManagement/resources/Help/", "AdminDlg"));
 
-            DBPb newPb = new DBPb();
+	}// GEN-LAST:event_jBHelpActionPerformed
 
-            newPb.id.loadFromCopy(new Integer(nextVal));
-            newPb.plevel.loadFromCopy(new Integer(
-                    UserManagementInterface.UM_PERMISSIONLEVEL_NORMAL));
-            newPb.locked.loadFromCopy(new Integer(
-                    UserManagementInterface.UM_ACCOUNT_LOCKED));
+	private void buttonChangePwdActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_buttonChangePwdActionPerformed
 
-            newPb.hist.setAnHist(root.getUserName());
+		invokeDialog(new PwdEditDlg(root, (DBPb) pbEntries.get(0)));
 
-            getTransaction().insertValues(newPb);
+	}// GEN-LAST:event_buttonChangePwdActionPerformed
 
-            tm.setEditable(newPb.name);
-            tm.setEditable(newPb.login);
-            tm.add(newPb);
+	private void buttonNewUserActionPerformed(java.awt.event.ActionEvent evt) {
 
-            if( pbEntries == null )
-                pbEntries = new Vector<DBStrukt>();
+		try {
+			int nextVal = getNewSequenceValue(UM_ID_SEQ);
 
-            pbEntries.add(newPb);
-            oldPbs.add(newPb.getCopy());
+			DBPb newPb = new DBPb();
 
-        } catch (SQLException ex) {
+			newPb.id.loadFromCopy(new Integer(nextVal));
+			newPb.plevel.loadFromCopy(new Integer(
+					UserManagementInterface.UM_PERMISSIONLEVEL_NORMAL));
+			newPb.locked.loadFromCopy(new Integer(
+					UserManagementInterface.UM_ACCOUNT_LOCKED));
 
-            logger.error(ex);
-            logger.error(StringUtils.exceptionToString(ex));
+			newPb.hist.setAnHist(root.getUserName());
 
-        } catch (UnsupportedDBDataTypeException ex) {
+			getTransaction().insertValues(newPb);
 
-            logger.error(ex);
-        } catch (WrongBindFileFormatException ex) {
-            logger.error(ex);
-        } catch (TableBindingNotRegisteredException ex) {
-            logger.error(ex);
-        } catch (IOException ex) {
-            logger.error(ex);
-        }
+			tm.setEditable(newPb.name);
+			tm.setEditable(newPb.login);
+			tm.add(newPb);
 
-    }
+			if (pbEntries == null)
+				pbEntries = new Vector<DBStrukt>();
 
-    @Override
-    public boolean canClose() {
-        int ret = checkSave(tm);
+			pbEntries.add(newPb);
+			oldPbs.add(newPb.getCopy());
 
-        if (ret == 1) {
-            buttonOKActionPerformed(null);
-        } else if (ret == -1) {
-            return false;
-        }
-        return true;
-    }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonCancel;
-    private javax.swing.JButton buttonChangePwd;
-    private javax.swing.JButton buttonNewUser;
-    private javax.swing.JButton buttonOK;
-    private javax.swing.JButton buttonRead;
-    private javax.swing.JButton jBHelp;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    // End of variables declaration//GEN-END:variables
+		} catch (SQLException ex) {
+
+			logger.error(ex);
+			logger.error(StringUtils.exceptionToString(ex));
+
+		} catch (UnsupportedDBDataTypeException ex) {
+
+			logger.error(ex);
+		} catch (WrongBindFileFormatException ex) {
+			logger.error(ex);
+		} catch (TableBindingNotRegisteredException ex) {
+			logger.error(ex);
+		} catch (IOException ex) {
+			logger.error(ex);
+		}
+
+	}
+
+	@Override
+	public boolean canClose() {
+		int ret = checkSave(tm);
+
+		if (ret == 1) {
+			buttonOKActionPerformed(null);
+		} else if (ret == -1) {
+			return false;
+		}
+		return true;
+	}
+
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JButton buttonCancel;
+	private javax.swing.JButton buttonChangePwd;
+	private javax.swing.JButton buttonNewUser;
+	private javax.swing.JButton buttonOK;
+	private javax.swing.JButton buttonRead;
+	private javax.swing.JButton jBHelp;
+	private javax.swing.JLabel jLabel1;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JTable jTable1;
+	// End of variables declaration//GEN-END:variables
 }

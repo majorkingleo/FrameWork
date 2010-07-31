@@ -5,51 +5,49 @@
 
 package at.redeye.Setup.ConfigCheck.Checks;
 
+import java.util.List;
+
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.Setup.ConfigCheck.ConfigCheck;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
-import java.util.Vector;
 
 /**
- *
+ * 
  * @author martin
  */
-public class AdminUserExists extends ConfigCheck
-{
-    public AdminUserExists(Root root)
-    {
-        super(root,"is there already a admin user in the database");                
-    }
+public class AdminUserExists extends ConfigCheck {
+	public AdminUserExists(Root root) {
+		super(root, "is there already a admin user in the database");
+	}
 
-    @Override
-    public boolean doIHaveRequiredFeature()
-    {
-        Transaction trans = root.getDBConnection().getDefaultTransaction();
+	@Override
+	public boolean doIHaveRequiredFeature() {
+		Transaction trans = root.getDBConnection().getDefaultTransaction();
 
-        DBPb pb = new DBPb();
+		DBPb pb = new DBPb();
 
-        try
-        {
-            Vector<DBPb> res = trans.fetchTable2(pb,
-                    "where " + trans.markColumn(pb.locked) + "=0 and " +
-                    trans.markColumn(pb.plevel) + "="  + UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN);
-            trans.rollback();
+		try {
+			final List<DBPb> res = trans.fetchTable2(
+					pb,
+					"where " + trans.markColumn(pb.locked) + "=0 and "
+							+ trans.markColumn(pb.plevel) + "="
+							+ UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN);
+			trans.rollback();
 
-            System.out.println(trans.getSql());
+			System.out.println(trans.getSql());
 
-            if( res.isEmpty() )
-                return false;
+			if (res.isEmpty())
+				return false;
 
-            return true;
+			return true;
 
-        } catch( Exception ex ) {
-            logger.error(StringUtils.exceptionToString(ex));
-            return false;
-        }
-    }
-
+		} catch (Exception ex) {
+			logger.error(StringUtils.exceptionToString(ex));
+			return false;
+		}
+	}
 
 }

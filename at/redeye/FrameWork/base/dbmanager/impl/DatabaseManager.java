@@ -8,6 +8,8 @@ package at.redeye.FrameWork.base.dbmanager.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -25,7 +27,6 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.UserManagement.UserManagementInterface;
-import java.util.HashMap;
 
 /**
  * 
@@ -37,10 +38,10 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	protected BaseCreateSql createSql = null;
 	protected SupportedDBMSTypes dbmstype = null;
 	protected ShowTables showTables = null;
-	protected Vector<DBStrukt> tables = new Vector<DBStrukt>();    
+	protected Vector<DBStrukt> tables = new Vector<DBStrukt>();
 
-        HashMap<String,String> table_versions;
-        Collection<String> table_list;
+	HashMap<String, String> table_versions;
+	Collection<String> table_list;
 
 	public DatabaseManager() {
 
@@ -50,20 +51,19 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		setTransaction(trans);
 	}
 
-        private void clearCache()
-        {
-            table_versions = null;
-            table_list = null;
-        }
+	private void clearCache() {
+		table_versions = null;
+		table_list = null;
+	}
 
 	public void setTransaction(Transaction trans) {
 
-            clearCache();
+		clearCache();
 
 		this.trans = trans;
 
-                if( trans == null )
-                    return;
+		if (trans == null)
+			return;
 
 		dbmstype = trans.getDBMSType();
 
@@ -71,7 +71,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		case DB_MYSQL:
 			createSql = new CreateSqlMySql();
 			break;
-			
+
 		case DB_JAVADB:
 			createSql = new CreateSqlDerby();
 			break;
@@ -101,7 +101,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		case DB_JAVADB:
 			showTables = new ShowTablesDerby();
 			break;
-			
+
 		case DB_MYSQL:
 			showTables = new ShowTablesMySql();
 			break;
@@ -118,23 +118,23 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	}
 
 	public boolean tableExists(String table) throws SQLException {
-		
-            // For the very first time
-            if (showTables == null) {
-                return false;
-            }
 
-            if (table_list == null) {
-                table_list = showTables.showTables(trans);
-            }
+		// For the very first time
+		if (showTables == null) {
+			return false;
+		}
 
-            for (String s : table_list) {
-                if (s.equalsIgnoreCase(table)) {
-                    return true;
-                }
-            }
+		if (table_list == null) {
+			table_list = showTables.showTables(trans);
+		}
 
-            return false;
+		for (String s : table_list) {
+			if (s.equalsIgnoreCase(table)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public String getTableVersion(String table) throws SQLException,
@@ -146,84 +146,83 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		if (!tableExists(vers.getName()))
 			return null;
 
-                if( table_versions == null )
-                {
-                    table_versions = new HashMap<String,String>();
+		if (table_versions == null) {
+			table_versions = new HashMap<String, String>();
 
-                    Vector<DBTableVersion> versions = trans.fetchTable2(new DBTableVersion());
+			List<DBTableVersion> versions = trans
+					.fetchTable2(new DBTableVersion());
 
-                    for( DBTableVersion version_entry : versions )
-                    {
-                        table_versions.put(version_entry.table.getValue().toUpperCase(),version_entry.version.getValue());
-                    }
-                }
+			for (DBTableVersion version_entry : versions) {
+				table_versions.put(
+						version_entry.table.getValue().toUpperCase(),
+						version_entry.version.getValue());
+			}
+		}
 
-                /* old code
-		DBTableVersion binddesc = new DBTableVersion();
+		/*
+		 * old code DBTableVersion binddesc = new DBTableVersion();
+		 * 
+		 * binddesc.table.loadFromString(table);
+		 * 
+		 * Vector<DBStrukt> res = trans.fetchTable(binddesc, "where " +
+		 * trans.markColumn("Table") + " = '" + table + "'");
+		 * 
+		 * if (res.size() > 0) return ((DBTableVersion)
+		 * res.get(0)).version.toString();
+		 */
 
-		binddesc.table.loadFromString(table);
-
-		Vector<DBStrukt> res = trans.fetchTable(binddesc, "where "
-				+ trans.markColumn("Table") + " = '" + table + "'");
-
-		if (res.size() > 0)
-			return ((DBTableVersion) res.get(0)).version.toString();
-                */
-
-                return table_versions.get(table.toUpperCase());
+		return table_versions.get(table.toUpperCase());
 	}
 
-    @Override
+	@Override
 	public Collection<String> getTables() throws SQLException {
 		return showTables.showTables(trans);
 	}
 
-    @Override
+	@Override
 	public boolean backupTable(String origin_name, String backup_name)
-			throws SQLException 
-    {                        
+			throws SQLException {
 		String sql = createSql.createSqlForBackup(origin_name, backup_name);
-    
-        return execSql( sql );        
+
+		return execSql(sql);
 	}
 
-    @Override
-	public boolean migrateTable(DBStrukt strukt, Integer fromVersion ) throws SQLException 
-    {
-        String table_name = strukt.getName();
-        
-		for( int i = 0; i < 50; i++ )
-        {
-            table_name = strukt.getName() + "_" + String.format("%02d",fromVersion) + "_" + String.format("%02d",i+1);
-            
-            if( tableExists(table_name ) )
-               continue;                        
-            
-            break;
-        }
-        
-        if( !backupTable( strukt.getName(), table_name) )        
-            return false;
+	@Override
+	public boolean migrateTable(DBStrukt strukt, Integer fromVersion)
+			throws SQLException {
+		String table_name = strukt.getName();
 
-        // new table in the DB add it to the Cache
-        if( table_list != null )
-            table_list.add(table_name);
-      
-        String sql = new String();
-        
-        for( int i = fromVersion; i < strukt.getVersion(); i++ )
-        {
-            sql += createSql.createSqlForNewRows(strukt, i+1) +";";
-        }        
-        
-        return execSql( sql );
+		for (int i = 0; i < 50; i++) {
+			table_name = strukt.getName() + "_"
+					+ String.format("%02d", fromVersion) + "_"
+					+ String.format("%02d", i + 1);
+
+			if (tableExists(table_name))
+				continue;
+
+			break;
+		}
+
+		if (!backupTable(strukt.getName(), table_name))
+			return false;
+
+		// new table in the DB add it to the Cache
+		if (table_list != null)
+			table_list.add(table_name);
+
+		String sql = new String();
+
+		for (int i = fromVersion; i < strukt.getVersion(); i++) {
+			sql += createSql.createSqlForNewRows(strukt, i + 1) + ";";
+		}
+
+		return execSql(sql);
 	}
-    
-    protected boolean execSql( String sql ) throws SQLException
-    {
-        String[] sqls = sql.split(";");
-        
-        boolean done_something = false;
+
+	protected boolean execSql(String sql) throws SQLException {
+		String[] sqls = sql.split(";");
+
+		boolean done_something = false;
 
 		for (String s : sqls) {
 			String s1 = s.trim();
@@ -239,20 +238,21 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		}
 
 		return done_something;
-    }
+	}
 
-    @Override
-    public boolean createTable(DBStrukt strukt) throws SQLException {
-        table_list = null; // cache leeren
-        String sql = createSql.createSqlforTable(strukt);
+	@Override
+	public boolean createTable(DBStrukt strukt) throws SQLException {
+		table_list = null; // cache leeren
+		String sql = createSql.createSqlforTable(strukt);
 
-        return execSql(sql);
-    }
+		return execSql(sql);
+	}
 
-    @Override
+	@Override
 	public boolean autoCreateTable(DBStrukt strukt) throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
-			WrongBindFileFormatException, CloneNotSupportedException, IOException {
+			WrongBindFileFormatException, CloneNotSupportedException,
+			IOException {
 		String version = getTableVersion(strukt.getName());
 
 		if (version == null || !tableExists(strukt.getName())) {
@@ -262,37 +262,38 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 				if (!createTable(vers)) {
 					return false;
 				} else {
-                                    return autoCreateTable(strukt);
+					return autoCreateTable(strukt);
 				}
 			} else {
 				if (tableExists(strukt.getName())) {
-					return setTableVersion(strukt.getName(), strukt
-							.getVersion());
+					return setTableVersion(strukt.getName(),
+							strukt.getVersion());
 				} else {
 					if (!createTable(strukt)) {
 						return false;
 					} else {
-						return setTableVersion(strukt.getName(), strukt
-								.getVersion());
+						return setTableVersion(strukt.getName(),
+								strukt.getVersion());
 					}
 				}
 			}
 		} else {
 			Integer vers = strukt.getVersion();
-            Integer ivers = 0;
-            
-           if( version.equals("0.1") ) // compatible mode for older apps
-               ivers = 1;
-           else
-               ivers = Integer.parseInt(version);
-            
+			Integer ivers = 0;
+
+			if (version.equals("0.1")) // compatible mode for older apps
+				ivers = 1;
+			else
+				ivers = Integer.parseInt(version);
+
 			if (vers.compareTo(ivers) == 0) {
 				return true;
 			} else {
-                if (!migrateTable(strukt, ivers)) {
-                    return false;
+				if (!migrateTable(strukt, ivers)) {
+					return false;
 				} else {
-					return setTableVersion(strukt.getName(), strukt.getVersion());
+					return setTableVersion(strukt.getName(),
+							strukt.getVersion());
 				}
 			}
 		}
@@ -310,48 +311,47 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		boolean rv = trans.fetchTableWithPrimkey(vers);
 
 		if (rv == true) {
-			
+
 			vers.version.loadFromString(version.toString());
 			trans.updateValues(vers);
 
 		} else {
-			
+
 			vers.version.loadFromString(version.toString());
 			trans.insertValues(vers);
-			
+
 		}
 
-            if (table_versions != null) {
-                table_versions.put(name, version.toString());
-            }
+		if (table_versions != null) {
+			table_versions.put(name, version.toString());
+		}
 
-            return true;
+		return true;
 	}
 
 	public void register(DBStrukt strukt) {
 
-            // doppelte Einträge vermeiden
-            // kann passieren, wenn erneut eingelogt wird.
-            for( int i = 0; i < tables.size(); i++ )
-            {
-                if( tables.get(i).getName().equals(strukt.getName()) )
-                {
-                    tables.remove(i);
-                    break;
-                }
-            }
+		// doppelte Einträge vermeiden
+		// kann passieren, wenn erneut eingelogt wird.
+		for (int i = 0; i < tables.size(); i++) {
+			if (tables.get(i).getName().equals(strukt.getName())) {
+				tables.remove(i);
+				break;
+			}
+		}
 
-            tables.add(strukt);
+		tables.add(strukt);
 	}
 
-        /**
-         * automatically creates the entire database
-         * @return return true on success, false on failure
-         */
-	public boolean autocreate() {               
-        
-		AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {                        
-            
+	/**
+	 * automatically creates the entire database
+	 * 
+	 * @return return true on success, false on failure
+	 */
+	public boolean autocreate() {
+
+		AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {
+
 			@Override
 			public void do_stuff() throws Exception {
 
@@ -375,159 +375,154 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return true;
 	}
 
-    public boolean db_supports_all_requested_features() throws SQLException {
-        return showTables.db_supports_all_requested_features(trans);
-    }
+	public boolean db_supports_all_requested_features() throws SQLException {
+		return showTables.db_supports_all_requested_features(trans);
+	}
 
-    public boolean can_support_db() {
-        
-        AutoLogger al = new AutoLogger("can_support_db" )
-        {            
-            @Override
-            public void do_stuff() throws Exception {
-                
-                result = new Boolean(false);
-                
-                if( db_supports_all_requested_features() ) {
-                    result = new Boolean(true);
-                }            
-            }
-        };
-        
-        return (Boolean)al.result;
-    }
+	public boolean can_support_db() {
 
-    public boolean check_table_versions() 
-    {
-        AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {
+		AutoLogger al = new AutoLogger("can_support_db") {
+			@Override
+			public void do_stuff() throws Exception {
 
-            @Override
-            public void do_stuff() throws Exception {
+				result = new Boolean(false);
 
-                for (final DBStrukt strukt : tables) {
-                    logger.debug("Checking Table: " + strukt.getName());
+				if (db_supports_all_requested_features()) {
+					result = new Boolean(true);
+				}
+			}
+		};
 
-                    String sversion = getTableVersion(strukt.getName());
+		return (Boolean) al.result;
+	}
 
-                    if (sversion == null) {
-                        logger.error("Not entry of Table " + strukt.getName() + " or table TABLEVERSION itsself does not exists");
-                        setFailed();
-                        break;
-                    }
+	public boolean check_table_versions() {
+		AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {
 
-                    int iversion = 0;
+			@Override
+			public void do_stuff() throws Exception {
 
-                    if (sversion.equals("0.1")) {
-                        iversion = 1;
-                    } else {
-                        iversion = Integer.parseInt(sversion);
-                    }
+				for (final DBStrukt strukt : tables) {
+					logger.debug("Checking Table: " + strukt.getName());
 
-                    boolean success = false;
+					String sversion = getTableVersion(strukt.getName());
 
-                    if (iversion == strukt.getVersion()) {
-                        success = true;
-                    }
+					if (sversion == null) {
+						logger.error("Not entry of Table "
+								+ strukt.getName()
+								+ " or table TABLEVERSION itsself does not exists");
+						setFailed();
+						break;
+					}
 
-                    if (!success) {
-                        setFailed();
-                        logger.debug(String.format("Table %s has version '%d' (string: %s) in Database and '%d' in Application Code. Updating Table is required.",
-                                strukt.getName(), iversion, sversion, strukt.getVersion()));
-                    }
-                }
-            }
-        };
+					int iversion = 0;
 
-        if (al.isFailed()) {
-            System.out.println("Last Sql: " + trans.getSql());
-            return false;
-        }
+					if (sversion.equals("0.1")) {
+						iversion = 1;
+					} else {
+						iversion = Integer.parseInt(sversion);
+					}
 
-        return true;
-    }
+					boolean success = false;
 
-    public boolean check_table_versions_with_message( final int Permissionlevel ) 
-    {        
-        if( !check_table_versions() )
-        {                        
-            final String adminMsg = 
-                    "Bitte öffnen Sie den Datenbankverbindungsdialog (Programm=>Datenbankeinstellungen) " +
-                    "und betätigen Sie den Button \"Einrichten\". Dadurch werden die notwendigen Änderungen " +
-                    "an der Datenbank automatisch durchgeführt. Bevor Tabellen manipuliert werden, erstellt " +
-                    "die Applikation automatisch Sicherungen der zu manipulierenden Tabellen. " +
-                    "Zusätzlich sollten Sie jedoch vorher eine Sicherung der gesammten Datenbank durchführen. " +
-                    "Um Datenverlusten vorzubeugen stellen Sie bitte auch sicher, dass währen der Migration " + 
-                    "kein anderer User mehr auf die Datenbank zugreift";
-            
-            final String userMsg = 
-                    "Bitte kontaktieren Sie Ihren Administrator damit dieser eine Aktualisierung der Datenbank " +
-                    "durchführen kann. Um den Vorgang zu starten, muß sich ein Benutzer mit Administratorrechten " +
-                    "auf dieser Applikation anmelden. Dann erfolgen auch noch weiter Hinweise. " +
-                    "Sie können das Programm nun auch noch weiter verwenden, es ist aber nicht mehr " +
-                    "sichergestellt das es korrekt funktioniert.";
-                                    
-            String msg;
+					if (iversion == strukt.getVersion()) {
+						success = true;
+					}
 
-            if (Permissionlevel == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
-                msg = adminMsg;
-            } else {
-                msg = userMsg;
-            }
+					if (!success) {
+						setFailed();
+						logger.debug(String
+								.format("Table %s has version '%d' (string: %s) in Database and '%d' in Application Code. Updating Table is required.",
+										strukt.getName(), iversion, sversion,
+										strukt.getVersion()));
+					}
+				}
+			}
+		};
 
+		if (al.isFailed()) {
+			System.out.println("Last Sql: " + trans.getSql());
+			return false;
+		}
 
-            JOptionPane.showMessageDialog(
-                    null,
-                    StringUtils.autoLineBreak(
-                    "Eine oder mehrere Tabellen in der Datenbank weichen von jener Version, die im Programm " +
-                    "benötigt werden ab.\n\n" + msg),
-                    "Datenbank", JOptionPane.WARNING_MESSAGE);
+		return true;
+	}
 
-            return false;
-        }
-        
-        return true;
-    }
+	public boolean check_table_versions_with_message(final int Permissionlevel) {
+		if (!check_table_versions()) {
+			final String adminMsg = "Bitte öffnen Sie den Datenbankverbindungsdialog (Programm=>Datenbankeinstellungen) "
+					+ "und betätigen Sie den Button \"Einrichten\". Dadurch werden die notwendigen Änderungen "
+					+ "an der Datenbank automatisch durchgeführt. Bevor Tabellen manipuliert werden, erstellt "
+					+ "die Applikation automatisch Sicherungen der zu manipulierenden Tabellen. "
+					+ "Zusätzlich sollten Sie jedoch vorher eine Sicherung der gesammten Datenbank durchführen. "
+					+ "Um Datenverlusten vorzubeugen stellen Sie bitte auch sicher, dass währen der Migration "
+					+ "kein anderer User mehr auf die Datenbank zugreift";
 
-    public boolean is_dbms_driver_loaded(SupportedDBMSTypes dbmstype)
-    {
-       String name;
-       
-       try
-       {       
-           switch (dbmstype) {
-               case DB_MSSQL:
-                   name = net.sourceforge.jtds.jdbc.Driver.class.getName();
-                   break;
-               case DB_MYSQL:
-                   name = com.mysql.jdbc.Driver.class.getName();
-                   break;
-               case DB_ORACLE:
-                   name = oracle.jdbc.OracleDriver.class.getName();
-                   break;
-               case DB_SQLITE:
-                   name = org.sqlite.JDBC.class.getName();
-                   break;
-               case DB_JAVADB:
-                   name = org.apache.derby.jdbc.EmbeddedDriver.class.getName();
-                   break;
-           }
-       } catch( NoClassDefFoundError ex ) {
-           return false;
-       }
+			final String userMsg = "Bitte kontaktieren Sie Ihren Administrator damit dieser eine Aktualisierung der Datenbank "
+					+ "durchführen kann. Um den Vorgang zu starten, muß sich ein Benutzer mit Administratorrechten "
+					+ "auf dieser Applikation anmelden. Dann erfolgen auch noch weiter Hinweise. "
+					+ "Sie können das Programm nun auch noch weiter verwenden, es ist aber nicht mehr "
+					+ "sichergestellt das es korrekt funktioniert.";
 
-       return true;
-    }
+			String msg;
 
-    public Vector<DBStrukt> getRegisteredTables() {
-        return tables;
-    }
+			if (Permissionlevel == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+				msg = adminMsg;
+			} else {
+				msg = userMsg;
+			}
 
-    public boolean drop_table(DBStrukt strukt) throws SQLException {
+			JOptionPane
+					.showMessageDialog(
+							null,
+							StringUtils
+									.autoLineBreak("Eine oder mehrere Tabellen in der Datenbank weichen von jener Version, die im Programm "
+											+ "benötigt werden ab.\n\n" + msg),
+							"Datenbank", JOptionPane.WARNING_MESSAGE);
 
-        table_list = null; // cache leeren
+			return false;
+		}
 
-        return execSql( "drop table " + trans.markTable(strukt) );
-    }
-    
-    
+		return true;
+	}
+
+	public boolean is_dbms_driver_loaded(SupportedDBMSTypes dbmstype) {
+		String name;
+
+		try {
+			switch (dbmstype) {
+			case DB_MSSQL:
+				name = net.sourceforge.jtds.jdbc.Driver.class.getName();
+				break;
+			case DB_MYSQL:
+				name = com.mysql.jdbc.Driver.class.getName();
+				break;
+			case DB_ORACLE:
+				name = oracle.jdbc.OracleDriver.class.getName();
+				break;
+			case DB_SQLITE:
+				name = org.sqlite.JDBC.class.getName();
+				break;
+			case DB_JAVADB:
+				name = org.apache.derby.jdbc.EmbeddedDriver.class.getName();
+				break;
+			}
+		} catch (NoClassDefFoundError ex) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public Vector<DBStrukt> getRegisteredTables() {
+		return tables;
+	}
+
+	public boolean drop_table(DBStrukt strukt) throws SQLException {
+
+		table_list = null; // cache leeren
+
+		return execSql("drop table " + trans.markTable(strukt));
+	}
+
 }

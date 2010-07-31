@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.BasicConfigurator;
@@ -26,75 +27,66 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.executor.DefaultStmtExecuter;
 
-
 public class TestApplication {
 
 	/**
 	 * @param args
 	 * @throws TableBindingNotRegisteredException
 	 */
-	
+
 	private static Logger logger = Logger.getLogger(TestApplication.class
-		      .getSimpleName());
-	
+			.getSimpleName());
+
 	public static void main(String[] args)
 			throws TableBindingNotRegisteredException {
-		
-		
+
 		BasicConfigurator.configure();
 
-		ConnectionDefinition connparams = new ConnectionDefinition
-		("", 0,
-				"root", 
-				"mysql", 
-				"test", 
-				SupportedDBMSTypes.DB_MYSQL);
+		ConnectionDefinition connparams = new ConnectionDefinition("", 0,
+				"root", "mysql", "test", SupportedDBMSTypes.DB_MYSQL);
 
-					
 		DbConnectionInterface connint = new DBConnector(connparams);
-		
-		TypeRegistrationInterface regi = new TypeRegistration (connparams.getDBMSType());
 
-		Vector<Vector<?>> result;
-		Vector<HashMap<String, Object>> result2;
+		TypeRegistrationInterface regi = new TypeRegistration(
+				connparams.getDBMSType());
+
+		List<List<?>> result;
+		List<HashMap<String, Object>> result2;
 		Connection my_db_conn = null;
 		try {
 
 			my_db_conn = connint.connectToDatabase();
-			logger.info("Connection open: "+ !my_db_conn.isClosed());
-			
-			
-			
+			logger.info("Connection open: " + !my_db_conn.isClosed());
+
 			StmtExecInterface invoker = (StmtExecInterface) new DefaultStmtExecuter(
 					my_db_conn, connparams.getDBMSType());
-			
 
-			String stmt = "select DUMMY.id, DUMMY.name, DUMMY.adress, INFO.text1, INFO.valid, DUMMY.zeit "+
-				"from DUMMY, INFO where INFO.id = DUMMY.id";
+			String stmt = "select DUMMY.id, DUMMY.name, DUMMY.adress, INFO.text1, INFO.valid, DUMMY.zeit "
+					+ "from DUMMY, INFO where INFO.id = DUMMY.id";
 
-			Vector<DBDataType> argslist = new Vector<DBDataType>();
+			List<DBDataType> argslist = new Vector<DBDataType>();
 			argslist.add(DBDataType.DB_TYPE_INTEGER);
 			argslist.add(DBDataType.DB_TYPE_STRING);
 			argslist.add(DBDataType.DB_TYPE_STRING);
 			argslist.add(DBDataType.DB_TYPE_STRING);
 			argslist.add(DBDataType.DB_TYPE_BIT);
 			argslist.add(DBDataType.DB_TYPE_STRING);
-			
-//			String stmt = "select persnr, count (*) from p2laz group by persnr";
-//			Vector<DBDataType> argslist = new Vector<DBDataType>();
-//			argslist.add(DBDataType.DB_TYPE_STRING);
-//			argslist.add(DBDataType.DB_TYPE_LONG);
+
+			// String stmt =
+			// "select persnr, count (*) from p2laz group by persnr";
+			// Vector<DBDataType> argslist = new Vector<DBDataType>();
+			// argslist.add(DBDataType.DB_TYPE_STRING);
+			// argslist.add(DBDataType.DB_TYPE_LONG);
 
 			result = invoker.fetchColumnValue(stmt, argslist);
 			String out = "";
-			for (Vector<?> row : result) {
+			for (List<?> row : result) {
 				for (Object object : row) {
 					out += object + "\t\t";
 				}
 				logger.info(out);
 				out = "";
 			}
-			
 
 			logger.info("\n========================== TEST2: =============================\n");
 
@@ -104,8 +96,8 @@ public class TestApplication {
 			regi.registerTableBindings("info.bind");
 			String[] tabnames = { "DUMMY", "INFO" };
 
-			result2 = invoker.fetchTableValue(
-					tabnames, "where DUMMY.id = INFO.id");
+			result2 = invoker.fetchTableValue(tabnames,
+					"where DUMMY.id = INFO.id");
 
 			logger.info(invoker.printFetchTableOutput(result2));
 
@@ -118,48 +110,49 @@ public class TestApplication {
 			logger.info("\n========================== TEST4: ============================\n");
 
 			GregorianCalendar cal = new GregorianCalendar();
-			
 
-			HashMap <String, Object> values = new HashMap<String, Object>();
+			HashMap<String, Object> values = new HashMap<String, Object>();
 			values.put("text1", "STRUCT UPDATE ZOCKT AUCH");
 			values.put("text2", cal.getTime().toString());
 			values.put("id", new Integer(2));
 			anz = invoker.updateTableValues("INFO", values, null);
-			logger.info(anz +" rows updated ");
-//			anz = invoker.updateValues("update INFO set text1 = '"+cal.getTime().toString()+"'");
-			
+			logger.info(anz + " rows updated ");
+			// anz =
+			// invoker.updateValues("update INFO set text1 = '"+cal.getTime().toString()+"'");
+
 			logger.info("\n========================== TEST5: ============================\n");
-			
+
 			result2 = invoker.fetchTableValue(tabnames2, null);
 			logger.info(invoker.printFetchTableOutput(result2));
-			
+
 			logger.info("\n========================== TEST6: ============================\n");
-//			
-//			values.clear();
-//			values.put("text1", "INSERT ZOCKT AUCH");
-//			values.put("text2", "WUNDERBAR");
-//			values.put("valid", new Integer(1));
-//			logger.info("Inserted: "+invoker.insertTableValues("INFO", values));
-//			my_db_conn.commit();
-//			
-//			values.put("text2", "MOBBIBÄR");
-//			values.put("valid", true);
-//			anz = invoker.updateTableValues("INFO", values, "where id = 3");
-//			my_db_conn.commit();
-//			result2 = invoker.fetchTableValue(tabnames2, null);
-//			logger.info(invoker.printFetchTableOutput(result2)+"\n-> "+anz);
-			
+			//
+			// values.clear();
+			// values.put("text1", "INSERT ZOCKT AUCH");
+			// values.put("text2", "WUNDERBAR");
+			// values.put("valid", new Integer(1));
+			// logger.info("Inserted: "+invoker.insertTableValues("INFO",
+			// values));
+			// my_db_conn.commit();
+			//
+			// values.put("text2", "MOBBIBÄR");
+			// values.put("valid", true);
+			// anz = invoker.updateTableValues("INFO", values, "where id = 3");
+			// my_db_conn.commit();
+			// result2 = invoker.fetchTableValue(tabnames2, null);
+			// logger.info(invoker.printFetchTableOutput(result2)+"\n-> "+anz);
+
 			result2.clear();
 			HashMap<String, Object> record = new HashMap<String, Object>();
-			record.put("id", new Integer (2));
+			record.put("id", new Integer(2));
 			record = invoker.fetchTableValue("INFO", record);
 			logger.info(invoker.printFetchTableOutput(record));
-			
+
 			logger.info("\n========================== TEST7: ============================\n");
 			regi.registerTableBindings("tpa.bind");
-//			regi.registerTableBindings("tek.bind");
-//			regi.registerTableBindings("tep.bind");
-			String[] tabnames3 = {"tpa" };
+			// regi.registerTableBindings("tek.bind");
+			// regi.registerTableBindings("tep.bind");
+			String[] tabnames3 = { "tpa" };
 			result2 = invoker.fetchTableValue(tabnames3, "");
 			logger.info(invoker.printFetchTableOutput(result2));
 			values.clear();
@@ -170,16 +163,17 @@ public class TestApplication {
 			my_db_conn.commit();
 			result2 = invoker.fetchTableValue(tabnames3, "");
 			logger.info("\n-> " + anz + invoker.printFetchTableOutput(result2));
-			
-//			anz = invoker.updateValues("update tpa set aktpos_feldid = ziel_feldid");
-//			
-//			my_db_conn.commit();
-//			result2 = invoker.fetchTableValue(tabnames3, "");
-//			
-//			logger.info(invoker.printFetchTableOutput(result2)+"\n-> "+anz);
-		
+
+			// anz =
+			// invoker.updateValues("update tpa set aktpos_feldid = ziel_feldid");
+			//
+			// my_db_conn.commit();
+			// result2 = invoker.fetchTableValue(tabnames3, "");
+			//
+			// logger.info(invoker.printFetchTableOutput(result2)+"\n-> "+anz);
+
 		} catch (ClassNotFoundException e) {
-		
+
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnSupportedDatabaseException e) {
@@ -203,16 +197,15 @@ public class TestApplication {
 		} catch (MissingConnectionParamException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			try {
 				connint.disconnectDatabase(my_db_conn);
-				logger.info("Connection closed: "+my_db_conn.isClosed());
+				logger.info("Connection closed: " + my_db_conn.isClosed());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 
 	}

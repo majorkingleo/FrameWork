@@ -5,16 +5,17 @@
 
 package at.redeye.FrameWork.base.dbmanager.impl;
 
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import at.redeye.FrameWork.base.dbmanager.ShowTables;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
-
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 
@@ -26,9 +27,9 @@ public class ShowTablesOracle implements ShowTables {
 
 		String sql = "select tname from TAB";
 
-		Vector<DBDataType> args = new Vector<DBDataType>();
+		List<DBDataType> args = new Vector<DBDataType>();
 		args.add(DBDataType.DB_TYPE_STRING);
-		Vector<Vector<?>> res;
+		List<List<?>> res;
 
 		/*
 		 * Eine UnsupportedDBDataTypeException Exception sollte hier ja eher
@@ -52,8 +53,9 @@ public class ShowTablesOracle implements ShowTables {
 
 	}
 
-    public boolean db_supports_all_requested_features(Transaction trans) throws SQLException {
-        return true;
-    }
+	public boolean db_supports_all_requested_features(Transaction trans)
+			throws SQLException {
+		return true;
+	}
 
 }

@@ -2,9 +2,11 @@ package at.redeye.SqlDBInterface.SqlDBIO.impl.creator;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -20,21 +22,20 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
  * @author Mario Mattl
  * 
  */
-public abstract class AbstractStmtCreator implements
-		StmtCreatorInterface {
+public abstract class AbstractStmtCreator implements StmtCreatorInterface {
 
-	protected static Logger logger = Logger
-			.getLogger(AbstractStmtCreator.class.getSimpleName());
+	protected static Logger logger = Logger.getLogger(AbstractStmtCreator.class
+			.getSimpleName());
 
 	protected TypeRegistrationInterface registration;
 
-	Vector<String> boundColumns = new Vector<String>();
+	List<String> boundColumns = new ArrayList<String>();
 
 	public AbstractStmtCreator(TypeRegistrationInterface registration) {
 		this.registration = registration;
 	}
-	
-    protected String markTableAndColumnNameForUpdate(String table, String column) {
+
+	protected String markTableAndColumnNameForUpdate(String table, String column) {
 		return markTableName(table) + "." + markColumnName(column);
 	}
 
@@ -43,7 +44,7 @@ public abstract class AbstractStmtCreator implements
 
 		// reset columns of recent statement
 		boundColumns.clear();
-		
+
 		StringBuilder str = new StringBuilder();
 
 		str.append("select ");
@@ -76,7 +77,7 @@ public abstract class AbstractStmtCreator implements
 
 		// reset columns of recent statement
 		boundColumns.clear();
-		
+
 		StringBuilder str = new StringBuilder();
 		str.append("select ");
 
@@ -104,8 +105,8 @@ public abstract class AbstractStmtCreator implements
 			String key = iter.next();
 			attr = columnNames.get(key);
 
-                        if( logger.isTraceEnabled() )
-                            logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+			if (logger.isTraceEnabled())
+				logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
 
 			if (attr.isPrimaryKey() == true) {
 				boundColumns.add(key);
@@ -118,7 +119,7 @@ public abstract class AbstractStmtCreator implements
 
 		String[] tokens;
 		String currcol;
-		
+
 		for (int index = 0; index < boundColumns.size(); index++) {
 			currcol = boundColumns.get(index);
 			if (currcol.contains(".")) {
@@ -128,7 +129,6 @@ public abstract class AbstractStmtCreator implements
 				str.append(markColumnName(currcol) + "= ?");
 			}
 
-			
 		}
 		logger.trace("PK select");
 		return str.toString();
@@ -139,7 +139,7 @@ public abstract class AbstractStmtCreator implements
 
 		// reset columns of recent statement
 		boundColumns.clear();
-		
+
 		StringBuilder str = new StringBuilder();
 
 		str.append("insert into ");
@@ -158,12 +158,12 @@ public abstract class AbstractStmtCreator implements
 		str.append(")");
 		str.append(" values (");
 		iter = keys.iterator();
-		
+
 		while (iter.hasNext()) {
-			
+
 			iter.next();
 			str.append("?");
-			
+
 			if (iter.hasNext() == true) {
 				str.append(" , ");
 			}
@@ -176,11 +176,11 @@ public abstract class AbstractStmtCreator implements
 			HashMap<String, Object> values, String whereStmt)
 			throws SQLException, TableBindingNotRegisteredException {
 
-		Vector<String> pkColumns = new Vector <String>();
-		
+		Vector<String> pkColumns = new Vector<String>();
+
 		// reset columns of recent statement
 		boundColumns.clear();
-		
+
 		StringBuilder str = new StringBuilder();
 
 		str.append("update ");
@@ -188,14 +188,14 @@ public abstract class AbstractStmtCreator implements
 
 		Set<String> keys = values.keySet();
 		Iterator<String> iter = keys.iterator();
-		
+
 		while (iter.hasNext()) {
 			String key = iter.next();
 
-                        if( logger.isTraceEnabled() )
-                            logger.trace("--> " + key);
+			if (logger.isTraceEnabled())
+				logger.trace("--> " + key);
 
-			str.append(markTableAndColumnNameForUpdate(table,key));
+			str.append(markTableAndColumnNameForUpdate(table, key));
 			str.append("=?");
 			boundColumns.add(key);
 			if (iter.hasNext() == true) {
@@ -206,8 +206,8 @@ public abstract class AbstractStmtCreator implements
 			str.append(" " + whereStmt);
 		} else {
 
-                    if( logger.isTraceEnabled() )
-			logger.trace("Searching table: " + table);
+			if (logger.isTraceEnabled())
+				logger.trace("Searching table: " + table);
 
 			HashMap<String, ColumnAttribute> cols = registration
 					.getRegisteredTableByString(table);
@@ -223,8 +223,8 @@ public abstract class AbstractStmtCreator implements
 				String key = iter.next();
 				attr = cols.get(key);
 
-                                if( logger.isTraceEnabled() )
-                                    logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+				if (logger.isTraceEnabled())
+					logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
 
 				if (attr.isPrimaryKey() == true) {
 					pkColumns.add(key);
@@ -238,10 +238,10 @@ public abstract class AbstractStmtCreator implements
 			str.append(" where ");
 
 			for (int index = 0; index < pkColumns.size(); index++) {
-				
+
 				str.append(markTableName(table) + "."
 						+ markColumnName(pkColumns.get(index)) + "=?");
-				
+
 				if (index < (pkColumns.size() - 1)) {
 					str.append(" and ");
 				}
@@ -258,15 +258,13 @@ public abstract class AbstractStmtCreator implements
 		return sdf.format(date);
 
 	}
-	
-	public Vector<String> getCols2Handle () {
+
+	public List<String> getCols2Handle() {
 		return boundColumns;
 	}
-	
-	
-	public abstract String markTableName (String tableName);
-	
-	public abstract String markColumnName (String columnName);
-	
+
+	public abstract String markTableName(String tableName);
+
+	public abstract String markColumnName(String columnName);
 
 }

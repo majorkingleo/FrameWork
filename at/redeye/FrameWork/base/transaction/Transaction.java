@@ -7,8 +7,10 @@ package at.redeye.FrameWork.base.transaction;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -36,7 +38,6 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.executor.DefaultStmtExecuter;
-import java.util.ArrayList;
 
 /**
  * 
@@ -99,13 +100,12 @@ public abstract class Transaction {
 		conn.rollback();
 	}
 
-	public Vector<Vector<?>> fetchColumnValue(String stmt,
-			Vector<DBDataType> typelist) throws SQLException,
-			UnsupportedDBDataTypeException {
+	public List<List<?>> fetchColumnValue(String stmt, List<DBDataType> typelist)
+			throws SQLException, UnsupportedDBDataTypeException {
 		return executer.fetchColumnValue(stmt, typelist);
 	}
 
-	public Vector<DBStrukt> fetchTable(DBStrukt binddesc) throws SQLException,
+	public List<DBStrukt> fetchTable(DBStrukt binddesc) throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
 			WrongBindFileFormatException {
 		return fetchTable(binddesc, "");
@@ -124,7 +124,7 @@ public abstract class Transaction {
 		}
 	}
 
-	public Vector<DBStrukt> fetchTable(DBStrukt binddesc, String where)
+	public List<DBStrukt> fetchTable(DBStrukt binddesc, String where)
 			throws SQLException, TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException {
 
@@ -132,30 +132,27 @@ public abstract class Transaction {
 
 		String tablenames[] = { binddesc.getName() };
 
-		Vector<HashMap<String, Object>> result = executer.fetchTableValue(
+		List<HashMap<String, Object>> result = executer.fetchTableValue(
 				tablenames, where);
 
-		Vector<DBStrukt> res = new Vector<DBStrukt>();
-
-		res.setSize(result.size());
+		List<DBStrukt> res = new ArrayList<DBStrukt>();
 
 		for (int i = 0; i < result.size(); i++) {
 			DBStrukt strukt = binddesc.getNewOne();
 			strukt.consume(result.get(i));
-			res.set(i, strukt);
+			res.add(strukt);
 		}
 
 		return res;
 	}
 
-    public <T extends DBStrukt> Vector<T> fetchTable2(T binddesc )
-            throws SQLException, TableBindingNotRegisteredException,
-            UnsupportedDBDataTypeException, WrongBindFileFormatException
-    {
-        return fetchTable2( binddesc, "");
-    }
+	public <T extends DBStrukt> List<T> fetchTable2(T binddesc)
+			throws SQLException, TableBindingNotRegisteredException,
+			UnsupportedDBDataTypeException, WrongBindFileFormatException {
+		return fetchTable2(binddesc, "");
+	}
 
-	public <T extends DBStrukt> Vector<T> fetchTable2(T binddesc, String where)
+	public <T extends DBStrukt> List<T> fetchTable2(T binddesc, String where)
 			throws SQLException, TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException {
 
@@ -163,49 +160,48 @@ public abstract class Transaction {
 
 		String tablenames[] = { binddesc.getName() };
 
-		Vector<HashMap<String, Object>> result = executer.fetchTableValue(
+		List<HashMap<String, Object>> result = executer.fetchTableValue(
 				tablenames, where);
 
-		Vector<T> res = new Vector<T>();
-
-		res.setSize(result.size());
+		List<T> res = new ArrayList<T>();
 
 		for (int i = 0; i < result.size(); i++) {
 			DBStrukt strukt = binddesc.getNewOne();
 			strukt.consume(result.get(i));
-			res.set(i, (T)strukt);
+			res.add((T) strukt);
 		}
 
 		return res;
 	}
-        
-    public <T extends DBStrukt> ArrayList<T> fetchTableList(T binddesc)
-            throws SQLException, TableBindingNotRegisteredException,
-            UnsupportedDBDataTypeException, WrongBindFileFormatException {
-        return fetchTableList(binddesc, "");
-    }
 
-    public <T extends DBStrukt> ArrayList<T> fetchTableList(T binddesc, String where)
-            throws SQLException, TableBindingNotRegisteredException,
-            UnsupportedDBDataTypeException, WrongBindFileFormatException {
+	public <T extends DBStrukt> ArrayList<T> fetchTableList(T binddesc)
+			throws SQLException, TableBindingNotRegisteredException,
+			UnsupportedDBDataTypeException, WrongBindFileFormatException {
+		return fetchTableList(binddesc, "");
+	}
 
-        registerTable(binddesc);
+	public <T extends DBStrukt> ArrayList<T> fetchTableList(T binddesc,
+			String where) throws SQLException,
+			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
+			WrongBindFileFormatException {
 
-        String tablenames[] = {binddesc.getName()};
+		registerTable(binddesc);
 
-        Vector<HashMap<String, Object>> result = executer.fetchTableValue(
-                tablenames, where);
+		String tablenames[] = { binddesc.getName() };
 
-        ArrayList<T> res = new ArrayList<T>(result.size());
+		List<HashMap<String, Object>> result = executer.fetchTableValue(
+				tablenames, where);
 
-        for (int i = 0; i < result.size(); i++) {
-            DBStrukt strukt = binddesc.getNewOne();
-            strukt.consume(result.get(i));
-            res.add(i, (T) strukt);
-        }
+		ArrayList<T> res = new ArrayList<T>(result.size());
 
-        return res;
-    }
+		for (int i = 0; i < result.size(); i++) {
+			DBStrukt strukt = binddesc.getNewOne();
+			strukt.consume(result.get(i));
+			res.add(i, (T) strukt);
+		}
+
+		return res;
+	}
 
 	public String getSql() {
 		return executer.getLastStmt();
@@ -238,8 +234,8 @@ public abstract class Transaction {
 		registerTable(binddesc);
 
 		HashMap<String, Object> data = binddesc.getHashMapAndData();
-		HashMap<String, Object> res = executer.fetchTableValue(binddesc
-				.getName(), data);
+		HashMap<String, Object> res = executer.fetchTableValue(
+				binddesc.getName(), data);
 
 		if (res == null)
 			return false;

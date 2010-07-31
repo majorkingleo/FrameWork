@@ -2,6 +2,7 @@ package at.redeye.FrameWork.base.dbmanager.impl;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,12 +16,12 @@ public class ShowTablesMSSql implements ShowTables {
 
 	@Override
 	public Collection<String> showTables(Transaction trans) throws SQLException {
-		
+
 		String sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES";
-		
-		Vector<DBDataType> args = new Vector<DBDataType>();
+
+		List<DBDataType> args = new Vector<DBDataType>();
 		args.add(DBDataType.DB_TYPE_STRING);
-		Vector<Vector<?>> res;
+		List<List<?>> res;
 
 		/*
 		 * Eine UnsupportedDBDataTypeException Exception sollte hier ja eher
@@ -30,8 +31,8 @@ public class ShowTablesMSSql implements ShowTables {
 			res = trans.getStmtExecInterface().fetchColumnValue(sql, args);
 		} catch (UnsupportedDBDataTypeException ex) {
 			System.out.println("XXX: " + ex);
-			Logger.getLogger(ShowTablesMSSql.class.getName()).log(
-					Level.SEVERE, null, ex);
+			Logger.getLogger(ShowTablesMSSql.class.getName()).log(Level.SEVERE,
+					null, ex);
 			return null;
 		}
 
@@ -43,8 +44,9 @@ public class ShowTablesMSSql implements ShowTables {
 		return ret;
 	}
 
-    public boolean db_supports_all_requested_features(Transaction trans) throws SQLException {
-        return true;
-    }
+	public boolean db_supports_all_requested_features(Transaction trans)
+			throws SQLException {
+		return true;
+	}
 
 }

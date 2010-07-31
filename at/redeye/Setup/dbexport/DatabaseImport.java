@@ -5,9 +5,17 @@
 
 package at.redeye.Setup.dbexport;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
-import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.dbmanager.impl.DatabaseManager;
 import at.redeye.FrameWork.base.dbmanager.impl.bindtypes.DBTableVersion;
@@ -16,257 +24,245 @@ import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.DeleteDir;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.utilities.UnZip;
-import at.redeye.FrameWork.utilities.Zip;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
-import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Vector;
-import org.apache.log4j.Logger;
 
 /**
- *
+ * 
  * @author martin
  */
-public class DatabaseImport
-{
-    public static Logger logger = Logger.getLogger(DatabaseImport.class.getName());
+public class DatabaseImport {
+	public static Logger logger = Logger.getLogger(DatabaseImport.class
+			.getName());
 
-    public static class CannotOpenTempDatabase extends Exception
-    {
-        public CannotOpenTempDatabase( String message )
-        {
-            super( message );
-        }
+	public static class CannotOpenTempDatabase extends Exception {
+		public CannotOpenTempDatabase(String message) {
+			super(message);
+		}
 
-        public CannotOpenTempDatabase()
-        {
-            super();
-        }
-    }
+		public CannotOpenTempDatabase() {
+			super();
+		}
+	}
 
-    Root root;
-    String source_file_name;
-    Transaction trans_temp;
-    Transaction trans_target;
-    File temp_db_dir;
-    ProgressListener listener = null;
+	Root root;
+	String source_file_name;
+	Transaction trans_temp;
+	Transaction trans_target;
+	File temp_db_dir;
+	ProgressListener listener = null;
 
-    /**
-     * exports a databse to a zip file, by using a derby database.
-     * Always call close when finished, or an error appeared. This
-     * cleans up the tempdir stuff.
-     * @param root
-     * @param target_file_name
-     */
-    public DatabaseImport( Root root, String source_file_name )
-    {
-        this.source_file_name = source_file_name;
-        this.root = root;
-    }
+	/**
+	 * exports a databse to a zip file, by using a derby database. Always call
+	 * close when finished, or an error appeared. This cleans up the tempdir
+	 * stuff.
+	 * 
+	 * @param root
+	 * @param target_file_name
+	 */
+	public DatabaseImport(Root root, String source_file_name) {
+		this.source_file_name = source_file_name;
+		this.root = root;
+	}
 
-    public void setProgressListener( ProgressListener progress_listener )
-    {
-        listener = progress_listener;
-    }
+	public void setProgressListener(ProgressListener progress_listener) {
+		listener = progress_listener;
+	}
 
-    protected void fireEvent( String event )
-    {
-        if( listener != null )
-        {
-            logger.info(event);
-            listener.setStage(event);
-        }
-    }
+	protected void fireEvent(String event) {
+		if (listener != null) {
+			logger.info(event);
+			listener.setStage(event);
+		}
+	}
 
-    public void doImport() throws IOException, CannotOpenTempDatabase, ClassNotFoundException, SQLException, MissingConnectionParamException, UnSupportedDatabaseException, TableBindingNotRegisteredException, UnsupportedDBDataTypeException, WrongBindFileFormatException
-    {
-       temp_db_dir = File.createTempFile("tempdb", ".db");
+	public void doImport() throws IOException, CannotOpenTempDatabase,
+			ClassNotFoundException, SQLException,
+			MissingConnectionParamException, UnSupportedDatabaseException,
+			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
+			WrongBindFileFormatException {
+		temp_db_dir = File.createTempFile("tempdb", ".db");
 
-       temp_db_dir.delete();
-       temp_db_dir.mkdir();
+		temp_db_dir.delete();
+		temp_db_dir.mkdir();
 
-       fireEvent("Entpacke Archiv");
+		fireEvent("Entpacke Archiv");
 
-       UnZip.unzip(temp_db_dir, source_file_name);
+		UnZip.unzip(temp_db_dir, source_file_name);
 
-       trans_temp = openTempDatabase();
+		trans_temp = openTempDatabase();
 
-       trans_target = root.getDBConnection().getNewTransaction();
+		trans_target = root.getDBConnection().getNewTransaction();
 
-       fireEvent("Lösche existierende Datenbank");
-        // alle bisherigen Tabellen löschen
-       DBManager db_manager = root.getDBManager();
+		fireEvent("Lösche existierende Datenbank");
+		// alle bisherigen Tabellen löschen
+		DBManager db_manager = root.getDBManager();
 
-       root.getBindtypeManager().setTransaction(trans_target);
+		root.getBindtypeManager().setTransaction(trans_target);
 
-       Vector<DBStrukt> tables = root.getBindtypeManager().getRegisteredTables();
+		Vector<DBStrukt> tables = root.getBindtypeManager()
+				.getRegisteredTables();
 
-       int count = tables.size()*2-1;
+		int count = tables.size() * 2 - 1;
 
-        if( listener != null )
-           listener.setOverallCounter(count);
+		if (listener != null)
+			listener.setOverallCounter(count);
 
-       // konrolliere, ob das auch nur annähernd die richtige Datenbank sein kann
-       DatabaseManager manager_temp = new DatabaseManager(trans_temp);
+		// konrolliere, ob das auch nur annähernd die richtige Datenbank sein
+		// kann
+		DatabaseManager manager_temp = new DatabaseManager(trans_temp);
 
-       Collection<String> source_tables = manager_temp.getTables();
+		Collection<String> source_tables = manager_temp.getTables();
 
-       for( DBStrukt table : tables )
-       {
-           boolean found = false;
+		for (DBStrukt table : tables) {
+			boolean found = false;
 
-           for( String source_table : source_tables )
-           {
-               manager_temp.register(table);
-               
-               if( table.getName().equals(source_table) )
-               {
-                   found = true;
-                   break;
-               }
-           }
+			for (String source_table : source_tables) {
+				manager_temp.register(table);
 
-           if( !found )
-           {
-               throw new CannotOpenTempDatabase("Tabelle " + table.getName() + " konnte in Quelldatenbank nicht gefunden werden. " +
-                       "Import abgebrochen, keine Daten wurden importiert, oder gelöscht");
-           }
-       }
+				if (table.getName().equals(source_table)) {
+					found = true;
+					break;
+				}
+			}
 
-       count = 0;
+			if (!found) {
+				throw new CannotOpenTempDatabase(
+						"Tabelle "
+								+ table.getName()
+								+ " konnte in Quelldatenbank nicht gefunden werden. "
+								+ "Import abgebrochen, keine Daten wurden importiert, oder gelöscht");
+			}
+		}
 
-       for( DBStrukt table : tables )
-       {
-           logger.info("Lösche Tabelle " + table.getName() );
+		count = 0;
 
-           fireEvent("Lösche Tabelle " + table.getName() );
+		for (DBStrukt table : tables) {
+			logger.info("Lösche Tabelle " + table.getName());
 
-           if( db_manager.tableExists(table.getName()) )
-           {
-               if (!db_manager.drop_table(table)) {
-                   throw new CannotOpenTempDatabase("Tabelle " + table.getName() + " konnte nicht gelöscht werden!");
-               }
-           }
+			fireEvent("Lösche Tabelle " + table.getName());
 
-           if( listener != null )
-                listener.setCounter(++count);
-       }
+			if (db_manager.tableExists(table.getName())) {
+				if (!db_manager.drop_table(table)) {
+					throw new CannotOpenTempDatabase("Tabelle "
+							+ table.getName()
+							+ " konnte nicht gelöscht werden!");
+				}
+			}
 
-       if( !root.getBindtypeManager().autocreate() )
-            throw new  CannotOpenTempDatabase("Die Datenbank konnte nicht mehr eingerichtet werden" );
+			if (listener != null)
+				listener.setCounter(++count);
+		}
 
-       // wenn das ein alter export ist, dann eventuelle Spalten anlegen, damit wir
-       // das graffel importieren können.
-       if( !manager_temp.autocreate() )
-            throw new  CannotOpenTempDatabase("Die Datenbank konnte nicht geladen werden" );
+		if (!root.getBindtypeManager().autocreate())
+			throw new CannotOpenTempDatabase(
+					"Die Datenbank konnte nicht mehr eingerichtet werden");
 
-       DBTableVersion version = new DBTableVersion();
+		// wenn das ein alter export ist, dann eventuelle Spalten anlegen, damit
+		// wir
+		// das graffel importieren können.
+		if (!manager_temp.autocreate())
+			throw new CannotOpenTempDatabase(
+					"Die Datenbank konnte nicht geladen werden");
 
-       for( DBStrukt table : tables )
-       {
-           if( table.getName().equals(version.getName()))
-            continue;
+		DBTableVersion version = new DBTableVersion();
 
-           logger.info("Importiere Tabelle " + table.getName() );
+		for (DBStrukt table : tables) {
+			if (table.getName().equals(version.getName()))
+				continue;
 
-           fireEvent("Importiere Tabelle " + table.getName() );
+			logger.info("Importiere Tabelle " + table.getName());
 
-           Vector<DBStrukt> imp_table = trans_temp.fetchTable(table);
+			fireEvent("Importiere Tabelle " + table.getName());
 
-           String imp_format = "Importiere Tabelle %s (%d von %d)";
+			final List<DBStrukt> imp_table = trans_temp.fetchTable(table);
 
-           fireEvent(String.format(imp_format,table.getName(),0,imp_table.size()));
+			final String imp_format = "Importiere Tabelle %s (%d von %d)";
 
-           int row_counter = 0;
+			fireEvent(String.format(imp_format, table.getName(), 0,
+					imp_table.size()));
 
-           for( DBStrukt it : imp_table )
-           {
-               trans_target.insertValues(it);               
+			int row_counter = 0;
 
-               row_counter++;
+			for (DBStrukt it : imp_table) {
+				trans_target.insertValues(it);
 
-               if( row_counter % 100 == 0 )
-               {
-                   if( row_counter % 1000 == 0 )
-                   {
-                    // commits sind relativ teuer, daher nur alle 1000 mal
-                    trans_target.commit();
-                   }
+				row_counter++;
 
-                   fireEvent(String.format(imp_format,table.getName(),row_counter,imp_table.size()));
-               }
-           }
+				if (row_counter % 100 == 0) {
+					if (row_counter % 1000 == 0) {
+						// commits sind relativ teuer, daher nur alle 1000 mal
+						trans_target.commit();
+					}
 
-           trans_target.commit();
+					fireEvent(String.format(imp_format, table.getName(),
+							row_counter, imp_table.size()));
+				}
+			}
 
-           if( listener != null )
-                listener.setCounter(++count);
-       }
-    }
+			trans_target.commit();
 
-    private Transaction openTempDatabase() throws IOException, CannotOpenTempDatabase, ClassNotFoundException, SQLException, MissingConnectionParamException, UnSupportedDatabaseException
-    {        
-        if( !root.getBindtypeManager().is_dbms_driver_loaded(SupportedDBMSTypes.DB_JAVADB) )
-            throw new CannotOpenTempDatabase("Missing Derby DB Driver, which is required for exporting databases!");
+			if (listener != null)
+				listener.setCounter(++count);
+		}
+	}
 
-        ConnectionDefinition connparams = new ConnectionDefinition(
-               "",
-               0,
-               "",
-               "",
-               temp_db_dir.getAbsolutePath(),
-               SupportedDBMSTypes.DB_JAVADB
-               );
+	private Transaction openTempDatabase() throws IOException,
+			CannotOpenTempDatabase, ClassNotFoundException, SQLException,
+			MissingConnectionParamException, UnSupportedDatabaseException {
+		if (!root.getBindtypeManager().is_dbms_driver_loaded(
+				SupportedDBMSTypes.DB_JAVADB))
+			throw new CannotOpenTempDatabase(
+					"Missing Derby DB Driver, which is required for exporting databases!");
 
-        Transaction t = new DerbyTransaction(connparams);
+		ConnectionDefinition connparams = new ConnectionDefinition("", 0, "",
+				"", temp_db_dir.getAbsolutePath(), SupportedDBMSTypes.DB_JAVADB);
 
-        return t;
-    }
+		Transaction t = new DerbyTransaction(connparams);
 
-    /**
-     * clean temporary stuff up
-     * @return true on success
-     */
-    boolean close()
-    {
-        try {
+		return t;
+	}
 
-            if( trans_temp != null )
-                trans_temp.close();
+	/**
+	 * clean temporary stuff up
+	 * 
+	 * @return true on success
+	 */
+	boolean close() {
+		try {
 
-            trans_temp = null;
+			if (trans_temp != null)
+				trans_temp.close();
 
-            root.getDBConnection().closeTransaction(trans_target);
-            trans_target = null;
+			trans_temp = null;
 
-        } catch( SQLException ex ) {
-            logger.error(StringUtils.exceptionToString(ex));
-            return false;
-        }
+			root.getDBConnection().closeTransaction(trans_target);
+			trans_target = null;
 
-        if( temp_db_dir != null )
-        {
-            if (temp_db_dir.exists())
-            {
-                logger.info("removing directory " + temp_db_dir);
-                if (!DeleteDir.deleteDirectory(temp_db_dir)) {
-                    logger.error("couldn't remove temporary Directory: " + temp_db_dir);
-                    return false;
-                }
-            }
-            temp_db_dir = null;
-        }
+		} catch (SQLException ex) {
+			logger.error(StringUtils.exceptionToString(ex));
+			return false;
+		}
 
-        root.getBindtypeManager().setTransaction(null);
+		if (temp_db_dir != null) {
+			if (temp_db_dir.exists()) {
+				logger.info("removing directory " + temp_db_dir);
+				if (!DeleteDir.deleteDirectory(temp_db_dir)) {
+					logger.error("couldn't remove temporary Directory: "
+							+ temp_db_dir);
+					return false;
+				}
+			}
+			temp_db_dir = null;
+		}
 
-        return true;
-    }
+		root.getBindtypeManager().setTransaction(null);
+
+		return true;
+	}
 }
