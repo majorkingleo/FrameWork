@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -72,16 +71,15 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			return (new Long(rs.getLong(index)));
 
 		case DB_TYPE_STRING:
-
 			result = rs.getString(index);
-			return (new String(result == null ? "" : result.trim()));
+			return (result == null ? "" : result.trim());
 
 		case DB_TYPE_SHORT:
 			return (new Short(rs.getShort(index)));
 
 		case DB_TYPE_BOOLEAN:
 		case DB_TYPE_BIT:
-			return (new Boolean(rs.getBoolean(index)));
+			return (rs.getBoolean(index));
 
 		case DB_TYPE_DATE: // FT
 		case DB_TYPE_TIME: // FT
@@ -168,7 +166,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		long fetchStartTime = System.currentTimeMillis();
 		PreparedStatement s;
 
-		Vector<HashMap<String, Object>> wholeOutput = new Vector<HashMap<String, Object>>();
+		List<HashMap<String, Object>> wholeOutput = new ArrayList<HashMap<String, Object>>();
 		HashMap<String, ColumnAttribute> typelist = new HashMap<String, ColumnAttribute>();
 		HashMap<String, Object> wholeRow = null;
 
@@ -302,19 +300,19 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			if (index == 0) {
 				while (iter.hasNext()) {
 					String currkey = iter.next();
-					str.append(currkey + "\n");
+					str.append(currkey).append("\n");
 				}
 			}
 			str.append("\n");
 			iter = keys.iterator();
 			while (iter.hasNext()) {
 				String currkey = iter.next();
-				str.append(row.get(currkey) + "\t");
+				str.append(row.get(currkey)).append("\t");
 
 			}
 
 		}
-		str.append("\n\n(" + index + ") READY\n");
+		str.append("\n\n(").append(index).append(") READY\n");
 		return str.toString();
 	}
 
@@ -339,7 +337,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 		while (iter.hasNext()) {
 			String currkey = iter.next();
-			str.append(currkey + "\n");
+			str.append(currkey).append("\n");
 		}
 
 		str.append("\n");
