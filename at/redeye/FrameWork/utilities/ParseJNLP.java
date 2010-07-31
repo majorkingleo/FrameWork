@@ -5,7 +5,6 @@
 
 package at.redeye.FrameWork.utilities;
 
-import at.redeye.FrameWork.utilities.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
