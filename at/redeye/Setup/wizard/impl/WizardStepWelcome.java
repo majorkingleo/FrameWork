@@ -59,8 +59,8 @@ public class WizardStepWelcome extends WizardBaseWindow {
     public void onInit() {
 
         setGuestContent();
-        super.toFront();
         super.setVisible(true);
+        super.setAlwaysOnTop(true);
     }
 
     @Override
