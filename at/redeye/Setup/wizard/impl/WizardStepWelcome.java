@@ -15,9 +15,8 @@ import at.redeye.FrameWork.base.wizards.impl.WizardBaseWindow;
  */
 public class WizardStepWelcome extends WizardBaseWindow {
 
-    
-	private static final long serialVersionUID = 1L;
-	private WizardPanelWelcome welcome;
+    private static final long serialVersionUID = 1L;
+    private WizardPanelWelcome welcome;
     private Wizard parentWizard = null;
 
     public WizardStepWelcome(Root root, Wizard parent) {
@@ -60,6 +59,7 @@ public class WizardStepWelcome extends WizardBaseWindow {
     public void onInit() {
 
         setGuestContent();
+        super.toFront();
         super.setVisible(true);
     }
 
