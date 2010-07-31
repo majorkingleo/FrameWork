@@ -6,7 +6,8 @@ package at.redeye.FrameWork.utilities;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -70,8 +71,9 @@ public class StringUtils {
 		return false;
 	}
 
-	public static Vector<String> split_str(StringBuilder s, String c) {
-		Vector<String> res = new Vector<String>();
+	public static List<String> split_str(StringBuilder s, String c) {
+
+		List<String> res = new ArrayList<String>();
 
 		int start = 0;
 		do {
@@ -180,8 +182,6 @@ public class StringUtils {
 							str.append(new String(in, 0, walker + index + 1));
 							str.append("\n");
 
-							// mob hier stand 2 aber damit verwerfen wir das
-							// nächste Zeichen. auch nicht gut
 							walker += 1; // jump over break sign
 
 							// spaces überspringen
@@ -201,11 +201,8 @@ public class StringUtils {
 							str.append(new String(in, 0, walker - index + 1));
 							str.append("\n");
 
-							// mob hier stand 2 aber damit verwerfen wir das
-							// nächste Zeichen. auch nicht gut
 							walker += 1; // jump over break sign
 
-							// spaces überspringen
 							for (int i = 0; i < mySpaceSigns.length; i++) {
 								if (in[walker + 1] == mySpaceSigns[i]) {
 									walker++;
