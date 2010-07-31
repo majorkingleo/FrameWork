@@ -33,77 +33,65 @@ public class DBConnection {
 		// nix
 	}
 
-	public DBConnection(ConnectionDefinition definition) {
+	public DBConnection(ConnectionDefinition definition)
+			throws ClassNotFoundException, SQLException,
+			MissingConnectionParamException, UnSupportedDatabaseException {
 		open(definition);
 	}
 
-	public boolean open(ConnectionDefinition definition) {
-		try {
-			if (!close()) {
-				return false;
-			}
-			this.definition = definition;
+	public boolean open(ConnectionDefinition definition)
+			throws ClassNotFoundException, SQLException,
+			MissingConnectionParamException, UnSupportedDatabaseException {
 
-			Transaction trans;
-            boolean is_new_transaction = true;
-
-			switch (definition.getDBMSType()) {
-			case DB_MSSQL:
-				trans = new MSSQLTransaction(definition);
-				break;
-			case DB_MYSQL:
-				trans = new MySQLTransaction(definition);
-				break;
-			case DB_JAVADB:
-				trans = new DerbyTransaction(definition);
-				break;
-			case DB_ORACLE:
-				trans = new OracleTransaction(definition);
-				break;
-            case DB_SQLITE:
-                
-                // Irgendwie funktioniert das nicht gscheit mit
-                // SQLite. Deswegen geben wir nun immer nur eine 
-                // Transaktion zurück.
-                // Alle müssen die selbe verwenden.
-                
-                if( transactions.size() > 0 )
-                {
-                    trans = transactions.firstElement();
-                    is_new_transaction = false;
-                }
-                else
-                {                
-                    trans = new SqLiteTransaction(definition);
-                }
-				break;
-			default:
-				Logger.getLogger(DBConnection.class.getName()).log(
-						Level.SEVERE, "Unsupported DBMS!");
-				return false;
-			}
-
-			if (!trans.isOpen())
-				return false;
-
-            if( is_new_transaction )
-                transactions.add(trans);
-
-			return true;
-		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE,
-					null, ex);
-		} catch (UnSupportedDatabaseException ex) {
-			Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE,
-					null, ex);
-		} catch (SQLException ex) {
-			Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE,
-					null, ex);
-		} catch (MissingConnectionParamException ex) {
-			Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE,
-					null, ex);
+		if (!close()) {
+			return false;
 		}
-		return false;
+		this.definition = definition;
+
+		Transaction trans;
+		boolean is_new_transaction = true;
+
+		switch (definition.getDBMSType()) {
+		case DB_MSSQL:
+			trans = new MSSQLTransaction(definition);
+			break;
+		case DB_MYSQL:
+			trans = new MySQLTransaction(definition);
+			break;
+		case DB_JAVADB:
+			trans = new DerbyTransaction(definition);
+			break;
+		case DB_ORACLE:
+			trans = new OracleTransaction(definition);
+			break;
+		case DB_SQLITE:
+
+			// Irgendwie funktioniert das nicht gscheit mit
+			// SQLite. Deswegen geben wir nun immer nur eine
+			// Transaktion zurück.
+			// Alle müssen die selbe verwenden.
+
+			if (transactions.size() > 0) {
+				trans = transactions.firstElement();
+				is_new_transaction = false;
+			} else {
+				trans = new SqLiteTransaction(definition);
+			}
+			break;
+		default:
+			Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE,
+					"Unsupported DBMS!");
+			return false;
+		}
+
+		if (!trans.isOpen())
+			return false;
+
+		if (is_new_transaction)
+			transactions.add(trans);
+
+		return true;
+
 	}
 
 	public boolean close() {
@@ -138,11 +126,11 @@ public class DBConnection {
 		return null;
 	}
 
-	public Transaction getNewTransaction() {        
-        
+	public Transaction getNewTransaction() {
+
 		try {
 
-            boolean is_new_transaction = true;
+			boolean is_new_transaction = true;
 			Transaction trans;
 
 			switch (definition.getDBMSType()) {
@@ -158,21 +146,18 @@ public class DBConnection {
 			case DB_ORACLE:
 				trans = new OracleTransaction(definition);
 				break;
-            case DB_SQLITE:    
-                // Irgendwie funktioniert das nicht gscheit mit
-                // SQLite. Deswegen geben wir nun immer nur eine 
-                // Transaktion zurück.
-                // Alle müssen die selbe verwenden.
-                
-                if( transactions.size() > 0 )
-                {
-                    trans = transactions.firstElement();
-                    is_new_transaction = false;
-                }
-                else
-                {                                
-                    trans = new SqLiteTransaction(definition);
-                }
+			case DB_SQLITE:
+				// Irgendwie funktioniert das nicht gscheit mit
+				// SQLite. Deswegen geben wir nun immer nur eine
+				// Transaktion zurück.
+				// Alle müssen die selbe verwenden.
+
+				if (transactions.size() > 0) {
+					trans = transactions.firstElement();
+					is_new_transaction = false;
+				} else {
+					trans = new SqLiteTransaction(definition);
+				}
 				break;
 			default:
 				Logger.getLogger(DBConnection.class.getName()).log(
@@ -183,11 +168,11 @@ public class DBConnection {
 			if (!trans.isOpen()) {
 				return null;
 			}
-            Logger.getLogger(DBConnection.class.getName()).log(
-						Level.INFO, "Transaction Opened: " + trans.hashCode());
-            
-            if( is_new_transaction )
-                transactions.add(trans);
+			Logger.getLogger(DBConnection.class.getName()).log(Level.INFO,
+					"Transaction Opened: " + trans.hashCode());
+
+			if (is_new_transaction)
+				transactions.add(trans);
 
 			return trans;
 
@@ -214,8 +199,8 @@ public class DBConnection {
 
 		try {
 
-                    	if (trans.isOpen())
-                            trans.close();
+			if (trans.isOpen())
+				trans.close();
 
 			if (trans.isOpen())
 				return false;
@@ -227,9 +212,9 @@ public class DBConnection {
 		}
 
 		transactions.remove(trans);
-        
-        Logger.getLogger(DBConnection.class.getName()).log(
-						Level.INFO, "Transaction Closed: " + trans.hashCode());
+
+		Logger.getLogger(DBConnection.class.getName()).log(Level.INFO,
+				"Transaction Closed: " + trans.hashCode());
 
 		return true;
 	}
