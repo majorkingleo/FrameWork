@@ -5,6 +5,11 @@
 
 package at.redeye.FrameWork.base;
 
+import java.sql.SQLException;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
@@ -12,331 +17,304 @@ import at.redeye.FrameWork.base.dbmanager.impl.DatabaseManager;
 import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
+import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
-import java.util.Vector;
-import org.apache.log4j.Logger;
 
 /**
- *
+ * 
  * @author martin
  */
 public class LocalRoot extends Root {
 
-    protected LocalSetup setup;
-    protected DBConnection db_connection;    
-    protected DBPb userEntry=null;
-    protected DBManager dbmanager=null;
-    protected Vector<BaseDialogBase> dialogs = new Vector<BaseDialogBase>();
-    protected boolean appExitAllowed = true;
-    private static Logger logger = Logger.getLogger(LocalRoot.class);
-    EncryptedDBPasswd enc;
-    DelayedLoader loader_encryption;
-    DelayedProxyLoader loader_proxy;
-    AutoProxyHandler proxy_handler;
+	protected LocalSetup setup;
+	protected DBConnection db_connection;
+	protected DBPb userEntry = null;
+	protected DBManager dbmanager = null;
+	protected Vector<BaseDialogBase> dialogs = new Vector<BaseDialogBase>();
+	protected boolean appExitAllowed = true;
+	private static Logger logger = Logger.getLogger(LocalRoot.class);
+	EncryptedDBPasswd enc;
+	DelayedLoader loader_encryption;
+	DelayedProxyLoader loader_proxy;
+	AutoProxyHandler proxy_handler;
 
-    public class DelayedLoader extends Thread
-    {
-        @Override
-        public void run()
-        {
-            enc = new EncryptedDBPasswd(getAppName());
-        }
-    }
+	public class DelayedLoader extends Thread {
+		@Override
+		public void run() {
+			enc = new EncryptedDBPasswd(getAppName());
+		}
+	}
 
-    public class DelayedProxyLoader extends Thread
-    {
-        Root root;
+	public class DelayedProxyLoader extends Thread {
+		Root root;
 
-        DelayedProxyLoader(Root root)
-        {
-            this.root = root;
-        }
+		DelayedProxyLoader(Root root) {
+			this.root = root;
+		}
 
-        @Override
-        public void run()
-        {
-            proxy_handler = new AutoProxyHandler(root);
-        }
-    }
+		@Override
+		public void run() {
+			proxy_handler = new AutoProxyHandler(root);
+		}
+	}
 
-    public LocalRoot( String app_name )
-    {
-        super(app_name);
+	public LocalRoot(String app_name) {
+		super(app_name);
 
-        init();
-    }
+		init();
+	}
 
-    public LocalRoot(String app_name, String title) {
-        super(app_name, title);
+	public LocalRoot(String app_name, String title) {
+		super(app_name, title);
 
-        init();
-    }
+		init();
+	}
 
-    private void init()
-    {
-        loader_encryption = new DelayedLoader();
-        loader_encryption.start();
+	private void init() {
+		loader_encryption = new DelayedLoader();
+		loader_encryption.start();
 
-        setup = new LocalSetup( this, app_name );
+		setup = new LocalSetup(this, app_name);
 
-        loader_proxy = new DelayedProxyLoader(this);
-        loader_proxy.start();
+		loader_proxy = new DelayedProxyLoader(this);
+		loader_proxy.start();
 
-        dbmanager = new DatabaseManager();
-        
-    }
+		dbmanager = new DatabaseManager();
 
-    @Override
-    public Setup getSetup() {
-        return setup;
-    }
+	}
 
-    @Override
-    public boolean saveSetup() {
-        if( setup.saveProps() )
-            return setup.saveGlobalProps();
-        
-        return false;
-    }      
+	@Override
+	public Setup getSetup() {
+		return setup;
+	}
 
-    @Override
-    public void setDBConnection( DBConnection con )
-    {
-        if( db_connection != null )
-            db_connection.close();
-        
-        db_connection = con;
-    }
-    
-    @Override
-    public DBConnection getDBConnection()
-    {
-        return db_connection;
-    } 
-    
-    public void closeDBConnection()
-    {
-        setDBConnection(null);
-    }
+	@Override
+	public boolean saveSetup() {
+		if (setup.saveProps())
+			return setup.saveGlobalProps();
 
-    private String decryptPasswd( String passwd )
-    {
-        if( passwd == null || passwd.isEmpty() )
-            return passwd;
+		return false;
+	}
 
-        if( (passwd.length() % 4) != 0  )
-            return passwd;
+	@Override
+	public void setDBConnection(DBConnection con) {
+		if (db_connection != null)
+			db_connection.close();
 
-       try {
-            if( enc == null )
-            {
-                long start = System.currentTimeMillis();
+		db_connection = con;
+	}
 
-                loader_encryption.join();
+	@Override
+	public DBConnection getDBConnection() {
+		return db_connection;
+	}
 
-                System.out.println("                       waited for encoder " + (System.currentTimeMillis() - start));
-           }
+	public void closeDBConnection() {
+		setDBConnection(null);
+	}
 
-        } catch ( InterruptedException ex ) {
-            logger.error(StringUtils.exceptionToString(ex));
-        }
+	private String decryptPasswd(String passwd) {
+		if (passwd == null || passwd.isEmpty())
+			return passwd;
 
-        return enc.tryDecryptDBPassword(passwd);
-    }
+		if ((passwd.length() % 4) != 0)
+			return passwd;
 
-    @Override
-    public boolean loadDBConnectionFromSetup()
-    {
-        String database = setup.getLocalConfig(Setup.DBDatabase, "");
-        String host = setup.getLocalConfig(Setup.DBHost, "");
-        String user = setup.getLocalConfig(Setup.DBUser, "");
-        String passwd = setup.getLocalConfig(Setup.DBPasswd, "");
-        SupportedDBMSTypes dbtype = SupportedDBMSTypes.valueOf(setup.getLocalConfig(Setup.DBType, SupportedDBMSTypes.DB_MYSQL.toString()));
-        String instance = setup.getLocalConfig(Setup.DBInstance, "");
-        String sport = setup.getLocalConfig(Setup.DBPort, "0");        
+		try {
+			if (enc == null) {
+				long start = System.currentTimeMillis();
 
-        int port = 0;
-        
-        if( !sport.isEmpty() ) {
-            try {
-                port = Integer.parseInt(sport);
-            } catch( NumberFormatException ex ) {
-                logger.error("invalid database port: "  + sport );
-                return false;
-            }
-        }
-        
-        if( dbtype == SupportedDBMSTypes.DB_ORACLE )
-            database = instance;
-        else if( dbtype == SupportedDBMSTypes.DB_JAVADB )
-        {
-            if( database.startsWith("APPHOME") )
-            {
-                database = database.replace("APPHOME", Setup.getAppConfigDir(app_name) );
-            }
-        }
+				loader_encryption.join();
 
-        sport    = decryptPasswd(sport);
-        instance = decryptPasswd(instance);
-        database = decryptPasswd(database);
-        host     = decryptPasswd(host);
-        user     = decryptPasswd(user);
-        passwd   = decryptPasswd(passwd);
+				System.out.println("                       waited for encoder "
+						+ (System.currentTimeMillis() - start));
+			}
 
-         ConnectionDefinition connparams = new ConnectionDefinition(
-                    host,
-                    port,
-                    user,
-                    passwd,                    
-                    database,
-                    dbtype
-                    );
-         
-         DBConnection con = new DBConnection();
+		} catch (InterruptedException ex) {
+			logger.error(StringUtils.exceptionToString(ex));
+		}
 
-         waitUntilNetworkIsReady();
+		return enc.tryDecryptDBPassword(passwd);
+	}
 
-         if( con.open(connparams) )
-         {
-             setDBConnection( con );                          
-             return true;
-         }
-         
-         return false;
-    }
-    
-    @Override
-    public void informWindowOpened( BaseDialogBase dlg )
-    {
-        dialogs.add(dlg);
-    }
-    
-    @Override
-    public void informWindowClosed( BaseDialogBase dlg )
-    {
-        dialogs.remove(dlg);
-        
-        if( dialogs.size() <= 0 )
-        {
-            if( appExitAllowed )
-            {
-                System.out.println("All Windows closed, normal exit" );
-                appExit();
-            }
-        }
-    }
+	@Override
+	public boolean loadDBConnectionFromSetup() {
 
-    @Override
-    public void closeAllWindowsNoAppExit()
-    {
-        appExitAllowed = false;
-        closeAllWindowsExceptThisOne(null);
-        appExitAllowed = true;
-    }
+		String database = setup.getLocalConfig(Setup.DBDatabase, "");
+		String host = setup.getLocalConfig(Setup.DBHost, "");
+		String user = setup.getLocalConfig(Setup.DBUser, "");
+		String passwd = setup.getLocalConfig(Setup.DBPasswd, "");
+		SupportedDBMSTypes dbtype = SupportedDBMSTypes.valueOf(setup
+				.getLocalConfig(Setup.DBType,
+						SupportedDBMSTypes.DB_MYSQL.toString()));
+		String instance = setup.getLocalConfig(Setup.DBInstance, "");
+		String sport = setup.getLocalConfig(Setup.DBPort, "0");
 
-    @Override
-    public void closeAllWindowsExceptThisOne( BaseDialogBase dlg )
-    {
-        Vector<BaseDialogBase> dlgs = new Vector<BaseDialogBase>();
-        dlgs.addAll(dialogs);
+		int port = 0;
 
-        for( BaseDialogBase frame : dlgs )
-        {
-            if( frame != dlg )
-                frame.closeNoAppExit();
-        }
-    }
-    
-    @Override
-    public void appExit()
-    {
-        saveSetup();
-        closeDBConnection();        
-        System.exit(0);
-    }
-    
-    @Override
-    public void setAktivUser( DBStrukt pb )
-    {
-        if( DBPb.class.isInstance(pb) )
-        {
-            userEntry = (DBPb) pb;
-        }
-    }
-    
-    @Override
-    public String getLogin()
-    {
-        if( userEntry == null )
-            return "";
-        
-        return userEntry.login.toString();
-    }
-    
-    @Override
-    public String getUserName()
-    {
-        if( userEntry == null )
-            return "";
-        
-        return userEntry.getUserName();
-    }
-    
-    @Override
-    public int getUserPermissionLevel()
-    {
-        if( userEntry == null )
-            return UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN;
-        
-        return (Integer)userEntry.plevel.getValue();
-    }
-            
-    @Override
-    public DBBindtypeManager getBindtypeManager()
-    {
-        return (DBBindtypeManager) dbmanager;
-    }        
-    
-    @Override
-    public DBManager getDBManager()
-    {
-        return dbmanager;
-    }        
-    
-    @Override
-    public int getUserId()
-    {
-        if( userEntry == null )
-        {
-            logger.warn("userEntry is null returning default user id 0");
-            return 0;
-        }
-        
-        return (Integer)userEntry.id.getValue();
-    }
+		if (!sport.isEmpty()) {
+			try {
+				port = Integer.parseInt(sport);
+			} catch (NumberFormatException ex) {
+				logger.error("invalid database port: " + sport);
+				return false;
+			}
+		}
 
-    @Override
-    public void noProxyFor(String address)
-    {
-        waitUntilNetworkIsReady();
+		if (dbtype == SupportedDBMSTypes.DB_ORACLE)
+			database = instance;
+		else if (dbtype == SupportedDBMSTypes.DB_JAVADB) {
+			if (database.startsWith("APPHOME")) {
+				database = database.replace("APPHOME",
+						Setup.getAppConfigDir(app_name));
+			}
+		}
 
-        proxy_handler.exludeFromProxy(address);
-    }
+		sport = decryptPasswd(sport);
+		instance = decryptPasswd(instance);
+		database = decryptPasswd(database);
+		host = decryptPasswd(host);
+		user = decryptPasswd(user);
+		passwd = decryptPasswd(passwd);
 
-    @Override
-    public void waitUntilNetworkIsReady()
-    {
-        if( proxy_handler == null && loader_proxy != null )
-        {
-            try {
-                loader_proxy.join();
-            } catch( InterruptedException ex ) {
-                logger.error(StringUtils.exceptionToString(ex));
-            }
-        }
+		ConnectionDefinition connparams = new ConnectionDefinition(host, port,
+				user, passwd, database, dbtype);
 
-        loader_proxy = null;
-    }
+		DBConnection con = new DBConnection();
+
+		waitUntilNetworkIsReady();
+
+		try {
+			if (con.open(connparams)) {
+				setDBConnection(con);
+				return true;
+			}
+		} catch (ClassNotFoundException e) {
+			logger.error(StringUtils.exceptionToString(e));
+		} catch (SQLException e) {
+			logger.error(StringUtils.exceptionToString(e));
+		} catch (MissingConnectionParamException e) {
+			logger.error(StringUtils.exceptionToString(e));
+		} catch (UnSupportedDatabaseException e) {
+			logger.error(StringUtils.exceptionToString(e));
+		}
+
+		return false;
+	}
+
+	@Override
+	public void informWindowOpened(BaseDialogBase dlg) {
+		dialogs.add(dlg);
+	}
+
+	@Override
+	public void informWindowClosed(BaseDialogBase dlg) {
+		dialogs.remove(dlg);
+
+		if (dialogs.size() <= 0) {
+			if (appExitAllowed) {
+				System.out.println("All Windows closed, normal exit");
+				appExit();
+			}
+		}
+	}
+
+	@Override
+	public void closeAllWindowsNoAppExit() {
+		appExitAllowed = false;
+		closeAllWindowsExceptThisOne(null);
+		appExitAllowed = true;
+	}
+
+	@Override
+	public void closeAllWindowsExceptThisOne(BaseDialogBase dlg) {
+		Vector<BaseDialogBase> dlgs = new Vector<BaseDialogBase>();
+		dlgs.addAll(dialogs);
+
+		for (BaseDialogBase frame : dlgs) {
+			if (frame != dlg)
+				frame.closeNoAppExit();
+		}
+	}
+
+	@Override
+	public void appExit() {
+		saveSetup();
+		closeDBConnection();
+		System.exit(0);
+	}
+
+	@Override
+	public void setAktivUser(DBStrukt pb) {
+		if (DBPb.class.isInstance(pb)) {
+			userEntry = (DBPb) pb;
+		}
+	}
+
+	@Override
+	public String getLogin() {
+		if (userEntry == null)
+			return "";
+
+		return userEntry.login.toString();
+	}
+
+	@Override
+	public String getUserName() {
+		if (userEntry == null)
+			return "";
+
+		return userEntry.getUserName();
+	}
+
+	@Override
+	public int getUserPermissionLevel() {
+		if (userEntry == null)
+			return UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN;
+
+		return (Integer) userEntry.plevel.getValue();
+	}
+
+	@Override
+	public DBBindtypeManager getBindtypeManager() {
+		return (DBBindtypeManager) dbmanager;
+	}
+
+	@Override
+	public DBManager getDBManager() {
+		return dbmanager;
+	}
+
+	@Override
+	public int getUserId() {
+		if (userEntry == null) {
+			logger.warn("userEntry is null returning default user id 0");
+			return 0;
+		}
+
+		return (Integer) userEntry.id.getValue();
+	}
+
+	@Override
+	public void noProxyFor(String address) {
+		waitUntilNetworkIsReady();
+
+		proxy_handler.exludeFromProxy(address);
+	}
+
+	@Override
+	public void waitUntilNetworkIsReady() {
+		if (proxy_handler == null && loader_proxy != null) {
+			try {
+				loader_proxy.join();
+			} catch (InterruptedException ex) {
+				logger.error(StringUtils.exceptionToString(ex));
+			}
+		}
+
+		loader_proxy = null;
+	}
 }
