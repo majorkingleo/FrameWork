@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -24,247 +23,243 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
  */
 public abstract class AbstractStmtCreator implements StmtCreatorInterface {
 
-	protected static Logger logger = Logger.getLogger(AbstractStmtCreator.class
-			.getSimpleName());
+    protected static Logger logger = Logger.getLogger(AbstractStmtCreator.class.getSimpleName());
+    protected TypeRegistrationInterface registration;
+    List<String> boundColumns = new ArrayList<String>();
 
-	protected TypeRegistrationInterface registration;
+    public AbstractStmtCreator(TypeRegistrationInterface registration) {
+        this.registration = registration;
+    }
 
-	List<String> boundColumns = new ArrayList<String>();
+    protected String markTableAndColumnNameForUpdate(String table, String column) {
+        return markTableName(table) + "." + markColumnName(column);
+    }
 
-	public AbstractStmtCreator(TypeRegistrationInterface registration) {
-		this.registration = registration;
-	}
+    public String buildStmtForTable(String[] tablenames, String whereStmt,
+            HashMap<String, ColumnAttribute> columnNames) {
 
-	protected String markTableAndColumnNameForUpdate(String table, String column) {
-		return markTableName(table) + "." + markColumnName(column);
-	}
+        // reset columns of recent statement
+        boundColumns.clear();
 
-	public String buildStmtForTable(String[] tablenames, String whereStmt,
-			HashMap<String, ColumnAttribute> columnNames) {
+        StringBuilder str = new StringBuilder();
 
-		// reset columns of recent statement
-		boundColumns.clear();
+        str.append("select ");
+        Set<String> keys = columnNames.keySet();
+        Iterator<String> iter = keys.iterator();
+        while (iter.hasNext()) {
+            str.append(markColumnName(iter.next()));
+            if (iter.hasNext() == true) {
+                str.append(" , ");
+            }
+        }
+        str.append(" from ");
+        for (int index = 0; index < tablenames.length; index++) {
+            str.append(markTableName(tablenames[index]).toUpperCase());
+            if (index < (tablenames.length - 1)) {
+                str.append(" , ");
+            }
+        }
+        if (whereStmt != null && whereStmt.isEmpty() == false) {
+            str.append(" ").append(whereStmt);
+        }
+        logger.trace("simple select");
+        return str.toString();
 
-		StringBuilder str = new StringBuilder();
+    }
 
-		str.append("select ");
-		Set<String> keys = columnNames.keySet();
-		Iterator<String> iter = keys.iterator();
-		while (iter.hasNext()) {
-			str.append(markColumnName(iter.next()));
-			if (iter.hasNext() == true) {
-				str.append(" , ");
-			}
-		}
-		str.append(" from ");
-		for (int index = 0; index < tablenames.length; index++) {
-			str.append(markTableName(tablenames[index]).toUpperCase());
-			if (index < (tablenames.length - 1)) {
-				str.append(" , ");
-			}
-		}
-		if (whereStmt != null && whereStmt.isEmpty() == false) {
-			str.append(" " + whereStmt);
-		}
-		logger.trace("simple select");
-		return str.toString();
+    public String buildStmtForTable(String tablename,
+            HashMap<String, Object> values) throws SQLException,
+            TableBindingNotRegisteredException {
 
-	}
+        // reset columns of recent statement
+        boundColumns.clear();
 
-	public String buildStmtForTable(String tablename,
-			HashMap<String, Object> values) throws SQLException,
-			TableBindingNotRegisteredException {
+        StringBuilder str = new StringBuilder();
+        str.append("select ");
 
-		// reset columns of recent statement
-		boundColumns.clear();
+        HashMap<String, ColumnAttribute> columnNames = registration.getRegisteredTableByString(tablename);
 
-		StringBuilder str = new StringBuilder();
-		str.append("select ");
+        Set<String> keys = columnNames.keySet();
+        if (keys == null) {
+            throw new TableBindingNotRegisteredException("Table " + tablename
+                    + " not found in registration!");
+        }
+        Iterator<String> iter = keys.iterator();
+        while (iter.hasNext()) {
+            str.append(markColumnName(iter.next()));
+            if (iter.hasNext() == true) {
+                str.append(" , ");
+            }
+        }
+        str.append(" from ").append(markTableName(tablename.toUpperCase())).append(" where ");
 
-		HashMap<String, ColumnAttribute> columnNames = registration
-				.getRegisteredTableByString(tablename);
+        iter = keys.iterator();
+        ColumnAttribute attr = null;
+        while (iter.hasNext()) {
+            String key = iter.next();
+            attr = columnNames.get(key);
 
-		Set<String> keys = columnNames.keySet();
-		if (keys == null) {
-			throw new TableBindingNotRegisteredException("Table " + tablename
-					+ " not found in registration!");
-		}
-		Iterator<String> iter = keys.iterator();
-		while (iter.hasNext()) {
-			str.append(markColumnName(iter.next()));
-			if (iter.hasNext() == true) {
-				str.append(" , ");
-			}
-		}
-		str.append(" from " + markTableName(tablename.toUpperCase())
-				+ " where ");
+            if (logger.isTraceEnabled()) {
+                logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+            }
 
-		iter = keys.iterator();
-		ColumnAttribute attr = null;
-		while (iter.hasNext()) {
-			String key = iter.next();
-			attr = columnNames.get(key);
+            if (attr.isPrimaryKey() == true) {
+                boundColumns.add(key);
+            }
+        }
+        if (boundColumns.isEmpty()) {
+            throw new SQLException(
+                    "Select is impossible:\nNo PrimaryKey columns found!");
+        }
 
-			if (logger.isTraceEnabled())
-				logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+        String[] tokens;
+        String currcol;
 
-			if (attr.isPrimaryKey() == true) {
-				boundColumns.add(key);
-			}
-		}
-		if (boundColumns.size() == 0) {
-			throw new SQLException(
-					"Select is impossible:\nNo PrimaryKey columns found!");
-		}
+        for (int index = 0; index < boundColumns.size(); index++) {
+            currcol = boundColumns.get(index);
+            if (currcol.contains(".")) {
+                tokens = currcol.split("\\."); // "." has to be escaped!
+                str.append(markColumnName(tokens[1])).append("= ?");
+            } else {
+                str.append(markColumnName(currcol)).append("= ?");
+            }
 
-		String[] tokens;
-		String currcol;
+        }
+        logger.trace("PK select");
+        return str.toString();
+    }
 
-		for (int index = 0; index < boundColumns.size(); index++) {
-			currcol = boundColumns.get(index);
-			if (currcol.contains(".")) {
-				tokens = currcol.split("\\."); // "." has to be escaped!
-				str.append(markColumnName(tokens[1]) + "= ?");
-			} else {
-				str.append(markColumnName(currcol) + "= ?");
-			}
+    public String buildInsertStmtForTable(String table,
+            HashMap<String, Object> values) {
 
-		}
-		logger.trace("PK select");
-		return str.toString();
-	}
+        // reset columns of recent statement
+        boundColumns.clear();
 
-	public String buildInsertStmtForTable(String table,
-			HashMap<String, Object> values) {
+        StringBuilder str = new StringBuilder();
 
-		// reset columns of recent statement
-		boundColumns.clear();
+        str.append("insert into ");
+        str.append(markTableName(table)).append(" (");
 
-		StringBuilder str = new StringBuilder();
+        Set<String> keys = values.keySet();
+        Iterator<String> iter = keys.iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            str.append(markColumnName(key));
+            boundColumns.add(key);
+            if (iter.hasNext() == true) {
+                str.append(" , ");
+            }
+        }
+        str.append(")");
+        str.append(" values (");
+        iter = keys.iterator();
 
-		str.append("insert into ");
-		str.append(markTableName(table) + " (");
+        while (iter.hasNext()) {
 
-		Set<String> keys = values.keySet();
-		Iterator<String> iter = keys.iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			str.append(markColumnName(key));
-			boundColumns.add(key);
-			if (iter.hasNext() == true) {
-				str.append(" , ");
-			}
-		}
-		str.append(")");
-		str.append(" values (");
-		iter = keys.iterator();
+            iter.next();
+            str.append("?");
 
-		while (iter.hasNext()) {
+            if (iter.hasNext() == true) {
+                str.append(" , ");
+            }
+        }
+        str.append(")");
+        return str.toString();
+    }
 
-			iter.next();
-			str.append("?");
+    public String buildUpdateStmtForTable(String table,
+            HashMap<String, Object> values, String whereStmt)
+            throws SQLException, TableBindingNotRegisteredException {
 
-			if (iter.hasNext() == true) {
-				str.append(" , ");
-			}
-		}
-		str.append(")");
-		return str.toString();
-	}
+        List<String> pkColumns = new ArrayList<String>();
 
-	public String buildUpdateStmtForTable(String table,
-			HashMap<String, Object> values, String whereStmt)
-			throws SQLException, TableBindingNotRegisteredException {
+        // reset columns of recent statement
+        boundColumns.clear();
 
-		Vector<String> pkColumns = new Vector<String>();
+        StringBuilder str = new StringBuilder();
 
-		// reset columns of recent statement
-		boundColumns.clear();
+        str.append("update ");
+        str.append(markTableName(table)).append(" SET ");
 
-		StringBuilder str = new StringBuilder();
+        Set<String> keys = values.keySet();
+        Iterator<String> iter = keys.iterator();
 
-		str.append("update ");
-		str.append(markTableName(table) + " SET ");
+        while (iter.hasNext()) {
+            String key = iter.next();
 
-		Set<String> keys = values.keySet();
-		Iterator<String> iter = keys.iterator();
+            if (logger.isTraceEnabled()) {
+                logger.trace("--> " + key);
+            }
 
-		while (iter.hasNext()) {
-			String key = iter.next();
+            str.append(markTableAndColumnNameForUpdate(table, key));
+            str.append("=?");
+            boundColumns.add(key);
+            if (iter.hasNext() == true) {
+                str.append(" , ");
+            }
+        }
+        if (whereStmt != null && whereStmt.isEmpty() == false) {
+            str.append(" ").append(whereStmt);
+        } else {
 
-			if (logger.isTraceEnabled())
-				logger.trace("--> " + key);
+            if (logger.isTraceEnabled()) {
+                logger.trace("Searching table: " + table);
+            }
 
-			str.append(markTableAndColumnNameForUpdate(table, key));
-			str.append("=?");
-			boundColumns.add(key);
-			if (iter.hasNext() == true) {
-				str.append(" , ");
-			}
-		}
-		if (whereStmt != null && whereStmt.isEmpty() == false) {
-			str.append(" " + whereStmt);
-		} else {
+            HashMap<String, ColumnAttribute> cols = registration.getRegisteredTableByString(table);
 
-			if (logger.isTraceEnabled())
-				logger.trace("Searching table: " + table);
+            keys = cols.keySet();
+            if (keys == null) {
+                throw new TableBindingNotRegisteredException("Table " + table
+                        + " not found in registration!");
+            }
+            iter = keys.iterator();
+            ColumnAttribute attr = null;
+            while (iter.hasNext()) {
+                String key = iter.next();
+                attr = cols.get(key);
 
-			HashMap<String, ColumnAttribute> cols = registration
-					.getRegisteredTableByString(table);
+                if (logger.isTraceEnabled()) {
+                    logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+                }
 
-			keys = cols.keySet();
-			if (keys == null) {
-				throw new TableBindingNotRegisteredException("Table " + table
-						+ " not found in registration!");
-			}
-			iter = keys.iterator();
-			ColumnAttribute attr = null;
-			while (iter.hasNext()) {
-				String key = iter.next();
-				attr = cols.get(key);
+                if (attr.isPrimaryKey() == true) {
+                    pkColumns.add(key);
+                    boundColumns.add(key);
+                }
+            }
+            if (pkColumns.isEmpty()) {
+                throw new SQLException(
+                        "Update impossible:\nNo whereStmt given and no PrimaryKey columns found!");
+            }
+            str.append(" where ");
 
-				if (logger.isTraceEnabled())
-					logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+            for (int index = 0; index < pkColumns.size(); index++) {
 
-				if (attr.isPrimaryKey() == true) {
-					pkColumns.add(key);
-					boundColumns.add(key);
-				}
-			}
-			if (pkColumns.size() == 0) {
-				throw new SQLException(
-						"Update impossible:\nNo whereStmt given and no PrimaryKey columns found!");
-			}
-			str.append(" where ");
+                str.append(markTableName(table)).append(".").append(markColumnName(pkColumns.get(index))).append("=?");
 
-			for (int index = 0; index < pkColumns.size(); index++) {
+                if (index < (pkColumns.size() - 1)) {
+                    str.append(" and ");
+                }
+            }
+        }
+        return str.toString();
+    }
 
-				str.append(markTableName(table) + "."
-						+ markColumnName(pkColumns.get(index)) + "=?");
+    public String toDateString(Date date) {
 
-				if (index < (pkColumns.size() - 1)) {
-					str.append(" and ");
-				}
-			}
-		}
-		return str.toString();
-	}
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+                + StmtExecInterface.SQLIF_STD_TIME_FORMAT);
+        return sdf.format(date);
 
-	public String toDateString(Date date) {
+    }
 
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-						+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
-		return sdf.format(date);
+    public List<String> getCols2Handle() {
+        return boundColumns;
+    }
 
-	}
+    public abstract String markTableName(String tableName);
 
-	public List<String> getCols2Handle() {
-		return boundColumns;
-	}
-
-	public abstract String markTableName(String tableName);
-
-	public abstract String markColumnName(String columnName);
-
+    public abstract String markColumnName(String columnName);
 }

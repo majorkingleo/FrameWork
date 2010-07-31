@@ -344,7 +344,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		iter = keys.iterator();
 		while (iter.hasNext()) {
 			String currkey = iter.next();
-			str.append(rs.get(currkey) + "\t");
+			str.append(rs.get(currkey)).append("\t");
 
 		}
 

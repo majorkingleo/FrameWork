@@ -8,11 +8,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Vector;
 
 import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mario Mattl
@@ -36,13 +37,14 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 
 	}
 
+    @Override
 	public String buildInsertStmtForTable(String table,
 			HashMap<String, Object> values) {
 
 		StringBuilder str = new StringBuilder();
 
 		str.append("insert into ");
-		str.append(markTableName(table) + " (");
+		str.append(markTableName(table)).append(" (");
 
 		Set<String> keys = values.keySet();
 		Iterator<String> iter = keys.iterator();
@@ -83,18 +85,19 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 		return str.toString();
 	}
 
+    @Override
 	public String buildUpdateStmtForTable(String table,
 			HashMap<String, Object> values, String whereStmt)
 			throws SQLException, TableBindingNotRegisteredException {
 
-		Vector<String> pkColumns = new Vector<String>();
+		List<String> pkColumns = new ArrayList<String>();
 
 		// reset columns of recent statement
 		boundColumns.clear();
 		StringBuilder str = new StringBuilder();
 
 		str.append("update ");
-		str.append(markTableName(table) + " SET ");
+		str.append(markTableName(table)).append(" SET ");
 
 		Set<String> keys = values.keySet();
 		Iterator<String> iter = keys.iterator();
@@ -103,7 +106,7 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 
 			String key = iter.next();
 			logger.trace("--> " + key);
-			str.append(markTableName(table) + "." + markColumnName(key));
+			str.append(markTableName(table)).append(".").append(markColumnName(key));
 			boundColumns.add(key);
 			str.append("=?");
 
@@ -112,7 +115,7 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 			}
 		}
 		if (whereStmt != null && whereStmt.isEmpty() == false) {
-			str.append(" " + whereStmt);
+			str.append(" ").append(whereStmt);
 		} else {
 
 			logger.trace("Searching table: " + table);
@@ -136,15 +139,14 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 					boundColumns.add(key);
 				}
 			}
-			if (pkColumns.size() == 0) {
+			if (pkColumns.isEmpty()) {
 				throw new SQLException(
 						"Update impossible:\nNo whereStmt given and no PrimaryKey columns found!");
 			}
 			str.append(" where ");
 
 			for (int index = 0; index < pkColumns.size(); index++) {
-				str.append(markTableName(table) + "."
-						+ markColumnName(pkColumns.get(index)) + "=?");
+				str.append(markTableName(table)).append(".").append(markColumnName(pkColumns.get(index))).append("=?");
 
 				if (index < (pkColumns.size() - 1)) {
 					str.append(" and ");

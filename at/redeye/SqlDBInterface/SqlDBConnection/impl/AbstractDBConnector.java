@@ -17,7 +17,7 @@ public abstract class AbstractDBConnector implements
 
 	private ConnectionDefinition conndef_;
 
-	private static Logger logger = Logger
+	private static final Logger logger = Logger
 			.getLogger(AbstractDBConnector.class.getSimpleName());
 
 	public AbstractDBConnector(ConnectionDefinition conn) {
@@ -49,9 +49,8 @@ public abstract class AbstractDBConnector implements
 			str.append("jdbc:jtds:sqlserver://");
 			str.append((conndef_.getHostname().isEmpty() ? "localhost"
 					: conndef_.getHostname()));
-			str.append(":"
-					+ (conndef_.getPort() == 0 ? 1433 : conndef_.getPort()));
-			str.append("/" + conndef_.getInstance());
+			str.append(":").append(conndef_.getPort() == 0 ? 1433 : conndef_.getPort());
+			str.append("/").append(conndef_.getInstance());
 			break;
 
 		case DB_MYSQL:
@@ -67,9 +66,8 @@ public abstract class AbstractDBConnector implements
 			str.append("jdbc:mysql://");
 			str.append((conndef_.getHostname().isEmpty() ? "localhost"
 					: conndef_.getHostname()));
-			str.append(":"
-					+ (conndef_.getPort() == 0 ? 3306 : conndef_.getPort()));
-			str.append("/" + conndef_.getInstance());
+			str.append(":").append(conndef_.getPort() == 0 ? 3306 : conndef_.getPort());
+			str.append("/").append(conndef_.getInstance());
 			str.append("?zeroDateTimeBehavior=convertToNull");
 			break;
 
@@ -92,9 +90,8 @@ public abstract class AbstractDBConnector implements
 			str.append("jdbc:oracle:thin:@//");
 			str.append((conndef_.getHostname().isEmpty() ? "localhost"
 					: conndef_.getHostname()));
-			str.append(":"
-					+ (conndef_.getPort() == 0 ? 1521 : conndef_.getPort()));
-			str.append("/" + conndef_.getInstance());
+			str.append(":").append(conndef_.getPort() == 0 ? 1521 : conndef_.getPort());
+			str.append("/").append(conndef_.getInstance());
 			break;
 
 		case DB_SQLITE:
