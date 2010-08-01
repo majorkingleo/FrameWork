@@ -8,20 +8,25 @@ package at.redeye.FrameWork.base.desktoplauncher;
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
+import at.redeye.FrameWork.utilities.CopyFile;
+import at.redeye.FrameWork.utilities.DeleteDir;
 import at.redeye.FrameWork.utilities.DownloadUrl;
 import at.redeye.FrameWork.utilities.MD5Calc;
 import at.redeye.FrameWork.utilities.ParseJNLP;
 import at.redeye.FrameWork.utilities.StringUtils;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.derby.iapi.util.StringUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -34,6 +39,9 @@ public class DesktopLauncher2 extends DesktopLauncher
     String jar_dir;
     String jar_lib_dir;
     ParseJNLP parser;
+    String jar_update_dir;
+    String jar_update_lib_dir;
+    String jar_update_dir_real;
 
     public DesktopLauncher2(Root root)
     {
@@ -43,6 +51,10 @@ public class DesktopLauncher2 extends DesktopLauncher
 
         jar_dir = Setup.getAppConfigDir(getAppName()) + "/jar";
         jar_lib_dir = jar_dir + "/lib";
+
+        jar_update_dir = Setup.getAppConfigDir(getAppName()) + "/jar_update.tmp";
+        jar_update_lib_dir = Setup.getAppConfigDir(getAppName()) + "/jar_update.tmp/lib";
+        jar_update_dir_real = Setup.getAppConfigDir(getAppName()) + "/jar_update";
     }
 
     private HashMap<String,String> getMd5Sums( String content )
@@ -132,6 +144,28 @@ public class DesktopLauncher2 extends DesktopLauncher
 
     public boolean download_jars() throws ParserConfigurationException, IOException, SAXException
     {
+        try {
+            if( !download_jars_int() )
+            {
+              delUpdateDir();
+              return false;
+            }
+        } catch( ParserConfigurationException ex ) {
+            delUpdateDir();
+            throw ex;
+        }  catch( IOException ex ) {
+            delUpdateDir();
+            throw ex;
+        }  catch( SAXException ex ) {
+            delUpdateDir();
+            throw ex;
+        }
+
+        return true;
+    }
+
+    public boolean download_jars_int() throws ParserConfigurationException, IOException, SAXException
+    {
         parser = new ParseJNLP( new File(getJnlpName()) );
 
         HashMap<String,String> online = getMd5SumsOline(parser);
@@ -140,7 +174,11 @@ public class DesktopLauncher2 extends DesktopLauncher
 
         String main_jar = parser.getMainJar();
 
+
         List<String> files = new ArrayList<String>();
+        List<String> files_to_copy = new ArrayList<String>();
+
+        boolean something_changed = false;
 
         for( String jar : parser.getJars() )
         {
@@ -154,6 +192,10 @@ public class DesktopLauncher2 extends DesktopLauncher
                 current.get(jar) == null ||
                 !current.get(jar).equals(online.get(jar)) )
             {
+                if (!something_changed && !manageUpdateDir()) {
+                    return false;
+                }
+
                 if( current == null )
                     logger.info("jar file " + jar + " does not exist");
                 else
@@ -164,11 +206,11 @@ public class DesktopLauncher2 extends DesktopLauncher
 
                 if( main_jar.equals(jar) )
                 {
-                    target = jar_dir + "/" + jar;
+                    target = jar_update_dir + "/" + jar;
                 }
                 else
                 {
-                    target = jar_lib_dir + "/" + jar;
+                    target = jar_update_lib_dir + "/" + jar;
                 }
 
                 files.add(target);
@@ -178,8 +220,43 @@ public class DesktopLauncher2 extends DesktopLauncher
                     logger.error("downloading " + jar + " failed");
                     return false;
                 }
+
+                something_changed = true;
+            } else {
+                files_to_copy.add(jar);
             }
         }
+
+        if( !something_changed )
+        {
+            logger.info("Jar files are up to date");
+            return true;
+        }
+
+        for( String jar : files_to_copy )
+        {
+            System.out.println("copy file: " + jar );
+
+            String target;
+            String source;
+
+            if (main_jar.equals(jar)) {
+                target = jar_update_dir + "/" + jar;
+                source = jar_dir + "/" + jar;
+            } else {
+                target = jar_update_lib_dir + "/" + jar;
+                source = jar_lib_dir + "/" + jar;
+            }
+
+            if( !CopyFile.copy(new File( source ), new File( target + ".part") ) )
+            {
+                logger.error("cannot copy file  from " + source + " to " + target );
+                return false;
+            }
+
+            files.add(target);
+        }
+
 
         // now rename all files
         for( String jar_file : files )
@@ -211,6 +288,30 @@ public class DesktopLauncher2 extends DesktopLauncher
                 file_old.delete();
         }
 
+        File jfupdate_dir = new File( jar_update_dir );
+
+        if( !jfupdate_dir.renameTo(new File(jar_update_dir_real)) )
+        {
+            return false;
+        }
+
+        if( !Setup.is_win_system() )
+        {
+            if( !updateDirs() )
+            {
+                logger.error("updateDirs failed");
+                return false;
+            }
+
+        } else {
+
+            if( !extractStarter() )
+            {
+                logger.error("extractStarter failed");
+                return false;
+            }
+        }
+        
         logger.info("Jar files are now up to date again");
 
         return true;
@@ -270,13 +371,14 @@ public class DesktopLauncher2 extends DesktopLauncher
     }
 
     private String getCommand()
-    {
-        String java = "java";
-
+    {        
         if( Setup.is_win_system() )
-            java = "javaw"; // to avoid opening the windows console window
+        {
+            return "javaw -jar '" + Setup.getAppConfigDir(app_name) + "/RedeyeStarter.jar" + "' " +
+                 " '" + getMainJarPath() + "' '" + getJnlpName() + "'";
+        }
 
-        return java + " -jar '" + getMainJarPath() + "' '" + getJnlpName() + "'";
+        return "java -jar '" + getMainJarPath() + "' '" + getJnlpName() + "'";
     }
 
     @Override
@@ -339,5 +441,138 @@ public class DesktopLauncher2 extends DesktopLauncher
            return false;
 
        return true;
+    }
+
+    private boolean manageUpdateDir()
+    {
+        File udir = new File( jar_update_dir );
+
+        if( udir.exists() )
+        {
+            if( !DeleteDir.deleteDirectory(udir) )
+            {
+                logger.error("failed deleting directory: " + udir);
+                return false;
+            }
+        }
+
+         File ulibdir = new File( jar_update_lib_dir );
+
+         if( !ulibdir.exists() )
+         {
+             if( !ulibdir.mkdirs() )
+             {
+                 logger.error("cannot create directory " + ulibdir);
+                 return false;
+             }
+         }
+
+        return true;
+    }
+
+    private boolean updateDirs()
+    {
+        File fjar_update_dir = new File( Setup.getAppConfigDir(getAppName()) + "/jar_update");
+        File fjar_old_dir = new File(  Setup.getAppConfigDir(getAppName()) + "/jar_old" );
+        File fjar_dir = new File( jar_dir );
+
+                // delete old directory
+        if( fjar_old_dir.exists() )
+        {
+            logger.info( "deleting old directory" );
+
+            if( !DeleteDir.deleteDirectory(fjar_old_dir) )
+            {
+                logger.error("deleting directory " + fjar_old_dir + " failed");
+                return false;
+            }
+        }
+
+        // move new directory to old one
+        logger.info( "rename " + fjar_dir + " to " + fjar_old_dir );
+
+        if( !fjar_dir.renameTo(fjar_old_dir)  )
+        {
+            logger.error( "cannot rename " + fjar_dir + " to " + fjar_old_dir + " updated aborted");
+            return false;
+        }
+
+        // move update dir directory normal one
+        logger.info( "rename " + fjar_update_dir + " to " + fjar_dir);
+
+        if( !fjar_update_dir.renameTo(fjar_dir)  )
+        {
+            logger.error( "cannot rename " + fjar_update_dir + " to " + fjar_dir);
+
+            // rename old dir back to normal one
+            if (!fjar_old_dir.renameTo(fjar_dir)) {
+                logger.error("cannot rename " + fjar_old_dir + " to " + fjar_dir);
+                return false;
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean extractStarter()
+    {
+        InputStream stream = getClass().getResourceAsStream( "/at/redeye/FrameWork/ext_resources/RedeyeStarter.zip" );
+
+        if( stream == null )
+        {
+            logger.error("Cannot load RedeyeStarter ");
+            return false;
+        }
+
+        String export_path_name = Setup.getAppConfigFile(app_name, "RedeyeStarter.jar");
+
+        try {
+
+            OutputStream out = new FileOutputStream(export_path_name);
+
+            BufferedInputStream bis = new BufferedInputStream( stream );
+
+            byte[] buf = new byte[1024*4];
+            int len;
+
+            while( (len = bis.read(buf) ) > 0 )
+            {
+                out.write(buf,0,len);
+            }
+
+            out.close();
+            bis.close();
+            stream.close();
+
+        } catch (Exception ex) {
+
+           logger.error(ex);
+           export_path_name = null;
+        }
+
+
+        return export_path_name != null;
+    }
+
+    @Override
+    public boolean createDesktopIcon()
+    {
+        if( Setup.is_win_system() )
+        {
+            if( !extractStarter() ) {
+                logger.error("extract Starter failed");
+                return false;
+            }
+        }
+
+        return super.createDesktopIcon();
+    }
+
+    private void delUpdateDir()
+    {
+        File fjar_update_dir = new File( Setup.getAppConfigDir(getAppName()) + "/jar_update");
+
+        DeleteDir.deleteDirectory(fjar_update_dir);
     }
 }
