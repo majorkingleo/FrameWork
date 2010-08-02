@@ -39,6 +39,8 @@ public class AutoProxyHandler
 
     Root root;
 
+    ProxySearch proxySearch;
+
 
     public AutoProxyHandler(final Root root)
     {
@@ -46,15 +48,26 @@ public class AutoProxyHandler
         proxy_pass = null;
         this.root = root;
 
-        if( haveProxyVole() )
+        root.addDllExtractorToCache(new ProxyVoleDLL() );
+
+        long start = System.currentTimeMillis();
+
+        System.out.println("X1 : " + (System.currentTimeMillis() - start ));
+
+        if( ( proxySearch = haveProxyVole() ) != null )
         {
             logger.info("proxy vole available");
-            ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
+
+            System.out.println("X11 : " + (System.currentTimeMillis() - start ));
             ProxySelector myProxySelector = proxySearch.getProxySelector();
+
+            System.out.println("XX111 : " + (System.currentTimeMillis() - start ));
             ProxySelector.setDefault(myProxySelector);
         } else {
             logger.info("proxy vole NOT available");
         }
+
+        System.out.println("X2 : " + (System.currentTimeMillis() - start ));
         
         if ( !loadSavedPassword() ) {
             if (detectUserAndPassFromEnv()) {
@@ -63,6 +76,8 @@ public class AutoProxyHandler
                 logger.info("no proxy env detected");
             }
         }
+
+        System.out.println("Saved PAsswords : " + (System.currentTimeMillis() - start ));
 
         Authenticator.setDefault(new Authenticator() {
 
@@ -157,18 +172,23 @@ public class AutoProxyHandler
                 }
             }
         });
+
+        System.out.println("X3 Authentificator : " + (System.currentTimeMillis() - start ));
     }
 
-    public static boolean haveProxyVole()
+    public static ProxySearch haveProxyVole()
     {
         try {
+            long start = System.currentTimeMillis();
             ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
+            System.out.println("                       waited for proxy search "
+                    + (System.currentTimeMillis() - start));
+
+            return proxySearch;
 
         } catch ( NoClassDefFoundError ex ) {
-            return false;
-        }
-
-        return true;
+            return null;
+        }        
     }
 
     private boolean detectUserAndPassFromEnv()
@@ -252,7 +272,7 @@ public class AutoProxyHandler
     {
         ProxySelector sel = ProxySelector.getDefault();
 
-        if( sel != null && haveProxyVole() )
+        if( sel != null && proxySearch != null )
         {
             new UseProxyWhiteListSelector(url, sel );
         }

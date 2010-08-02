@@ -45,7 +45,7 @@ public class DesktopLauncher2 extends DesktopLauncher
 
     public DesktopLauncher2(Root root)
     {
-        super(root.getAppName(), root.getWebStartUrl(), root.getAppTitle());
+        super(root);
 
         this.root = root;
 

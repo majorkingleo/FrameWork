@@ -14,6 +14,8 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.dbmanager.impl.DatabaseManager;
+import at.redeye.FrameWork.base.dll_cache.DLLCache;
+import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
 import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
@@ -40,6 +42,7 @@ public class LocalRoot extends Root {
 	DelayedLoader loader_encryption;
 	DelayedProxyLoader loader_proxy;
 	AutoProxyHandler proxy_handler;
+        DLLCache dll_cache;
 
 	public class DelayedLoader extends Thread {
 		@Override
@@ -57,7 +60,10 @@ public class LocalRoot extends Root {
 
 		@Override
 		public void run() {
-			proxy_handler = new AutoProxyHandler(root);
+                    long start = System.currentTimeMillis();
+                    proxy_handler = new AutoProxyHandler(root);
+
+                    System.out.println(" proxy laoding: " + (System.currentTimeMillis() - start));
 		}
 	}
 
@@ -74,15 +80,18 @@ public class LocalRoot extends Root {
 	}
 
 	private void init() {
-		loader_encryption = new DelayedLoader();
-		loader_encryption.start();
 
-		setup = new LocalSetup(this, app_name);
+            dll_cache = new DLLCache(this);
 
-		loader_proxy = new DelayedProxyLoader(this);
-		loader_proxy.start();
+            loader_encryption = new DelayedLoader();
+            loader_encryption.start();
 
-		dbmanager = new DatabaseManager();
+            setup = new LocalSetup(this, app_name);
+
+            loader_proxy = new DelayedProxyLoader(this);
+            loader_proxy.start();
+
+            dbmanager = new DatabaseManager();
 
 	}
 
@@ -308,13 +317,29 @@ public class LocalRoot extends Root {
 	@Override
 	public void waitUntilNetworkIsReady() {
 		if (proxy_handler == null && loader_proxy != null) {
-			try {
-				loader_proxy.join();
-			} catch (InterruptedException ex) {
-				logger.error(StringUtils.exceptionToString(ex));
-			}
+                    try {
+                        long start = System.currentTimeMillis();
+                        loader_proxy.join();
+                        System.out.println("                       waited for proxy "
+                                + (System.currentTimeMillis() - start));
+
+                    } catch (InterruptedException ex) {
+                        logger.error(StringUtils.exceptionToString(ex));
+                    }
 		}
 
 		loader_proxy = null;
 	}
+
+    @Override
+    public void addDllExtractorToCache( DLLExtractor extractor )
+    {
+        dll_cache.addDllExtractor(extractor);
+        dll_cache.initEnv();
+    }
+
+    public void updateDllCache()
+    {
+        dll_cache.update();
+    }
 }

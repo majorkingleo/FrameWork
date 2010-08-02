@@ -24,34 +24,9 @@ public class DesktopLauncher
     String icon_name_gif;
     String jnlp_name;
     String app_title;
+    Root   root;
 
     public static Logger logger = Logger.getLogger(CreateDesktopIcon.class.getName());
-
-    public DesktopLauncher( String app_name, String web_start_url, String app_title, 
-                            String icon_name_ico, String icon_name_png, String icon_name_gif)
-    {
-        this.app_name = app_name;
-        this.web_start_url = web_start_url;
-        this.icon_name_ico = icon_name_ico;
-        this.icon_name_png = icon_name_png;
-        this.icon_name_gif = icon_name_gif;
-        this.jnlp_name = Setup.getAppConfigFile(app_name, "launch.jnlp");
-        this.app_title = app_title;
-
-        if( app_title == null )
-            this.app_title = this.app_name;
-    }
-
-    public DesktopLauncher( String app_name, String web_start_url, String app_title )
-    {
-        this.app_name = app_name;
-        this.web_start_url = web_start_url;
-        this.jnlp_name = Setup.getAppConfigFile(app_name, "launch.jnlp");
-        this.app_title = app_title;
-
-        if( app_title == null )
-            this.app_title = this.app_name;
-    }
 
     public DesktopLauncher(Root root)
     {
@@ -60,9 +35,12 @@ public class DesktopLauncher
         this.web_start_url = root.getWebStartUrl();
         this.jnlp_name = Setup.getAppConfigFile(app_name, "launch.jnlp");
         this.app_title = root.getAppTitle();
+        this.root = root;
 
         if( app_title == null )
             this.app_title = this.app_name;
+
+        root.addDllExtractorToCache(new JShortcutDLL());
     }
 
     public static boolean canCreateDesktopIcon()

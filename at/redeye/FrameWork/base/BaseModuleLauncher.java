@@ -166,7 +166,7 @@ public abstract class BaseModuleLauncher {
 
                     root.waitUntilNetworkIsReady();
                     
-                    DesktopLauncher launcher = new DesktopLauncher(root.getAppName(), root.getWebStartUrl(), root.getAppTitle());
+                    DesktopLauncher launcher = new DesktopLauncher(root);
 
                     if (launcher.download_jnlp()) {
                         logger.info("updated jnlp");
@@ -174,9 +174,11 @@ public abstract class BaseModuleLauncher {
                         logger.error("failed updating jnlp");
                     }
                     
-                }
+                }                
 
                 jnlpUpdated();
+
+                root.updateDllCache();
             }
         };
 
@@ -221,6 +223,8 @@ public abstract class BaseModuleLauncher {
 
                     jnlpUpdated();
                 }
+
+                root.updateDllCache();
             }
         };
 

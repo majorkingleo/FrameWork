@@ -8,7 +8,7 @@ package at.redeye.FrameWork.base;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
-import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
+import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
 import at.redeye.UserManagement.UserManagementInterface;
 
 /**
@@ -110,5 +110,15 @@ public abstract class Root {
     public void noProxyFor(String address)
     {
         
+    }
+
+    public void addDllExtractorToCache( DLLExtractor extractor )
+    {
+
+    }
+
+    public void updateDllCache()
+    {
+    
     }
 }
