@@ -63,6 +63,8 @@ public class DownloadUrl
             while ((len = bis.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
+            out.close();
+            bis.close();
 
             File old_one = to;
 
