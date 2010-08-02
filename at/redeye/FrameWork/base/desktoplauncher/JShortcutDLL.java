@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import net.jimmc.jshortcut.JShellLink;
 
 /**
  *
@@ -31,9 +32,12 @@ public class JShortcutDLL implements DLLExtractor
     {
         String envdir = System.getProperty(PROPERTY_NAME);
 
+        // dient dazu das di lib geladen wird und die Resource auch zur Verfügung steht.
+        JShellLink.class.getName();
+
         for( String lib : getNames() )
         {
-            InputStream source = this.getClass().getResourceAsStream(lib);
+            InputStream source = this.getClass().getResourceAsStream("/" + lib);
 
             File tempFile = new File( envdir + "/"  + lib );
 
@@ -54,7 +58,7 @@ public class JShortcutDLL implements DLLExtractor
 
         List<String> res = new ArrayList<String>();
 
-        if (Setup.is_win_system())
+     //   if (Setup.is_win_system())
         {
             String libname = "jshortcut_" + System.getProperty("os.arch") + ".dll";
 
