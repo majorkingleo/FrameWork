@@ -52,6 +52,11 @@ public class DLLCache
     {
         for( DLLExtractor extractor : extractors )
         {
+            File fcache_dir = new File( cache_dir );
+
+            if( !fcache_dir.exists() )
+                fcache_dir.mkdirs();
+
             for( String dll_name : extractor.getNames() )
             {
                 File dll = new File( cache_dir + "/" + dll_name );

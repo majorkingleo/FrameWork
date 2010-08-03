@@ -58,7 +58,7 @@ public class JShortcutDLL implements DLLExtractor
 
         List<String> res = new ArrayList<String>();
 
-     //   if (Setup.is_win_system())
+       if (Setup.is_win_system())
         {
             String libname = "jshortcut_" + System.getProperty("os.arch") + ".dll";
 
