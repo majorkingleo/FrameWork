@@ -7,7 +7,6 @@ package at.redeye.FrameWork.base.proxy;
 
 import at.redeye.FrameWork.base.Setup;
 import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
-import com.btr.proxy.search.desktop.win.Win32ProxyUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

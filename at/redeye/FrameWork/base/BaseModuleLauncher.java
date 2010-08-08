@@ -162,6 +162,8 @@ public abstract class BaseModuleLauncher {
 
             @Override
             public void run() {
+                setName("updateJnlp");
+
                 if (DesktopLauncher.canCreateDesktopIcon()) {
 
                     root.waitUntilNetworkIsReady();
@@ -200,6 +202,9 @@ public abstract class BaseModuleLauncher {
 
             @Override
             public void run() {
+
+                setName("updateJnlp2");
+
                 if (DesktopLauncher2.canCreateDesktopIcon()) {
 
                     root.waitUntilNetworkIsReady();

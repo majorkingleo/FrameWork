@@ -45,10 +45,16 @@ public class LocalRoot extends Root {
         DLLCache dll_cache;
 
 	public class DelayedLoader extends Thread {
-		@Override
-		public void run() {
-			enc = new EncryptedDBPasswd(getAppName());
-		}
+
+            public DelayedLoader()
+            {
+                setName(DelayedLoader.class.getCanonicalName());
+            }
+
+            @Override
+            public void run() {
+                enc = new EncryptedDBPasswd(getAppName());
+            }
 	}
 
 	public class DelayedProxyLoader extends Thread {
@@ -56,6 +62,8 @@ public class LocalRoot extends Root {
 
 		DelayedProxyLoader(Root root) {
 			this.root = root;
+
+                        this.setName(DelayedProxyLoader.class.getCanonicalName());
 		}
 
 		@Override
@@ -338,6 +346,7 @@ public class LocalRoot extends Root {
         dll_cache.initEnv();
     }
 
+    @Override
     public void updateDllCache()
     {
         dll_cache.update();
