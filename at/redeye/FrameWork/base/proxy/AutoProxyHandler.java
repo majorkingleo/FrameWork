@@ -6,6 +6,7 @@
 package at.redeye.FrameWork.base.proxy;
 
 import at.redeye.FrameWork.base.EncryptedDBPasswd;
+import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.utilities.StringUtils;
 import com.btr.proxy.search.ProxySearch;
@@ -48,36 +49,47 @@ public class AutoProxyHandler
         proxy_pass = null;
         this.root = root;
 
+        ProxySelector.setDefault(null);
+
         root.addDllExtractorToCache(new ProxyVoleDLL() );
 
         long start = System.currentTimeMillis();
 
         System.out.println("X1 : " + (System.currentTimeMillis() - start ));
 
-        if( ( proxySearch = haveProxyVole() ) != null )
-        {
-            logger.info("proxy vole available");
+        if (!loadFromSettings()) {
+            if ((proxySearch = haveProxyVole()) != null) {
+                logger.info("proxy vole available");
 
-            System.out.println("X11 : " + (System.currentTimeMillis() - start ));
-            ProxySelector myProxySelector = proxySearch.getProxySelector();
+                System.out.println("X11 : " + (System.currentTimeMillis() - start));
+                ProxySelector myProxySelector = proxySearch.getProxySelector();
 
-            System.out.println("XX111 : " + (System.currentTimeMillis() - start ));
-            ProxySelector.setDefault(myProxySelector);
-        } else {
-            logger.info("proxy vole NOT available");
-        }
+                System.out.println("XX111 : " + (System.currentTimeMillis() - start));
+                ProxySelector.setDefault(myProxySelector);
 
-        System.out.println("X2 : " + (System.currentTimeMillis() - start ));
-        
-        if ( !loadSavedPassword() ) {
-            if (detectUserAndPassFromEnv()) {
-                logger.info("detected user: " + proxy_user);
+                if( myProxySelector == null )
+                {
+                    logger.info("no proxy found, disable proxy search automatically");
+                    root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.ProxyEnabled.getConfigName(), "false");
+                }
             } else {
-                logger.info("no proxy env detected");
+                logger.info("proxy vole NOT available");
             }
         }
 
-        System.out.println("Saved PAsswords : " + (System.currentTimeMillis() - start ));
+        System.out.println("X2 : " + (System.currentTimeMillis() - start ));
+
+        if (ProxySelector.getDefault() != null) {
+            if (!loadSavedPassword()) {
+                if (detectUserAndPassFromEnv()) {
+                    logger.info("detected user: " + proxy_user);
+                } else {
+                    logger.info("no proxy env detected");
+                }
+            }
+        }
+
+        System.out.println("Saved Passwords : " + (System.currentTimeMillis() - start ));
 
         Authenticator.setDefault(new Authenticator() {
 
@@ -276,6 +288,41 @@ public class AutoProxyHandler
         {
             new UseProxyWhiteListSelector(url, sel );
         }
+    }
+
+    private boolean loadFromSettings()
+    {
+        if (!StringUtils.isYes(root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.ProxyEnabled))) {
+            logger.info("proxy disabled at all");
+            return true;
+        }
+
+        if (StringUtils.isYes(root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.ProxyAutoDetect))) {
+            logger.info("proxy autodetection enabled");
+            return false;
+        }
+
+        String proxy_host = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.ProxyHost);
+
+        proxy_host = proxy_host.trim();
+
+        if( proxy_host.isEmpty() )
+            return false;
+
+        int proxy_port = 8080;
+
+        try
+        {
+            proxy_port = Integer.parseInt(root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.ProxyPort));
+
+        } catch( NumberFormatException ex ) {
+            logger.error(StringUtils.exceptionToString(ex));
+            return false;
+        }
+
+        ProxySelector.setDefault(new SimpleProxySelector(proxy_host, proxy_port));
+
+        return false;
     }
 
 }

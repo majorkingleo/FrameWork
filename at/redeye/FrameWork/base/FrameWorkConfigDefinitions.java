@@ -31,6 +31,12 @@ public class FrameWorkConfigDefinitions {
     public static DBConfig AutoLoginUser = new DBConfig("AutoLoginUser", "", "Legt den Login fest, mit dem die automatische Anmeldung durchgeführt wird.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_HAS_VALUE));
     public static DBConfig LookAndFeel = new DBConfig ("LookAndFeel", "System", "Bestimmt das Aussehen der Benutzoberfläche. Mögliche Werte sind \"System\", \"Motif\", \"Nimbus\" oder \"Metal\"", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LOOKANDFEEL));
     public static DBConfig SpreadSheetRowHeaderLimit = new DBConfig("SpreadSheetRowHeaderLimit", "20", "Legt fest ab welcher Anzahl von Zeilen im Spreadsheet die Zeilennummer eingeblendet werden sollen.", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG));
+    
+    public static DBConfig ProxyAutoDetect = new DBConfig( "ProxyAutoDetect", "true", "Proxy Einstellungen automatisch finden", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
+    public static DBConfig ProxyHost = new DBConfig( "ProxyHost", "" );
+    public static DBConfig ProxyPort = new DBConfig( "ProxyPort", "8080", "", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG ));
+    public static DBConfig ProxyDisabledFor = new DBConfig( "ProxyDisbledFor", "", "Hostnamen, oder IP Addressen, für die der Proxy nicht verwendet werden soll", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG ));
+    public static DBConfig ProxyEnabled = new DBConfig( "ProxyEnabled", "true", "", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
 
     public static void registerDefinitions() {
         GlobalConfigDefinitions.add_help_path("/at/redeye/FrameWork/base/resources/Help/Params/");
@@ -52,6 +58,12 @@ public class FrameWorkConfigDefinitions {
         addLocal(ImagePreviewInFileOpen);
         addLocal(AutoLoginUser);
         addLocal(LookAndFeel);
+
+        addLocal(ProxyAutoDetect);
+        addLocal(ProxyHost);
+        addLocal(ProxyPort);
+        addLocal(ProxyDisabledFor);
+        addLocal(ProxyEnabled);
         
 
         add(AllowAutoLogin);
