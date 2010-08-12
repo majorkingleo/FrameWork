@@ -35,7 +35,7 @@ public class FrameWorkConfigDefinitions {
     public static DBConfig ProxyAutoDetect = new DBConfig( "ProxyAutoDetect", "true", "Proxy Einstellungen automatisch finden", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
     public static DBConfig ProxyHost = new DBConfig( "ProxyHost", "" );
     public static DBConfig ProxyPort = new DBConfig( "ProxyPort", "8080", "", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG ));
-    public static DBConfig ProxyDisabledFor = new DBConfig( "ProxyDisbledFor", "", "Hostnamen, oder IP Addressen, für die der Proxy nicht verwendet werden soll", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG ));
+    public static DBConfig ProxyDisabledFor = new DBConfig( "ProxyDisbledFor", "", "Hostnamen, oder IP Addressen, für die der Proxy nicht verwendet werden soll");
     public static DBConfig ProxyEnabled = new DBConfig( "ProxyEnabled", "true", "", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
 
     public static void registerDefinitions() {
