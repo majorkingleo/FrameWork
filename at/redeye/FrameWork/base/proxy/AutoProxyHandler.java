@@ -61,6 +61,8 @@ public class AutoProxyHandler
             if ((proxySearch = haveProxyVole()) != null) {
                 logger.info("proxy vole available");
 
+                // ProxySearch.enableLogging();
+
                 System.out.println("X11 : " + (System.currentTimeMillis() - start));
                 ProxySelector myProxySelector = proxySearch.getProxySelector();
 
@@ -284,14 +286,25 @@ public class AutoProxyHandler
     {
         ProxySelector sel = ProxySelector.getDefault();
 
-        if( sel != null && proxySearch != null )
+        if( sel != null )
         {
-            new UseProxyWhiteListSelector(url, sel );
+            if( proxySearch != null )
+            {
+                new UseProxyWhiteListSelector(url, sel );
+            }
+            else
+            {
+                if( sel instanceof SimpleProxySelector )
+                {
+                    SimpleProxySelector simple_selector = (SimpleProxySelector) sel;
+                    simple_selector.exludeFromProxy(url);
+                }
+            }
         }
     }
 
     private boolean loadFromSettings()
-    {
+    {        
         if (!StringUtils.isYes(root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.ProxyEnabled))) {
             logger.info("proxy disabled at all");
             return true;
@@ -320,9 +333,9 @@ public class AutoProxyHandler
             return false;
         }
 
-        ProxySelector.setDefault(new SimpleProxySelector(proxy_host, proxy_port));
-
-        return false;
+        ProxySelector.setDefault(new SimpleProxySelector(proxy_host, proxy_port));       
+        
+        return true;
     }
 
 }
