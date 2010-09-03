@@ -3,6 +3,7 @@ package at.redeye.FrameWork.base.dbmanager.impl;
 import java.util.Vector;
 
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 
 public class CreateSqlDerby extends BaseCreateSql {
 
@@ -71,5 +72,17 @@ public class CreateSqlDerby extends BaseCreateSql {
         return res;
     }
 
+    @Override
+    protected String appendNotNullIfSupportedbyNewRows(ColumnAttribute attr) {
+
+        if( attr.getDatatype() == DBDataType.DB_TYPE_STRING )
+        {
+            // nut null geht nicht und mit default Werten befüllen leider auch nicht.
+            //return " default "+ getDefaultValueVarChar(attr.getWidth());
+            return "";
+        }
+
+        return " NOT NULL";
+    }
 
 }

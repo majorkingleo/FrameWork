@@ -58,17 +58,6 @@ public class CreateSqlOracle extends BaseCreateSql {
 
 		return null;
 	}
-	
-	private String getDefaultValueVarChar(int length) {
-		
-		StringBuilder str = new StringBuilder ();
-		str.append("'");
-		for (int i = 0; i < length; i++) {
-			str.append(" ");
-		}
-		str.append("'");
-		return str.toString();
-	}
 
     @Override
     protected String createIndexKeys( String table, Vector<String> indexKeys )

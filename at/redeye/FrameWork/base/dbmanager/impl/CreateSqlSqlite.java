@@ -74,15 +74,4 @@ public class CreateSqlSqlite extends BaseCreateSql {
         return " NOT NULL";
     }
 
-    private String getDefaultValueVarChar(int length) {
-
-		StringBuilder str = new StringBuilder ();
-		str.append("'");
-		for (int i = 0; i < length; i++) {
-			str.append(" ");
-		}
-		str.append("'");
-		return str.toString();
-	}
-
 }
