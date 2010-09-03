@@ -77,4 +77,9 @@ public class DBString extends DBValue {
     {
         return max_len;
     }
+
+    public boolean isEmpty()
+    {
+        return value.isEmpty();
+    }
 }
