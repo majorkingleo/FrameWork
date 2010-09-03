@@ -45,8 +45,12 @@ public class BasicCategoryBarChart extends javax.swing.JPanel {
 
         initComponents();
         dataset = data.getDataset();
-        add(loadChart(data), BorderLayout.CENTER);
+        add(loadChart(data), BorderLayout.CENTER);       
+    }
 
+    public ChartPanel getChartPanel()
+    {
+        return chartPanel;
     }
 
     /**
@@ -145,6 +149,8 @@ public class BasicCategoryBarChart extends javax.swing.JPanel {
     }
 
     public void updateDataSet(CategoryChartData data) {
+
+        chartPanel.getChart().setTitle(data.getTitleOfChart());        
 
         dataset.clear();
         for (int rowidx = 0; rowidx < data.getDataset().getRowCount(); rowidx++) {
