@@ -93,6 +93,14 @@ public class AdminDlg extends BaseDialog {
 		tm.prepareTable();
 		feed_table();
 		tm.autoResize();
+
+            registerHelpWin(new Runnable() {
+
+                public void run() {
+                    invokeDialog(new HelpWin(root,
+				"/at/redeye/UserManagement/resources/Help/", "AdminDlg"));
+                }
+            });            
 	}
 
 	public void feed_table() {
@@ -397,10 +405,8 @@ public class AdminDlg extends BaseDialog {
 	}//GEN-LAST:event_buttonReadActionPerformed
 
 	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
-	// TODO add your handling code here:
 
-		invokeDialog(new HelpWin(root,
-				"/at/redeye/UserManagement/resources/Help/", "AdminDlg"));
+		callHelpWin();
 
 	}//GEN-LAST:event_jBHelpActionPerformed
 
