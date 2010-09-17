@@ -298,6 +298,12 @@ public abstract class Transaction {
 	public abstract String getPeriodStmt(String string, DateMidnight dm_from,
 			DateMidnight dm_to);
 
+        public String getPeriodStmt(DBValue column, DateMidnight dm_from,
+			DateMidnight dm_to)
+        {
+            return getPeriodStmt( column.getName(), dm_from, dm_to);
+        }
+
 	/*
 	 * return: column1 >= date && column2 < date
 	 */
