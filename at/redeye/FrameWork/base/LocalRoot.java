@@ -19,6 +19,7 @@ import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
 import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.Plugin.Plugin;
+import at.redeye.FrameWork.base.ml.MLHelper;
 import at.redeye.FrameWork.utilities.calendar.CalendarFactory;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
@@ -50,6 +51,7 @@ public class LocalRoot extends Root {
         DLLCache dll_cache;
         ArrayList<Plugin> plugins;
         Holidays holidays;
+        MLHelper ml_helper;
 
 	public class DelayedLoader extends Thread {
 
@@ -116,9 +118,13 @@ public class LocalRoot extends Root {
 
 	@Override
 	public boolean saveSetup() {
+
+                if( ml_helper != null )
+                    ml_helper.saveMissingProps();
+
 		if (setup.saveProps())
 			return setup.saveGlobalProps();
-
+                    
 		return false;
 	}
 
@@ -416,5 +422,13 @@ public class LocalRoot extends Root {
     public void setHolidays( Holidays  holidays )
     {
         this.holidays = holidays;
+    }
+
+    public String MlM( String message )
+    {
+        if( ml_helper == null )
+            ml_helper = new MLHelper( this );
+
+        return ml_helper.MlM(message);
     }
 }

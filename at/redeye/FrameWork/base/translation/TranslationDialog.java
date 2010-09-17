@@ -15,8 +15,10 @@ import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
+import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.widgets.GridLayout2;
 import at.redeye.FrameWork.widgets.NoticeIfChangedTextField;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -62,8 +64,7 @@ public class TranslationDialog extends BaseDialog {
     Vector<JTextField> left_cols = new Vector<JTextField>();
     Vector<JTextField> right_cols = new Vector<JTextField>();
 
-    /** Creates new form TranslationDialog */
-    public TranslationDialog(Root root, JFrame frame , String name ) {
+    public TranslationDialog(Root root, Container frame , String name,  ExtractStrings es ) {
         super(root, name );
         initComponents();
 
@@ -71,7 +72,8 @@ public class TranslationDialog extends BaseDialog {
 
         jLTitle.setText(getTitle(name));
 
-        ExtractStrings es = new ExtractStrings(frame);
+        if( es == null )
+            es = new ExtractStrings(frame);
 
         Set<String> strings = es.getStrings();
 
@@ -356,7 +358,7 @@ public class TranslationDialog extends BaseDialog {
         jLabel5 = new javax.swing.JLabel();
         colsRight = new javax.swing.JSpinner();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
         jBClose.setText("Schließen");
@@ -519,7 +521,6 @@ public class TranslationDialog extends BaseDialog {
             public void do_stuff() throws Exception {
 
                 if (canClose()) {
-                    getTransaction().rollback();
                     close();
                 }
             }
@@ -527,8 +528,7 @@ public class TranslationDialog extends BaseDialog {
     }//GEN-LAST:event_jBCloseActionPerformed
 
     private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
-        // TODO add your handling code here:
-
+        
         new AutoMBox(getTitle()) {
 
             @Override

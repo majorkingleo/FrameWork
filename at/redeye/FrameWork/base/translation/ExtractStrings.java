@@ -7,15 +7,18 @@ package at.redeye.FrameWork.base.translation;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
-import java.util.Vector;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 
 /**
@@ -25,12 +28,12 @@ import javax.swing.JRadioButtonMenuItem;
 public class ExtractStrings
 {
     TreeSet<String> strings;
-    HashMap<String,Vector<JComponent>> components;
+    HashMap<String,List<JComponent>> components;
 
     public ExtractStrings( Container cont )
     {
         strings = new TreeSet<String>();
-        components = new HashMap<String,Vector<JComponent>>();
+        components = new HashMap<String,List<JComponent>>();
 
         extractStrings(cont);
     }
@@ -40,7 +43,7 @@ public class ExtractStrings
         return strings;
     }
 
-    public HashMap<String,Vector<JComponent>>  getComponents()
+    public HashMap<String,List<JComponent>>  getComponents()
     {
         return components;
     }
@@ -63,6 +66,10 @@ public class ExtractStrings
                 addString((JRadioButtonMenuItem)comp);
             else if( comp instanceof JCheckBoxMenuItem )
                 addString((JCheckBoxMenuItem)comp);
+            else if( comp instanceof JCheckBox )
+                addString((JCheckBox)comp);
+            else if( comp instanceof JRadioButton )
+                addString((JRadioButton)comp);
             else
             {
                 try {
@@ -75,11 +82,11 @@ public class ExtractStrings
 
     private void addComp( String text, JComponent comp )
     {
-        Vector<JComponent> vcomp = components.get(text);
+        List<JComponent> vcomp = components.get(text);
 
         if( vcomp == null )
         {
-            vcomp = new Vector<JComponent>();
+            vcomp = new ArrayList<JComponent>();
             components.put(text, vcomp);
         }
 
@@ -91,6 +98,20 @@ public class ExtractStrings
         strings.add(label.getText());
 
         addComp(label.getText(),label);
+    }
+
+    private void addString( JCheckBox box )
+    {
+        strings.add(box.getText());
+
+        addComp(box.getText(),box);
+    }
+
+    private void addString( JRadioButton button )
+    {
+        strings.add(button.getText());
+
+        addComp(button.getText(),button);
     }
 
     private void addString( JButton button )
@@ -135,6 +156,10 @@ public class ExtractStrings
             ((JMenuItem)comp).setText(value);
         else if( comp instanceof JMenu )
             ((JMenu)comp).setText(value);
+        else if( comp instanceof JRadioButton )
+            ((JRadioButton)comp).setText(value);
+        else if( comp instanceof JCheckBox )
+            ((JCheckBox)comp).setText(value);
 
     }
 }

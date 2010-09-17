@@ -449,4 +449,38 @@ public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInte
         return getTitle();
     }
 
+    /**
+    * language the dialog is programmed in
+    * if not set, the settings from Root.getBaseLangague() are used
+    */
+    public void setBaseLanguage( String language )
+    {
+        helper.setBaseLanguage(language);
+    }
+
+    /**
+    * @return language the dialog is programmed in
+    * if not set, the settings from Root.getBaseLangague() are used
+    */
+    public String getBaseLanguage()
+    {
+        return helper.getBaseLanguage();
+    }
+
+    @Override
+    public void doLayout()
+    {
+        helper.doLayout();
+        super.doLayout();
+    }
+
+    /**
+     * @param message native langauge message
+     * @return translated message, if available
+     */
+    public String MlM( String message )
+    {
+        return helper.MlM( message );
+    }
+
 }

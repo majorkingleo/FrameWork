@@ -59,6 +59,7 @@ public class TableManipulator {
     int auto_show_row_header = 20;
     private static Logger logger = Logger.getLogger(TableManipulator.class.getName());
     TableEditorStopper editor_stopper;
+    BaseDialogBase base_dlg;
     
     public TableManipulator( Root root, JTable table, TableDesign tabledesign )
     {
@@ -292,7 +293,7 @@ public class TableManipulator {
     {
         for( TableDesign.Coll coll : tabledesign.colls )
         {
-            model.addColumn(coll.Title);                      
+            model.addColumn(MlM(coll.Title));
         }   
         
         /* Das muß so sein,
@@ -659,6 +660,14 @@ public class TableManipulator {
 
     private BaseDialogBase getBaseDialog()
     {
+        if( base_dlg == null )
+            base_dlg = getBaseDialogInt();
+
+        return base_dlg;
+    }
+
+    private BaseDialogBase getBaseDialogInt()
+    {
         Container parent = table;
         
         do
@@ -766,5 +775,15 @@ public class TableManipulator {
             if( width > 5 )
                 tcol.setPreferredWidth(width);
         }
+    }
+
+    public String MlM( String message )
+    {
+        base_dlg = getBaseDialog();
+
+        if( base_dlg == null )
+            return message;
+
+        return base_dlg.MlM(message);
     }
 }

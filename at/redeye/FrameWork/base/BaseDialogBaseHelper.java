@@ -90,6 +90,15 @@ public class BaseDialogBaseHelper implements BindVarInterface
     private JRootPane myrootPane;
     protected Runnable HelpWinRunnable;
     protected UniqueDialogHelper unique_dialog_helper;
+    protected TranslationHelper translation_helper;
+    protected boolean autoswitch_trans_first_run = true;
+    
+    
+    /**
+    * language the dialog is programmed in
+    * if not set, the settings from Root.getBaseLangague() are used
+    */
+    private String base_language;
 
     private class ActionKeyListener implements ActionListener
     {
@@ -191,7 +200,7 @@ public class BaseDialogBaseHelper implements BindVarInterface
                     }
                 });
 
-        new TranslationHelper(root,parent,this);
+        translation_helper = new TranslationHelper(root,parent,this);
 
         loadStuff();
     }
@@ -821,5 +830,49 @@ public class BaseDialogBaseHelper implements BindVarInterface
     {
         if( bind_vars == null )
             bind_vars = new BindVarBase();
+    }
+
+    /**
+    * language the dialog is programmed in
+    * if not set, the settings from Root.getBaseLangague() are used
+    */
+    public void setBaseLanguage( String language )
+    {
+        base_language = language;
+    }
+
+    /**
+    * @return language the dialog is programmed in
+    * if not set, the settings from Root.getBaseLangague() are used
+    */
+    public String getBaseLanguage()
+    {
+        if( base_language == null )
+            return root.getBaseLanguage();
+
+        return base_language;
+    }
+
+     public void autoSwitchToCurrentLocale()
+     {
+         translation_helper.autoSwitchToCurrentLocale();
+     }
+
+     public void doLayout()
+     {
+         if( autoswitch_trans_first_run )
+         {
+             autoSwitchToCurrentLocale();
+             autoswitch_trans_first_run = false;
+         }
+     }
+
+    /**
+     * @param message native langauge message
+     * @return translated message, if available
+     */
+    public String MlM( String message )
+    {
+        return translation_helper.MlM( message );
     }
 }

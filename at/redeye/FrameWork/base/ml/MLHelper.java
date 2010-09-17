@@ -1,0 +1,202 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package at.redeye.FrameWork.base.ml;
+
+import at.redeye.FrameWork.base.AutoLogger;
+import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.translation.TranslationDialog;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
+import java.util.Properties;
+
+/**
+ *
+ * @author martin
+ */
+public class MLHelper
+{
+    Root root;
+    Properties props;
+    String current_lang;
+    Locale locale = Locale.getDefault();
+    Properties missing_props;
+    String missing_props_file_name;
+
+    public MLHelper( Root root )
+    {
+        this.root = root;
+        autoLoadCurrentLocale();
+    }
+
+    boolean loadPropsFile( String lang ) throws FileNotFoundException, IOException
+    {
+        boolean loaded_something = false;
+
+        String dir = TranslationDialog.getTranslationsDir(root);
+        String file_name = "trans";
+        String base_name = dir + file_name;
+        String prop = ".properties";
+
+        String extra = "_";
+
+        if( lang.isEmpty() )
+            extra = "";
+
+        File dir_exact = new File( base_name + extra + lang + prop );
+
+        props = new Properties();
+        current_lang = lang;
+
+        if( dir_exact.isFile() )
+        {
+            FileInputStream in = new FileInputStream(dir_exact);
+            props.load(in);
+            in.close();
+            loaded_something = true;
+        }
+
+        String resourcePath = root.getLanguageTranslationResourcePath();
+
+        if( resourcePath != null )
+        {
+            String resource_name = "/" + resourcePath + "trans" + extra + lang + prop;
+            
+            InputStream in = this.getClass().getResourceAsStream(resource_name);
+            
+            if( in != null )
+            {
+                props.load(in);            
+                in.close();
+                loaded_something = true;
+            }
+        }
+
+        return loaded_something;
+    }
+
+    public boolean loadTrans(String trans) {
+        try {
+            return loadPropsFile(trans);
+
+        } catch (FileNotFoundException ex) {
+            return false;
+
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    public void autoLoadCurrentLocale()
+    {
+        if( current_lang != null && locale.toString().equals(current_lang) )
+            return;
+
+        if (loadTrans(locale.toString())) {
+            return;
+        }
+
+        String parts[] = locale.toString().split("_");
+
+        if (parts.length == 1 ) {
+            loadTrans(root.getDefaultLanguage());
+            return;
+        }
+
+        if (loadTrans(parts[0])) {
+            return;
+        }
+
+        if( !loadTrans(root.getDefaultLanguage() ) )
+        {
+            // damit nun alle Werte auf das richtige locale eingestellt sind.
+            loadTrans(locale.toString());
+        }
+    }
+
+    private String getMissingPropsFileName()
+    {
+        if (missing_props_file_name == null)
+        {
+            String dir = TranslationDialog.getTranslationsDir(root);
+            String file_name = "trans";
+            String base_name = dir + file_name;
+            String prop = ".missing.properties";
+
+            String extra = "_";
+
+            missing_props_file_name = base_name + extra + current_lang + prop;
+        }
+        return missing_props_file_name;
+    }
+
+    private void addMissing( String message )
+    {
+        if( missing_props == null )
+        {
+            missing_props = new Properties();
+            File file = new File( getMissingPropsFileName() );
+
+            if( file.isFile() )
+            {
+                try {
+                    FileInputStream in = new FileInputStream( file );
+                    if( in != null )
+                    {
+                        missing_props.load(in);
+                        in.close();
+                    }
+                } catch( IOException ex ) {
+
+                }
+            }
+        }
+
+        missing_props.setProperty(message, "");
+    }
+
+    public void saveMissingProps()
+    {
+        if( missing_props == null )
+            return;
+
+        new AutoLogger(MLHelper.class.getName()) {
+
+            @Override
+            public void do_stuff() throws Exception {
+
+                FileOutputStream out = new FileOutputStream(getMissingPropsFileName());
+                missing_props.store(out, "Untranslated messages");
+                out.close();
+
+            }
+        };
+
+    }
+
+    public String MlM( String message )
+    {
+        if( props != null )
+        {
+            String msg = props.getProperty(message);
+
+            if( msg == null )
+            {
+                addMissing( message );
+                return message;
+            }
+
+            return msg;
+        }
+
+        return message;
+    }
+
+}
