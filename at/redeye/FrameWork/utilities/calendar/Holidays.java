@@ -5,8 +5,8 @@
 
 package at.redeye.FrameWork.utilities.calendar;
 
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import org.joda.time.DateMidnight;
 
 /**
@@ -82,4 +82,6 @@ public interface Holidays {
      * @date date for the holiday we are looking for
      */
     public HolidayInfo getHolidayForDay( DateMidnight date );
+
+    public HolidayInfo getHolidayForDay(Calendar cal);
 }

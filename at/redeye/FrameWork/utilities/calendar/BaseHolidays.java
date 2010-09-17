@@ -6,9 +6,9 @@
 package at.redeye.FrameWork.utilities.calendar;
 
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
+import java.util.Calendar;
 
 import java.util.Collection;
-import java.util.Date;
 import org.joda.time.DateMidnight;
 
 /**
@@ -83,6 +83,28 @@ public abstract class BaseHolidays {
     public abstract Collection<HolidayInfo> getHolidays(int year);
 
 
+     public HolidayInfo getHolidayForDay( Calendar date )
+     {
+        if( last_used_year != date.get(Calendar.YEAR) ||
+                last_used_holidays == null )
+        {
+            last_used_year = date.get(Calendar.YEAR);
+            last_used_holidays = getHolidays(last_used_year);
+        }
+
+        for( HolidayInfo hi : last_used_holidays )
+        {
+            if( hi.date.getYear()        == date.get(Calendar.YEAR) &&
+                hi.date.getMonthOfYear() == date.get(Calendar.MONTH)+1 &&
+                hi.date.getDayOfMonth()  == date.get(Calendar.DAY_OF_MONTH) )
+            {
+                return hi;
+            }
+        }
+
+        return null;
+     }
+
     public HolidayInfo getHolidayForDay( DateMidnight date )
     {
         if( last_used_year != date.getYear() ||
@@ -94,10 +116,12 @@ public abstract class BaseHolidays {
 
         for( HolidayInfo hi : last_used_holidays )
         {
-            if( hi.date.equals(date) )
+            if( hi.date.getYear()        == date.getYear() &&
+                hi.date.getMonthOfYear() == date.getMonthOfYear() &&
+                hi.date.getDayOfMonth()  == date.getDayOfMonth() )
             {
                 return hi;
-            }
+            }            
         }
 
         return null;

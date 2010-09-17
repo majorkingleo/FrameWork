@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Vector;
 
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
+import java.util.Calendar;
 import org.joda.time.DateMidnight;
 
 /**
@@ -174,5 +175,9 @@ public class HolidayMerger implements Holidays {
         }
 
         return null;
+    }
+
+    public HolidayInfo getHolidayForDay(Calendar date) {
+        return getHolidayForDay(new DateMidnight(date));
     }
 }

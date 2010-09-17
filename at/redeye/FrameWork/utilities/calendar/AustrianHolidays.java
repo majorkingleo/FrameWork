@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.utilities.calendar;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
