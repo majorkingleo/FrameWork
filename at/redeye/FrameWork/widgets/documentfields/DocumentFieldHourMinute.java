@@ -3,20 +3,23 @@
  * and open the template in the editor.
  */
 
-package at.redeye.FrameWork.base;
+package at.redeye.FrameWork.widgets.documentfields;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
 
 /**
  *
  * @author martin
  */
-public class DocumentFieldDateTime extends PlainDocument {        
+public class DocumentFieldHourMinute extends DocumentFieldLimit {
             
-
     private static final long serialVersionUID = 1L;
+
+    public DocumentFieldHourMinute()
+    {
+        super( 5 );
+    }
 
     @Override
     public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {

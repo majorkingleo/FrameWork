@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package at.redeye.FrameWork.base;
+package at.redeye.FrameWork.widgets.documentfields;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

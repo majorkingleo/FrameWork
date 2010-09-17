@@ -26,6 +26,7 @@ public class BaseAppConfigDefinitions
     public static DBConfig Version = new DBConfig("Programm-Version", "0", "Programmversion mit der die Einstellungen zuletzt gespeichert wurden." );
     public static DBConfig VerticalScrollingSpeed = new DBConfig("VerticalScrollingSpeed","16","Vertikale Mausradscrollgeschwindigkeit", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG));
     public static DBConfig HorizontalScrollingSpeed = new DBConfig("HorizontalScrollingSpeed","16","Horiziontale Mausradscrollgeschwindigkeit", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_LONG));
+    public static DBConfig DateFormat = new DBConfig( "DateFormat", "yyyy-MM-dd", "Datumsformat");
 
     public static void BaseRegisterDefinitions()
     {
@@ -35,6 +36,7 @@ public class BaseAppConfigDefinitions
        addLocal(Version);
        addLocal(VerticalScrollingSpeed);
        addLocal(HorizontalScrollingSpeed);
+       addLocal(DateFormat);
     }
 
     public static void add( String name, String value, String descr )

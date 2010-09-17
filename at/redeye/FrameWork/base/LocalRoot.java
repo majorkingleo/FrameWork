@@ -18,12 +18,17 @@ import at.redeye.FrameWork.base.dll_cache.DLLCache;
 import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
 import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
 import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.FrameWork.Plugin.Plugin;
+import at.redeye.FrameWork.utilities.calendar.CalendarFactory;
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -43,6 +48,8 @@ public class LocalRoot extends Root {
 	DelayedProxyLoader loader_proxy;
 	AutoProxyHandler proxy_handler;
         DLLCache dll_cache;
+        ArrayList<Plugin> plugins;
+        Holidays holidays;
 
 	public class DelayedLoader extends Thread {
 
@@ -100,7 +107,6 @@ public class LocalRoot extends Root {
             loader_proxy.start();
 
             dbmanager = new DatabaseManager();
-
 	}
 
 	@Override
@@ -350,5 +356,65 @@ public class LocalRoot extends Root {
     public void updateDllCache()
     {
         dll_cache.update();
+    }
+
+    @Override
+    public void registerPlugin( Plugin plugin )
+    {
+        if( plugins == null )
+            plugins = new ArrayList<Plugin>();
+        else
+        {
+            for( Plugin p : plugins )
+            {
+                // already registered
+                if( p.getName().equals(plugin.getName()) )
+                    return;
+            }
+        }
+
+        if( plugin.isAvailable() )
+        {
+            plugins.add(plugin);
+            plugin.initPlugin(this);
+        }
+    }
+
+    @Override
+    public List<Plugin> getRegisteredPlugins()
+    {
+        return plugins;
+    }
+
+    @Override
+    public Plugin getPlugin( String name )
+    {
+        for( Plugin plugin : plugins )
+        {
+            if( plugin.getName().equals(name) )
+            {
+                if( !plugin.isAvailable() )
+                    return null;
+
+                return plugin;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Holidays getHolidays() 
+    {
+        if( holidays == null )
+            holidays = CalendarFactory.getDefaultHolidays();
+
+        return holidays;
+    }
+
+    @Override
+    public void setHolidays( Holidays  holidays )
+    {
+        this.holidays = holidays;
     }
 }

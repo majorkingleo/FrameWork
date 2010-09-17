@@ -4,6 +4,9 @@
  */
 package at.redeye.FrameWork.base.tablemanipulator;
 
+import at.redeye.FrameWork.widgets.documentfields.DocumentFieldDateTime;
+import at.redeye.FrameWork.widgets.documentfields.DocumentFieldInteger;
+import at.redeye.FrameWork.widgets.documentfields.DocumentFieldLimit;
 import at.redeye.FrameWork.base.*;
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBInteger;

@@ -9,7 +9,10 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
+import at.redeye.FrameWork.Plugin.Plugin;
+import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.UserManagement.UserManagementInterface;
+import java.util.List;
 
 /**
  *
@@ -120,5 +123,30 @@ public abstract class Root {
     public void updateDllCache()
     {
     
+    }
+
+    public void registerPlugin( Plugin plugin )
+    {
+
+    }
+
+    public List<Plugin> getRegisteredPlugins()
+    {
+        return null;
+    }
+
+
+    public Plugin getPlugin(String name)
+    {
+        return null;
+    }
+
+    public Holidays getHolidays() {
+        return null;
+    }
+
+    public void setHolidays( Holidays  holidays )
+    {
+
     }
 }
