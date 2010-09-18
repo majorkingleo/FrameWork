@@ -117,8 +117,8 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="&#xc4;nderungsProtokoll">
-                <Property name="tabTitle" type="java.lang.String" value="&#xc4;nderungsProtokoll"/>
+              <JTabbedPaneConstraints tabName="&#xc4;nderungsprotokoll">
+                <Property name="tabTitle" type="java.lang.String" value="&#xc4;nderungsprotokoll"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

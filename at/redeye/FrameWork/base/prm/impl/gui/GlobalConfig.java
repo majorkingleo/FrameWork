@@ -43,7 +43,7 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 	/** Creates new form Config */
 	public GlobalConfig(Root root) {
 		super(root, "Globale Einstellungen");
-
+                setBaseLanguage("de");
 		initComponents();
 
 		DBConfig config = new DBConfig();

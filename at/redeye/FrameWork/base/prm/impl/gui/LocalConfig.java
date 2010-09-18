@@ -35,7 +35,7 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
     /** Creates new form Config */
     public LocalConfig(Root root) {
         super(root, "Lokale Einstellungen");
-
+        setBaseLanguage("de");
         initComponents();
 
         DBConfig config = new DBConfig();

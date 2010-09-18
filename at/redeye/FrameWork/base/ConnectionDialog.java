@@ -52,7 +52,17 @@ public class ConnectionDialog extends BaseDialog {
     StringBuffer DBPort = new StringBuffer();
     DBBindtypeManager bindtypeManager = null;
     private WizardClientActionInterface wizardAction = null;
-    
+
+    private String MESSAGE_TITLE;
+    private String MESSAGE_ERROR_CONNECTION;
+    private String MESSAGE_ERORR_ENCRYPT_PASSWORD;
+    private String MESSAGE_ERROR_CONNECTION_FROM_SETUP;
+    private String MESSAGE_ERROR_LOOSY_DATABASE;
+    private String MESSAGE_SUCCES_DATABASE;
+    private String MESSAGE_TITLE_SUCCESS;
+    private String MESSAGE_ERROR_CONFIGURE_DATABASE;
+    private String MESSAGE_SUCCES_DATABASE_CONNECTION;
+
     /** Creates new form ConnectionDialog */
     public ConnectionDialog( Root root, WizardClientActionInterface wizardAction) {
         super( root , "Datenbankverbindung");
@@ -74,6 +84,7 @@ public class ConnectionDialog extends BaseDialog {
     private void initCommon()
     {
         setBindtypeManager( root.getBindtypeManager() );
+        setBaseLanguage("de");
 
         /* Das ganze dient nur dazu, damit nichts vorbelegt wird,
          * was in der Combobox dann nicht zur auswahl steht, und dann
@@ -173,6 +184,20 @@ public class ConnectionDialog extends BaseDialog {
             }
 
         });
+
+        if( MESSAGE_TITLE == null )
+        {
+            MESSAGE_TITLE = MlM( "Fehler" );
+            MESSAGE_ERROR_CONNECTION = MlM( "Fehler beim Herstellen der Verbindung" );
+            MESSAGE_ERORR_ENCRYPT_PASSWORD = MlM("Das Datenbankpasswort konnte nicht verschlüsselt werden!");
+            MESSAGE_ERROR_CONNECTION_FROM_SETUP = MlM("Fehler beim Herstellen der Verbindung vom Setup");
+            MESSAGE_ERROR_LOOSY_DATABASE = MlM("Die Datenbank erfüllt nicht die notwendigen Voraussetzungen " +
+                                             "um dieses Programm ausführen zu können.");
+            MESSAGE_SUCCES_DATABASE = MlM("Die Datenbank konnte erfolgreich eingerichtet werden.");
+            MESSAGE_TITLE_SUCCESS = MlM( "Erfolg" );
+            MESSAGE_ERROR_CONFIGURE_DATABASE = MlM( "Fehler beim Einrichten der Datenbank" );
+            MESSAGE_SUCCES_DATABASE_CONNECTION = MlM("Die Verbindung konnte hergestellt werden.");
+        }
 
         var_to_gui();
     }
@@ -488,9 +513,9 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     
     if( con == null )
     {
-        JOptionPane.showMessageDialog(null, 
-            "Fehler beim Herstellen der Verbindung", 
-            "Error",
+        JOptionPane.showMessageDialog(null,
+            MESSAGE_ERROR_CONNECTION,
+            MESSAGE_TITLE,
             JOptionPane.OK_OPTION);
     }
     else
@@ -506,8 +531,8 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
         if( enc_passwd == null )
         {
             JOptionPane.showMessageDialog(null,
-            "Das Datenbankpasswort konnte nicht verschlüsselt werden!",
-            "Error",
+            MESSAGE_ERORR_ENCRYPT_PASSWORD,
+            MESSAGE_TITLE,
             JOptionPane.OK_OPTION);
             return;
         }
@@ -520,8 +545,8 @@ private void JBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
         if( !root.loadDBConnectionFromSetup() )
         {
             JOptionPane.showMessageDialog(null, 
-            "Fehler beim Herstellen der Verbindung vom Setup", 
-            "Error",
+            MESSAGE_ERROR_CONNECTION_FROM_SETUP,
+            MESSAGE_TITLE,
             JOptionPane.OK_OPTION);
             return;
         }
@@ -552,8 +577,8 @@ private boolean setupDatabase( boolean success_message )
     if( con == null )
     {
         JOptionPane.showMessageDialog(null,
-            "Fehler beim Herstellen der Verbindung",
-            "Error",
+            MESSAGE_ERROR_CONNECTION,
+            MESSAGE_TITLE,
             JOptionPane.OK_OPTION);
         return false;
     }
@@ -594,9 +619,8 @@ private boolean setupDatabase( boolean success_message )
             {
                 JOptionPane.showMessageDialog(null,
                 	StringUtils.autoLineBreak(
-                        "Die Datenbank erfüllt nicht die notwendigen Voraussetzungen " +
-                        "um dieses Programm ausführen zu können."),
-                        "Fehler",
+                        MESSAGE_ERROR_LOOSY_DATABASE),
+                        MESSAGE_TITLE,
                         JOptionPane.OK_OPTION);
             }
             else
@@ -612,8 +636,8 @@ private boolean setupDatabase( boolean success_message )
                     if (success_message) {
                         JOptionPane.showMessageDialog(null,
                                 StringUtils.autoLineBreak(
-                                "Die Datenbank konnte erfolgreich eingerichtet werden."),
-                                "Erfolg",
+                                MESSAGE_SUCCES_DATABASE),
+                                MESSAGE_TITLE_SUCCESS,
                                 JOptionPane.INFORMATION_MESSAGE);
                     }
                     return true;
@@ -640,8 +664,8 @@ private boolean setupDatabase( boolean success_message )
         }
 
         JOptionPane.showMessageDialog(null,
-            "Fehler beim Einrichten der Datenbank",
-            "Fehler",
+            MESSAGE_ERROR_CONFIGURE_DATABASE,
+            MESSAGE_TITLE,
             JOptionPane.OK_OPTION);
         return false;
     }
@@ -659,14 +683,14 @@ private void JBTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     if( con == null )
     {
         JOptionPane.showMessageDialog(null, 
-            "Fehler beim Herstellen der Verbindung", 
-            "Error",
+            MESSAGE_ERROR_CONNECTION,
+            MESSAGE_TITLE,
             JOptionPane.WARNING_MESSAGE);
     } else {
         
         JOptionPane.showMessageDialog(null, 
-            "Die Verbindung konnte hergestellt werden.", 
-            "Erfolg",
+            MESSAGE_SUCCES_DATABASE_CONNECTION,
+            MESSAGE_TITLE_SUCCESS,
             JOptionPane.INFORMATION_MESSAGE);
     }
 }//GEN-LAST:event_JBTestActionPerformed

@@ -24,6 +24,7 @@ public class AboutPlugins extends BaseDialog {
     /** Creates new form AboutPlugins */
     public AboutPlugins( Root root ) {
         super(root, "Plugins" );
+        setBaseLanguage("de");
 
         initComponents();
 
@@ -75,7 +76,7 @@ public class AboutPlugins extends BaseDialog {
         jTChangeLog.setContentType("text/html");
         jScrollPane3.setViewportView(jTChangeLog);
 
-        jTPlugin.addTab("ÄnderungsProtokoll", jScrollPane3);
+        jTPlugin.addTab("Änderungsprotokoll", jScrollPane3);
 
         jBCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
         jBCancel.setText("Schließen");
