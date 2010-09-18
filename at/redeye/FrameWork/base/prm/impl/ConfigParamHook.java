@@ -70,10 +70,18 @@ public class ConfigParamHook implements HelpWinHook
         Set<String> keys = config.keySet();
                         
         res.append("<table>\n");
-        res.append("<tr bgcolor=\"" + color_title + "\"><td><b>Parameter</b></td>\n");
-        res.append("<td><b>Wert</b></td>\n");
-        res.append("<td><b>Standardwert</b></td>\n");
-        res.append("<td><b>Beschreibung</b></td></tr>\n");               
+        res.append("<tr bgcolor=\"" + color_title + "\"><td><b>");
+        res.append(root.MlM("Parameter"));
+        res.append("</b></td>\n");
+        res.append("<td><b>");
+        res.append(root.MlM("Wert"));
+        res.append("</b></td>\n");
+        res.append("<td><b>");
+        res.append(root.MlM("Standardwert"));
+        res.append("</b></td>\n");
+        res.append("<td><b>");
+        res.append(root.MlM("Beschreibung"));
+        res.append("</b></td></tr>\n");
         
         int count = 1;
         

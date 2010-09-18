@@ -114,6 +114,7 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 				for (String key : keys) {
 
 					DBConfig c = (DBConfig) vals.get(key);
+                                        c.descr.loadFromCopy(MlM(c.descr.getValue()));
 					values.add(c);
 					tm.add(c);
 				}
