@@ -83,6 +83,8 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
 
             String val = root.getSetup().getLocalConfig(c.getConfigName(), c.getConfigValue());
 
+            c.descr.loadFromCopy(MlM(c.descr.getValue()));
+
             c.setConfigValue(val);
             tm.add(c);
             values.add(c);

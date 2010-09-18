@@ -65,7 +65,7 @@ public class MLUtil {
         }
     }
 
-    private static boolean haveResource( String name )
+    public static boolean haveResource( String name )
     {
         //System.out.println("testing: " + name);
 
@@ -79,8 +79,13 @@ public class MLUtil {
 
     public static Properties autoLoadFile4Class(Root root, Object object, String locale, boolean no_default)
     {
+        return autoLoadFile4ClassName( root, object.getClass().getName(), locale, no_default );
+    }
+
+    public static Properties autoLoadFile4ClassName(Root root, String name, String locale, boolean no_default)
+    {
         try {
-            return loadFile4Class(root, object, locale, no_default);
+            return loadFile4ClassName(root, name, locale, no_default);
         } catch( FileNotFoundException ex ) {
             return null;
         } catch( IOException ex ) {
@@ -88,11 +93,11 @@ public class MLUtil {
         }
     }
 
-    private static Properties loadFile4Class(Root root, Object object, String locale, boolean no_default) throws FileNotFoundException, IOException
+    private static Properties loadFile4ClassName(Root root, String name, String locale, boolean no_default) throws FileNotFoundException, IOException
     {
         Properties p = null;
 
-        p = loadFile4ClassInt(root, object, locale);
+        p = loadFile4ClassInt(root, name, locale);
 
         if( p != null )
             return p;
@@ -101,28 +106,28 @@ public class MLUtil {
 
         if ( parts.length == 1 ) {
             if( !no_default )
-                p = loadFile4ClassInt(root, object,root.getDefaultLanguage());
+                p = loadFile4ClassInt(root, name,root.getDefaultLanguage());
         }
 
         if( p != null )
             return p;
 
-        p = loadFile4ClassInt(root, object, parts[0]);
+        p = loadFile4ClassInt(root, name, parts[0]);
 
         if( p != null )
             return p;
 
         if( !no_default )
-            p = loadFile4ClassInt(root, object,root.getDefaultLanguage());
+            p = loadFile4ClassInt(root, name,root.getDefaultLanguage());
 
         return p;
     }
 
-    private static Properties loadFile4ClassInt( Root root, Object object, String lang ) throws FileNotFoundException, IOException
+    private static Properties loadFile4ClassInt( Root root, String name, String lang ) throws FileNotFoundException, IOException
     {
         String dir = TranslationDialog.getTranslationsDir(root);
 
-        String file_name =  "/" + object.getClass().getName();
+        String file_name =  "/" + name;
 
         String base_name = dir + file_name;
         String prop = ".properties";
@@ -134,10 +139,10 @@ public class MLUtil {
 
         File dir_exact = new File( base_name + extra + lang + prop );
 
-        String resource_name = "/" + object.getClass().getName().replaceAll("\\.", "/") + extra + lang + prop;
+        String resource_name = "/" + name.replaceAll("\\.", "/") + extra + lang + prop;
 
-        String alt1_resource_name = "/" + MLUtil.getAltResourcePath(object.getClass().getName().replaceAll("\\.", "/"), "translations") + extra + lang + prop;
-        String alt2_resource_name = "/" + MLUtil.getAltResourcePath(object.getClass().getName().replaceAll("\\.", "/"), "resources/translations") + extra + lang + prop;
+        String alt1_resource_name = "/" + MLUtil.getAltResourcePath(name.replaceAll("\\.", "/"), "translations") + extra + lang + prop;
+        String alt2_resource_name = "/" + MLUtil.getAltResourcePath(name.replaceAll("\\.", "/"), "resources/translations") + extra + lang + prop;
 
         Properties local_props = new Properties();
 
@@ -175,13 +180,18 @@ public class MLUtil {
 
     public static Properties autoLoadFile4Class(Root root, Object object, String locale, String impl_language)
     {
+        return autoLoadFile4ClassName( root, object.getClass().getName(), locale, impl_language);
+    }
+
+    public static Properties autoLoadFile4ClassName(Root root, String name, String locale, String impl_language)
+    {
         try {
             boolean no_default = false;
 
             if( MLUtil.compareLanguagesOnly(locale, impl_language))
                 no_default = true;
 
-            return loadFile4Class(root, object, locale, no_default);
+            return loadFile4ClassName(root, name, locale, no_default);
         } catch( FileNotFoundException ex ) {
             return null;
         } catch( IOException ex ) {

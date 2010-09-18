@@ -10,6 +10,7 @@ import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
 import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
 import at.redeye.FrameWork.Plugin.Plugin;
+import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.UserManagement.UserManagementInterface;
 import java.util.List;
@@ -313,5 +314,20 @@ public abstract class Root {
      * @param obj
      */
     public abstract void loadMlM4Class( Object obj );
+
+    /**
+     * load a MlM file for a spacific class
+     * @param obj
+     * @param impl_locale the locale the class was originaly implemented
+     * eg "de" for german
+     */
+    public abstract void loadMlM4ClassName(String name, String string);
+
+    /**
+     * load a MlM file for a spacific class
+     * as implementation language the value of base_language is used
+     * @param obj
+     */
+    public abstract void loadMlM4ClassName(String name);
     
 }

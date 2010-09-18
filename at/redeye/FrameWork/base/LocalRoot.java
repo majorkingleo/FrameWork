@@ -460,4 +460,32 @@ public class LocalRoot extends Root {
 
         ml_helper.autoLoadFile4Class(obj, getDisplayLanguage(), base_language);
     }
+
+    /**
+     * load a MlM file for a spacific class
+     * @param obj
+     * @param impl_locale the locale the class was originaly implemented
+     * eg "de" for german
+     */
+    public void loadMlM4ClassName(String name, String impl_locale)
+    {
+        if( ml_helper == null )
+            ml_helper = new MLHelper( this );
+
+
+        ml_helper.autoLoadFile4ClassName(name, getDisplayLanguage(), impl_locale);
+    }
+
+    /**
+     * load a MlM file for a spacific class
+     * as implementation language the value of base_language is used
+     * @param obj
+     */
+    public void loadMlM4ClassName(String name)
+    {
+        if( ml_helper == null )
+            ml_helper = new MLHelper( this );
+
+        ml_helper.autoLoadFile4ClassName(name, getDisplayLanguage(), base_language);
+    }
 }

@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -27,6 +29,8 @@ public class MLHelper
     String locale;
     Properties missing_props;
     String missing_props_file_name;
+
+    List<String> loaded_object_files;
 
     public MLHelper( Root root )
     {
@@ -189,7 +193,56 @@ public class MLHelper
      */
     public void autoLoadFile4Class(Object object)
     {
-        Properties p = MLUtil.autoLoadFile4Class(root, object, current_lang, root.getBaseLanguage());
+        autoLoadFile4ClassName(object.getClass().getName());
+    }
+
+    /**
+     * automatically loads a translation file for the given object.
+     * as implementation language root.getBaseLanguage() is used
+     * and as target language the current language is used.
+     * @param object
+     */
+    public void autoLoadFile4ClassName(String name)
+    {
+        if( already_loaded( name, current_lang, root.getBaseLanguage() ) )
+           return;
+
+        Properties p = MLUtil.autoLoadFile4ClassName(root, name, current_lang, root.getBaseLanguage());
+
+        if( p != null )
+        {
+            MLUtil.addAllProps(props, p);
+        }
+    }
+
+    private boolean already_loaded( String name, String locale, String impl_language )
+    {
+        String key = name + locale + impl_language;
+
+        if( loaded_object_files == null )
+             loaded_object_files = new LinkedList<String>();
+
+        if( loaded_object_files.contains(key) )
+             return true;
+
+        loaded_object_files.add(key);
+
+        return false;
+    }
+
+
+    /**
+     * tries locating and loading a translation class for a specific language
+     * @param object for which a translation is required
+     * @param locale language that is requested eg: "de_AT", or "de"
+     * @param impl_language naitive languague shoudl be like "de"
+     */
+    public void autoLoadFile4ClassName( String name, String locale, String impl_language)
+    {
+        if( already_loaded( name, locale, impl_language ) )
+           return;
+
+        Properties p = MLUtil.autoLoadFile4ClassName(root, name, locale, impl_language);
 
         if( p != null )
         {
@@ -205,12 +258,7 @@ public class MLHelper
      */
     public void autoLoadFile4Class( Object object, String locale, String impl_language)
     {
-        Properties p = MLUtil.autoLoadFile4Class(root, object, locale, impl_language);
-
-        if( p != null )
-        {
-            MLUtil.addAllProps(props, p);
-        }
+        autoLoadFile4ClassName( object.getClass().getName(), locale, impl_language );
     }
 
     public String MlM( String message )

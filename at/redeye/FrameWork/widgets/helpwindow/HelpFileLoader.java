@@ -123,8 +123,13 @@ public class HelpFileLoader {
 		return s;
 	}
 
+        public static String getResourceName( String Base, String ModuleName )
+        {
+            return Base + "/" + ModuleName + ".html";
+        }
+
 	public String loadHelp(String Base, String ModuleName) throws IOException {
-		String resource = Base + "/" + ModuleName + ".html";
+		String resource = getResourceName( Base, ModuleName);
 
 		resource = resource.replaceAll("//", "/");
 

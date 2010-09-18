@@ -9,6 +9,7 @@ package at.redeye.FrameWork.widgets.helpwindow;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
 import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.translation.MLUtil;
 
 /**
  * 
@@ -49,20 +50,44 @@ public class HelpWin extends BaseDialog {
 			@Override
 			public void do_stuff() throws Exception {
 
-				logger.debug("Loading Help for: '" + ModuleName + "'");
+                            String locale = root.getDisplayLanguage();
+                            
+                            String module_name = null;
+                                    
+                            if( MLUtil.haveResource(HelpFileLoader.getResourceName(base, ModuleName + "_" + locale) ) )
+                            {
+                                module_name = ModuleName + "_" + locale;
+                            }
+                            else if( MLUtil.haveResource(HelpFileLoader.getResourceName(base, ModuleName + "_" +  MLUtil.getLanguageOnly(locale)) ) )
+                            {
+                                module_name = ModuleName + "_" +  MLUtil.getLanguageOnly(locale);
+                            }
+                            else
+                            {
+                                if( !MLUtil.compareLanguagesOnly(root.getBaseLanguage(), root.getDisplayLanguage() ) )
+                                {
+                                    if( MLUtil.haveResource(HelpFileLoader.getResourceName(base, ModuleName + "_" +  MLUtil.getLanguageOnly(root.getDefaultLanguage()) ) ) )
+                                        module_name = ModuleName + "_" +  MLUtil.getLanguageOnly(root.getDefaultLanguage());
+                                }
+                            }
 
-				HelpFileLoader hfl = new HelpFileLoader();
+                            if( module_name == null )
+                                module_name = ModuleName;
 
-				String res = hfl.loadHelp(base, ModuleName);
+                            logger.debug("Loading Help for: '" + module_name + "'");
 
-				if (hook != null) {
-					res = res.replace(hook.getKeyword(), hook.getText());
-				}
+                            HelpFileLoader hfl = new HelpFileLoader();
 
-				// logger.debug(res.toString());
+                            String res = hfl.loadHelp(base, module_name);
 
-				jHelp.setText(res.toString());
-				jHelp.setCaretPosition(0);
+                            if (hook != null) {
+                                res = res.replace(hook.getKeyword(), hook.getText());
+                            }
+
+                            // logger.debug(res.toString());
+
+                            jHelp.setText(res.toString());
+                            jHelp.setCaretPosition(0);
 			}
 		};
 	}

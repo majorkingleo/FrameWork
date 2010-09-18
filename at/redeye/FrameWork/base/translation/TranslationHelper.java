@@ -133,7 +133,7 @@ public class TranslationHelper
                     if (value != null && !value.isEmpty()) {
                         assign(comp, value);
                     } else {
-                        assign(comp, key);
+                        assign(comp, root.MlM(key));
                     }
                 }
             }

@@ -5,9 +5,11 @@
 
 package at.redeye.FrameWork.base.prm.impl;
 
-import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.*;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
+import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
+import at.redeye.FrameWork.base.prm.impl.gui.LocalConfig;
+import at.redeye.FrameWork.base.translation.MLUtil;
 import at.redeye.FrameWork.widgets.helpwindow.HelpFileLoader;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWinHook;
 
@@ -41,13 +43,19 @@ public class ConfigParamHook implements HelpWinHook
         this.search_path = search_path;
        
         if( global )
+        {
             config = GlobalConfigDefinitions.entries;
+            root.loadMlM4ClassName(GlobalConfig.class.getName(), "de");
+        }
         else
+        {
             config = LocalConfigDefinitions.entries;
+            root.loadMlM4ClassName(LocalConfig.class.getName(), "de");
+        }
         
         color_even = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.HelpParamColorEven);
         color_odd = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.HelpParamColorOdd);
-        color_title = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.HelpParamColorTitle);
+        color_title = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.HelpParamColorTitle);        
     }
     
     
@@ -108,7 +116,7 @@ public class ConfigParamHook implements HelpWinHook
             res.append("</td>\n");            
                         
             res.append("<td><font face=\"Verdana\">\n");
-            res.append( c.descr.toString() );            
+            res.append( root.MlM(c.descr.toString()) );
             res.append("</font></td>\n");
             
             res.append("</tr>\n");
@@ -121,7 +129,27 @@ public class ConfigParamHook implements HelpWinHook
             for(String path : search_path)
             {
                 try {
-                    extra = hfl.loadHelp(path, key);
+                    String locale = root.getDisplayLanguage();
+
+                    String module_name = null;
+
+                    if (MLUtil.haveResource(HelpFileLoader.getResourceName(path, key + "_" + locale))) {
+                        module_name = key + "_" + locale;
+                    } else if (MLUtil.haveResource(HelpFileLoader.getResourceName(path, key + "_" + MLUtil.getLanguageOnly(locale)))) {
+                        module_name = key + "_" + MLUtil.getLanguageOnly(locale);
+                    } else {
+                        if (!MLUtil.compareLanguagesOnly(root.getBaseLanguage(), root.getDisplayLanguage())) {
+                            if (MLUtil.haveResource(HelpFileLoader.getResourceName(path, key + "_" + MLUtil.getLanguageOnly(root.getDefaultLanguage())))) {
+                                module_name = key + "_" + MLUtil.getLanguageOnly(root.getDefaultLanguage());
+                            }
+                        }
+                    }
+                    
+                    if( module_name == null )
+                        module_name = key;
+
+                    extra = hfl.loadHelp(path, module_name);
+
                 } catch (IOException ex) {
                     logger.trace("Hilfemodul: '" + path + "/" + key + ".html' konnte nicht geöffnet werden." );
                 }

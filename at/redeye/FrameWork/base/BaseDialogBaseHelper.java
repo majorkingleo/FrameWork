@@ -139,6 +139,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
     {
         translation_helper = new TranslationHelper(root,parent,this);
         parent.setTitle(MlM(title));
+        
+        root.loadMlM4Class(this, "de");
 
         if( !do_not_inform_root )
             root.informWindowOpened(parent);
@@ -440,12 +442,12 @@ public class BaseDialogBaseHelper implements BindVarInterface
      *        -1 on Cancel <br/>
      */
     public int checkSave() {
-        Object[] options = {"Daten Speichern", "Änderungen verwerfen", "Abbrechen"};
+        Object[] options = {MlM("Daten Speichern"), MlM("Änderungen verwerfen"), MlM("Abbrechen")};
 
         int n = JOptionPane.showOptionDialog(null,
                 StringUtils.autoLineBreak(
-                "Sie haben Daten verändert. "+
-                "Möchten Sie die Daten vor dem Verlassen des Dialoges speichern?"),
+                MlM("Sie haben Daten verändert. "+
+                "Möchten Sie die Daten vor dem Verlassen des Dialoges speichern?")),
                 parent.getTitle(), JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
@@ -684,16 +686,16 @@ public class BaseDialogBaseHelper implements BindVarInterface
 
         if (table.getSelectedRowCount() <= 0) {
             JOptionPane.showMessageDialog(null,
-                    StringUtils.autoLineBreak("Bitte wählen Sie einen Eintrag aus."),
-                    "Fehler",
+                    StringUtils.autoLineBreak(MlM("Bitte wählen Sie einen Eintrag aus.")),
+                    MlM("Fehler"),
                     JOptionPane.OK_OPTION);
             return false;
         }
 
         if (table.getSelectedRowCount() > 1) {
             JOptionPane.showMessageDialog(null,
-                    "Bitte nur einen Eintrag auswählen.",
-                    "Fehler",
+                    MlM("Bitte nur einen Eintrag auswählen."),
+                    MlM("Fehler"),
                     JOptionPane.OK_OPTION);
             return false;
         }
