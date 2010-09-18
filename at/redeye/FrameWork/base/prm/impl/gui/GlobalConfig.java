@@ -126,8 +126,7 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 		feed_table(true);
 	}
 
-	// <editor-fold defaultstate="collapsed"
-	// desc="Generated Code">//GEN-BEGIN:initComponents
+	//<editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
 		jLTitle = new javax.swing.JLabel();
@@ -241,9 +240,9 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 								.addContainerGap()));
 
 		pack();
-	}// </editor-fold>//GEN-END:initComponents
+	}//</editor-fold>//GEN-END:initComponents
 
-	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBHelpActionPerformed
+	private void jBHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBHelpActionPerformed
 
 		java.awt.EventQueue.invokeLater(new Runnable() {
 
@@ -255,13 +254,13 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 						"GlobalConfig", hook).setVisible(true);
 			}
 		});
-	}// GEN-LAST:event_jBHelpActionPerformed
+	}//GEN-LAST:event_jBHelpActionPerformed
 
-	private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBSaveActionPerformed
+	private void jBSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSaveActionPerformed
 
 		saveData();
 
-	}// GEN-LAST:event_jBSaveActionPerformed
+	}//GEN-LAST:event_jBSaveActionPerformed
 
 	@Override
 	public boolean canClose() {
@@ -279,7 +278,7 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 		feed_table();
 	}
 
-	private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jBCloseActionPerformed
+	private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCloseActionPerformed
 		new AutoMBox(getTitle()) {
 
 			@Override
@@ -299,8 +298,8 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 			}
 		};
 
-	}// GEN-LAST:event_jBCloseActionPerformed
-		// Variables declaration - do not modify//GEN-BEGIN:variables
+	}//GEN-LAST:event_jBCloseActionPerformed
+		//Variables declaration - do not modify//GEN-BEGIN:variables
 
 	private javax.swing.JButton jBClose;
 	private javax.swing.JButton jBHelp;
@@ -309,7 +308,7 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JTable jTContent;
 
-	// End of variables declaration//GEN-END:variables
+	//End of variables declaration//GEN-END:variables
 
 	public void onChange(PrmDefaultChecksInterface checks, PrmActionEvent event) {
 		// System.out.println("PRM "+event.getParameterName()+" ," +
