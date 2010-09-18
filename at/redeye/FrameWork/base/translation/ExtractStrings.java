@@ -20,6 +20,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTabbedPane;
 
 /**
  *
@@ -70,6 +71,15 @@ public class ExtractStrings
                 addString((JCheckBox)comp);
             else if( comp instanceof JRadioButton )
                 addString((JRadioButton)comp);
+            else if( comp instanceof JTabbedPane )
+            {
+                addString((JTabbedPane)comp);
+                
+                try {
+                    extractStrings((Container) comp);
+                } catch (Exception ex) {
+                }
+            }
             else
             {
                 try {
@@ -160,6 +170,40 @@ public class ExtractStrings
             ((JRadioButton)comp).setText(value);
         else if( comp instanceof JCheckBox )
             ((JCheckBox)comp).setText(value);
+        else if( comp instanceof TabTitleWrapper )
+            ((TabTitleWrapper)comp).setText(value);
 
+    }
+
+    static private class TabTitleWrapper extends JComponent
+    {
+        JTabbedPane parent;
+        int index;
+
+        public TabTitleWrapper( JTabbedPane parent, int index )
+        {
+            this.index = index;
+            this.parent = parent;
+        }
+
+        public String getText()
+        {
+            return parent.getTitleAt(index);
+        }
+
+        public void setText( String text)
+        {
+            parent.setTitleAt(index, text);
+        }
+    }
+
+    private void addString(JTabbedPane jTabbedPane)
+    {
+        for( int i = 0; i < jTabbedPane.getTabCount(); i++ )
+        {
+            TabTitleWrapper wrapper = new TabTitleWrapper(jTabbedPane, i );
+            strings.add(wrapper.getText());
+            addComp(wrapper.getText(),wrapper);
+        }
     }
 }
