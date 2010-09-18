@@ -13,6 +13,7 @@ import at.redeye.FrameWork.Plugin.Plugin;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.UserManagement.UserManagementInterface;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -52,6 +53,12 @@ public abstract class Root {
      * eg: /at/redeye/Zeiterfassung/resources/translations
      */
     String language_resource_path;
+
+    /**
+     * language used in messages, can differ from
+     * Locale.getDefault()
+     */
+    String display_language;
 
     public Root( String app_name )
     {
@@ -250,6 +257,34 @@ public abstract class Root {
     public void setLanguageTranslationResourcePath( String path )
     {
         language_resource_path = path;
+    }
+
+    /**     
+     * @return language that should be used for translations
+     * can be Locale.getDefault() or something userdefined
+     */
+    public String getDisplayLanguage()
+    {
+        if (display_language == null)
+        {
+            Setup setup = getSetup();
+
+            display_language = Locale.getDefault().toString();
+
+            if (setup == null) {
+                return display_language;
+            }
+
+            String lang = setup.getLocalConfig(BaseAppConfigDefinitions.DisplayLanguage);
+
+            if (lang != null && lang.trim().isEmpty()) {
+                return display_language;
+            }
+
+            display_language = lang;
+        }
+
+        return display_language;
     }
 
     /**

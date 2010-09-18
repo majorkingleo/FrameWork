@@ -189,17 +189,17 @@ public class TranslationHelper
 
     public void autoSwitchToCurrentLocale()
     {
-        Locale locale = Locale.getDefault();
+        String locale = root.getDisplayLanguage();
 
-        if (locale.toString().equals(helper.getBaseLanguage())) {
+        if (locale.equals(helper.getBaseLanguage())) {
             return;
         }
 
-        if (switchTrans(locale.toString())) {
+        if (switchTrans(locale)) {
             return;
         }
 
-        String parts[] = locale.toString().split("_");
+        String parts[] = locale.split("_");
 
         if (parts.length == 1 && !root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
             switchTrans(root.getDefaultLanguage());
@@ -210,6 +210,15 @@ public class TranslationHelper
             return;
         }
 
+        /**
+         * ist die Implementationssprache die gleiche, wie
+         * die gewünschte, dann kein Fallback auf die Default Sprache.
+         */
+        if( MLUtil.compareLanguagesOnly(locale, helper.getBaseLanguage()))
+        {
+            return;
+        }
+
         if (!root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
             switchTrans(root.getDefaultLanguage());
         }
@@ -217,17 +226,17 @@ public class TranslationHelper
 
     public void autoLoadCurrentLocale()
     {
-        Locale locale = Locale.getDefault();
+        String locale = root.getDisplayLanguage();
 
-        if (locale.toString().equals(helper.getBaseLanguage())) {
+        if (locale.equals(helper.getBaseLanguage())) {
             return;
         }
 
-        if (loadTrans(locale.toString())) {
+        if (loadTrans(locale)) {
             return;
         }
 
-        String parts[] = locale.toString().split("_");
+        String parts[] = locale.split("_");
 
         if (parts.length == 1 && !root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
             loadTrans(root.getDefaultLanguage());
@@ -235,6 +244,15 @@ public class TranslationHelper
         }
 
         if (loadTrans(parts[0])) {
+            return;
+        }
+
+        /**
+         * ist die Implementationssprache die gleiche, wie
+         * die gewünschte, dann kein Fallback auf die Default Sprache.
+         */
+        if( MLUtil.compareLanguagesOnly(locale, helper.getBaseLanguage()))
+        {
             return;
         }
 

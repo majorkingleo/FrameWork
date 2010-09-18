@@ -178,9 +178,7 @@ public class MLUtil {
         try {
             boolean no_default = false;
 
-            if( impl_language.equals(locale) )
-                no_default = true;
-            else if( locale.startsWith(impl_language) )
+            if( MLUtil.compareLanguagesOnly(locale, impl_language))
                 no_default = true;
 
             return loadFile4Class(root, object, locale, no_default);
@@ -189,5 +187,22 @@ public class MLUtil {
         } catch( IOException ex ) {
             return null;
         }
+    }
+
+    /**
+     * compares the language part of the given locales
+     * @param locale_a
+     * @param locale_b
+     * @return true if both languages are the same
+     */
+    public static boolean compareLanguagesOnly( String locale_a, String locale_b )
+    {
+        if( locale_a.equals(locale_b) )
+            return true;
+
+        String parts_a[] = locale_a.split("_");
+        String parts_b[] = locale_b.split("_");
+
+        return parts_a[0].equals(parts_b[0]);
     }
 }

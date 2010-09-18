@@ -445,7 +445,7 @@ public class LocalRoot extends Root {
             ml_helper = new MLHelper( this );
 
 
-        ml_helper.autoLoadFile4Class(obj, Locale.getDefault().toString(), impl_locale);
+        ml_helper.autoLoadFile4Class(obj, getDisplayLanguage(), impl_locale);
     }
 
     /**
@@ -458,6 +458,6 @@ public class LocalRoot extends Root {
         if( ml_helper == null )
             ml_helper = new MLHelper( this );
 
-        ml_helper.autoLoadFile4Class(obj, Locale.getDefault().toString(), base_language);
+        ml_helper.autoLoadFile4Class(obj, getDisplayLanguage(), base_language);
     }
 }

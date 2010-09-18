@@ -13,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -25,13 +24,14 @@ public class MLHelper
     Root root;
     Properties props;
     String current_lang;
-    Locale locale = Locale.getDefault();
+    String locale;
     Properties missing_props;
     String missing_props_file_name;
 
     public MLHelper( Root root )
     {
         this.root = root;
+        locale = root.getDisplayLanguage();
         autoLoadCurrentLocale();
     }
 
@@ -95,14 +95,14 @@ public class MLHelper
 
     public void autoLoadCurrentLocale()
     {
-        if( current_lang != null && locale.toString().equals(current_lang) )
+        if( current_lang != null && locale.equals(current_lang) )
             return;
 
-        if (loadTrans(locale.toString())) {
+        if (loadTrans(locale)) {
             return;
         }
 
-        String parts[] = locale.toString().split("_");
+        String parts[] = locale.split("_");
 
         if (parts.length == 1 ) {
             loadTrans(root.getDefaultLanguage());
@@ -113,10 +113,13 @@ public class MLHelper
             return;
         }
 
-        if( !loadTrans(root.getDefaultLanguage() ) )
+        if( !MLUtil.compareLanguagesOnly(locale, root.getBaseLanguage()) )
         {
-            // damit nun alle Werte auf das richtige locale eingestellt sind.
-            loadTrans(locale.toString());
+            if( !loadTrans(root.getDefaultLanguage()) )
+            {
+                // damit nun alle Werte auf das richtige locale eingestellt sind.
+                loadTrans(locale);
+            }
         }
     }
 
