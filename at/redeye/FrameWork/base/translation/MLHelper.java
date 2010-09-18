@@ -3,11 +3,10 @@
  * and open the template in the editor.
  */
 
-package at.redeye.FrameWork.base.ml;
+package at.redeye.FrameWork.base.translation;
 
 import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.translation.TranslationDialog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -179,6 +178,38 @@ public class MLHelper
             }
         };
 
+    }
+
+    /**
+     * automatically loads a translation file for the given object.
+     * as implementation language root.getBaseLanguage() is used
+     * and as target language the current language is used.
+     * @param object
+     */
+    public void autoLoadFile4Class(Object object)
+    {
+        Properties p = MLUtil.autoLoadFile4Class(root, object, current_lang, root.getBaseLanguage());
+
+        if( p != null )
+        {
+            MLUtil.addAllProps(props, p);
+        }
+    }
+
+    /**
+     * tries locating and loading a translation class for a specific language
+     * @param object for which a translation is required
+     * @param locale language that is requested eg: "de_AT", or "de"
+     * @param impl_language naitive languague shoudl be like "de"
+     */
+    public void autoLoadFile4Class( Object object, String locale, String impl_language)
+    {
+        Properties p = MLUtil.autoLoadFile4Class(root, object, locale, impl_language);
+
+        if( p != null )
+        {
+            MLUtil.addAllProps(props, p);
+        }
     }
 
     public String MlM( String message )

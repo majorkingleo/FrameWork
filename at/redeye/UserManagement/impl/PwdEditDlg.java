@@ -36,6 +36,11 @@ public class PwdEditDlg extends BaseDialog {
 
 	private DBPb pb_;
 
+        private static String MESSAGE_TITLE;
+        private static String MESSAGE_WRONG_CURRENT_PASSWD;
+        private static String MESSAGE_PASSWD_TOSHORT;
+        private static String MESSAGE_WRONG_SECOND_PASSWD;
+
 	/** Creates new form PwdEditDlg */
 	public PwdEditDlg(final Root root, DBPb pb) {
 		super(root, menuTitle);
@@ -50,6 +55,15 @@ public class PwdEditDlg extends BaseDialog {
                             "PwdEditDlg").setVisible(true);
                 }
             });
+
+            if( MESSAGE_TITLE == null )
+            {
+                MESSAGE_TITLE = MlM( "Fehler" );
+                MESSAGE_WRONG_CURRENT_PASSWD = MlM( "Das eingegebene, aktuelle Passwort ist nicht korrekt!" );
+                MESSAGE_PASSWD_TOSHORT = MlM( "Das neue Passwort muss mindestens fünf Zeichen enthalten!" );
+                MESSAGE_WRONG_SECOND_PASSWD = MlM( "Das eingegebene, neue Passwort "
+							+ "unterscheidet sich von der Wiederholung!" );
+            }
 	}
 
     //<editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -188,8 +202,8 @@ public class PwdEditDlg extends BaseDialog {
 					.showMessageDialog(
 							this,
 							StringUtils
-									.autoLineBreak("Das eingegebene, aktuelle Passwort ist nicht korrekt!"),
-							"Fehler", JOptionPane.OK_OPTION);
+									.autoLineBreak(MESSAGE_WRONG_CURRENT_PASSWD),
+							MESSAGE_TITLE, JOptionPane.OK_OPTION);
 			return;
 		}
 
@@ -199,8 +213,8 @@ public class PwdEditDlg extends BaseDialog {
 					.showMessageDialog(
 							this,
 							StringUtils
-									.autoLineBreak("Das neue Passwort muss mindestens fünf Zeichen enthalten!"),
-							"Fehler", JOptionPane.OK_OPTION);
+									.autoLineBreak(MESSAGE_PASSWD_TOSHORT),
+							MESSAGE_TITLE, JOptionPane.OK_OPTION);
 			return;
 		}
 
@@ -209,9 +223,8 @@ public class PwdEditDlg extends BaseDialog {
 				.getPassword()));
 		if (!encPwd.equals(encPwdCtl)) {
 			JOptionPane.showMessageDialog(this, StringUtils
-					.autoLineBreak("Das eingegebene, neue Passwort "
-							+ "unterscheidet sich von der Wiederholung!"),
-					"Fehler", JOptionPane.OK_OPTION);
+					.autoLineBreak(MESSAGE_WRONG_SECOND_PASSWD),
+					MESSAGE_TITLE, JOptionPane.OK_OPTION);
 			return;
 		}
 		pb_.pwd.loadFromCopy(encPwd);

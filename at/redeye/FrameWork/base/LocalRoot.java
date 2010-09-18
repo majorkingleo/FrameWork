@@ -19,7 +19,7 @@ import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
 import at.redeye.FrameWork.base.proxy.AutoProxyHandler;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.Plugin.Plugin;
-import at.redeye.FrameWork.base.ml.MLHelper;
+import at.redeye.FrameWork.base.translation.MLHelper;
 import at.redeye.FrameWork.utilities.calendar.CalendarFactory;
 import at.redeye.FrameWork.utilities.calendar.Holidays;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
@@ -30,6 +30,7 @@ import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 
@@ -430,5 +431,33 @@ public class LocalRoot extends Root {
             ml_helper = new MLHelper( this );
 
         return ml_helper.MlM(message);
+    }
+
+    /**
+     * load a MlM file for a spacific class
+     * @param obj
+     * @param impl_locale the locale the class was originaly implemented
+     * eg "de" for german
+     */
+    public void loadMlM4Class( Object obj, String impl_locale )
+    {
+        if( ml_helper == null )
+            ml_helper = new MLHelper( this );
+
+
+        ml_helper.autoLoadFile4Class(obj, Locale.getDefault().toString(), impl_locale);
+    }
+
+    /**
+     * load a MlM file for a spacific class
+     * as implementation language the value of base_language is used
+     * @param obj
+     */
+    public void loadMlM4Class( Object obj )
+    {
+        if( ml_helper == null )
+            ml_helper = new MLHelper( this );
+
+        ml_helper.autoLoadFile4Class(obj, Locale.getDefault().toString(), base_language);
     }
 }

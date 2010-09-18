@@ -137,7 +137,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
 
     protected void initCommon(boolean do_not_inform_root)
     {
-        parent.setTitle(title);
+        translation_helper = new TranslationHelper(root,parent,this);
+        parent.setTitle(MlM(title));
 
         if( !do_not_inform_root )
             root.informWindowOpened(parent);
@@ -198,9 +199,7 @@ public class BaseDialogBaseHelper implements BindVarInterface
                             parent.close();
                         }
                     }
-                });
-
-        translation_helper = new TranslationHelper(root,parent,this);
+                });        
 
         loadStuff();
     }

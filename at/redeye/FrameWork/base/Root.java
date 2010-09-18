@@ -263,4 +263,20 @@ public abstract class Root {
     }
 
     public abstract String MlM( String message );
+
+    /**
+     * load a MlM file for a spacific class
+     * @param obj
+     * @param impl_locale the locale the class was originaly implemented
+     * eg "de" for german
+     */
+    public abstract void loadMlM4Class( Object obj, String impl_locale );
+
+    /**
+     * load a MlM file for a spacific class
+     * as implementation language the value of base_language is used
+     * @param obj
+     */
+    public abstract void loadMlM4Class( Object obj );
+    
 }

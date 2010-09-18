@@ -38,10 +38,23 @@ public class UserDataHandling implements UserManagementInterface {
 	private Vector<UserManagementListener> registeredListener;
 	private boolean auto_login_feature_activated = true;
 
+        public static String MESSAGE_EMPTY_DATABASE;
+        public static String MESSAGE_USER_LOCKED;
+        public static String MESSAGE_WRONG_USERDATA;
+
 	public UserDataHandling(Root root) {
 		super();
 		this.root = root;
 		registeredListener = new Vector<UserManagementListener>();
+
+                root.loadMlM4Class(this, "de");
+
+                if( MESSAGE_EMPTY_DATABASE == null )
+                {
+                    MESSAGE_EMPTY_DATABASE = MlM("Keine Benutzer gefunden (Leere Datenbank!)");
+                    MESSAGE_USER_LOCKED = MlM( "Benutzer ist gesperrt!" );
+                    MESSAGE_WRONG_USERDATA = MlM( "Falsche Benutzerdaten" );
+                }
 	}
 
 	public DBPb checkUserData(String login, String pwd,
@@ -51,6 +64,11 @@ public class UserDataHandling implements UserManagementInterface {
 			CloneNotSupportedException, UserLockedException {
 		return checkUserData(login, pwd, autoLoginRequested, null);
 	}
+
+        private String MlM( String message )
+        {
+            return root.MlM(message);
+        }
 
 	/**
 	 * Checks if username and password are ok
@@ -79,13 +97,14 @@ public class UserDataHandling implements UserManagementInterface {
 		if (login.equals(setUpUser)
 				&& getEncryptedPwd(pwd).equalsIgnoreCase(setUpPwd)) {
 
-			Object[] options = { "Datenbank einrichten", "Benutzer warten",
-					"Abbrechen" };
+			Object[] options = { MlM("Datenbank einrichten"),
+                                             MlM("Benutzer warten"),
+                                             MlM("Abbrechen") };
 
 			int n = JOptionPane.showOptionDialog(null,
-					"M\u00f6chten Sie die Datenbank einrichten,\n"
-							+ "oder die Benutzerdaten pflegen?\n",
-					"Initiales Setup", JOptionPane.YES_NO_CANCEL_OPTION,
+					MlM("Möchten Sie die Datenbank einrichten,\n"
+							+ "oder die Benutzerdaten pflegen?\n"),
+					MlM("Initiales Setup"), JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
 			switch (n) {
@@ -149,17 +168,17 @@ public class UserDataHandling implements UserManagementInterface {
 					&& encPwd.equalsIgnoreCase(currpb.pwd.toString())) {
 
 				if ((Integer) currpb.locked.getValue() == UserManagementInterface.UM_ACCOUNT_LOCKED) {
-					throw new UserLockedException("Benutzer ist gesperrt!");
+					throw new UserLockedException(MESSAGE_USER_LOCKED);
 				}
 
 				return currpb;
 
 			} else {
-				throw new InvalidLoginException("Wrong User data!");
+				throw new InvalidLoginException(MESSAGE_WRONG_USERDATA);
 			}
 
 		}
-		throw new InvalidLoginException("No User found (Empty database)!");
+		throw new InvalidLoginException(MESSAGE_EMPTY_DATABASE);
 	}
 
 	protected String getEncryptedPwd(String input) {

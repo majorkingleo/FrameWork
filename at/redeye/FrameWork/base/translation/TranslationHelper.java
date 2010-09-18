@@ -10,13 +10,12 @@ import at.redeye.FrameWork.base.BaseDialogBase;
 import at.redeye.FrameWork.base.BaseDialogBaseHelper;
 import at.redeye.FrameWork.base.Root;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -34,10 +33,32 @@ public class TranslationHelper
      Root  root;
      ExtractStrings extract_strings;
      Properties currentProps;
+     List additional_strings;
+     boolean tried_autoloading_locale = false;
+     BaseDialogBaseHelper helper;
 
      class OpenTransDialog implements Runnable
      {
          public void run() {
+
+             if( extract_strings != null )
+             {
+                 if( additional_strings != null )
+                    extract_strings.strings.addAll(additional_strings);
+
+                 // alle in der property Datei gefundenen Strings hinzufügen
+                 if( currentProps != null )
+                 {
+                     Set<Object> keys = currentProps.keySet();
+
+                     Iterator<Object> it = keys.iterator();
+
+                     while( it.hasNext() )
+                        extract_strings.strings.add((String)it.next());
+                 }
+             }
+
+
              base_dlg.invokeDialogUnique(
                 new TranslationDialog(root, base_dlg.getContainer(), base_dlg.getClass().getName(), extract_strings)
              );
@@ -67,19 +88,11 @@ public class TranslationHelper
          }
      }
 
-     public TranslationHelper(Root root, BaseDialogBase base_dlg)
-     {
-         this.root = root;
-         this.base_dlg = base_dlg;
-
-        base_dlg.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), new OpenTransDialog() );
-        base_dlg.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), new SwitchTrans_DE_EN() );
-     }
-
     public TranslationHelper(Root root, BaseDialogBase base_dlg, BaseDialogBaseHelper helper)
     {
         this.root = root;
         this.base_dlg = base_dlg;
+        this.helper = helper;
 
         helper.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), new OpenTransDialog() );
         helper.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), new SwitchTrans_DE_EN() );        
@@ -97,86 +110,52 @@ public class TranslationHelper
         return false;
     }
 
-    private String getAltResourcePath(String resourceName, String subdir)
+    private boolean loadTranslation( String new_trans ) throws FileNotFoundException, IOException
     {
-        int index = resourceName.lastIndexOf('/');
-
-        return resourceName.substring(0,index) + '/' + subdir + resourceName.substring(index);
+        return switchTranslation(new_trans, true);
     }
 
     private boolean switchTranslation( String new_trans ) throws FileNotFoundException, IOException
     {
-        String dir = TranslationDialog.getTranslationsDir(root);        
+        return switchTranslation(new_trans, false);
+    }
 
-        String file_name =  "/" + base_dlg.getClass().getName();
+    private boolean switchTranslation( String new_trans, boolean load_only ) throws FileNotFoundException, IOException
+    {
+        boolean not_found = false;
 
-        String base_name = dir + file_name;
-        String prop = ".properties";
+        Properties props = MLUtil.autoLoadFile4Class(root, base_dlg, new_trans, true);
 
-        String extra = "_";
-
-        if( new_trans.isEmpty() )
-            extra = "";
-
-        File dir_exact = new File( base_name + extra + new_trans + prop );
-
-        String resource_name = "/" + base_dlg.getClass().getName().replaceAll("\\.", "/") + extra + new_trans + prop;
-
-        String alt1_resource_name = "/" + getAltResourcePath(base_dlg.getClass().getName().replaceAll("\\.", "/"), "translations") + extra + new_trans + prop;
-        String alt2_resource_name = "/" + getAltResourcePath(base_dlg.getClass().getName().replaceAll("\\.", "/"), "resources/translations") + extra + new_trans + prop;
-
-        Properties props = new Properties();
-
-        if( dir_exact.isFile() )
-        {
-            FileInputStream in = new FileInputStream(dir_exact);
-            props.load(in);
-            in.close();
-
-        } else if( haveResource( resource_name ) ) {
-
-            InputStream in = this.getClass().getResourceAsStream( resource_name );
-            props.load( in );
-            in.close();
-
-        } else if( haveResource( alt1_resource_name ) ) {
-
-            InputStream in = this.getClass().getResourceAsStream( alt1_resource_name );
-            props.load( in );
-            in.close();
-
-        } else if( haveResource( alt2_resource_name ) ) {
-
-            InputStream in = this.getClass().getResourceAsStream( alt2_resource_name );
-            props.load( in );
-            in.close();
-
-        } else {
-           return false;
+        if( props == null ) {
+            not_found = true;
+            props = new Properties();
         }
 
-        if( extract_strings == null )
-            extract_strings = new ExtractStrings(base_dlg.getContainer());
+        if (!load_only) {
+            if (extract_strings == null) {
+                extract_strings = new ExtractStrings(base_dlg.getContainer());
+            }
 
-        HashMap<String,List<JComponent>> all = extract_strings.getComponents();
+            HashMap<String, List<JComponent>> all = extract_strings.getComponents();
 
-        Set<String> keys = all.keySet();
+            Set<String> keys = all.keySet();
 
-        for (String key : keys) {
-            String value = props.getProperty(key);
+            for (String key : keys) {
+                String value = props.getProperty(key);
 
-            for (JComponent comp : all.get(key)) {
-                if (value != null && !value.isEmpty()) {
-                    assign(comp, value);
-                } else {
-                    assign(comp, key);
+                for (JComponent comp : all.get(key)) {
+                    if (value != null && !value.isEmpty()) {
+                        assign(comp, value);
+                    } else {
+                        assign(comp, key);
+                    }
                 }
             }
         }
 
         currentProps = props;
 
-        return true;
+        return !not_found;
     }
 
     private static void assign( JComponent comp, String value )
@@ -196,11 +175,23 @@ public class TranslationHelper
         }        
     }
 
+    public boolean loadTrans(String trans) {
+        try {
+            return loadTranslation(trans);
+
+        } catch (FileNotFoundException ex) {
+            return false;
+
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
     public void autoSwitchToCurrentLocale()
     {
         Locale locale = Locale.getDefault();
 
-        if (locale.toString().equals(base_dlg.getBaseLanguage())) {
+        if (locale.toString().equals(helper.getBaseLanguage())) {
             return;
         }
 
@@ -210,7 +201,7 @@ public class TranslationHelper
 
         String parts[] = locale.toString().split("_");
 
-        if (parts.length == 1 && !root.getDefaultLanguage().equals(base_dlg.getBaseLanguage())) {
+        if (parts.length == 1 && !root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
             switchTrans(root.getDefaultLanguage());
             return;
         }
@@ -219,22 +210,70 @@ public class TranslationHelper
             return;
         }
 
-        if (!root.getDefaultLanguage().equals(base_dlg.getBaseLanguage())) {
+        if (!root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
             switchTrans(root.getDefaultLanguage());
+        }
+    }
+
+    public void autoLoadCurrentLocale()
+    {
+        Locale locale = Locale.getDefault();
+
+        if (locale.toString().equals(helper.getBaseLanguage())) {
+            return;
+        }
+
+        if (loadTrans(locale.toString())) {
+            return;
+        }
+
+        String parts[] = locale.toString().split("_");
+
+        if (parts.length == 1 && !root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
+            loadTrans(root.getDefaultLanguage());
+            return;
+        }
+
+        if (loadTrans(parts[0])) {
+            return;
+        }
+
+        if (!root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
+            loadTrans(root.getDefaultLanguage());
         }
     }
 
     public String MlM( String message )
     {
-        if( currentProps == null )
-            return message;
+        String res = null;
 
-        String res =  currentProps.getProperty(message);
-
-        if( res == null && extract_strings != null )
+        if( currentProps == null && !tried_autoloading_locale )
         {
-            // damit im Ünbersetztungsdialog der Text aufscheint
-            extract_strings.strings.add(message);
+            autoLoadCurrentLocale();
+            tried_autoloading_locale = true;
+        }
+
+        if( currentProps != null )
+            res = currentProps.getProperty(message);
+
+        if( res == null )
+        {
+            if( extract_strings == null )
+            {
+                // hierher kommen wir, wenn MlM im Konstruktor aufgerufen wird
+                // und dadurch autoSwitchToCurrentLocale() noch nicht aufgrufen wird.
+                // Die Funktion wird nämlich erst beim doLayout aufgerufen
+
+                if( additional_strings == null )
+                    additional_strings = new LinkedList<String>();
+
+                additional_strings.add(message);
+            }
+            else
+            {
+                // damit im Übersetztungsdialog der Text aufscheint
+                extract_strings.strings.add(message);
+            }
         }
 
         if( res == null )

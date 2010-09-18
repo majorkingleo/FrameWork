@@ -35,11 +35,30 @@ public class LoginDlg extends BaseDialog {
 	private static final String dlgName = "Login Dialog";
 	private UserManagementInterface um;
 
+        private static String MESSAGE_TITLE;
+        private static String MESSAGE_DBACCESS;
+        private static String MESSAGE_DBBINDDESC;
+        private static String MESSAGE_USERLOCKED;
+        private static String MESSAGE_WRONGUSERDATA;
+        private static String MESSAGE_DBREGISTERED_TABLES;
+        private static String MESSAGE_UNKNOWN;
+
 	/** Creates new form LoginDlg */
 	public LoginDlg(Root root, UserManagementInterface um) {
 		super(root, dlgName);
 		this.um = um;
 		initComponents();
+
+         if( MESSAGE_TITLE == null )
+         {
+                MESSAGE_TITLE = MlM( "User Management" );
+                MESSAGE_DBACCESS = MlM( "Fehler beim Zugriff auf die Datenbank!" );
+                MESSAGE_WRONGUSERDATA = MlM("Falsche Benutzerdaten!");
+                MESSAGE_DBREGISTERED_TABLES = MlM( "Tabellen wurden nicht registiert!" );
+                MESSAGE_DBBINDDESC = MlM( "Falscher Bindedeskriptor!");
+                MESSAGE_UNKNOWN = MlM( "Allgemeiner Fehler beim Überprüfen der Daten!" );
+                MESSAGE_USERLOCKED = MlM( "Der Benutzer ist gesperrt!");
+         }
 	}
 
     @Override
@@ -174,46 +193,46 @@ public class LoginDlg extends BaseDialog {
 			close();
 		} catch (InvalidLoginException e) {
 			logger.error("Falsche Benutzerdaten!");
-			JOptionPane.showMessageDialog(this, "Falsche Benutzerdaten!",
-					"User Management", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, MESSAGE_WRONGUSERDATA,
+					 MESSAGE_TITLE, JOptionPane.ERROR_MESSAGE);
 			return;
 		} catch (SQLException e) {
 			logger.error("Fehler beim Zugriff auf die Datenbank!\n"
 					+ e.getMessage());
 			JOptionPane
 					.showMessageDialog(this,
-							"Fehler beim Zugriff auf die Datenbank!\n"
-									+ e.getMessage(), "User Management",
+							 MESSAGE_DBACCESS + "\n" + e.getMessage(),
+                                                         MESSAGE_TITLE,
 							JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 			return;
 		} catch (UnsupportedDBDataTypeException e) {
 			logger.error("Fehler beim Zugriff auf die Datenbank!");
 			JOptionPane.showMessageDialog(this,
-					"Fehler beim Zugriff auf die Datenbank!",
-					"User Management", JOptionPane.ERROR_MESSAGE);
+					MESSAGE_DBACCESS,
+					MESSAGE_TITLE, JOptionPane.ERROR_MESSAGE);
 			return;
 		} catch (TableBindingNotRegisteredException e) {
 			logger.error("Tabellen wurden nicht registiert!");
 			JOptionPane.showMessageDialog(this,
-					"Tabellen wurden nicht registiert!", "User Management",
+					MESSAGE_DBREGISTERED_TABLES, MESSAGE_TITLE,
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		} catch (WrongBindFileFormatException e) {
 			logger.error("Falscher Bindedeskriptor!");
-			JOptionPane.showMessageDialog(this, "Falscher Bindedeskriptor!",
-					"User Management", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, MESSAGE_DBBINDDESC,
+					MESSAGE_TITLE, JOptionPane.ERROR_MESSAGE);
 			return;
 		} catch (CloneNotSupportedException e) {
 			logger.error("Allgemeiner Fehler beim Überprüfen der Daten!");
 			JOptionPane.showMessageDialog(this,
-					"Allgemeiner Fehler beim Überprüfen der Daten!",
-					"User Management", JOptionPane.ERROR_MESSAGE);
+					MESSAGE_UNKNOWN,
+					MESSAGE_TITLE, JOptionPane.ERROR_MESSAGE);
 			return;
 		} catch (UserLockedException e) {
 			logger.error("Der Benutzer ist gesperrt!");
-			JOptionPane.showMessageDialog(this, "Der Benutzer ist gesperrt!",
-					"User Management", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, MESSAGE_USERLOCKED,
+					MESSAGE_TITLE, JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
