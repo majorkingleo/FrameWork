@@ -100,16 +100,14 @@ public class MLHelper
 
         if (loadTrans(locale)) {
             return;
-        }
+        }        
 
-        String parts[] = locale.split("_");
-
-        if (parts.length == 1 ) {
+        if (locale.length() == 2  && !MLUtil.compareLanguagesOnly(locale, root.getBaseLanguage()) ) {
             loadTrans(root.getDefaultLanguage());
             return;
         }
 
-        if (loadTrans(parts[0])) {
+        if (loadTrans(MLUtil.getLanguageOnly(locale))) {
             return;
         }
 

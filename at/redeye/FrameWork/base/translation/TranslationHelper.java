@@ -12,12 +12,10 @@ import at.redeye.FrameWork.base.Root;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import javax.swing.JComponent;
@@ -96,18 +94,6 @@ public class TranslationHelper
 
         helper.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), new OpenTransDialog() );
         helper.registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), new SwitchTrans_DE_EN() );        
-    }
-
-    private boolean haveResource( String name )
-    {
-        System.out.println("testing: " + name);
-
-        URL url = this.getClass().getResource(name);
-
-        if( url != null )
-            return true;
-
-        return false;
     }
 
     private boolean loadTranslation( String new_trans ) throws FileNotFoundException, IOException
@@ -199,14 +185,12 @@ public class TranslationHelper
             return;
         }
 
-        String parts[] = locale.split("_");
-
-        if (parts.length == 1 && !root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
+        if (locale.length() == 2 && !MLUtil.compareLanguagesOnly(root.getDefaultLanguage(), helper.getBaseLanguage())) {
             switchTrans(root.getDefaultLanguage());
             return;
         }
 
-        if (switchTrans(parts[0])) {
+        if (switchTrans(MLUtil.getLanguageOnly(locale))) {
             return;
         }
 
@@ -234,16 +218,14 @@ public class TranslationHelper
 
         if (loadTrans(locale)) {
             return;
-        }
+        }        
 
-        String parts[] = locale.split("_");
-
-        if (parts.length == 1 && !root.getDefaultLanguage().equals(helper.getBaseLanguage())) {
+        if (locale.length() == 2  && !MLUtil.compareLanguagesOnly(root.getDefaultLanguage(), helper.getBaseLanguage())) {
             loadTrans(root.getDefaultLanguage());
             return;
         }
 
-        if (loadTrans(parts[0])) {
+        if (loadTrans(MLUtil.getLanguageOnly(locale))) {
             return;
         }
 

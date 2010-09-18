@@ -197,12 +197,21 @@ public class MLUtil {
      */
     public static boolean compareLanguagesOnly( String locale_a, String locale_b )
     {
-        if( locale_a.equals(locale_b) )
-            return true;
+        String a = getLanguageOnly(locale_a);
+        String b = getLanguageOnly(locale_b);
 
-        String parts_a[] = locale_a.split("_");
-        String parts_b[] = locale_b.split("_");
+        return a.equals(b);
+    }
 
-        return parts_a[0].equals(parts_b[0]);
+    /**
+     * @param locale
+     * @return returns "de" when the locale was "de_AT"
+     */
+    public static String getLanguageOnly( String locale )
+    {
+        if( locale.length() == 2 )
+            return locale;
+
+        return locale.substring(0,2);
     }
 }
