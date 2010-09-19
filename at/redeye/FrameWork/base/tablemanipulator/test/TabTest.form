@@ -69,6 +69,7 @@
             <Component class="javax.swing.JButton" name="jButton1">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Eins"/>
+                <Property name="toolTipText" type="java.lang.String" value="xEins"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -121,6 +122,7 @@
                 <Component class="javax.swing.JButton" name="jButton2">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="zwei"/>
+                    <Property name="toolTipText" type="java.lang.String" value="xZwei"/>
                   </Properties>
                 </Component>
               </SubComponents>

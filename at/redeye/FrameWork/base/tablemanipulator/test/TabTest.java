@@ -39,6 +39,7 @@ public class TabTest extends BaseDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jButton1.setText("Eins");
+        jButton1.setToolTipText("xEins");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -60,6 +61,7 @@ public class TabTest extends BaseDialog {
         jTabbedPane1.addTab("tab1", jPanel1);
 
         jButton2.setText("zwei");
+        jButton2.setToolTipText("xZwei");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);

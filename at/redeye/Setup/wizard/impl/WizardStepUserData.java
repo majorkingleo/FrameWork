@@ -67,7 +67,7 @@ public class WizardStepUserData extends WizardBaseWindow implements WizardWindow
 
     @Override
     protected String getHelptext() {
-        return "\n In diesem Setup-Abschnitt können Sie Ihre Benutzerdaten einpflegen.";
+        return "\n " + MlM("In diesem Setup-Abschnitt können Sie Ihre Benutzerdaten einpflegen.");
     }
 
     @Override

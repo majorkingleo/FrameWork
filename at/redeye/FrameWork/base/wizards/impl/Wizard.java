@@ -139,7 +139,9 @@ public class Wizard implements WizardClientActionInterface,
                 legend.append("   ");
             }
 
-            legend.append(idx + 1).append(". ").append(allWindows.get(idx).getTitle()).append("\n");
+            WizardBaseWindow current = allWindows.get(idx);
+
+            legend.append(idx + 1).append(". ").append(current.MlM(current.getTitle())).append("\n");
 
         }
         for (int idx = 0; idx < allWindows.size(); idx++) {

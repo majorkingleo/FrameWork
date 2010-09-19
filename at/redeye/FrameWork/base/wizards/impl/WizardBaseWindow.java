@@ -67,6 +67,8 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
         registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), new OnWinClose());
 
         should_this_step_be_skipped = false;
+
+        root.loadMlM4ClassName(WizardBaseWindow.class.getName(), "de");
     }
 
     /** This method is called from within the constructor to
@@ -233,23 +235,23 @@ public abstract class WizardBaseWindow extends BaseDialog implements WizardWindo
 
     protected void setButtonCancelText(String text) {
         System.out.println("Text cancel: " + text);
-        buttonCancel.setText(text);
+        buttonCancel.setText(MlM(text));
     }
 
     protected void setButtonFinishText(String text) {
-        buttonFinish.setText(text);
+        buttonFinish.setText(MlM(text));
     }
 
     protected void setButtonNextText(String text) {
-        buttonNext.setText(text);
+        buttonNext.setText(MlM(text));
     }
 
     protected void setButtonPrevText(String text) {
-        buttonPrev.setText(text);
+        buttonPrev.setText(MlM(text));
     }
 
     protected void setAreaMenuTreeTitle(String text) {
-        textAreaMenuTree.setBorder(BorderFactory.createTitledBorder(text));
+        textAreaMenuTree.setBorder(BorderFactory.createTitledBorder(MlM(text)));
     }
 
     protected void controlButtons() {

@@ -37,6 +37,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 /**
@@ -68,6 +69,8 @@ public class TranslationDialog extends BaseDialog {
         super(root, name );
         initComponents();
 
+        setBaseLanguage("de");
+
         ClassName = name;
 
         jLTitle.setText(getTitle(name));
@@ -77,8 +80,9 @@ public class TranslationDialog extends BaseDialog {
 
         Set<String> strings = es.getStrings();
 
-        panel.setLayout(new GridLayout2(0,4));
+        panel.setLayout(new GridLayout2(0,5));
 
+        
         for( String s : strings )
         {
             if( shouldBeTranslated(s))
@@ -95,7 +99,7 @@ public class TranslationDialog extends BaseDialog {
                 copy.setBorderPainted(false);
                 copy.setContentAreaFilled(false);
                 copy.setMargin(new Insets(0, 0, 0, 0));
-                copy.setToolTipText("Text kopieren");
+                copy.setToolTipText(MlM("Text kopieren"));
 
                 copy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/next.png")));
 
@@ -106,11 +110,30 @@ public class TranslationDialog extends BaseDialog {
                 edit.setBorderPainted(false);
                 edit.setContentAreaFilled(false);
                 edit.setMargin(new Insets(0, 0, 0, 0));
-                edit.setToolTipText("Text mehrzeilig editieren");
+                edit.setToolTipText(MlM("Text mehrzeilig editieren"));
 
                 edit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/edit.png")));
                 
                 panel.add(edit);
+
+
+                String res = root.MlM(s);
+
+                JButton wizard = null;
+
+                if( res.equals(s) )
+                {
+                    panel.add( new JLabel() );
+                } else {
+                    wizard = new JButton();
+                    wizard.setBorderPainted(false);
+                    wizard.setContentAreaFilled(false);
+                    wizard.setMargin(new Insets(0, 0, 0, 0));
+                    wizard.setToolTipText(res);
+                    wizard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/wizard.gif")));
+
+                    panel.add(wizard);
+                }
 
                 final NoticeIfChangedTextField editField = new NoticeIfChangedTextField();
                 right_cols.add(editField);
@@ -121,6 +144,16 @@ public class TranslationDialog extends BaseDialog {
                         editField.setText(tf.getText());
                     }
                 });
+
+                if( wizard != null )
+                {
+                    wizard.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            editField.setText(root.MlM(tf.getText()));
+                        }
+                    });
+                }
 
                 editField.setColumns(40);
 
@@ -282,14 +315,14 @@ public class TranslationDialog extends BaseDialog {
         return true;
     }
 
-    private static String getTitle( String name )
+    private String getTitle(String name )
     {
         int index = name.lastIndexOf('.');
 
         if( index > 0 )
             name = name.substring(index+1);
 
-        return "Übersetzungen von " + name;
+        return String.format(MlM("Übersetzungen von %s "),  name);
     }
 
 

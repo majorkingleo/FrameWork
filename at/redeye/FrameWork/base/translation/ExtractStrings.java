@@ -28,6 +28,48 @@ import javax.swing.JTabbedPane;
  */
 public class ExtractStrings
 {
+    static private class TabTitleWrapper extends JComponent
+    {
+        JTabbedPane parent;
+        int index;
+
+        public TabTitleWrapper( JTabbedPane parent, int index )
+        {
+            this.index = index;
+            this.parent = parent;
+        }
+
+        public String getText()
+        {
+            return parent.getTitleAt(index);
+        }
+
+        public void setText( String text)
+        {
+            parent.setTitleAt(index, text);
+        }
+    }
+
+    static private class ToolTipWrapper extends JComponent
+    {
+        JComponent parent;        
+
+        public ToolTipWrapper( JComponent parent )
+        {
+            this.parent = parent;
+        }
+
+        public String getText()
+        {
+            return parent.getToolTipText();
+        }
+
+        public void setText( String text)
+        {
+            parent.setToolTipText(text);
+        }
+    }
+
     TreeSet<String> strings;
     HashMap<String,List<JComponent>> components;
 
@@ -54,6 +96,19 @@ public class ExtractStrings
         for( Component comp : cont.getComponents() )
         {
 //            System.out.println("com:" + comp);
+
+            if( comp instanceof JComponent )
+            {
+                JComponent jcomp = (JComponent) comp;
+
+                String text = jcomp.getToolTipText();
+
+                if( text != null && !text.isEmpty() )
+                {
+                    strings.add(text);
+                    addComp( text, new ToolTipWrapper(jcomp));
+                }
+            }
 
             if( comp instanceof JLabel )
                 addString((JLabel)comp);
@@ -172,29 +227,9 @@ public class ExtractStrings
             ((JCheckBox)comp).setText(value);
         else if( comp instanceof TabTitleWrapper )
             ((TabTitleWrapper)comp).setText(value);
+        else if( comp instanceof ToolTipWrapper )
+            ((ToolTipWrapper)comp).setText(value);
 
-    }
-
-    static private class TabTitleWrapper extends JComponent
-    {
-        JTabbedPane parent;
-        int index;
-
-        public TabTitleWrapper( JTabbedPane parent, int index )
-        {
-            this.index = index;
-            this.parent = parent;
-        }
-
-        public String getText()
-        {
-            return parent.getTitleAt(index);
-        }
-
-        public void setText( String text)
-        {
-            parent.setTitleAt(index, text);
-        }
     }
 
     private void addString(JTabbedPane jTabbedPane)

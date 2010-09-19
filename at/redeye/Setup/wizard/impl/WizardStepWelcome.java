@@ -32,8 +32,8 @@ public class WizardStepWelcome extends WizardBaseWindow {
 
     @Override
     protected String getHelptext() {
-        return "\n Der Setup Wizard ermöglich Ihnen die initiale Parametrierung \n "
-                + "Ihrer RedEye Labs Anwendung.";
+        return "\n " + MlM("Der Setup Wizard ermöglich Ihnen die initiale Parametrierung \n "
+                + "Ihrer RedEye Labs Anwendung.");
     }
 
     public boolean allowJumpNextWindow() {

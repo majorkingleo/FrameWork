@@ -29,6 +29,7 @@ public class WizardStepDBSetup extends WizardBaseWindow implements WizardWindowI
         super(root, "Datenbank Setup");
         this.parentWizard = parent;
         dlg = new ConnectionDialog(root, parent);
+        setBaseLanguage("de");
     }
     
     public boolean allowJumpNextWindow() {
@@ -57,13 +58,13 @@ public class WizardStepDBSetup extends WizardBaseWindow implements WizardWindowI
     }
 
     public String getWindowHelp() {
-        return "Datenbank einrichten!";
+        return MlM("Datenbank einrichten!");
     }
 
 
     @Override
     protected String getHelptext() {
-        return "\n Datenbank einrichten und Verbindungstest";
+        return "\n " + MlM("Datenbank einrichten und Verbindungstest");
     }
 
     @Override

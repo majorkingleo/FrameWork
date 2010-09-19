@@ -25,6 +25,7 @@ public class WizardStepFinished extends WizardBaseWindow {
         super(root, "Abschluss");
         this.parentWizard = parent;
         finish = new WizardPanelFinished();
+        setBaseLanguage("de");
     }
 
     @Override
@@ -34,7 +35,7 @@ public class WizardStepFinished extends WizardBaseWindow {
 
     @Override
     protected String getHelptext() {
-        return "\n Abschluss des Wizards.\n Ihre Anwendung ist nun startbereit!";
+        return "\n " + MlM("Abschluss des Wizards.\n Ihre Anwendung ist nun startbereit!");
     }
 
     @Override
