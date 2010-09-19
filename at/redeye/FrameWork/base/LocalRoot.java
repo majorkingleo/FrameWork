@@ -30,7 +30,6 @@ import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * 
@@ -109,7 +108,7 @@ public class LocalRoot extends Root {
             loader_proxy = new DelayedProxyLoader(this);
             loader_proxy.start();
 
-            dbmanager = new DatabaseManager();
+            dbmanager = new DatabaseManager(this);
 	}
 
 	@Override

@@ -76,11 +76,14 @@ public abstract class AutoMBox
         
         if (thrown_ex != null) {
             if (do_mbox) {
+
+                Root root = Root.getLastRoot();
+
                 JOptionPane.showMessageDialog(null,
                         StringUtils.autoLineBreak(
-                        "Es ist ein Fehler aufgetreten: " +
+                        root.MlM("Es ist ein Fehler aufgetreten:") + " " +
                         thrown_ex.getLocalizedMessage()),
-                        "Error",
+                        root.MlM("Error"),
                         JOptionPane.OK_OPTION);
             }
         }

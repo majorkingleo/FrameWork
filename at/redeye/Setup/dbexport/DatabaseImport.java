@@ -57,6 +57,12 @@ public class DatabaseImport {
 	File temp_db_dir;
 	ProgressListener listener = null;
 
+        String MESSAGE_MISSING_TABLE;
+        String MESSAGE_FAILED_DELETING_TABLE;
+        String MESSAGE_FAILED_CREATING_DB;
+        String MESSAGE_FAILED_LOADING_DB;
+        String MESSAGE_MISSING_DERBY;
+
 	/**
 	 * exports a databse to a zip file, by using a derby database. Always call
 	 * close when finished, or an error appeared. This cleans up the tempdir
@@ -68,6 +74,19 @@ public class DatabaseImport {
 	public DatabaseImport(Root root, String source_file_name) {
 		this.source_file_name = source_file_name;
 		this.root = root;
+
+                root.loadMlM4Class(this,"de");
+
+                if( MESSAGE_MISSING_TABLE == null )
+                {
+                    MESSAGE_MISSING_TABLE = root.MlM("Tabelle %s"
+                            + " konnte in Quelldatenbank nicht gefunden werden. "
+                            + "Import abgebrochen, keine Daten wurden importiert, oder gelöscht");
+                    MESSAGE_FAILED_DELETING_TABLE = root.MlM("Tabelle %s konnte nicht gelöscht werden!");
+                    MESSAGE_FAILED_CREATING_DB = root.MlM("Die Datenbank konnte nicht mehr eingerichtet werden");
+                    MESSAGE_FAILED_LOADING_DB = root.MlM("Die Datenbank konnte nicht geladen werden");
+                    MESSAGE_MISSING_DERBY = root.MlM("Der Datenbanktreiber für Derby Datenbanken ist nicht installiert. Dieser Treiber wird aber benötigt um Daten exportieren zu können.");
+                }
 	}
 
 	public void setProgressListener(ProgressListener progress_listener) {
@@ -91,7 +110,7 @@ public class DatabaseImport {
 		temp_db_dir.delete();
 		temp_db_dir.mkdir();
 
-		fireEvent("Entpacke Archiv");
+		fireEvent(root.MlM("Entpacke Archiv"));
 
 		UnZip.unzip(temp_db_dir, source_file_name);
 
@@ -99,7 +118,7 @@ public class DatabaseImport {
 
 		trans_target = root.getDBConnection().getNewTransaction();
 
-		fireEvent("Lösche existierende Datenbank");
+		fireEvent(root.MlM("Lösche existierende Datenbank"));
 		// alle bisherigen Tabellen löschen
 		DBManager db_manager = root.getDBManager();
 
@@ -115,7 +134,7 @@ public class DatabaseImport {
 
 		// konrolliere, ob das auch nur annähernd die richtige Datenbank sein
 		// kann
-		DatabaseManager manager_temp = new DatabaseManager(trans_temp);
+		DatabaseManager manager_temp = new DatabaseManager(root, trans_temp);
 
 		Collection<String> source_tables = manager_temp.getTables();
 
@@ -132,11 +151,7 @@ public class DatabaseImport {
 			}
 
 			if (!found) {
-				throw new CannotOpenTempDatabase(
-						"Tabelle "
-								+ table.getName()
-								+ " konnte in Quelldatenbank nicht gefunden werden. "
-								+ "Import abgebrochen, keine Daten wurden importiert, oder gelöscht");
+				throw new CannotOpenTempDatabase(String.format(MESSAGE_MISSING_TABLE,table.getName()) );
 			}
 		}
 
@@ -145,13 +160,11 @@ public class DatabaseImport {
 		for (DBStrukt table : tables) {
 			logger.info("Lösche Tabelle " + table.getName());
 
-			fireEvent("Lösche Tabelle " + table.getName());
+			fireEvent(String.format(root.MlM("Lösche Tabelle %s"),table.getName()));
 
 			if (db_manager.tableExists(table.getName())) {
 				if (!db_manager.drop_table(table)) {
-					throw new CannotOpenTempDatabase("Tabelle "
-							+ table.getName()
-							+ " konnte nicht gelöscht werden!");
+					throw new CannotOpenTempDatabase(String.format(MESSAGE_FAILED_DELETING_TABLE,table.getName()));
 				}
 			}
 
@@ -160,15 +173,13 @@ public class DatabaseImport {
 		}
 
 		if (!root.getBindtypeManager().autocreate())
-			throw new CannotOpenTempDatabase(
-					"Die Datenbank konnte nicht mehr eingerichtet werden");
+			throw new CannotOpenTempDatabase(MESSAGE_FAILED_CREATING_DB);
 
 		// wenn das ein alter export ist, dann eventuelle Spalten anlegen, damit
 		// wir
 		// das graffel importieren können.
 		if (!manager_temp.autocreate())
-			throw new CannotOpenTempDatabase(
-					"Die Datenbank konnte nicht geladen werden");
+			throw new CannotOpenTempDatabase(MESSAGE_FAILED_LOADING_DB);
 
 		DBTableVersion version = new DBTableVersion();
 
@@ -178,11 +189,11 @@ public class DatabaseImport {
 
 			logger.info("Importiere Tabelle " + table.getName());
 
-			fireEvent("Importiere Tabelle " + table.getName());
+			fireEvent(String.format(root.MlM("Importiere Tabelle %s"),table.getName()));
 
 			final List<DBStrukt> imp_table = trans_temp.fetchTable(table);
 
-			final String imp_format = "Importiere Tabelle %s (%d von %d)";
+			final String imp_format = root.MlM("Importiere Tabelle %s (%d von %d)");
 
 			fireEvent(String.format(imp_format, table.getName(), 0,
 					imp_table.size()));

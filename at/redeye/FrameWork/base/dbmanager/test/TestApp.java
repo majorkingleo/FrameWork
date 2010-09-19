@@ -43,7 +43,7 @@ public class TestApp {
         
         System.out.println(sql);        
         
-        DBManager dbm = new DatabaseManager( trans );
+        DBManager dbm = new DatabaseManager( root, trans );
         try {
             
             Collection<String> tables = dbm.getTables();

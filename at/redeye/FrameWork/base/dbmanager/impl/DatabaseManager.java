@@ -15,6 +15,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import at.redeye.FrameWork.base.AutoLogger;
+import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
 import at.redeye.FrameWork.base.dbmanager.DBManager;
@@ -42,14 +43,53 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 	HashMap<String, String> table_versions;
 	Collection<String> table_list;
+        Root root;
 
-	public DatabaseManager() {
+        String MESSAGE_ADMIN;
+        String MESSAGE_USER;
+        String MESSAGE_BOTH;
+        String MESSAGE_TITLE;
 
+	public DatabaseManager(Root root) {
+            this.root = root;
+
+            initCommon();
 	}
 
-	public DatabaseManager(Transaction trans) {
-		setTransaction(trans);
+	public DatabaseManager(Root root, Transaction trans) {
+            this.root = root;
+            setTransaction(trans);
+
+            initCommon();
 	}
+
+        private void initCommon()
+        {
+            root.loadMlM4Class(this,"de");
+
+
+            if( MESSAGE_ADMIN == null )
+            {
+                MESSAGE_ADMIN = root.MlM("Bitte öffnen Sie den Datenbankverbindungsdialog (Programm=>Datenbankeinstellungen) "
+                        + "und betätigen Sie den Button \"Einrichten\". Dadurch werden die notwendigen Änderungen "
+                        + "an der Datenbank automatisch durchgeführt. Bevor Tabellen manipuliert werden, erstellt "
+                        + "die Applikation automatisch Sicherungen der zu manipulierenden Tabellen. "
+                        + "Zusätzlich sollten Sie jedoch vorher eine Sicherung der gesammten Datenbank durchführen. "
+                        + "Um Datenverlusten vorzubeugen stellen Sie bitte auch sicher, dass währen der Migration "
+                        + "kein anderer User mehr auf die Datenbank zugreift");
+
+                MESSAGE_USER = root.MlM("Bitte kontaktieren Sie Ihren Administrator damit dieser eine Aktualisierung der Datenbank "
+                        + "durchführen kann. Um den Vorgang zu starten, muß sich ein Benutzer mit Administratorrechten "
+                        + "auf dieser Applikation anmelden. Dann erfolgen auch noch weiter Hinweise. "
+                        + "Sie können das Programm nun auch noch weiter verwenden, es ist aber nicht mehr "
+                        + "sichergestellt das es korrekt funktioniert.");
+
+                MESSAGE_BOTH = root.MlM("Eine oder mehrere Tabellen in der Datenbank weichen von jener Version, die im Programm "
+                        + "benötigt werden ab.");
+
+                MESSAGE_TITLE = root.MlM("Warnung");
+            }
+        }
 
 	private void clearCache() {
 		table_versions = null;
@@ -448,43 +488,28 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return true;
 	}
 
-	public boolean check_table_versions_with_message(final int Permissionlevel) {
-		if (!check_table_versions()) {
-			final String adminMsg = "Bitte öffnen Sie den Datenbankverbindungsdialog (Programm=>Datenbankeinstellungen) "
-					+ "und betätigen Sie den Button \"Einrichten\". Dadurch werden die notwendigen Änderungen "
-					+ "an der Datenbank automatisch durchgeführt. Bevor Tabellen manipuliert werden, erstellt "
-					+ "die Applikation automatisch Sicherungen der zu manipulierenden Tabellen. "
-					+ "Zusätzlich sollten Sie jedoch vorher eine Sicherung der gesammten Datenbank durchführen. "
-					+ "Um Datenverlusten vorzubeugen stellen Sie bitte auch sicher, dass währen der Migration "
-					+ "kein anderer User mehr auf die Datenbank zugreift";
+    public boolean check_table_versions_with_message(final int Permissionlevel) {
+        if (!check_table_versions()) {
 
-			final String userMsg = "Bitte kontaktieren Sie Ihren Administrator damit dieser eine Aktualisierung der Datenbank "
-					+ "durchführen kann. Um den Vorgang zu starten, muß sich ein Benutzer mit Administratorrechten "
-					+ "auf dieser Applikation anmelden. Dann erfolgen auch noch weiter Hinweise. "
-					+ "Sie können das Programm nun auch noch weiter verwenden, es ist aber nicht mehr "
-					+ "sichergestellt das es korrekt funktioniert.";
 
-			String msg;
+            String msg;
 
-			if (Permissionlevel == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
-				msg = adminMsg;
-			} else {
-				msg = userMsg;
-			}
+            if (Permissionlevel == UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN) {
+                msg = MESSAGE_ADMIN;
+            } else {
+                msg = MESSAGE_USER;
+            }
 
-			JOptionPane
-					.showMessageDialog(
-							null,
-							StringUtils
-									.autoLineBreak("Eine oder mehrere Tabellen in der Datenbank weichen von jener Version, die im Programm "
-											+ "benötigt werden ab.\n\n" + msg),
-							"Datenbank", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    null,
+                    StringUtils.autoLineBreak(MESSAGE_BOTH + "\n\n" + msg),
+                    MESSAGE_TITLE, JOptionPane.WARNING_MESSAGE);
 
-			return false;
-		}
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 	public boolean is_dbms_driver_loaded(SupportedDBMSTypes dbmstype) {
 		String name;

@@ -61,15 +61,19 @@ public abstract class Root {
      */
     String display_language;
 
+    static Root static_root;
+
     public Root( String app_name )
     {
         this.app_name = app_name;
+        static_root = this;
     }
 
     public Root( String app_name, String app_title )
     {
         this.app_name = app_name;
         this.app_title = app_title;
+        static_root = this;
     }
 
     public abstract Setup getSetup();
@@ -329,5 +333,14 @@ public abstract class Root {
      * @param obj
      */
     public abstract void loadMlM4ClassName(String name);
+
+    /**
+     * only use this in case of emergency
+     * @return the last instace of the root class
+     */
+    public static Root getLastRoot()
+    {
+        return static_root;
+    }
     
 }

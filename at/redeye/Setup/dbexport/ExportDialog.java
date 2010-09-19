@@ -35,6 +35,9 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
     public ExportDialog( Root root ) {
         super( root, "Datenbankexport" );
         initComponents();
+
+        setBaseLanguage("de");
+
     }
 
     public void setExImportFactory(DBExImpFactory factory)
@@ -88,7 +91,7 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
                         export.close();
 
                         if( !do_abort )
-                            JOptionPane.showMessageDialog(dialog, "Die Datenbank wurde erfolgreich exportiert!");
+                            JOptionPane.showMessageDialog(dialog, MlM("Die Datenbank wurde erfolgreich exportiert!"));
                     }
                 };
 

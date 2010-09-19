@@ -57,6 +57,10 @@ public class DatabaseExport {
 	File temp_db_dir;
 	ProgressListener listener = null;
 
+        String MESSAGE_ERROR_AUTOCREATE_FAILED;
+        String MESSAGE_CANNOT_CREATE_TEMP_DIR;
+        String MESSAGE_MISSING_DERBY;
+
 	/**
 	 * exports a databse to a zip file, by using a derby database. Always call
 	 * close when finished, or an error appeared. This cleans up the tempdir
@@ -68,6 +72,15 @@ public class DatabaseExport {
 	public DatabaseExport(Root root, String target_file_name) {
 		this.target_file_name = target_file_name;
 		this.root = root;
+
+                root.loadMlM4Class(this, "de");
+
+                if( MESSAGE_ERROR_AUTOCREATE_FAILED == null )
+                {
+                    MESSAGE_ERROR_AUTOCREATE_FAILED = root.MlM("Die Automatische Erzeugung der Datenbank ist fehlgeschlagen!");
+                    MESSAGE_CANNOT_CREATE_TEMP_DIR = root.MlM("Erstellen eines temporären Verzeichnisses fehlgeschlagen.");
+                    MESSAGE_MISSING_DERBY = root.MlM("Der Datenbanktreiber für Derby Datenbanken ist nicht installiert. Dieser Treiber wird aber benötigt um Daten exportieren zu können.");
+                }
 	}
 
 	public void setProgressListener(ProgressListener progress_listener) {
@@ -86,7 +99,7 @@ public class DatabaseExport {
 			WrongBindFileFormatException {
 		trans_source = root.getDBConnection().getNewTransaction();
 
-		fireEvent("erzeuge temporäre Datenbank");
+		fireEvent(root.MlM("erzeuge temporäre Datenbank"));
 
 		trans_temp = createTempDatabase();
 		DBBindtypeManager bindtype_manager = root.getBindtypeManager();
@@ -96,16 +109,16 @@ public class DatabaseExport {
 		if (listener != null)
 			listener.setOverallCounter(tables.size());
 
-		DatabaseManager manager_temp = new DatabaseManager(trans_temp);
+		DatabaseManager manager_temp = new DatabaseManager(root, trans_temp);
 
 		for (DBStrukt table : tables) {
 			manager_temp.register(table);
 		}
 
-		fireEvent("richte Datenbank ein");
+		fireEvent(root.MlM("richte Datenbank ein"));
 
 		if (manager_temp.autocreate() == false) {
-			throw new CannotCreateTempDatabase("Autocreating database failed!");
+			throw new CannotCreateTempDatabase(MESSAGE_ERROR_AUTOCREATE_FAILED);
 		}
 
 		DBTableVersion table_version = new DBTableVersion();
@@ -113,7 +126,7 @@ public class DatabaseExport {
 		int count = 0;
 
 		for (DBStrukt table : tables) {
-			fireEvent("lese Tabelle " + table.getName());
+			fireEvent(root.MlM("lese Tabelle ") + table.getName());
 
 			if (table.getName().equals(table_version.getName()))
 				continue;
@@ -123,7 +136,7 @@ public class DatabaseExport {
 
 			logger.info("fetched " + res.size() + " values");
 
-			final String exp_format = "Exportiere Tabelle %s (%d von %d)";
+			final String exp_format = root.MlM("Exportiere Tabelle %s (%d von %d)");
 
 			fireEvent(String.format(exp_format, table.getName(), 0, res.size()));
 
@@ -176,7 +189,7 @@ public class DatabaseExport {
 
 		trans_temp = null;
 
-		fireEvent("Komprimieren der Datenbank");
+		fireEvent(root.MlM("Komprimieren der Datenbank"));
 
 		try {
 			Zip.zip(temp_db_dir, target_file_name);
@@ -201,7 +214,7 @@ public class DatabaseExport {
 		temp_db_dir = File.createTempFile("tempdb", ".db");
 
 		if (temp_db_dir == null)
-			throw new CannotCreateTempDatabase("Cannot create temp directory");
+			throw new CannotCreateTempDatabase(MESSAGE_CANNOT_CREATE_TEMP_DIR);
 
 		logger.info("creating temp database: " + temp_db_dir);
 
@@ -210,7 +223,7 @@ public class DatabaseExport {
 		if (!root.getBindtypeManager().is_dbms_driver_loaded(
 				SupportedDBMSTypes.DB_JAVADB))
 			throw new CannotCreateTempDatabase(
-					"Missing Derby DB Driver, which is required for exporting databases!");
+					MESSAGE_MISSING_DERBY);
 
 		ConnectionDefinition connparams = new ConnectionDefinition("", 0, "",
 				"", temp_db_dir.getAbsolutePath(), SupportedDBMSTypes.DB_JAVADB);

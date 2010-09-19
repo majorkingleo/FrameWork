@@ -700,7 +700,14 @@ public class TranslationDialog extends BaseDialog {
 
     public static String getTranslationsDir( Root root )
     {
-        return Setup.getAppConfigDir(root.getAppName()) + "/translations/";
+        String dir = Setup.getAppConfigDir(root.getAppName()) + "/translations/";
+
+        File fdir = new File( dir );
+
+        if( !fdir.exists() )
+            fdir.mkdirs();
+
+        return dir;
     }
 
     private void loadTranslationsFor(String ClassName, String lang) throws FileNotFoundException, IOException
