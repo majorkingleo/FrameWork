@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.utilities.calendar;
 
+import at.redeye.FrameWork.base.Root;
 import java.util.Locale;
 import org.joda.time.DateMidnight;
 
@@ -31,7 +32,12 @@ public class MonthNames
 
     public static String getFullMonthName( int month )
     {
+        Root root = Root.getLastRoot();
+
         Locale locale = Locale.getDefault();
+
+        if( root != null )
+           locale = new Locale(root.getDisplayLanguage());
 
         String country = locale.getCountry();
 

@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.utilities.calendar;
 
+import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import java.util.Calendar;
 
@@ -20,20 +21,31 @@ public abstract class BaseHolidays {
     public String CountryCode = "";
     protected int last_used_year=0;
     protected Collection<HolidayInfo> last_used_holidays = null;
-    
+    Root root;
+
     public BaseHolidays( String CountryCode )
     {
         this.CountryCode = CountryCode;
+
+        root = Root.getLastRoot();
     }
     
     public HolidayInfo create( DateMidnight date, boolean floating, boolean official, String name )
     {
-        return new HolidayInfo( date, floating, official, name, CountryCode );                
+        return new HolidayInfo( date, floating, official, MlM(name), CountryCode );
     }
 
     public HolidayInfo create( int year, int month, int day, boolean floating, boolean official, String name )
     {
-        return new HolidayInfo( year, month, day, floating, official, name, CountryCode );                
+        return new HolidayInfo( year, month, day, floating, official, MlM(name), CountryCode );
+    }
+
+    private String MlM( String message )
+    {
+        if( root != null )
+            return root.MlM(message);
+
+        return message;
     }
     
     public DateMidnight getEaster( int year )

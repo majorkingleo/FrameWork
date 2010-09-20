@@ -21,6 +21,8 @@ public class SwitzerlandHolidays extends BaseHolidays implements Holidays {
     public SwitzerlandHolidays()
     {
         super(myCountryCode);
+
+        root.loadMlM4Class(this, "de");
     }
     
     public Collection<HolidayInfo> getHolidays(int year) {
@@ -39,7 +41,7 @@ public class SwitzerlandHolidays extends BaseHolidays implements Holidays {
         
         res.add( create( year, 1, 1, false, true, "Neujahrstag" ) );
         res.add( create( year, 1, 2, false, false, "Berchtoldstag" ) );
-        res.add( create( year, 1, 6, false, false, "Dreik\u00f6nigstag" ) );
+        res.add( create( year, 1, 6, false, false, "Dreikönigstag" ) );
 
         DateMidnight gruendonnerstag = easter.minusDays(3);
         res.add( create( gruendonnerstag, true, false, "Gründonnerstag"));

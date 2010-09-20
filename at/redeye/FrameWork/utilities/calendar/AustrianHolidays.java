@@ -5,9 +5,7 @@
 
 package at.redeye.FrameWork.utilities.calendar;
 
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Vector;
 import org.joda.time.DateMidnight;
 
@@ -24,6 +22,8 @@ public class AustrianHolidays extends BaseHolidays implements Holidays {
     public AustrianHolidays()
     {
         super(myCountryCode);
+
+        root.loadMlM4Class(this, "de");
     }
 
     public Collection<HolidayInfo> getHolidays(int year) {
@@ -33,13 +33,13 @@ public class AustrianHolidays extends BaseHolidays implements Holidays {
         Vector<HolidayInfo> res = new Vector<HolidayInfo>();                                               
         
         res.add( create( year, 1, 1, false, true, "Neujahrstag" ) );
-        res.add( create( year, 1, 6, false, true, "Dreik\u00f6nigstag" ) );
+        res.add( create( year, 1, 6, false, true, "Dreikönigstag" ) );
         res.add( create( year, 5, 1, false, true, "Tag der Arbeit" ) );        
         res.add( create( year, 8, 15, false, true, "Maria Himmelfahrt" ) );
         res.add( create( year, 10, 26, false, true, "Nationalfeiertag" ) );
         res.add( create( year, 11, 1, false, true, "Allerheiligen" ) );
         res.add( create( year, 11, 2, false, false, "Allerseelen" ) );
-        res.add( create( year, 12, 8, false, false, "Maria Empf\u00f6ngnis" ) );
+        res.add( create( year, 12, 8, false, false, "Maria Empfängnis" ) );
         res.add( create( year, 12, 25, false, true, "1. Weihnachtsfeiertag" ) );
         res.add( create( year, 12, 26, false, true, "2. Weihnachtsfeiertag" ) );        
         
