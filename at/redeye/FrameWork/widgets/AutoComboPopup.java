@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -27,10 +28,10 @@ public class AutoComboPopup extends JPanel
 {
     JList list;
     JScrollPane scroll;
-    Vector items;
+    List items;
     boolean self_triggert = false;
 
-    public AutoComboPopup( Vector items, final JTextField textField )
+    public AutoComboPopup( List items, final JTextField textField )
     {
         this.items = items;
         setLayout(new BorderLayout());
@@ -44,7 +45,7 @@ public class AutoComboPopup extends JPanel
         scroll.setViewportView(list);
 
         add(scroll, BorderLayout.NORTH);
-        list.setListData(items);
+        list.setListData(new Vector(items));
 
         list.addListSelectionListener(new ListSelectionListener() {
 
@@ -146,12 +147,12 @@ public class AutoComboPopup extends JPanel
     }
 
     void refresh() {
-        list.setListData(items);
+        list.setListData(new Vector(items));
     }
 
-    void refresh(Vector items) {
+    void refresh(List items) {
         this.items = items;
-        list.setListData(items);
+        list.setListData(new Vector(items));
     }
 
     public void mouseWheelMoved(MouseWheelEvent e)

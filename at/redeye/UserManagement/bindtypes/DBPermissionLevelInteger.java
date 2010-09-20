@@ -5,6 +5,7 @@
 
 package at.redeye.UserManagement.bindtypes;
 
+import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.bindtypes.DBEnumAsInteger;
 import at.redeye.UserManagement.UserManagementInterface;
 
@@ -108,4 +109,10 @@ public class DBPermissionLevelInteger extends DBEnumAsInteger
     {
         return new DBPermissionLevelInteger(name, title);
     }
+
+    @Override
+    public void initLocalization(Root root) {
+        root.loadMlM4Class(this,"de");
+    }
+
 }

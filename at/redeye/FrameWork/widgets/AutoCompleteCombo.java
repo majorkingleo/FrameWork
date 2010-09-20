@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.JTextField;
 import javax.swing.Popup;
@@ -19,7 +20,7 @@ import javax.swing.event.AncestorListener;
 public class AutoCompleteCombo extends JTextField
         implements FocusListener, KeyListener, MouseWheelListener, MouseListener {
 
-    private Vector items = null;
+    private List items = null;
     private int matched_index = -1;
     private boolean do_completion = true;
     private Popup popup = null;
@@ -42,7 +43,7 @@ public class AutoCompleteCombo extends JTextField
         setEnabled(true);
     }
 
-    public void set_items(Vector v) {
+    public void set_items(List v) {
         // it is assumed that 'items' is pre-sorted in manner that
         // auto-complete will operate on (namely, first match wins)
         //
