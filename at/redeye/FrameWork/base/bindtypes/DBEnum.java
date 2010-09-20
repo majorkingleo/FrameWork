@@ -5,9 +5,12 @@
 
 package at.redeye.FrameWork.base.bindtypes;
 
-import java.util.Vector;
+import at.redeye.FrameWork.base.Root;
 
 import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -21,7 +24,7 @@ public class DBEnum extends DBValue {
         public abstract boolean setValue( String val );
         public abstract String getValue();
         public abstract EnumHandler getNewOne();
-        public abstract Vector<String> getPossibleValues();  
+        public abstract List<String> getPossibleValues();
     }
     
     public EnumHandler handler; 
@@ -50,18 +53,18 @@ public class DBEnum extends DBValue {
 
     @Override
     public void loadFromString(String s) {
-        handler.setValue(s);
+        handler.setValue(delocalize(s));
     }
 
     @Override
     public boolean acceptString(String s) {
-       return handler.setValue(s);
+       return handler.setValue(delocalize(s));
     }
 
     @Override
     public void loadFromCopy(Object obj) {
        handler = handler.getNewOne();
-       handler.setValue((String)obj);
+       handler.setValue(delocalize((String)obj));
     }
 
     @Override
@@ -87,8 +90,80 @@ public class DBEnum extends DBValue {
         return handler.getValue();
     }
     
-    public Vector<String> getPossibleValues()
+    public List<String> getPossibleValues()
     {
         return handler.getPossibleValues();
+    }
+
+    /**
+     * Required for translating back
+     * a localized input method back into
+     * the original language
+     */
+    private HashMap<String,String> localized_values_map;
+    private List<String> localized_values;
+
+    public List<String> getLocalizedPossibleValues(Root root)
+    {
+        if( localized_values_map == null )
+        {
+            initLocalization( root );
+            localized_values_map = new HashMap<String,String>();
+            localized_values = new ArrayList<String>();
+            
+            for (String original : handler.getPossibleValues()) {
+                String translated = root.MlM(original);
+
+                localized_values.add(translated);
+                localized_values_map.put(translated, original);
+            }
+        }
+
+        return localized_values;
+    }
+    
+    public List<String> getLocalizedPossibleValues()
+    {
+        return getLocalizedPossibleValues(Root.getLastRoot());
+    }
+
+    public String delocalize( String message )
+    {
+        if( localized_values == null )
+            getLocalizedPossibleValues();
+
+        String res = localized_values_map.get(message);
+
+        if( res != null )
+            return res;
+
+        return message;
+    }
+
+    /**
+     * call here root.loadMlM4Class(root, language);
+     * @param root
+     */
+    public void initLocalization(Root root)
+    {
+    
+    }
+
+    public String getLocalizedString(Root root)
+    {
+        if( localized_values == null )
+            getLocalizedPossibleValues();
+
+       return root.MlM(handler.getValue());
+    }
+
+    public String getLocalizedString()
+    {
+       Root root = Root.getLastRoot();
+
+       if( root != null )
+           return getLocalizedString( root );
+
+       return handler.getValue();
     }
 }

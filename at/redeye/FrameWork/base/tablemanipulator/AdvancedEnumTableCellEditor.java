@@ -33,7 +33,7 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
     public AdvancedEnumTableCellEditor(TableDesign tabledesign, DBEnum value ) {
         this.tabledesign = tabledesign;       
 
-        for( String s : value.getPossibleValues() )
+        for( String s : value.getLocalizedPossibleValues() )
         {
             component.addItem(s);
         }
@@ -90,7 +90,10 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
             tabledesign.colls.get(last_col).validator.updateComponentBeforeEdit(component, value, tabledesign, row, column);
         }
 
-        component.setSelectedItem(value);
+        if( value instanceof DBEnum )
+            component.setSelectedItem(((DBEnum)value).getLocalizedString());
+        else
+            component.setSelectedItem(value);
 
         return component;
     }

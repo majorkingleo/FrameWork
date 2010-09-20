@@ -5,7 +5,9 @@
 
 package at.redeye.FrameWork.base.bindtypes;
 
-import java.util.Vector;
+import at.redeye.FrameWork.base.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -63,8 +65,8 @@ public class DBFlagJaNein extends DBEnum
         }
 
         @Override
-        public Vector<String> getPossibleValues() {
-            Vector<String> res = new Vector<String>();
+        public List<String> getPossibleValues() {
+            List<String> res = new ArrayList<String>();
             
             for( FLAGTYPES t : FLAGTYPES.values() )
                 res.add( t.toString() );
@@ -97,4 +99,12 @@ public class DBFlagJaNein extends DBEnum
     {
         return !isYes();
     }
+
+
+    @Override
+    public void initLocalization(Root root)
+    {
+        root.loadMlM4Class(this, "de");
+    }
+ 
 }
