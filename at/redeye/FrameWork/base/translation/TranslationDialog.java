@@ -85,7 +85,7 @@ public class TranslationDialog extends BaseDialog {
         
         for( String s : strings )
         {
-            if( shouldBeTranslated(s))
+            if( MLUtil.shouldBeTranslated(s))
             {
                 final JTextField tf = new JTextField(s);
 
@@ -300,19 +300,6 @@ public class TranslationDialog extends BaseDialog {
                 invokeDialogUnique(new HelpWin(root, "/at/redeye/FrameWork/base/translation/resources/Help", "TranslationDialog"));
             }
         });
-    }
-
-    public static boolean shouldBeTranslated(String s)
-    {
-        s = s.trim();
-
-        if( s.isEmpty() )
-            return false;
-
-        if( s.matches("^[0-9]+$") )
-            return false;
-
-        return true;
     }
 
     private String getTitle(String name )

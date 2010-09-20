@@ -17,12 +17,16 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author martin
  */
 public class MLUtil {
+
+    static Pattern number_pattern = Pattern.compile("^[0-9 \t\\n,\\.]+$");
 
     public static Properties convertResourceBundleToProperties(ResourceBundle resource) {
         Properties properties = new Properties();
@@ -223,5 +227,21 @@ public class MLUtil {
             return locale;
 
         return locale.substring(0,2);
+    }
+
+    public static boolean shouldBeTranslated(String s)
+    {
+        if( s.isEmpty() )
+            return false;
+
+        if( s.trim().isEmpty() )
+            return false;
+
+        Matcher matcher = number_pattern.matcher(s);
+
+        if( matcher.matches() )
+            return false;
+
+        return true;
     }
 }

@@ -263,6 +263,9 @@ public class MLHelper
 
     public String MlM( String message )
     {
+        if( !MLUtil.shouldBeTranslated( message ) )
+            return message;
+
         if( props != null )
         {
             String msg = props.getProperty(message);
