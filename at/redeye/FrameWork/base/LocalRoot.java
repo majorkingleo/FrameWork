@@ -487,4 +487,15 @@ public class LocalRoot extends Root {
 
         ml_helper.autoLoadFile4ClassName(name, getDisplayLanguage(), base_language);
     }
+
+    @Override
+    public void setLanguageTranslationResourcePath( String path )
+    {
+        super.setLanguageTranslationResourcePath(path);
+
+        if( ml_helper == null )
+            ml_helper = new MLHelper( this );
+
+        ml_helper.autoLoadCurrentLocale();
+    }
 }

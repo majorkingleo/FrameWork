@@ -70,8 +70,10 @@ public class MLHelper
 
         if( resourcePath != null )
         {
-            String resource_name = "/" + resourcePath + "trans" + extra + lang + prop;
-            
+            String resource_name = "/" + resourcePath + "/trans" + extra + lang + prop;
+
+            resource_name = resource_name.replaceAll("//", "/");
+
             InputStream in = this.getClass().getResourceAsStream(resource_name);
             
             if( in != null )
@@ -99,9 +101,11 @@ public class MLHelper
 
     public void autoLoadCurrentLocale()
     {
+        /*
         if( current_lang != null && locale.equals(current_lang) )
             return;
-
+        */
+        
         if (loadTrans(locale)) {
             return;
         }        
