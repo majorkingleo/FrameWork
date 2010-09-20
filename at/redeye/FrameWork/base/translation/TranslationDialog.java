@@ -13,6 +13,7 @@ package at.redeye.FrameWork.base.translation;
 
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
 import at.redeye.FrameWork.widgets.GridLayout2;
@@ -164,9 +165,9 @@ public class TranslationDialog extends BaseDialog {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                    
-                        final JDialog dialog = new JDialog(base);
+                        final MultiLineInputDialog dialog = new MultiLineInputDialog(base, root);
 
-                        final MultiLineInput mli = new MultiLineInput();
+                        final MultiLineInput mli = dialog.getMli();
                         mli.setSaveActionListener(new Runnable() {
                             public void run()
                             {
@@ -182,18 +183,11 @@ public class TranslationDialog extends BaseDialog {
                            }
                         });
 
-                        dialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
                         mli.setText(tf.getText());
 
                         String editedText =  editField.getText().trim();
                         if( !editedText.isEmpty() )
-                            mli.setTransText(editedText);
-
-                        dialog.setTitle("Text mehrzeilig editieren");
-                        dialog.add(mli);
-                        dialog.pack();
-
+                            mli.setTransText(editedText);                                                
                         
                         // Adjust dialogs placement on screen
                         Dimension dialog_dim = dialog.getPreferredSize();
