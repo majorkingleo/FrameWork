@@ -107,9 +107,14 @@ public class StringUtils {
 	}
 
 	public static String strip_post(String str, String what) {
-		StringBuilder s = new StringBuilder();
-		s.append(str);
-		return strip_post(s, what);
+
+            if (str == null) {
+                throw new NullPointerException();
+            }
+
+            StringBuilder s = new StringBuilder();
+            s.append(str);
+            return strip_post(s, what);
 	}
 
 	public static String strip(String s, String what) {
