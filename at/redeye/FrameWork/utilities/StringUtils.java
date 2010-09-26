@@ -141,7 +141,28 @@ public class StringUtils {
 		return autoLineBreak(what.toString(), defaultAutoLineLength);
 	}
 
-	public static String autoLineBreak(String what, int length) {
+        public static String autoLineBreak(String what, int length)
+        {
+            /**
+             * Diese Funktion löscht noch überschüssige Leerzeichen weg.
+             */
+
+            String res[] = autoLineBreak_int(what, length).split("\n");
+
+            StringBuilder stripped_string = new StringBuilder();
+
+            for( String line : res )
+            {
+                if( stripped_string.length() > 0 )
+                    stripped_string.append('\n');
+
+                stripped_string.append(line.trim());
+            }
+
+            return stripped_string.toString();
+        }
+
+	private static String autoLineBreak_int(String what, int length) {
 
 		final char[] myPreferedSigns = { ';', '.', ',', '!', '?', '>', '-' };
 		final char[] mySpaceSigns = { ' ', '\t' };
@@ -373,7 +394,7 @@ public class StringUtils {
 
 	/**
 	 * The method cuts off the requested number of lines from source string.<br>
-	 * Processed are the indicaters <b>\r<\b> and <b>\n<\b>
+	 * Processed are the indicaters is <b>\n<\b>
 	 * 
 	 * @param sourceString
 	 *            The string that shall be processed.
@@ -382,6 +403,9 @@ public class StringUtils {
 	 * @return The rest of string afer the line cut off.
 	 */
 	public static String skipLeadingLines(String sourceString, int lines) {
+
+            if( lines <= 0 )
+                return sourceString;
 
 		String truncatedString;
 		int lbCounter = 0;
@@ -393,7 +417,7 @@ public class StringUtils {
 			if (lbCounter == lines) {
 				break;
 			}
-			if (arr[idx] == '\n' || arr[idx] == '\r') {
+			if (arr[idx] == '\n') {
 				lbCounter++;
 			}
 		}
