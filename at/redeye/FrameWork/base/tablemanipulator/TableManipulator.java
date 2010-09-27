@@ -12,14 +12,12 @@ import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.LookAndFeel;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -34,13 +32,11 @@ import at.redeye.FrameWork.utilities.StringUtils;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
@@ -66,7 +62,9 @@ public class TableManipulator {
     private static Logger logger = Logger.getLogger(TableManipulator.class.getName());
     TableEditorStopper editor_stopper;
     BaseDialogBase base_dlg;
-    
+    boolean allowReordering = true;
+    boolean allowResorting = true;
+
     public TableManipulator( Root root, JTable table, TableDesign tabledesign )
     {
         this.tabledesign = tabledesign;
@@ -221,9 +219,8 @@ public class TableManipulator {
         ((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(
             SwingConstants.LEFT);       
 
-        table.setAutoCreateRowSorter(true);
-        //table.getTableHeader().setReorderingAllowed(false);
-        table.getTableHeader().setReorderingAllowed(true);
+        setReorderingAllowed(allowReordering);
+        setResortingAllowed(allowResorting);
 
         if( max_height > 0 )
         {
@@ -267,7 +264,17 @@ public class TableManipulator {
         return table;
   */
     }
-    
+
+    public void setReorderingAllowed(boolean state) {
+        allowReordering = state;
+        table.getTableHeader().setReorderingAllowed(state);
+    }
+
+    public void setResortingAllowed(boolean state) {
+        allowResorting = state;
+        table.setAutoCreateRowSorter(state);
+    }
+
     public void add(DBStrukt binddesc) 
     {
         Vector<DBValue> values = binddesc.getAllValues();
@@ -800,24 +807,25 @@ public class TableManipulator {
                 tcol.setPreferredWidth(width);
         }
 
-        // Wiederherstellen der Spalten, so wie es das letzte mal
-        // abgespeichert war
+        if (allowReordering) {
+            // Wiederherstellen der Spalten, so wie es das letzte mal
+            // abgespeichert war
 
-        List<Integer> dont_move_anymore = new ArrayList<Integer>();
+            List<Integer> dont_move_anymore = new ArrayList<Integer>();
 
-        for( int i = 0; i < positions.size(); i++ )
-        {
-            int index = positions.get(i);
+            for (int i = 0; i < positions.size(); i++) {
+                int index = positions.get(i);
 
-            if( dont_move_anymore.contains(i) )
-                continue;            
+                if (dont_move_anymore.contains(i)) {
+                    continue;
+                }
 
-            if( index >= 0 && index != i )
-            {
-                //System.out.println("i " + i + " = " + index );
+                if (index >= 0 && index != i) {
+                    //System.out.println("i " + i + " = " + index );
 
-                table.getColumnModel().moveColumn(i, index);
-                dont_move_anymore.add(index);
+                    table.getColumnModel().moveColumn(i, index);
+                    dont_move_anymore.add(index);
+                }
             }
         }
     }
