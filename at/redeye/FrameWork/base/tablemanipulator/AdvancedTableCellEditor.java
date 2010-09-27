@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -51,16 +52,16 @@ public class AdvancedTableCellEditor extends AbstractCellEditor implements Table
         return component.getText();
     }
 
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {        
 
-        System.out.println("getTableCellEditorComponent");
-
-        last_row = row;
-        last_col = column;
+        last_row = TableDesign.getModelRow(table, row);
+        last_col =  TableDesign.getModelCol(table, column);
         current_value = value;
 
+        System.out.println("getTableCellEditorComponent col: " + last_col + " row: " + last_row + " Value " + current_value.toString());
+
         component.enable_complete(false);
-        component.set_items(tabledesign.getAllOfCollSorted(column));
+        component.set_items(tabledesign.getAllOfCollSorted(last_col));
         component.enable_complete(true);        
         component.setBackground(Color.YELLOW);
 
@@ -124,7 +125,7 @@ public class AdvancedTableCellEditor extends AbstractCellEditor implements Table
     @Override
     public boolean stopCellEditing() {
 
-        System.out.println("stopCellEditing");
+        System.out.println("Advanced stopCellEditing");
 
         if (tabledesign.colls.get(last_col).validator != null) {
             if (!tabledesign.colls.get(last_col).validator.acceptData(((JTextField) component).getText())) {

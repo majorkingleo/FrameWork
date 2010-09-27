@@ -54,8 +54,9 @@ public class NormalTableCellEditor extends AbstractCellEditor implements TableCe
 
         System.out.println("getTableCellEditorComponent");
 
-        last_row = row;
-        last_col = column;
+        last_row = TableDesign.getModelRow(table, row);
+        last_col =  TableDesign.getModelCol(table, column);
+
         current_value = value;
 
         component.setBackground(Color.YELLOW);
@@ -118,7 +119,7 @@ public class NormalTableCellEditor extends AbstractCellEditor implements TableCe
     @Override
     public boolean stopCellEditing() {
 
-        System.out.println("stopCellEditing");
+        System.out.println("Normal stopCellEditing");
 
         if (tabledesign.colls.get(last_col).validator != null) {
             if (!tabledesign.colls.get(last_col).validator.acceptData(((JTextField) component).getText())) {

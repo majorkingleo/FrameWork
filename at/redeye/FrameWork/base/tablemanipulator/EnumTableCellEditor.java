@@ -64,11 +64,12 @@ public class EnumTableCellEditor extends AbstractCellEditor implements TableCell
 
         System.out.println("getTableCellEditorComponent");
 
-        last_row = row;
-        last_col = column;
+        last_row = TableDesign.getModelRow(table, row);
+        last_col =  TableDesign.getModelCol(table, column);
+
         current_value = value;
 
-        DBValue val = (DBValue) tabledesign.rows.get(row).get(column);
+        DBValue val = (DBValue) tabledesign.rows.get(last_row).get(last_col);
 
         if( val instanceof  DBSqlAsInteger ) {
             DBSqlAsInteger sql_val = (DBSqlAsInteger) val;
@@ -89,7 +90,7 @@ public class EnumTableCellEditor extends AbstractCellEditor implements TableCell
     @Override
     public boolean stopCellEditing() {
 
-        // System.out.println("stopCellEditing");
+        System.out.println("Enum stopCellEditing");
         return super.stopCellEditing();
     }
 }

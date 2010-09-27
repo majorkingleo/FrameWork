@@ -67,13 +67,14 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
         return component.getText();
     }
 
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {        
 
-        System.out.println("getTableCellEditorComponent for column " + column);
+        last_row = TableDesign.getModelRow(table, row);
+        last_col =  TableDesign.getModelCol(table, column);
 
-        last_row = row;
-        last_col = column;
-        current_value = value;        
+        current_value = value;
+
+        System.out.println("getTableCellEditorComponent for column " + last_col);
 
        java.awt.EventQueue.invokeLater(new Runnable() {
 
@@ -87,7 +88,7 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
 
         if( tabledesign.colls.get(last_col).validator != null )
         {
-            tabledesign.colls.get(last_col).validator.updateComponentBeforeEdit(component, value, tabledesign, row, column);
+            tabledesign.colls.get(last_col).validator.updateComponentBeforeEdit(component, value, tabledesign, last_row, last_col);
         }
 
         if( value instanceof DBEnum )
@@ -101,7 +102,7 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
     @Override
     public boolean stopCellEditing() {
 
-       System.out.println("stopCellEditing");
+       System.out.println("Advanced stopCellEditing");
        component.hidePopup();
 
         if (tabledesign.colls.get(last_col).validator != null) {

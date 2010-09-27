@@ -7,10 +7,14 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
+import javax.swing.JTable;
+import javax.swing.RowSorter;
 
 /**
  *
@@ -27,7 +31,7 @@ public class TableDesign {
     public Set<Integer> edited_cols;
     public Set<Integer> edited_rows;
     public Vector<Vector<Object>> rows = new Vector<Vector<Object>>();
-    protected Vector<ColoredCell>  coloredCells = new Vector<ColoredCell>();
+    protected Vector<ColoredCell>  coloredCells = new Vector<ColoredCell>();    
 
     public void addColoredCell (int row, int col, Color color) {
         ColoredCell cell = new ColoredCell();
@@ -147,6 +151,20 @@ public class TableDesign {
         }
 
         return null;
+    }
 
+    static int getModelCol( JTable table, int col )
+    {
+        return table.getColumnModel().getColumn(col).getModelIndex();
+    }
+
+    static int getModelRow( JTable table, int row )
+    {
+        RowSorter sorter  = table.getRowSorter();
+
+        if( sorter == null )
+            return row;
+
+        return sorter.convertRowIndexToModel( row );
     }
 }

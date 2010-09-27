@@ -32,6 +32,16 @@ public class NormalCellRenderer extends DefaultTableCellRenderer {
      * The current column being rendered
      */
     protected int col;
+
+    /**
+     * The current model_row being rendered
+     */
+    protected int model_row;
+    /**
+     * The current model_column being rendered
+     */
+    protected int model_col;
+
     /**
      * If this cell is part of the "selected" row
      */
@@ -81,12 +91,15 @@ public class NormalCellRenderer extends DefaultTableCellRenderer {
         }
         this.row = row;
         this.col = col;
+        this.model_col = TableDesign.getModelCol(tbl, col);
+        this.model_row = TableDesign.getModelRow(tbl, row);
         this.isSelected = isSelected;
         this.isFocused = isFocused;
 
         if (font == null) {
             font = this.getFont();
         }
+
         return super.getTableCellRendererComponent(tbl, v, isSelected, isFocused, row, col);
     }
 
@@ -95,23 +108,23 @@ public class NormalCellRenderer extends DefaultTableCellRenderer {
         // System.out.println("setValue: " + row + " " + " col " + col + " " + v.toString());
 
         // System.out.println( tabledesign.colls.get(col).Title ); 
-        if (tabledesign.colls.get(col).validator != null) {
+        if (tabledesign.colls.get(model_col).validator != null) {
             if (DBValue.class.isInstance(v)) {
-                String res = tabledesign.colls.get(col).validator.formatData(v);
+                String res = tabledesign.colls.get(model_col).validator.formatData(v);
                 super.setValue(res);
             } else {
-                Object val = tabledesign.rows.get(row).get(col);
+                Object val = tabledesign.rows.get(model_row).get(model_col);
 
                 if (val instanceof DBValue && v instanceof String) {
-                    tabledesign.colls.get(col).validator.loadToValue((DBValue) val, (String) v,row);
-                    String res = tabledesign.colls.get(col).validator.formatData(val);
+                    tabledesign.colls.get(model_col).validator.loadToValue((DBValue) val, (String) v,model_row);
+                    String res = tabledesign.colls.get(model_col).validator.formatData(val);
                     super.setValue(res);
                 } else {
                     super.setValue(v);
                 }
             }
         } else {
-            Object val = tabledesign.rows.get(row).get(col);
+            Object val = tabledesign.rows.get(model_row).get(model_col);
             if (v instanceof String && val instanceof DBValue) {
                 DBValue db_value = (DBValue) val;
                 String s = (String) v;
@@ -140,14 +153,14 @@ public class NormalCellRenderer extends DefaultTableCellRenderer {
         //Set colors dependant upon if the row is selected or not
         if (!this.isSelected) {
             if (hightlight) {
-                if (!tabledesign.colls.get(col).isEditable) {
+                if (!tabledesign.colls.get(model_col).isEditable) {
                     this.setBackground(hColor);
                 } else {
                     this.setBackground(heColor);
                 }
             } else {
 
-                if (!tabledesign.colls.get(col).isEditable) {
+                if (!tabledesign.colls.get(model_col).isEditable) {
                     this.setBackground(lColor);
                 } else {
                     this.setBackground(leColor);
@@ -160,14 +173,14 @@ public class NormalCellRenderer extends DefaultTableCellRenderer {
             ColoredCell ccell;
             for (int ccellindex= 0; ccellindex < tabledesign.coloredCells.size(); ccellindex++) {
                 ccell = tabledesign.coloredCells.get(ccellindex);
-                if (ccell.col == col && ccell.row == row) {
+                if (ccell.col == model_col && ccell.row == model_row) {
                     this.setBackground(ccell.color);
                 }
             }
         }
 
-        if (tabledesign.edited_rows.contains(row) &&
-                tabledesign.edited_cols.contains(col)) {
+        if (tabledesign.edited_rows.contains(model_row) &&
+                tabledesign.edited_cols.contains(model_col)) {
             this.setFont(new Font(font.getFamily(), Font.BOLD, font.getSize()));
         }
     }

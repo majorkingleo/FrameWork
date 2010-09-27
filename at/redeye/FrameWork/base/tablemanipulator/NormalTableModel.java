@@ -4,7 +4,6 @@
  */
 package at.redeye.FrameWork.base.tablemanipulator;
 
-import at.redeye.FrameWork.base.tablemanipulator.TableDesign;
 
 import javax.swing.table.DefaultTableModel;
 

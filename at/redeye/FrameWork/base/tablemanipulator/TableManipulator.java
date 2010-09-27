@@ -12,12 +12,14 @@ import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.LookAndFeel;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -32,9 +34,13 @@ import at.redeye.FrameWork.utilities.StringUtils;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
@@ -213,10 +219,11 @@ public class TableManipulator {
         }
  
         ((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(
-            SwingConstants.LEFT);
- 
-        // table.setAutoCreateRowSorter(true);
-        table.getTableHeader().setReorderingAllowed(false);
+            SwingConstants.LEFT);       
+
+        table.setAutoCreateRowSorter(true);
+        //table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setReorderingAllowed(true);
 
         if( max_height > 0 )
         {
@@ -574,9 +581,14 @@ public class TableManipulator {
     /**
      * @return -1 if nothing was selected
      */
-    public int getSelectedRow()
+    public int getSelectedRow()    
     {
-        return table.getSelectedRow();
+        int row = table.getSelectedRow();
+
+        if( row < 0 || row > table.getRowCount() )
+            return row;
+
+        return TableDesign.getModelRow(table, row);
     }
 
     public TableDesign getTabledesign() {
@@ -722,13 +734,14 @@ public class TableManipulator {
         {
             Rectangle col_rect = header.getHeaderRect(j);
 
-            TableDesign.Coll col =  tabledesign.colls.get(j);
+            TableDesign.Coll col =  tabledesign.colls.get(TableDesign.getModelCol(table, j));
 
             logger.info(j + ": " + col_rect.width + " " +col.Title + " => " +  col.dbval.getName() );
 
             String col_uid = uid + "_" + col.dbval.getName();
 
-            setup.setLocalConfig(col_uid, String.valueOf(col_rect.width));
+            // das j hinten drann ist die Position an der sich die Spalte befindet
+            setup.setLocalConfig(col_uid, String.valueOf(col_rect.width) + "," + j);
         }
     }
 
@@ -750,13 +763,17 @@ public class TableManipulator {
         uid += binddesc.getName();
         Setup setup = root.getSetup();
 
+        // remember the position of each column
+        // in this array
+        List<Integer> positions = new ArrayList<Integer>();
+
         for (int i = 0; i < table.getColumnCount(); i++) {
             DefaultTableColumnModel colModel  = (DefaultTableColumnModel) table.getColumnModel();
             TableColumn             tcol       = colModel.getColumn(i);
 
             int width = 0;
 
-            TableDesign.Coll col =  tabledesign.colls.get(i);
+            TableDesign.Coll col =  tabledesign.colls.get(TableDesign.getModelCol(table, i));
 
             String col_uid = uid + "_" + col.dbval.getName();
 
@@ -765,15 +782,43 @@ public class TableManipulator {
             if( val.isEmpty() )
                 continue;
 
+            String values[] = val.split(",");
+
             try
             {
-                width = Integer.parseInt(val);
+                width = Integer.parseInt(values[0]);
+
+                if( values.length > 1 )
+                    positions.add(Integer.parseInt(values[1]));
+
             } catch( NumberFormatException ex ) {
                 logger.error(StringUtils.exceptionToString(ex));
+                positions.add(-1);
             }
 
             if( width > 5 )
                 tcol.setPreferredWidth(width);
+        }
+
+        // Wiederherstellen der Spalten, so wie es das letzte mal
+        // abgespeichert war
+
+        List<Integer> dont_move_anymore = new ArrayList<Integer>();
+
+        for( int i = 0; i < positions.size(); i++ )
+        {
+            int index = positions.get(i);
+
+            if( dont_move_anymore.contains(i) )
+                continue;            
+
+            if( index >= 0 && index != i )
+            {
+                //System.out.println("i " + i + " = " + index );
+
+                table.getColumnModel().moveColumn(i, index);
+                dont_move_anymore.add(index);
+            }
         }
     }
 
