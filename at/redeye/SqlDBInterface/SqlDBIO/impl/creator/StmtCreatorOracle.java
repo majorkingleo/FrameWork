@@ -4,16 +4,16 @@
 package at.redeye.SqlDBInterface.SqlDBIO.impl.creator;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Mario Mattl
@@ -37,7 +37,7 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 
 	}
 
-    @Override
+	@Override
 	public String buildInsertStmtForTable(String table,
 			HashMap<String, Object> values) {
 
@@ -85,7 +85,7 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 		return str.toString();
 	}
 
-    @Override
+	@Override
 	public String buildUpdateStmtForTable(String table,
 			HashMap<String, Object> values, String whereStmt)
 			throws SQLException, TableBindingNotRegisteredException {
@@ -105,10 +105,24 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 		while (iter.hasNext()) {
 
 			String key = iter.next();
-			logger.trace("--> " + key);
-			str.append(markTableName(table)).append(".").append(markColumnName(key));
-			boundColumns.add(key);
-			str.append("=?");
+
+			if (logger.isTraceEnabled()) {
+				logger.trace("--> " + key);
+			}
+			str.append(markTableName(table)).append(".")
+					.append(markColumnName(key));
+
+			// Oracle: It is not allowed to set to null, 
+			// so we don't bind empty columns.
+			Object tester = values.get(key);
+			if (tester instanceof String && ((String) tester).isEmpty()) {
+				str.append("=' '");
+			} else if (tester instanceof Date && tester.toString().isEmpty()) {
+				str.append("='").append(toDateString(new Date(0))).append("'"); // reset date
+			} else {
+				boundColumns.add(key);
+				str.append("=?");
+			}
 
 			if (iter.hasNext() == true) {
 				str.append(" , ");
@@ -117,8 +131,9 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 		if (whereStmt != null && whereStmt.isEmpty() == false) {
 			str.append(" ").append(whereStmt);
 		} else {
-
-			logger.trace("Searching table: " + table);
+			if (logger.isTraceEnabled()) {
+				logger.trace("Searching table: " + table);
+			}
 
 			HashMap<String, ColumnAttribute> cols = registration
 					.getRegisteredTableByString(table);
@@ -133,7 +148,9 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 			while (iter.hasNext()) {
 				String key = iter.next();
 				attr = cols.get(key);
-				logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+				if (logger.isTraceEnabled()) {
+					logger.trace(key + " -> IsPK: " + attr.isPrimaryKey());
+				}
 				if (attr.isPrimaryKey() == true) {
 					pkColumns.add(key);
 					boundColumns.add(key);
@@ -146,7 +163,9 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 			str.append(" where ");
 
 			for (int index = 0; index < pkColumns.size(); index++) {
-				str.append(markTableName(table)).append(".").append(markColumnName(pkColumns.get(index))).append("=?");
+				str.append(markTableName(table)).append(".")
+						.append(markColumnName(pkColumns.get(index)))
+						.append("=?");
 
 				if (index < (pkColumns.size() - 1)) {
 					str.append(" and ");
@@ -155,5 +174,4 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 		}
 		return str.toString();
 	}
-
 }
