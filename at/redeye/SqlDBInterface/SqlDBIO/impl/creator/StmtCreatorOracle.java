@@ -41,29 +41,16 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 	public String buildInsertStmtForTable(String table,
 			HashMap<String, Object> values) {
 
+                boundColumns.clear();
 		StringBuilder str = new StringBuilder();
 
 		str.append("insert into ");
 		str.append(markTableName(table)).append(" (");
 
+                boolean added_entry = false;
+
 		Set<String> keys = values.keySet();
 		Iterator<String> iter = keys.iterator();
-		while (iter.hasNext()) {
-			// Oracle: Ignore columns that have empty strings
-			String col = iter.next();
-			Object tester = values.get(col);
-			if ((tester instanceof String || tester instanceof Date)
-					&& tester.toString().isEmpty()) {
-				continue;
-			}
-			str.append(markColumnName(col));
-			if (iter.hasNext() == true) {
-				str.append(" , ");
-			}
-		}
-		str.append(")");
-		str.append(" values (");
-		iter = keys.iterator();
 
 		while (iter.hasNext()) {
 			String key = iter.next();
@@ -71,15 +58,43 @@ public class StmtCreatorOracle extends AbstractStmtCreator {
 			if (ele instanceof String || ele instanceof Date) {
 				if (ele.toString().isEmpty()) {
 					continue;
-				} else {
-					str.append("?");
-					boundColumns.add(key);
 				}
 			}
 
-			if (iter.hasNext() == true) {
-				str.append(" , ");
+                    if (added_entry) {
+                        str.append(" , ");
+                        added_entry = false;
+                    }
+
+                    str.append(markColumnName(key));
+                    added_entry = true;
+
+		}
+
+		str.append(")");
+		str.append(" values (");
+		iter = keys.iterator();
+
+                added_entry = false;
+
+		while (iter.hasNext()) {
+			String key = iter.next();
+			Object ele = values.get(key);                        
+			if (ele instanceof String || ele instanceof Date) {
+				if (ele.toString().isEmpty()) {                                         
+					continue;
+				} 
 			}
+
+                    if (added_entry) {
+                        str.append(" , ");
+                        added_entry = false;
+                    }
+
+                    str.append("?");
+                    boundColumns.add(key);
+                    added_entry = true;
+
 		}
 		str.append(")");
 		return str.toString();
