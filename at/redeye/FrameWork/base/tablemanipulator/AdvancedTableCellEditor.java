@@ -7,7 +7,6 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.widgets.documentfields.DocumentFieldDateTime;
 import at.redeye.FrameWork.widgets.documentfields.DocumentFieldInteger;
 import at.redeye.FrameWork.widgets.documentfields.DocumentFieldLimit;
-import at.redeye.FrameWork.base.*;
 import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBInteger;
 import at.redeye.FrameWork.base.bindtypes.DBString;
@@ -21,7 +20,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
 
 /**
  *
