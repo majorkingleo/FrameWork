@@ -7,8 +7,6 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,6 +46,8 @@ public class TableDesign {
         public TableValidator validator = null;
         DBValue dbval = null;
         public Vector<Object> additional_autocomplete_values = null;
+        private boolean doAutocompleteForAllOfThisColl = true;
+        private boolean doAutoCompleteForCollAtAll = true;
 
         public Coll(String title) {
             this.Title = title;
@@ -66,6 +66,26 @@ public class TableDesign {
         
         void setEditable(boolean isEditable) {
             this.isEditable = isEditable;
+        }
+
+        void setDoAutocompleteForAllOfThisColl( boolean state )
+        {
+            doAutocompleteForAllOfThisColl = state;
+        }
+
+        boolean getDoAutocompleteForAllOfThisColl()
+        {
+            return doAutocompleteForAllOfThisColl;
+        }
+
+        void setAutoCompleteForCollAtAll( boolean state )
+        {
+            doAutoCompleteForCollAtAll = state;
+        }
+
+        boolean getAutoCompleteForCollAtAll()
+        {
+            return doAutoCompleteForCollAtAll;
         }
     }
     public Vector<Coll> colls;
@@ -88,6 +108,9 @@ public class TableDesign {
             coll = colls.get(col);
             validator = coll.validator;
         }
+
+        if( !coll.getDoAutocompleteForAllOfThisColl() )
+            return all;
 
         for( int i = 0; i < rows.size(); i++ )
         {

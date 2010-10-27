@@ -50,6 +50,7 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
         tm.hide(config.hist.ae_user);
 
         tm.setEditable(config.value);
+        tm.setAutoCompleteForAllOfThisColl(config.value, false);        
 
         tm.prepareTable();
 

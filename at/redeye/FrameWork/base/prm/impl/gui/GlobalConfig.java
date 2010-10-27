@@ -54,6 +54,7 @@ public class GlobalConfig extends BaseDialog implements CanCloseInterface,
 		tm.hide(config.hist.lo_zeit);
 
 		tm.setEditable(config.value);
+                tm.setAutoCompleteForAllOfThisColl(config.value, false);
 
 		tm.prepareTable();
 

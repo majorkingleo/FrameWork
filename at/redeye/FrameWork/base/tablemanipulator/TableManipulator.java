@@ -464,7 +464,52 @@ public class TableManipulator {
             col++;
         }                
     }
-    
+
+    /**
+     * disable, or enables the Autocompletet feature for this column
+     * @param column
+     * @param doAutocomplete
+     */
+    public void setAutoCompleteForAllOfThisColl(DBValue column, boolean doAutocomplete) {
+        Vector<DBValue> values = binddesc.getAllValues();
+
+        for (int i = 0, col = 0; i < values.size(); i++) {
+            if (isHidden(i)) {
+                continue;
+            }
+
+            if (values.get(i).hashCode() == column.hashCode()) {
+                tabledesign.colls.get(col).setDoAutocompleteForAllOfThisColl(doAutocomplete);
+                return;
+            }
+
+            col++;
+        }
+    }
+
+    /**
+     * disable, or enables the Autocompletet feature
+     * @param column
+     * @param doAutocomplete
+     */
+    public void setAutoCompleteForCollAtAll(DBValue column, boolean doAutocomplete) {
+        Vector<DBValue> values = binddesc.getAllValues();
+
+        for (int i = 0, col = 0; i < values.size(); i++) {
+            if (isHidden(i)) {
+                continue;
+            }
+
+            if (values.get(i).hashCode() == column.hashCode()) {
+                tabledesign.colls.get(col).setAutoCompleteForCollAtAll(doAutocomplete);
+                return;
+            }
+
+            col++;
+        }
+    }
+
+
     public void setValidator(DBValue column,TableValidator validator) 
     {
         Vector<DBValue> values = binddesc.getAllValues();
