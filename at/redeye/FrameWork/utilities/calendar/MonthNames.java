@@ -41,6 +41,14 @@ public class MonthNames
 
         String country = locale.getCountry();
 
+        if( country.isEmpty() && locale.toString().contains("_") )
+        {
+            String parts[] = locale.toString().split("_");
+
+            if( parts.length > 1 )
+                country = parts[1].toUpperCase();
+        }
+
         for( int i = 0; i < codes.length; i += 2 )
         {
             if( country.equals(codes[i][0]) )
