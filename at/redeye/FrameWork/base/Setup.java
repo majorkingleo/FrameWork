@@ -37,25 +37,30 @@ public abstract class Setup {
     static public final String WindowHeight = "WindowHeight";
 
     public static Logger logger = Logger.getLogger(Setup.class);
-    
+
+    private static final boolean b_is_win_system = System.getProperty("os.name").matches(".*[Ww][Ii][Nn].*");
+    private static final boolean b_is_win_7_system  = System.getProperty("os.name").matches("Windows 7");
+    private static final boolean b_is_linux_system = System.getProperty("os.name").equals("Linux");
+    private static final boolean b_is_65bit_system = System.getProperty("os.arch").contains("64");
+
     public static boolean is_win_system()
     {
-        return System.getProperty("os.name").matches(".*[Ww][Ii][Nn].*");
+        return b_is_win_system;
     }
 
     public static boolean is_win_7_system()
     {
-        return System.getProperty("os.name").matches("Windows 7");
+        return b_is_win_7_system;
     }
 
     public static boolean is_linux_system()
     {
-        return System.getProperty("os.name").equals("Linux");
+        return b_is_linux_system;
     }
 
     public static boolean is_64bit_system()
     {
-        return System.getProperty("os.arch").contains("64");
+        return b_is_65bit_system;
     }    
 
     public static String getHiddenUserHomeFileName( String name )

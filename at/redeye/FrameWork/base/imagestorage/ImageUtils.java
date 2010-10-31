@@ -70,7 +70,7 @@ public class ImageUtils {
         return ext;
     }
 
-    public static Icon loadScaledImageIcon(String path, int w, int h) {
+    public static Icon loadScaledImageAsIcon(String path, int w, int h) {
         ImageIcon icon = createImageIcon(path);
         Image image = scaleImage(icon.getImage(),w,h);
         icon.setImage(image);
@@ -87,8 +87,18 @@ public class ImageUtils {
             return null;
         }
     }
+
+    public static ImageIcon loadScaledImageIcon(String path)
+    {
+        return loadScaledImageIcon(path, 50,50 );
+    }
+
+    public static ImageIcon loadScaledImageIcon(String path, int width, int height )
+    {
+        return loadScaledImageIcon(path, width, height, -1 );
+    }
     
-    public static ImageIcon loadScaledImageIcon(String path) {
+    public static ImageIcon loadScaledImageIcon(String path, int width, int height, int max_height) {
 
         try {
             java.net.URL imgURL;
@@ -98,7 +108,7 @@ public class ImageUtils {
             if (imgURL != null) {
                 ImageIcon icon =  new ImageIcon(imgURL);
                 Image image = icon.getImage();
-                image = scaleImage(image,50,50);
+                image = scaleImage(image,width,height,max_height);
                 icon.setImage(image);
                 return icon;
             } else {
@@ -129,8 +139,13 @@ public class ImageUtils {
     {
         return loadScaledImageIcon(bytes, descr, 50, 50);
     }
-    
+
     public static Image scaleImage(Image image, int width, int height )
+    {
+        return scaleImage(image, width , height, -1);
+    }
+
+    public static Image scaleImage(Image image, int width, int height, int max_height )
     {
         int image_width = image.getWidth(null);
         int image_height = image.getHeight(null);
@@ -156,6 +171,15 @@ public class ImageUtils {
         scale_width = width;
         
         scale_height = (int)((double)width / ratio);
+
+        if( scale_width <= 0 )
+            scale_width = width;
+
+        if( scale_height <= 0 )
+            scale_height = height;
+
+        if( max_height != -1 && scale_height > max_height )
+            scale_height = max_height;
         
         image = image.getScaledInstance(scale_width, scale_height, Image.SCALE_SMOOTH);
             
