@@ -30,7 +30,8 @@ public class AboutPlugins extends BaseDialog {
 
         Vector<Plugin> plugins = new Vector();
 
-        plugins.addAll(root.getRegisteredPlugins());
+        if( root.getRegisteredPlugins() != null )
+            plugins.addAll(root.getRegisteredPlugins());
 
         jLPlugins.setListData( plugins );
     }
