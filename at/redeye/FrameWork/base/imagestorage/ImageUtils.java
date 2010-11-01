@@ -31,6 +31,7 @@
 
 package at.redeye.FrameWork.base.imagestorage;
 
+import at.redeye.FrameWork.base.AutoLogger;
 import at.redeye.FrameWork.base.imagestorage.bindtypes.DBImage;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -40,9 +41,11 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -55,6 +58,7 @@ public class ImageUtils {
     public final static String tiff = "tiff";
     public final static String tif = "tif";
     public final static String png = "png";
+    public final static String bmp = "bmp";
 
     /*
      * Get the extension of a file.
@@ -101,12 +105,34 @@ public class ImageUtils {
     public static ImageIcon loadScaledImageIcon(String path, int width, int height, int max_height) {
 
         try {
-            java.net.URL imgURL;
+            final java.net.URL imgURL;
 
             imgURL = new java.net.URL("file:" + path);
 
             if (imgURL != null) {
-                ImageIcon icon =  new ImageIcon(imgURL);
+
+                ImageIcon icon = null;
+
+                if( path.endsWith("bmp") )
+                {
+                    try
+                    {
+                        BufferedImage bimg = ImageIO.read(imgURL);
+
+                        if( bimg == null )
+                            return null;
+
+                        icon = new ImageIcon(bimg);
+                            
+                    } catch( IOException ex) {
+                        return null;
+                    }
+                }
+                else
+                {
+                    icon =  new ImageIcon(imgURL);
+                }
+
                 Image image = icon.getImage();
                 image = scaleImage(image,width,height,max_height);
                 icon.setImage(image);
