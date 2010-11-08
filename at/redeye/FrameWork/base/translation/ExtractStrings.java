@@ -21,6 +21,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTabbedPane;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 /**
  *
@@ -70,6 +72,29 @@ public class ExtractStrings
         }
     }
 
+    static private class FrameTitleWrapper extends JComponent
+    {
+        TitledBorder border;
+
+        public FrameTitleWrapper( JComponent parent )
+        {
+            if( parent.getBorder() instanceof TitledBorder )
+            {
+                border = (TitledBorder) parent.getBorder();
+            }
+        }
+
+        public String getText()
+        {
+            return border.getTitle();
+        }
+
+        public void setText( String text)
+        {
+           border.setTitle(text);
+        }
+    }
+
     TreeSet<String> strings;
     HashMap<String,List<JComponent>> components;
 
@@ -107,6 +132,21 @@ public class ExtractStrings
                 {
                     strings.add(text);
                     addComp( text, new ToolTipWrapper(jcomp));
+                }
+
+                Border border = jcomp.getBorder();
+
+                if( border != null && border instanceof TitledBorder )
+                {
+                    TitledBorder tborder = (TitledBorder) border;
+
+                    text = tborder.getTitle();
+
+                    if( text != null && !text.isEmpty() )
+                    {
+                        strings.add(text);
+                        addComp( text, new FrameTitleWrapper(jcomp));
+                    }
                 }
             }
 
@@ -229,7 +269,8 @@ public class ExtractStrings
             ((TabTitleWrapper)comp).setText(value);
         else if( comp instanceof ToolTipWrapper )
             ((ToolTipWrapper)comp).setText(value);
-
+        else if( comp instanceof FrameTitleWrapper )
+            ((FrameTitleWrapper)comp).setText(value);
     }
 
     private void addString(JTabbedPane jTabbedPane)
