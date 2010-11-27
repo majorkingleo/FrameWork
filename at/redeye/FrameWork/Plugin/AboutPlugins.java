@@ -34,6 +34,13 @@ public class AboutPlugins extends BaseDialog {
             plugins.addAll(root.getRegisteredPlugins());
 
         jLPlugins.setListData( plugins );
+
+        if( !plugins.isEmpty() )
+        {
+            jLPlugins.setSelectedIndex(0);
+            jLPluginsMouseClicked(null);
+        }
+
     }
 
     /** This method is called from within the constructor to
