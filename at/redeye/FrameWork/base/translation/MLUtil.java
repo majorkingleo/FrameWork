@@ -73,7 +73,16 @@ public class MLUtil {
     {
         //System.out.println("testing: " + name);
 
-        URL url = name.getClass().getResource(name);
+        Root root = Root.getLastRoot();
+
+        URL url;
+
+        if( root != null )
+            url = root.getClass().getResource(name);
+        else
+            url = name.getClass().getResource(name); // dieser Weg funkt mit Webstart nicht
+
+        // System.out.println("testing: " + name  + (url != null ? " found" : " not found"));
 
         if( url != null )
             return true;
