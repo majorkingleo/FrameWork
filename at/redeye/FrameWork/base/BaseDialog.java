@@ -337,6 +337,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      * Geschwindigkeit. Vom User über den Parameter VerticalScrollingSpeed einstellbar.
      * @param scroll_panel
      */
+    @Override
     public void adjustScrollingSpeed( JScrollPane scroll_panel )
     {
         helper.adjustScrollingSpeed(scroll_panel);
@@ -347,6 +348,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      * push it to front, by useing the wait cursor.
      * @param frame
      */
+    @Override
     public void invokeDialog( JFrame frame )
     {
         helper.invokeDialog(frame);
@@ -357,6 +359,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      * push it to front, by useing the wait cursor.
      * @param frame
      */
+    @Override
     public void invokeDialog( BaseDialogBase dlg )
     {
         helper.invokeDialog(dlg);
@@ -372,26 +375,31 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
         helper.invokeDialog((BaseDialogBase)dlg);
     }
 
+    @Override
     public void invokeDialogUnique( BaseDialogBase dialog )
     {
         helper.invokeDialogUnique(dialog);
     }
 
+    @Override
     public void registerOnCloseListener( Runnable runnable )
     {
         helper.registerOnCloseListener(runnable);
     }
 
+    @Override
     public void deregisterOnCloseListener( Runnable runnable )
     {
         helper.deregisterOnCloseListener(runnable);
     }
 
+    @Override
     public boolean closeSubdialogsOnClose()
     {
         return true;
     }
 
+    @Override
     public Container getContainer()
     {
         return this;
@@ -401,23 +409,28 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
         return this;
     }
 
+    @Override
     public void invokeDialogModal(BaseDialogDialog dlg) {
         helper.invokeDialogModal(dlg);
     }
 
+    @Override
     public void setBindVarsChanged(boolean state) {
         helper.setBindVarsChanged(state);
     }
 
+    @Override
     public Collection<Pair> getBindVarPairs() {
         return helper.getBindVarPairs();
     }
 
+    @Override
     public void addBindVarPair( Pair pair )
     {
         helper.addBindVarPair(pair);
     }
 
+    @Override
     public void setBindVars( BindVarInterface bind_vars )
     {
         helper.setBindVars(bind_vars);
@@ -435,6 +448,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      * each one has a different title.
      */
 
+    @Override
     public String getUniqueDialogIdentifier(Object requester)
     {
         return this.getClass().getName() + "/" + getTitle();
@@ -444,6 +458,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
     * language the dialog is programmed in
     * if not set, the settings from Root.getBaseLangague() are used
     */
+    @Override
     public void setBaseLanguage( String language )
     {
         helper.setBaseLanguage(language);
@@ -453,6 +468,7 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
     * @return language the dialog is programmed in
     * if not set, the settings from Root.getBaseLangague() are used
     */
+    @Override
     public String getBaseLanguage()
     {
         return helper.getBaseLanguage();
@@ -469,8 +485,14 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      * @param message native langauge message
      * @return translated message, if available
      */
+    @Override
     public String MlM( String message )
     {
         return helper.MlM( message );
+    }
+
+    @Override
+    public void invokeMainDialog(BaseDialogBase dialog) {
+        helper.invokeMainDialog(dialog);
     }
 }

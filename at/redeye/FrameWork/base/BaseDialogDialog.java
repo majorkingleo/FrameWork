@@ -478,9 +478,15 @@ public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInte
      * @param message native langauge message
      * @return translated message, if available
      */
+    @Override
     public String MlM( String message )
     {
         return helper.MlM( message );
+    }
+
+    @Override
+    public void invokeMainDialog(BaseDialogBase dialog) {
+        helper.invokeMainDialog(dialog);
     }
 
 }

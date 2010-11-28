@@ -130,7 +130,10 @@ public class AboutPlugins extends BaseDialog {
     private void jLPluginsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLPluginsMouseClicked
 
         Plugin plugin = (Plugin) jLPlugins.getSelectedValue();
-        
+
+        if(plugin == null)
+            return;
+
         jTLicenceText.setText(plugin.getLicenceText());
         jTLicenceText.setCaretPosition(0);
 

@@ -343,4 +343,8 @@ public abstract class Root {
         return static_root;
     }
     
+    /**     
+     * @return the number of currently open windows
+     */
+    public abstract int countOpenWindows();
 }

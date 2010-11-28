@@ -480,6 +480,7 @@ public class LocalRoot extends Root {
      * as implementation language the value of base_language is used
      * @param obj
      */
+    @Override
     public void loadMlM4ClassName(String name)
     {
         if( ml_helper == null )
@@ -497,5 +498,15 @@ public class LocalRoot extends Root {
             ml_helper = new MLHelper( this );
 
         ml_helper.autoLoadCurrentLocale();
+    }
+
+
+    /**
+     * @return the number of currently open windows
+     */
+    @Override
+    public int countOpenWindows()
+    {
+        return dialogs.size();
     }
 }

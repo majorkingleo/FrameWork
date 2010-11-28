@@ -93,7 +93,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
     protected TranslationHelper translation_helper;
     protected boolean autoswitch_trans_first_run = true;
     
-    
+    private static int default_pos_x = 300;
+    private static int default_pos_y = 300;
     /**
     * language the dialog is programmed in
     * if not set, the settings from Root.getBaseLangague() are used
@@ -161,8 +162,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
 
         String id = parent.getUniqueDialogIdentifier("SetToLastXYPos");
 
-        int x = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowX), "300"));
-        int y = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowY), "300"));
+        int x = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowX), String.valueOf(default_pos_x +=30)));
+        int y = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowY), String.valueOf(default_pos_y +=30)));
         int w = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowWidth), "0"));
         int h = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowHeight), "0"));
 
@@ -324,6 +325,14 @@ public class BaseDialogBaseHelper implements BindVarInterface
         if( parent.closeSubdialogsOnClose() )
             close_subdialog_helper.closeSubDialog(dlg);
 
+        setNormalCursor();
+    }
+
+    void invokeMainDialog(BaseDialogBase dialog)
+    {
+        setWaitCursor();
+        dialog.setVisible(true);
+        dialog.toFront();
         setNormalCursor();
     }
 

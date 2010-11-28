@@ -86,6 +86,13 @@ public interface BaseDialogBase
 
     public void invokeDialogUnique( BaseDialogBase dialog );
 
+    /**
+     * opens the dialog as a new main Dialog. So if the source Dialog
+     * is closed, the subdialog won't be closed, because it's a new main dialog.
+     * @param dialog
+     */
+    public void invokeMainDialog( BaseDialogBase dialog );
+
     public void registerOnCloseListener(Runnable runnable);
 
     public void deregisterOnCloseListener( Runnable runnable );
