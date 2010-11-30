@@ -171,6 +171,55 @@ public class ImageUtils {
         return scaleImage(image, width , height, -1);
     }
 
+    /**
+     * Returns the size of the scaled image, by not changing the ratio of the origin with an height.
+     * If the size of the image is smaller than the with and height, nothing will be scaled
+     * This function does not scale the image itself. It only calcs the dimension
+     * @param image
+     * @param width
+     * @param height
+     * @param max_height
+     * @return
+     */
+    public static Dimension getScaledSize(Image image, int width, int height, int max_height )
+    {
+        int image_width = image.getWidth(null);
+        int image_height = image.getHeight(null);
+
+        int scale_width = width;
+        int scale_height = height;
+
+        if( image_width < width )
+            scale_width = image_width;
+
+        if( image_height < height )
+            scale_height = image_height;
+
+        if( image_height < height &&
+            image_width < width )
+        {
+            // do not scale
+            return new Dimension(image_width, image_height);
+        }
+
+        double ratio = (double)image_width / (double)image_height;
+
+        scale_width = width;
+
+        scale_height = (int)((double)width / ratio);
+
+        if( scale_width <= 0 )
+            scale_width = width;
+
+        if( scale_height <= 0 )
+            scale_height = height;
+
+        if( max_height != -1 && scale_height > max_height )
+            scale_height = max_height;
+
+        return new Dimension( scale_width, scale_height );
+    }
+
     public static Image scaleImage(Image image, int width, int height, int max_height )
     {
         int image_width = image.getWidth(null);
