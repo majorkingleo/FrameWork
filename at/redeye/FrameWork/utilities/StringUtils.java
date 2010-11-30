@@ -97,6 +97,9 @@ public class StringUtils {
 		int start = skip_char(s, what, 0);
 		int end = skip_char_reverse(s, what, s.length() - 1);
 
+                if( start > end )
+                    return s.substring(start);
+
 		return s.substring(start, end + 1);
 	}
 
