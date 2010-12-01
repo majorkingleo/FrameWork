@@ -447,4 +447,29 @@ public class StringUtils {
 		}
 		return str.toString();
 	}
+
+        /**
+         * Adds Line numbers as prefix to the text
+         * @param text
+         * @return Line numbered String
+         */
+        public static String addLineNumbers(String text)
+        {
+            final String lines[] = text.split("\n");
+
+            final String max_num = String.valueOf(lines.length);
+
+            final String format = "%0" + max_num.length() + "d: ";
+
+            final StringBuilder sb = new StringBuilder();
+
+            for( int i = 0; i < lines.length; i++ )
+            {
+                sb.append(String.format(format, i+1));
+                sb.append(lines[i]);
+                sb.append('\n');
+            }
+
+            return sb.toString();
+        }
 }
