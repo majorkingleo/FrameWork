@@ -5,10 +5,10 @@
 
 package at.redeye.FrameWork.widgets.helpwindow;
 
+import at.redeye.FrameWork.Plugin.Plugin;
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.FrameWorkConfigDefinitions;
 import at.redeye.FrameWork.base.Root;
-import at.redeye.FrameWork.base.Setup;
 import java.io.IOException;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkEvent.EventType;
@@ -23,6 +23,7 @@ public class HyperlinkExecuter implements HyperlinkListener {
 
     private static final Logger logger = Logger.getLogger(HyperlinkExecuter.class.getName());
     private Root root;
+    private static OpenUrlInterface open_url = null;
 
     public HyperlinkExecuter( Root root )
     {
@@ -48,29 +49,40 @@ public class HyperlinkExecuter implements HyperlinkListener {
 
         logger.info(e.getURL());
 
-        final String protocoll = e.getURL().getProtocol();
+        if( open_url != null )
+        {
+            open_url.openUrl(e.getURL().toString());
+        }
+        else
+        {
+            String open_command = getOpenCommand();
 
-        String open_command = getOpenCommand();
+            String command = open_command + " \"" + e.getURL().toString() + "\"";
+            logger.info(command);
 
-        String command = open_command + " \"" + e.getURL().toString() + "\"";
-        logger.info(command);
+            String command_array[] = new String[2];
 
-        String command_array[] = new String[2];
+            command_array[0] = open_command;
+            command_array[1] = e.getURL().toString();
 
-        command_array[0] = open_command;
-        command_array[1] = e.getURL().toString();
-
-        Process p = Runtime.getRuntime().exec(command_array);
-
+            Process p = Runtime.getRuntime().exec(command_array);
+        }
         return;
 
     }
 
     public String getOpenCommand()
     {
+        /*
         if( Setup.is_win_system() )
             return "explorer";
-
+        */
+        
         return root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.OpenCommand);
+    }
+
+    public static void setOpenUrl( OpenUrlInterface open_url_ )
+    {
+        open_url = open_url_;
     }
 }
