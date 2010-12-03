@@ -107,6 +107,7 @@
             <Component class="javax.swing.JEditorPane" name="jTLicenceText">
               <Properties>
                 <Property name="contentType" type="java.lang.String" value="text/html"/>
+                <Property name="editable" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -128,6 +129,7 @@
             <Component class="javax.swing.JEditorPane" name="jTChangeLog">
               <Properties>
                 <Property name="contentType" type="java.lang.String" value="text/html"/>
+                <Property name="editable" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>

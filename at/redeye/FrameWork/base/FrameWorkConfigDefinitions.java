@@ -38,6 +38,8 @@ public class FrameWorkConfigDefinitions {
     public static DBConfig ProxyDisabledFor = new DBConfig( "ProxyDisbledFor", "", "Hostnamen, oder IP Addressen, für die der Proxy nicht verwendet werden soll");
     public static DBConfig ProxyEnabled = new DBConfig( "ProxyEnabled", "true", "", new PrmDefaultCheckSuite(PrmDefaultChecksInterface.PRM_IS_TRUE_FALSE));
 
+    public static DBConfig OpenCommand = new DBConfig("OpenCommand", "kde-open", "Kommando für das öffnen einer Datei, oder eines Verzeichnisses");
+
     public static void registerDefinitions() {
         GlobalConfigDefinitions.add_help_path("/at/redeye/FrameWork/base/resources/Help/Params/");
         LocalConfigDefinitions.add_help_path("/at/redeye/FrameWork/base/resources/Help/Params/");
@@ -64,6 +66,8 @@ public class FrameWorkConfigDefinitions {
         addLocal(ProxyPort);
         addLocal(ProxyDisabledFor);
         addLocal(ProxyEnabled);
+
+        addLocal(OpenCommand);
         
 
         add(AllowAutoLogin);
