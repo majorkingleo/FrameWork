@@ -7,8 +7,10 @@ package at.redeye.FrameWork.base.tablemanipulator;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import javax.swing.JTable;
@@ -26,10 +28,18 @@ public class TableDesign {
         Color color;
     }
 
+    public static class ToolTipCell {
+        int row;
+        int col;
+        String tooltip;
+    }
+
     public Set<Integer> edited_cols;
     public Set<Integer> edited_rows;
     public Vector<Vector<Object>> rows = new Vector<Vector<Object>>();
-    protected Vector<ColoredCell>  coloredCells = new Vector<ColoredCell>();    
+    protected Vector<ColoredCell>  coloredCells = new Vector<ColoredCell>();
+    protected List<ToolTipCell> tooltipCells = new ArrayList<ToolTipCell>();
+
 
     public void addColoredCell (int row, int col, Color color) {
         ColoredCell cell = new ColoredCell();
@@ -37,6 +47,17 @@ public class TableDesign {
         cell.col = col;
         cell.color = color;
         coloredCells.add (cell);
+    }
+
+    void addToolTipCell(int row, int col, String tooltip)
+    {
+        ToolTipCell cell = new ToolTipCell();
+
+        cell.row = row;
+        cell.col = col;
+        cell.tooltip = tooltip;
+
+        tooltipCells.add(cell);
     }
 
     public static class Coll {

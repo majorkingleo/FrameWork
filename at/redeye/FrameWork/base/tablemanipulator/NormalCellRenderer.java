@@ -175,9 +175,25 @@ public class NormalCellRenderer extends DefaultTableCellRenderer {
                 ccell = tabledesign.coloredCells.get(ccellindex);
                 if (ccell.col == model_col && ccell.row == model_row) {
                     this.setBackground(ccell.color);
+                    break;
                 }
             }
         }
+
+        boolean found = false;
+
+        for (int ccellindex = 0; ccellindex < tabledesign.tooltipCells.size(); ccellindex++) {
+            TableDesign.ToolTipCell cell = tabledesign.tooltipCells.get(ccellindex);
+            if (cell.col == model_col && cell.row == model_row) {
+                this.setToolTipText(cell.tooltip);
+                found = true;
+                break;
+            }
+        }
+
+        if( !found )
+            setToolTipText(null);
+
 
         if (tabledesign.edited_rows.contains(model_row) &&
                 tabledesign.edited_cols.contains(model_col)) {

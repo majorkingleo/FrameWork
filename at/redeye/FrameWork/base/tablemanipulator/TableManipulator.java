@@ -622,6 +622,27 @@ public class TableManipulator {
         }
     }
 
+    public void setToolTip (DBValue column, int row, String tooltip) {
+
+        Vector<DBValue> values = binddesc.getAllValues();
+
+
+        for( int i = 0, col=0; i < values.size(); i++ )
+        {
+            if( isHidden( i ) )
+                continue;
+
+
+            if( values.get(i).getName().equals(column.getName()) )
+            {
+                tabledesign.addToolTipCell(row, col, tooltip);
+                return;
+            }
+
+            col++;
+        }
+    }
+
     public void updateValue( DBValue value, int row )
     {
         Vector<DBValue> values = binddesc.getAllValues();
