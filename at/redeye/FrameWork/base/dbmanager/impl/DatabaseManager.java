@@ -157,6 +157,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		}
 	}
 
+    @Override
 	public boolean tableExists(String table) throws SQLException {
 
 		// For the very first time
@@ -388,6 +389,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 	 * 
 	 * @return return true on success, false on failure
 	 */
+    @Override
 	public boolean autocreate() {
 
 		AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {
@@ -415,10 +417,12 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return true;
 	}
 
+    @Override
 	public boolean db_supports_all_requested_features() throws SQLException {
 		return showTables.db_supports_all_requested_features(trans);
 	}
 
+    @Override
 	public boolean can_support_db() {
 
 		AutoLogger al = new AutoLogger("can_support_db") {

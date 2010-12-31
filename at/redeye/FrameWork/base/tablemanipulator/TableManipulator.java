@@ -65,6 +65,8 @@ public class TableManipulator {
     boolean allowReordering = true;
     boolean allowResorting = true;
 
+    Runnable closeListener = null;
+
     public TableManipulator( Root root, JTable table, TableDesign tabledesign )
     {
         this.tabledesign = tabledesign;
@@ -75,6 +77,7 @@ public class TableManipulator {
         table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));
         row_header = new RowHeader( table,  new Runnable() {
 
+            @Override
             public void run() {
                 checkRowHeaderLimit();
             }
@@ -112,7 +115,17 @@ public class TableManipulator {
         
         return false;
     }
-    
+
+    /**
+     * reconfigure the table for a new bindtype
+     * @param binddesc
+     */
+    public void reconfigure(DBStrukt binddesc)
+    {
+        hidden_values.clear();
+        configure( table, binddesc, allEditable );
+    }
+
     private void configure( JTable table, DBStrukt binddesc, boolean allEditable )
     {
         this.binddesc = binddesc;
@@ -142,6 +155,7 @@ public class TableManipulator {
         table.setDefaultRenderer(Object.class, new NormalCellRenderer(root, this.tabledesign));
         row_header = new RowHeader( table, new Runnable() {
 
+            @Override
             public void run() {
                 checkRowHeaderLimit();
             }
@@ -153,7 +167,12 @@ public class TableManipulator {
         autoResizeColWidth( table );
         setUserColWidth();
     }
-    
+
+    public void autoResizeNoUserColWidth()
+    {
+        autoResizeColWidth( table );        
+    }
+
      public void autoResizeColWidth(JTable table ) {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);        
  
@@ -714,12 +733,18 @@ public class TableManipulator {
         if( base == null )
             return;
 
-        base.registerOnCloseListener(new Runnable() {
+        if( closeListener == null )
+        {
+            closeListener = new Runnable() {
 
-            public void run() {
-                saveTableHeaderSize();
-            }
-        });
+                @Override
+                public void run() {
+                    saveTableHeaderSize();
+                }
+            };
+        
+            base.registerOnCloseListener(closeListener);
+        }
     }
 
     private BaseDialogBase getBaseDialog()
