@@ -61,7 +61,9 @@ public class CreateDesktopIconWin extends CreateDesktopIcon
         if( icon_name == null )
             return false;
 
-        logger.error("created Icon: " + icon_name);
+        //icon_name = icon_name.replaceAll("\\\\", "/");
+
+        logger.error("created Icon: " + icon_name);        
 
         link.setIconLocation(icon_name);
         link.setName(app_title);

@@ -82,7 +82,11 @@ public abstract class CreateDesktopIcon
         if( Setup.is_win_system() )
             extension = ".ico";
 
-        String export_path_name = Setup.getAppConfigFile(app_name, app_name + extension);
+        //String export_path_name = Setup.getAppConfigFile(app_name, app_name + extension);
+        
+        // ansonsten kann bei einem zu langen Namen das Icon auf Win-XP und womöglich bei anderen
+        // nicht mehr korrekt dargestellt werden, weils irgendwas im icon link ding vom M$ sprengt.
+        String export_path_name = Setup.getAppConfigFile(app_name, "appicon" + extension);
 
         try {
 
