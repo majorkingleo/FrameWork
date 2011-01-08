@@ -35,7 +35,7 @@ public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInte
 
     private static final long serialVersionUID = 1L;
 
-    BaseDialogBaseHelper helper;
+    public BaseDialogBaseHelper helper;
     JRootPane myrootPane;
     protected static Logger logger = Logger.getLogger(BaseDialogDialog.class.getName());
     protected Root root;
