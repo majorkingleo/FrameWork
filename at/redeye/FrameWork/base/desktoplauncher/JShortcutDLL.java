@@ -32,7 +32,7 @@ public class JShortcutDLL implements DLLExtractor
     {
         String envdir = System.getProperty(PROPERTY_NAME);
 
-        // dient dazu das di lib geladen wird und die Resource auch zur Verfügung steht.
+        // dient dazu das die lib geladen wird und die Resource auch zur Verfügung steht.
         JShellLink.class.getName();
 
         for( String lib : getNames() )
