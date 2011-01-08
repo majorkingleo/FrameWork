@@ -64,7 +64,7 @@ public class TableManipulator {
     BaseDialogBase base_dlg;
     boolean allowReordering = true;
     boolean allowResorting = true;
-
+    boolean saveUserColWidth = true;
     Runnable closeListener = null;
 
     public TableManipulator( Root root, JTable table, TableDesign tabledesign )
@@ -104,6 +104,11 @@ public class TableManipulator {
         configure( table, binddesc, allEditable );
         addCloseListener();
     }   
+
+    public void setSaveUserColWidth( boolean state )
+    {
+        saveUserColWidth = state;
+    }
 
     protected boolean isHidden( int i )
     {
@@ -760,7 +765,8 @@ public class TableManipulator {
 
                 @Override
                 public void run() {
-                    saveTableHeaderSize();
+                    if( saveUserColWidth )
+                        saveTableHeaderSize();
                 }
             };
         
