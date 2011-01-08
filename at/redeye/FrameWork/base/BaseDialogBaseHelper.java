@@ -68,15 +68,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
      */
     protected static Logger logger = Logger.getLogger(BaseDialogBaseHelper.class.getName());
     private Transaction seq_transaction = null;
-    public Timer autoRefreshTimer = new Timer();
-    public TimerTask autoRefreshTask = new TimerTask() {
-
-        @Override
-        public void run() {
-
-            parent.doAutoRefresh();
-        }
-    };
+    public Timer autoRefreshTimer = null;
+    public TimerTask autoRefreshTask = null;
 
     boolean edited = false;
     public BindVarInterface bind_vars;
@@ -884,5 +877,24 @@ public class BaseDialogBaseHelper implements BindVarInterface
     public String MlM( String message )
     {
         return translation_helper.MlM( message );
+    }
+
+    public Timer getAutoRefreshTimer() {
+        if (autoRefreshTimer == null) {
+            autoRefreshTimer = new Timer();
+        }
+
+        if (autoRefreshTask == null) {
+            autoRefreshTask = new TimerTask() {
+
+                @Override
+                public void run() {
+
+                    parent.doAutoRefresh();
+                }
+            };
+        }
+
+        return autoRefreshTimer;
     }
 }

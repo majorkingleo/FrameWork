@@ -16,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Timer;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -193,4 +194,6 @@ public interface BaseDialogBase
      * @return translated message, if available
      */
     public String MlM( String message );
+
+    public Timer getAutoRefreshTimer();
 }

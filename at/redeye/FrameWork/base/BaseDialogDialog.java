@@ -16,6 +16,7 @@ import java.awt.Container;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Timer;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
@@ -487,6 +488,12 @@ public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInte
     @Override
     public void invokeMainDialog(BaseDialogBase dialog) {
         helper.invokeMainDialog(dialog);
+    }
+
+    @Override
+    public Timer getAutoRefreshTimer()
+    {
+        return helper.getAutoRefreshTimer();
     }
 
 }
