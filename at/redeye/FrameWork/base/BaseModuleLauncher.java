@@ -245,7 +245,7 @@ public abstract class BaseModuleLauncher {
 
     }
 
-        public void BaseConfigureLogging()
+        public static void BaseConfigureLogging()
         {
             PatternLayout layout = new PatternLayout(
                     "%d{ISO8601} %-5p (%F:%L): %m%n");
