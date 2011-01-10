@@ -71,8 +71,9 @@ public class AutoProxyHandler
 
                 if( myProxySelector == null )
                 {
-                    logger.info("no proxy found, disable proxy search automatically");
-                    root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.ProxyEnabled.getConfigName(), "false");
+                    //logger.info("no proxy found, disable proxy search automatically");
+                    logger.info("no proxy found");
+                    // root.getSetup().setLocalConfig(FrameWorkConfigDefinitions.ProxyEnabled.getConfigName(), "false");
                 }
             } else {
                 logger.info("proxy vole NOT available");
@@ -252,6 +253,7 @@ public class AutoProxyHandler
         root.getSetup().setLocalConfig(HTTP_PROXY_DOMAIN, domain);
         root.getSetup().setLocalConfig(HTTP_PROXY_USER, user);
         root.getSetup().setLocalConfig(HTTP_PROXY_PASS, EncryptedDBPasswd.encryptDBPassword(pass, root.getAppName()));
+        root.saveSetup();
     }
 
     private boolean loadSavedPassword()
