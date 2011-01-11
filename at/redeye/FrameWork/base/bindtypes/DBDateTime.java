@@ -17,6 +17,13 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
  */
 public class DBDateTime extends DBValue {
 
+        private static final SimpleDateFormat SDF_4_STD_STRING = new SimpleDateFormat( StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+						+ StmtExecInterface.SQLIF_STD_TIME_FORMAT );
+
+        private static final SimpleDateFormat SDF_4_SQLIF_STD_TIME_FORMAT = new SimpleDateFormat( StmtExecInterface.SQLIF_STD_TIME_FORMAT);
+
+        private static final SimpleDateFormat SDF_4_SQLIF_STD_DATE_FORMAT = new SimpleDateFormat( StmtExecInterface.SQLIF_STD_DATE_FORMAT );
+
 	protected Date value = new Date(0);
 
 	public DBDateTime(String name) {
@@ -68,12 +75,8 @@ public class DBDateTime extends DBValue {
 	@Override
 	public void loadFromString(String s) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-						+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
-
 		try {
-			value = sdf.parse(s);
+			value = SDF_4_STD_STRING.parse(s);
 		} catch (ParseException e) {
 
 			e.printStackTrace();
@@ -86,12 +89,9 @@ public class DBDateTime extends DBValue {
 		return getStdString(value);
 	}
 
-	public static String getStdString(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
-						+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
+	public static String getStdString(Date date) {		
 
-		return sdf.format(date);
+		return SDF_4_STD_STRING.format(date);
 	}
 
 	public static String getStdString(DateTime date) {
@@ -109,25 +109,21 @@ public class DBDateTime extends DBValue {
         return getTimeStr(value);
     }
 
+    
+
 	public static String getTimeStr(Date date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				StmtExecInterface.SQLIF_STD_TIME_FORMAT);
-
-		return sdf.format(date);
+            return SDF_4_SQLIF_STD_TIME_FORMAT.format(date);
 
 	}
 
 	public String getDateStr() {
 		return getDateStr(value);
-	}
+	}        
 
 	public static String getDateStr(Date value) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat(
-				StmtExecInterface.SQLIF_STD_DATE_FORMAT);
-
-		return sdf.format(value);
+		return SDF_4_SQLIF_STD_DATE_FORMAT.format(value);
 	}
 
 	public static String getDateStr(DateMidnight date) {
