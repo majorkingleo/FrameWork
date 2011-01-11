@@ -572,25 +572,26 @@ public class TableManipulator {
         }
     }
     
-    public void hide( DBValue column )
-    {        
-        Vector<DBValue> values = binddesc.getAllValues();
-        
-        boolean found = false;
-        
-        for( int i = 0; i < values.size(); i++ )
+    public void hide( DBValue ... columns )
+    {
+        for (DBValue column : columns)
         {
-            if( values.get(i).hashCode() == column.hashCode() )
-            {
-                hidden_values.add(i);
-                found = true;
-                break;
+            Vector<DBValue> values = binddesc.getAllValues();
+
+            boolean found = false;
+
+            for (int i = 0; i < values.size(); i++) {
+                if (values.get(i).hashCode() == column.hashCode()) {
+                    hidden_values.add(i);
+                    found = true;
+                    break;
+                }
             }
-        }
-        
-        if( !found ) {            
-            System.out.println( "Didn't found: " + column.getName() );
-            return;
+
+            if (!found) {
+                System.out.println("Didn't found: " + column.getName());
+                return;
+            }
         }
         
         configure( table, binddesc, allEditable );
