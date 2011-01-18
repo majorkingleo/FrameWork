@@ -424,6 +424,7 @@ public class LocalRoot extends Root {
         this.holidays = holidays;
     }
 
+    @Override
     public String MlM( String message )
     {
         if( ml_helper == null )
@@ -438,6 +439,7 @@ public class LocalRoot extends Root {
      * @param impl_locale the locale the class was originaly implemented
      * eg "de" for german
      */
+    @Override
     public void loadMlM4Class( Object obj, String impl_locale )
     {
         if( ml_helper == null )
@@ -452,6 +454,7 @@ public class LocalRoot extends Root {
      * as implementation language the value of base_language is used
      * @param obj
      */
+    @Override
     public void loadMlM4Class( Object obj )
     {
         if( ml_helper == null )
@@ -466,6 +469,7 @@ public class LocalRoot extends Root {
      * @param impl_locale the locale the class was originaly implemented
      * eg "de" for german
      */
+    @Override
     public void loadMlM4ClassName(String name, String impl_locale)
     {
         if( ml_helper == null )
@@ -508,5 +512,12 @@ public class LocalRoot extends Root {
     public int countOpenWindows()
     {
         return dialogs.size();
+    }
+
+    public AutoProxyHandler getAutProxyHandler()
+    {
+        waitUntilNetworkIsReady();
+        
+        return proxy_handler;
     }
 }
