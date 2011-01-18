@@ -23,10 +23,12 @@ public class ProxyVoleDLL implements DLLExtractor
     public static final String LIB_NAME_BASE = "proxy_util_";
     public static final String PROPERTY_NAME = "proxy_vole_lib_dir";
 
+    @Override
     public String getPropertyNameForDllDir() {
         return PROPERTY_NAME;
     }
 
+    @Override
     public void extractDlls() throws IOException
     {
         String envdir = System.getProperty(PROPERTY_NAME);
@@ -50,6 +52,7 @@ public class ProxyVoleDLL implements DLLExtractor
         }
     }
 
+    @Override
     public List<String> getNames() {
 
         List<String> res = new ArrayList<String>();

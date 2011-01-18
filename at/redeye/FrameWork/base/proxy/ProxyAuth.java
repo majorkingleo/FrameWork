@@ -92,6 +92,7 @@ public class ProxyAuth extends BaseDialogDialog {
     public void close()
     {
         root.getSetup().setLocalConfig(SAVE_PASSWORD, String.valueOf(jCSavePasswd.isSelected()));
+        super.close();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -194,13 +195,13 @@ public class ProxyAuth extends BaseDialogDialog {
 
         isOk = true;
 
-        dispose();
+        closeNoAppExit();
 
     }//GEN-LAST:event_jButtonOkActionPerformed
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
 
-        dispose();
+        closeNoAppExit();
 
     }//GEN-LAST:event_jButtonCancelActionPerformed
 

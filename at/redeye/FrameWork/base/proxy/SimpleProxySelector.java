@@ -51,8 +51,7 @@ public class SimpleProxySelector extends ProxySelector
     {
         super();
         
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(host, port));
-        
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(host, port));        
         proxy_list.add(proxy);
 
         if( no_proxy_list == null )
@@ -67,6 +66,16 @@ public class SimpleProxySelector extends ProxySelector
     public List<Proxy> select(URI uri) {
 
         logger.info("request for downloading: " + uri);
+
+        try {
+
+            throw new Exception("test");
+        } catch( Exception ex ) {
+            String res = StringUtils.exceptionToString(ex);
+
+            if( res.contains("org.apache.commons.httpclient.HttpMethodDirector") )
+                return no_proxy_list;
+        }
 
         String suri = uri.toString();
 
@@ -83,6 +92,8 @@ public class SimpleProxySelector extends ProxySelector
             int i = suri.lastIndexOf(':');
             suri = suri.substring(0,i);
         }        
+
+        logger.info("suri: " + suri);
 
         for (WhiteListEntry white_host : white_list)
         {
