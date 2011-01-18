@@ -335,8 +335,17 @@ public class AutoProxyHandler
             return false;
         }
 
-        ProxySelector.setDefault(new SimpleProxySelector(proxy_host, proxy_port));       
-        
+        SimpleProxySelector sel = new SimpleProxySelector(proxy_host, proxy_port);
+
+        ProxySelector.setDefault(sel);
+
+         String proxy_disabled_for = root.getSetup().getLocalConfig(FrameWorkConfigDefinitions.ProxyDisabledFor);
+
+         if( proxy_disabled_for != null && !proxy_disabled_for.isEmpty() )
+         {  
+             sel.exludeFromProxy(proxy_disabled_for);
+         }
+
         return true;
     }
 
