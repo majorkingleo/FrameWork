@@ -576,6 +576,9 @@ public class TableManipulator {
     {
         for (DBValue column : columns)
         {
+            if( column == null )
+                continue;
+
             Vector<DBValue> values = binddesc.getAllValues();
 
             boolean found = false;
