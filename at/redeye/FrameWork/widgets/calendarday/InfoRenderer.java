@@ -22,4 +22,5 @@ public interface InfoRenderer
     public void addContent( Object data );    
     public void setDay( DateMidnight day );
     public String renderSum();
+    public DateMidnight getDay();
 }

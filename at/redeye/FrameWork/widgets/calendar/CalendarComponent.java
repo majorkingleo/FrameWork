@@ -36,6 +36,7 @@ public class CalendarComponent extends javax.swing.JPanel implements DisplayMont
     protected int month = 0;
     protected int year = 0;
     protected boolean showMonth = true;
+    protected boolean allowClickOnInactiveDays = false;
     
     /** Creates new form CalendarComponent */
     public CalendarComponent() {
@@ -100,6 +101,17 @@ public class CalendarComponent extends javax.swing.JPanel implements DisplayMont
     {
         showMonth = state;
         jPMonth.setVisible(false);
+    }
+
+    /**
+     * by default an inactive element is not clickable
+     * and a listener will not be informed. By using this
+     * function the behavior can be changed
+     * @param state
+     */
+    public void setAllowClickOnInctiveElements( boolean state )
+    {
+        allowClickOnInactiveDays = state;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -469,7 +481,7 @@ public class CalendarComponent extends javax.swing.JPanel implements DisplayMont
     @Override
     public void onClicked(CalendarDay day) {
         
-        if( !day.isActive() )
+        if( !day.isActive() && !allowClickOnInactiveDays )
             return;
         
         for( DisplayDay d : days )
