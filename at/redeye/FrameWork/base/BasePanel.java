@@ -44,10 +44,12 @@ public class BasePanel extends javax.swing.JPanel implements BindVarInterface
         bind_vars.bindVar(box,var);        
     }
 
+    @Override
     public Collection<Pair> getBindVarPairs() {
         return bind_vars.getBindVarPairs();
     }
 
+    @Override
     public void addBindVarPair( Pair pair )
     {
         bind_vars.addBindVarPair(pair);
