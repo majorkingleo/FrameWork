@@ -50,13 +50,14 @@ public class AdvancedTableCellEditor extends AbstractCellEditor implements Table
         return component.getText();
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {        
 
         last_row = TableDesign.getModelRow(table, row);
         last_col =  TableDesign.getModelCol(table, column);
         current_value = value;
 
-        System.out.println("getTableCellEditorComponent col: " + last_col + " row: " + last_row + " Value " + current_value.toString());
+        System.out.println("getTableCellEditorComponent col: " + last_col + " row: " + last_row + " Value " + (current_value != null ? current_value.toString() : "(null)"));
 
         component.enable_complete(false);
 
@@ -120,7 +121,9 @@ public class AdvancedTableCellEditor extends AbstractCellEditor implements Table
 
             component.setText(String.valueOf(value));
         }
-        System.out.println( "value:" + value.getClass().getName() );
+
+        if( value != null )
+            System.out.println( "value:" + value.getClass().getName() );
 
         return component;
     }
