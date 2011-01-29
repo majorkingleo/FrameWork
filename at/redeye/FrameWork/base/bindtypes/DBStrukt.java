@@ -59,6 +59,11 @@ public abstract class DBStrukt {
         element_by_name.put(value.getName().toUpperCase(), value);
     }
 
+    public void remove( DBValue value )
+    {
+        elements.remove(value);
+        element_by_name.remove(value.getName().toUpperCase());
+    }
     
     public void add( DBValue value, Integer version )
     {
