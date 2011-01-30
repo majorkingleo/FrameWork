@@ -560,6 +560,7 @@ public abstract class BaseModuleLauncher {
 
             AutoMBox mb = new AutoMBox(BaseModuleLauncher.class.getName()) {
 
+                @Override
                 public void do_stuff() throws Exception {
                     if (!auto_import_db.importDB()) {
                         JOptionPane.showMessageDialog(null, "Fehler beim Importieren der Demo Datenbank.");
