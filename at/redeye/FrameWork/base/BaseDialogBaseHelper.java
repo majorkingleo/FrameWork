@@ -20,6 +20,8 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -162,17 +164,35 @@ public class BaseDialogBaseHelper implements BindVarInterface
 
         Dimension dim = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 
+        Point mouse_point  = MouseInfo.getPointerInfo().getLocation();
+               
+        if( x < mouse_point.x && x + w > mouse_point.x )
+        {
+            // alter Wert is super, den lassen wir so
+        } else {
+            x = mouse_point.x - 100;
+        }
+
+               
+        if( y < mouse_point.y && y + h > mouse_point.y )
+        {
+            // alter Wert is super, den lassen wir so
+        } else {            
+            y = mouse_point.y - 100;
+        }
+        
+
         if( dim.getWidth() < x + parent.getWidth() )
-            x = 300;
+            x = 100;
 
         if( dim.getHeight() < y + parent.getHeight() )
-            y = 300;
+            y = 100;
 
         if( x < 0 )
-            x = 300;
+            x = 100;
 
         if( y < 0 )
-            y = 300;
+            y = 100;
 
         parent.setBounds(x, y, 0, 0);
 
