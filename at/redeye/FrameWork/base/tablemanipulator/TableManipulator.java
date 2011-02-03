@@ -463,7 +463,18 @@ public class TableManipulator {
         for( int i = 0; i < tabledesign.rows.size(); i++ )
             tabledesign.edited_rows.add(i);
     }
-    
+
+    public boolean isEdited()
+    {
+        if( tabledesign.edited_rows == null )
+            return false;
+
+        if( tabledesign.edited_rows.isEmpty() )
+            return false;
+
+        return true;
+    }
+
     public void setEditable( DBValue column )
     {
         setEditable( column, true );
