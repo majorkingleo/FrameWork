@@ -20,7 +20,8 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
  */
 public class SequenceOracle implements Sequence {
 
-	public int getNewSequenceValue(String seqName, Transaction trans)
+    @Override
+    public int getNewSequenceValue(String seqName, Transaction trans)
 			throws SQLException, UnsupportedDBDataTypeException {
 		int currValue = 0;
 		List<DBDataType> args = new Vector<DBDataType>();
@@ -33,6 +34,27 @@ public class SequenceOracle implements Sequence {
 		currValue = (Integer) res.get(0).get(0);
 
 		return currValue;
+	}
+
+    /**
+     * TODO bessere implementierung
+     * @param seqName
+     * @param number
+     * @param trans
+     * @return
+     * @throws SQLException
+     * @throws UnsupportedDBDataTypeException
+     */
+    @Override
+    public int getNewSequenceValues(String seqName, int number, Transaction trans)
+			throws SQLException, UnsupportedDBDataTypeException {
+
+            int ret = getNewSequenceValue(seqName, trans);
+
+            for( int i = 1 ; i < number; i++ )
+                getNewSequenceValue(seqName, trans);
+
+            return ret;
 	}
 
 }

@@ -518,6 +518,39 @@ public class BaseDialogBaseHelper implements BindVarInterface
     }
 
     /**
+     * Ermittelt den nächsten Wert für eine gegebene Sequenz
+     * @param seqName
+     * @return den nächsten Wert der Sequenz
+     * @throws java.sql.SQLException
+     * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
+     * @throws WrongBindFileFormatException
+     * @throws TableBindingNotRegisteredException
+     * @throws IOException
+     */
+    public int getNewSequenceValues(String seqName, int number) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException {
+        if (getTransaction().getDBMSType() == SupportedDBMSTypes.DB_SQLITE) {
+            int value = getTransaction().getNewSequenceValues(seqName, number, 1234567);
+            return value;
+        } else {
+
+            if( seq_transaction!= null && !seq_transaction.isOpen() ) {
+                closeTransaction(seq_transaction);
+                seq_transaction = null;
+            }
+
+            if (seq_transaction == null ) {
+                seq_transaction = getNewTransaction();
+            }
+
+            int value = seq_transaction.getNewSequenceValues(seqName, number, 1234567);
+
+            seq_transaction.commit();
+
+            return value;
+        }
+    }
+
+    /**
      * @return The Transaction object for this dialog
      * This Transaction object will be automatically closed, on closing this this
      * dialog. The Transaction object will be only created once in the lifetime

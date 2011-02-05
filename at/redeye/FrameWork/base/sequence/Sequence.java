@@ -29,5 +29,15 @@ public interface Sequence {
      */
     public int getNewSequenceValue( String seqName, Transaction trans ) throws
 			UnsupportedDBDataTypeException, WrongBindFileFormatException, SQLException, TableBindingNotRegisteredException, IOException;
-    
+
+   /**
+     *
+     * @param seqName Name
+     * @return next value
+     * @throws java.sql.SQLException
+     * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
+     */
+    public int getNewSequenceValues( String seqName, int number, Transaction trans ) throws
+			UnsupportedDBDataTypeException, WrongBindFileFormatException, SQLException, TableBindingNotRegisteredException, IOException;
+
 }

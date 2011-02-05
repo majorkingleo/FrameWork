@@ -332,6 +332,19 @@ public abstract class Transaction {
 		return sequence.getNewSequenceValue(seqName, this);
 	}
 
+	public int getNewSequenceValues(String seqName, int number, int magic)
+			throws SQLException, UnsupportedDBDataTypeException,
+			WrongBindFileFormatException, TableBindingNotRegisteredException,
+			IOException {
+		if (magic != 1234567) {
+			Logger logger = Logger.getLogger(Transaction.class
+					.getCanonicalName());
+			logger.warning("Unqualified access to Sequence Value!");
+		}
+
+		return sequence.getNewSequenceValues(seqName, number, this);
+	}
+
 	public abstract String getGUIFilterWhereStmt(
 			Vector<? extends JComponent> fromFilter,
 			Vector<? extends JComponent> toFilter);

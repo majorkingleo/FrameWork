@@ -165,6 +165,21 @@ public interface BaseDialogBase
      */
     public int getNewSequenceValue(String seqName) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException;
 
+/**
+     * Ermittelt den nächsten Wert für eine gegebene Sequenz. Die <b>number</b> gibt dabei an wieviele
+     * Werte benötigt werden. Im Endeffekt darf dann der zurückgegeben Wert so oft, wie durch die Varible <b>number</> angeben
+     * erhöht werden.
+     * @param seqName
+     * @param number die Anzahl der Werte die geliefert werden soll.
+     * @return den nächsten Wert der Sequenz
+     * @throws java.sql.SQLException
+     * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
+     * @throws WrongBindFileFormatException
+     * @throws TableBindingNotRegisteredException
+     * @throws IOException
+     */
+    public int getNewSequenceValues(String seqName, int number) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException;
+    
     public void dispose();
 
     public int getX();

@@ -34,52 +34,44 @@ public class CommonSequence implements Sequence {
      * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
      * @throws IOException 
      */
+    @Override
     public int getNewSequenceValue( String seqName, Transaction trans ) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException
     {
+    	return getNewSequenceValues(seqName, 1, trans);
+    }
+      
+    /**
+     *
+     * @param seqName
+     * @param trans new Single Transaction not used for other stuff
+     * @return next value
+     * @throws java.sql.SQLException
+     * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
+     * @throws IOException
+     */
+    @Override
+    public int getNewSequenceValues( String seqName, int number, Transaction trans ) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException
+    {
+        if( number < 1 )
+            throw new SQLException("invalid number " + number + " must be greater or equal than 1");
+
     	int currValue = 1;
-        
-        /*
-        
-	Vector<DBDataType> args = new Vector<DBDataType>();
-	args.add(DBDataType.DB_TYPE_INTEGER);
-	Vector<Vector<?>> res;
 
-	String selectStmt = "select NEXTVAL from SEQUENCES where NAME='"+ seqName +"'";
-
-	res = trans.fetchColumnValue(selectStmt, args);
-                        
-	if( res.size() == 0 )
-        {
-            currValue = 1;
-            String sql = "insert into SEQUENCES (NAME,NEXTVAL) VALUES('" + seqName + "','2')";
-            trans.updateValues(sql);
-         } else {                        
-            currValue = (Integer) res.get(0).get(0);
-
-            String updateStmt = "update SEQUENCES set NEXTVAL='" 
-                               + Integer.toString(currValue + 1) +
-                                 "' where NAME='" + seqName +"'";
-            trans.updateValues(updateStmt);
-         }        
-	*/
-        
         DBSequences seq = new DBSequences();
-        
+
         seq.name.loadFromString(seqName);
-        
+
         if( !trans.fetchTableWithPrimkey(seq) ) {
-            
-            seq.value.loadFromCopy(new Integer(currValue+1));
+
+            seq.value.loadFromCopy(new Integer(currValue+number));
             trans.insertValues(seq);
             return currValue;
         } else {
             currValue = (Integer)seq.value.getValue();
-            seq.value.loadFromCopy(new Integer(currValue+1));
+            seq.value.loadFromCopy(new Integer(currValue+number));
             trans.updateValues(seq);
         }
-        
+
         return currValue;
     }
-      
-    
 }

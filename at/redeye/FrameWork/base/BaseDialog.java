@@ -196,22 +196,27 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
      * to be overrided by subdialogs
      * @return true if the dialog can be closed
      */
+    @Override
     public boolean canClose() {
         return true;
     }
 
+    @Override
     public void setEdited() {
         helper.setEdited();
     }
 
+    @Override
     public boolean isEdited() {
         return helper.isEdited();
     }
 
+    @Override
     public void setEdited(boolean val) {
         helper.setEdited(val);
     }
 
+    @Override
     public void clearEdited() {
         helper.clearEdited();
     }    
@@ -501,5 +506,23 @@ public class BaseDialog extends javax.swing.JFrame implements BindVarInterface, 
     public Timer getAutoRefreshTimer()
     {
         return helper.getAutoRefreshTimer();
+    }
+
+    /**
+     * Ermittelt den nächsten Wert für eine gegebene Sequenz. Die <b>number</b> gibt dabei an wieviele
+     * Werte benötigt werden. Im Endeffekt darf dann der zurückgegeben Wert so oft, wie durch die Varible <b>number</> angeben
+     * erhöht werden.
+     * @param seqName
+     * @param number die Anzahl der Werte die geliefert werden soll.
+     * @return den nächsten Wert der Sequenz
+     * @throws java.sql.SQLException
+     * @throws at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException
+     * @throws WrongBindFileFormatException
+     * @throws TableBindingNotRegisteredException
+     * @throws IOException
+     */
+    @Override
+    public int getNewSequenceValues(String seqName, int number) throws SQLException, UnsupportedDBDataTypeException, WrongBindFileFormatException, TableBindingNotRegisteredException, IOException {
+        return helper.getNewSequenceValues(seqName, number);
     }
 }
