@@ -109,7 +109,7 @@ public class CalendarComponent extends javax.swing.JPanel implements DisplayMont
      * function the behavior can be changed
      * @param state
      */
-    public void setAllowClickOnInctiveElements( boolean state )
+    public void setAllowClickOnInactiveElements( boolean state )
     {
         allowClickOnInactiveDays = state;
     }
