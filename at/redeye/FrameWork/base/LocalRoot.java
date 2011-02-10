@@ -214,7 +214,8 @@ public class LocalRoot extends Root {
 
 		DBConnection con = new DBConnection();
 
-		waitUntilNetworkIsReady();
+                if( !dbtype.equals(dbtype.DB_JAVADB) && !host.equals("localhost") )
+                    waitUntilNetworkIsReady();
 
 		try {
 			if (con.open(connparams)) {
