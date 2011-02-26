@@ -80,33 +80,43 @@ public class LocalRoot extends Root {
                     long start = System.currentTimeMillis();
                     proxy_handler = new AutoProxyHandler(root);
 
-                    System.out.println(" proxy laoding: " + (System.currentTimeMillis() - start));
+                    logger.trace(" proxy laoding: " + (System.currentTimeMillis() - start));
 		}
 	}
 
 	public LocalRoot(String app_name) {
 		super(app_name);
 
-		init();
+		init(true, true);
 	}
 
 	public LocalRoot(String app_name, String title) {
 		super(app_name, title);
 
-		init();
+		init(true, true);
 	}
 
-	private void init() {
+        public LocalRoot(String app_name, String title, boolean enable_encryption, boolean enable_proxy_loading) {
+		super(app_name, title);
 
+		init(enable_encryption, enable_proxy_loading);
+	}
+
+	private void init(  boolean enable_encryption, boolean enable_proxy_loading )
+        {
             dll_cache = new DLLCache(this);
 
-            loader_encryption = new DelayedLoader();
-            loader_encryption.start();
+            if( enable_encryption ) {
+                loader_encryption = new DelayedLoader();
+                loader_encryption.start();
+            }
 
             setup = new LocalSetup(this, app_name);
 
-            loader_proxy = new DelayedProxyLoader(this);
-            loader_proxy.start();
+            if( enable_proxy_loading ) {
+                loader_proxy = new DelayedProxyLoader(this);
+                loader_proxy.start();
+            }
 
             dbmanager = new DatabaseManager(this);
 	}

@@ -267,7 +267,7 @@ public abstract class BaseModuleLauncher {
 
 		String logFileDir = root.getSetup().getLocalConfig(
 				BaseAppConfigDefinitions.LoggingDir);
-		System.out.println("logFileDir: " + logFileDir);
+		logger.trace("logFileDir: " + logFileDir);
 		String logFileLevel = root.getSetup().getLocalConfig(
 				BaseAppConfigDefinitions.LoggingLevel);
 		String loggingEnabled = root.getSetup().getLocalConfig(
@@ -280,7 +280,7 @@ public abstract class BaseModuleLauncher {
 				+ "log.OS-" + System.getProperty("user.name", "unknown-user")
 				+ ".txt";
 
-		System.out.println("Filename: " + filename);
+		logger.trace("Filename: " + filename);
 
 		logger.setLevel(Level.toLevel(logFileLevel));
                 logger.addAppender(consoleAppender);

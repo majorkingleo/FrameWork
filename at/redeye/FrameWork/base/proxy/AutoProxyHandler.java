@@ -55,7 +55,7 @@ public class AutoProxyHandler
 
         long start = System.currentTimeMillis();
 
-        System.out.println("X1 : " + (System.currentTimeMillis() - start ));
+        logger.trace("X1 : " + (System.currentTimeMillis() - start ));
 
         if (!loadFromSettings()) {
             if ((proxySearch = haveProxyVole()) != null) {
@@ -63,10 +63,10 @@ public class AutoProxyHandler
 
                 // ProxySearch.enableLogging();
 
-                System.out.println("X11 : " + (System.currentTimeMillis() - start));
+                logger.trace("X11 : " + (System.currentTimeMillis() - start));
                 ProxySelector myProxySelector = proxySearch.getProxySelector();
 
-                System.out.println("XX111 : " + (System.currentTimeMillis() - start));
+                logger.trace("XX111 : " + (System.currentTimeMillis() - start));
                 ProxySelector.setDefault(myProxySelector);
 
                 if( myProxySelector == null )
@@ -80,7 +80,7 @@ public class AutoProxyHandler
             }
         }
 
-        System.out.println("X2 : " + (System.currentTimeMillis() - start ));
+        logger.trace("X2 : " + (System.currentTimeMillis() - start ));
 
         if (ProxySelector.getDefault() != null) {
             if (!loadSavedPassword()) {
@@ -92,7 +92,7 @@ public class AutoProxyHandler
             }
         }
 
-        System.out.println("Saved Passwords : " + (System.currentTimeMillis() - start ));
+        logger.trace("Saved Passwords : " + (System.currentTimeMillis() - start ));
 
         Authenticator.setDefault(new Authenticator() {
 
@@ -188,7 +188,7 @@ public class AutoProxyHandler
             }
         });
 
-        System.out.println("X3 Authentificator : " + (System.currentTimeMillis() - start ));
+        logger.trace("X3 Authentificator : " + (System.currentTimeMillis() - start ));
     }
 
     public static ProxySearch haveProxyVole()
