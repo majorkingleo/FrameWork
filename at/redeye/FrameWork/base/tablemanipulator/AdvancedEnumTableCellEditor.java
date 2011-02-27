@@ -54,6 +54,7 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
         component.setEditable(true);        
     }
 
+    @Override
     public Object getCellEditorValue() {
         /*
         System.out.println( "value+:" + ((JTextField)component).getText() );
@@ -67,6 +68,7 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
         return component.getText();
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {        
 
         last_row = TableDesign.getModelRow(table, row);
@@ -78,6 +80,7 @@ public class AdvancedEnumTableCellEditor extends AbstractCellEditor implements T
 
        java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 if(component.isVisible())
                     component.requestFocus();
