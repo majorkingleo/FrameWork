@@ -25,7 +25,8 @@ public class DBSqlAsInteger extends DBEnumAsInteger {
 			}
 		}
 
-		public String extra_sql = "";
+		private String extra_sql = "";
+                private String order_by_sql = "";
 
 		public abstract List<Pair> getPossibleValues();
 
@@ -40,6 +41,14 @@ public class DBSqlAsInteger extends DBEnumAsInteger {
 		public void setExtraSql(String extra_sql) {
 			this.extra_sql = extra_sql;
 		}
+
+                public String getOrderBySql() {
+                    return order_by_sql;
+                }
+
+                public void setOrderBySql( String sql ) {
+                    this.order_by_sql = sql;
+                }
 	}
 
 	public static class SqlAsIntegerHandler extends EnumAsIntegerHandler {
@@ -54,6 +63,7 @@ public class DBSqlAsInteger extends DBEnumAsInteger {
 			refresh();
 		}
 
+        @Override
 		public void refresh() {
 			query.refresh();
 			pairs = query.getPossibleValues();
