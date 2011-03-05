@@ -38,6 +38,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.executor.DefaultStmtExecuter;
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -285,8 +286,14 @@ public abstract class Transaction {
 
 	public abstract String getDayStmt(String string, DateMidnight day);
 
+        public abstract String getDayStmt(String string, LocalDate day);
+
 	public String getDayStmt(DBDateTime to, DateMidnight dateMidnight) {
 		return getDayStmt(to.getName(), dateMidnight);
+	}
+
+	public String getDayStmt(DBDateTime to, LocalDate date) {
+		return getDayStmt(to.getName(), date);
 	}
 
 	public abstract String getPeriodStmt(String column, DBDateTime begin,
@@ -298,8 +305,17 @@ public abstract class Transaction {
 	public abstract String getPeriodStmt(String string, DateMidnight dm_from,
 			DateMidnight dm_to);
 
+	public abstract String getPeriodStmt(String string, LocalDate dm_from,
+			LocalDate dm_to);
+
         public String getPeriodStmt(DBValue column, DateMidnight dm_from,
 			DateMidnight dm_to)
+        {
+            return getPeriodStmt( column.getName(), dm_from, dm_to);
+        }
+
+        public String getPeriodStmt(DBValue column, LocalDate dm_from,
+			LocalDate dm_to)
         {
             return getPeriodStmt( column.getName(), dm_from, dm_to);
         }
@@ -310,8 +326,16 @@ public abstract class Transaction {
 	public abstract String getPeriodStmt(String column1, String column2,
 			DateMidnight date);
 
+	public abstract String getPeriodStmt(String column1, String column2,
+			LocalDate date);
+
 	public String getPeriodStmt(DBValue column1, DBValue column2,
 			DateMidnight dm) {
+		return getPeriodStmt(column1.getName(), column2.getName(), dm);
+	}
+
+	public String getPeriodStmt(DBValue column1, DBValue column2,
+			LocalDate dm) {
 		return getPeriodStmt(column1.getName(), column2.getName(), dm);
 	}
 
@@ -370,6 +394,30 @@ public abstract class Transaction {
 	}
 
 	public String getLowerDateExl(DBDateTime column, DateMidnight dm_from) {
+		return getLowerDateExl(column.getName(), dm_from);
+	}
+
+        public abstract String getHigherDate(String column, LocalDate dm_from);
+
+	public abstract String getLowerDate(String column, LocalDate dm_from);
+
+	public String getHigherDate(DBDateTime column, LocalDate dm_from) {
+		return getHigherDate(column.getName(), dm_from);
+	}
+
+	public String getLowerDate(DBDateTime column, LocalDate dm_from) {
+		return getLowerDate(column.getName(), dm_from);
+	}
+
+	public abstract String getHigherDateExl(String column, LocalDate dm_from);
+
+	public abstract String getLowerDateExl(String column, LocalDate dm_from);
+
+	public String getHigherDateExl(DBDateTime column, LocalDate dm_from) {
+		return getHigherDateExl(column.getName(), dm_from);
+	}
+
+	public String getLowerDateExl(DBDateTime column, LocalDate dm_from) {
 		return getLowerDateExl(column.getName(), dm_from);
 	}
 

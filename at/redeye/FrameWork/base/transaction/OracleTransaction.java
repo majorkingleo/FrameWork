@@ -12,6 +12,7 @@ import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -123,7 +124,30 @@ public class OracleTransaction extends Transaction {
 
 		return str.toString();
     }
-    
+
+
+
+    @Override
+    public String getPeriodStmt(String column1, String column2, LocalDate date)
+    {
+        StringBuilder str = new StringBuilder();
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append("TRUNC(");
+		str.append(markColumn(column1));
+        str.append(")");
+		str.append(" >= '");
+		str.append( str_date );
+		str.append("' AND '");
+        str.append(str_date);
+		str.append("' < ");
+        str.append("TRUNC(");
+        str.append(markColumn(column2));
+		str.append(")");
+
+		return str.toString();
+    }
 	@Override
 	public String getDayStmt(String column, Date day) {
 
@@ -137,9 +161,22 @@ public class OracleTransaction extends Transaction {
 		return getDayStmt(column, DBDateTime.getDateStr(day));
 	}
 
+
+	@Override
+	public String getDayStmt(String column, LocalDate day) {
+		return getDayStmt(column, DBDateTime.getDateStr(day));
+	}
+
 	@Override
 	public String getPeriodStmt(String column, DateMidnight dm_from,
 			DateMidnight dm_to) {
+		return getPeriodStmt(column, DBDateTime.getStdString(dm_from),
+				DBDateTime.getStdString(dm_to));
+	}
+
+	@Override
+	public String getPeriodStmt(String column, LocalDate dm_from,
+			LocalDate dm_to) {
 		return getPeriodStmt(column, DBDateTime.getStdString(dm_from),
 				DBDateTime.getStdString(dm_to));
 	}
@@ -151,6 +188,21 @@ public class OracleTransaction extends Transaction {
 
     @Override
     public String getHigherDate(String column, DateMidnight dm_from) {
+         StringBuilder str = new StringBuilder();
+
+        String str_date = DBDateTime.getStdString(dm_from);
+
+        str.append("TRUNC(");
+        str.append(markColumn(column));
+        str.append(")");
+        str.append(" >= '");
+        str.append(str_date);
+        str.append("'");
+        return str.toString();
+    }
+
+    @Override
+    public String getHigherDate(String column, LocalDate dm_from) {
          StringBuilder str = new StringBuilder();
 
         String str_date = DBDateTime.getStdString(dm_from);
@@ -180,12 +232,38 @@ public class OracleTransaction extends Transaction {
     }
 
     @Override
+    public String getLowerDate(String column, LocalDate dm_from) {
+        StringBuilder str = new StringBuilder();
+
+        String str_date = DBDateTime.getStdString(dm_from);
+
+        str.append("TRUNC(");
+        str.append(markColumn(column));
+        str.append(")");
+        str.append(" <= '");
+        str.append(str_date);
+        str.append("'");
+        return str.toString();
+    }
+
+    @Override
     public String getHigherDateExl(String column, DateMidnight dm_from) {
+        return getHigherDate( column, dm_from.plusDays(1) );
+    }
+
+
+    @Override
+    public String getHigherDateExl(String column, LocalDate dm_from) {
         return getHigherDate( column, dm_from.plusDays(1) );
     }
 
     @Override
     public String getLowerDateExl(String column, DateMidnight dm_from) {
+        return getLowerDate( column, dm_from.minusDays(1) );
+    }
+
+    @Override
+    public String getLowerDateExl(String column, LocalDate dm_from) {
         return getLowerDate( column, dm_from.minusDays(1) );
     }
 

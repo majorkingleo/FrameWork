@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 
 import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
+import org.joda.time.LocalDate;
 
 /**
  * 
@@ -104,6 +105,13 @@ public class DBDateTime extends DBValue {
 				+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
 	}
 
+	public static String getStdString(LocalDate date) 
+        {
+            DateTime dt = date.toDateTimeAtStartOfDay();
+            return dt.toString(StmtExecInterface.SQLIF_STD_DATE_FORMAT + " "
+				+ StmtExecInterface.SQLIF_STD_TIME_FORMAT);
+	}
+
 
     public String getTimeStr() {
         return getTimeStr(value);
@@ -131,7 +139,11 @@ public class DBDateTime extends DBValue {
 		return date.toString(StmtExecInterface.SQLIF_STD_DATE_FORMAT);
 
 	}
-	
+
+	public static String getDateStr(LocalDate date) {
+		return date.toString(StmtExecInterface.SQLIF_STD_DATE_FORMAT);
+	}
+        
 	public boolean loadTimePart(String time) {
 		if (time.matches("(([0-1][0-9])|(2[0-3])):[0-5][0-9]:[0-5][0-9]") == false)
 			return false;

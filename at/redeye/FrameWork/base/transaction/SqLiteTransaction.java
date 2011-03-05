@@ -17,6 +17,7 @@ import at.redeye.FrameWork.widgets.DBFilterEditField;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
+import org.joda.time.LocalDate;
 
 /**
  * @author Mario Mattl
@@ -57,9 +58,9 @@ public class SqLiteTransaction extends Transaction {
         str.append(day.getDateStr());
         str.append("%'");
          */
-        DateMidnight dm = new DateMidnight((Date) day.getValue());
+        LocalDate dm = new LocalDate((Date) day.getValue());
 
-        return getPeriodExclStmt(column, dm.toDate(), dm.plusDays(1).toDate());
+        return getPeriodExclStmt(column, dm.toDateTimeAtStartOfDay().toDate(), dm.plusDays(1).toDateTimeAtStartOfDay().toDate());
     }
 
     @Override
@@ -144,6 +145,11 @@ public class SqLiteTransaction extends Transaction {
     }
 
     @Override
+    public String getDayStmt(String column, LocalDate day) {
+        return getPeriodExclStmt(column, day.toDateTimeAtStartOfDay().toDate(), day.plusDays(1).toDateTimeAtStartOfDay().toDate());
+    }
+
+    @Override
     public String getPeriodStmt(String column, DateMidnight dm_from, DateMidnight dm_to) {
         return getPeriodStmt(column,
                 DBDateTime.getStdString(dm_from),
@@ -151,7 +157,32 @@ public class SqLiteTransaction extends Transaction {
     }
 
     @Override
+    public String getPeriodStmt(String column, LocalDate dm_from, LocalDate dm_to) {
+        return getPeriodStmt(column,
+                DBDateTime.getStdString(dm_from),
+                DBDateTime.getStdString(dm_to));
+    }
+
+    @Override
     public String getPeriodStmt(String column1, String column2, DateMidnight date) {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column1));
+        str.append(" >= '");
+        str.append(str_date);
+        str.append("' AND '");
+        str.append(str_date);
+        str.append("' < ");
+        str.append(markColumn(column2));
+
+        return str.toString();
+    }
+
+   @Override
+   public String getPeriodStmt(String column1, String column2, LocalDate date) {
         StringBuilder str = new StringBuilder();
 
 
@@ -254,6 +285,26 @@ public class SqLiteTransaction extends Transaction {
 
     @Override
     public String getLowerDateExl(String column, DateMidnight dm_from) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getHigherDate(String column, LocalDate dm_from) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getLowerDate(String column, LocalDate dm_from) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getHigherDateExl(String column, LocalDate dm_from) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getLowerDateExl(String column, LocalDate dm_from) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

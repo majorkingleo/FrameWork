@@ -17,6 +17,7 @@ import at.redeye.FrameWork.widgets.DBFilterEditField;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
+import org.joda.time.LocalDate;
 
 /**
  * @author Mario Mattl
@@ -48,9 +49,9 @@ public class MySQLTransaction extends Transaction {
     @Override
     public String getDayStmt(String column, DBDateTime day) {
 
-        DateMidnight dm = new DateMidnight((Date) day.getValue());
+        LocalDate dm = new LocalDate((Date) day.getValue());
 
-        return getPeriodExclStmt(column, dm.toDate(), dm.plusDays(1).toDate());
+        return getPeriodExclStmt(column, dm.toDateTimeAtStartOfDay().toDate(), dm.plusDays(1).toDateTimeAtStartOfDay().toDate());
     }
 
     @Override
@@ -147,7 +148,26 @@ public class MySQLTransaction extends Transaction {
     }
 
     @Override
+    public String getDayStmt(String column, LocalDate day) {
+        return getPeriodExclStmt(column, day.toDateTimeAtStartOfDay().toDate(), day.plusDays(1).toDateTimeAtStartOfDay().toDate());
+    }
+
+    @Override
     public String getPeriodStmt(String column, DateMidnight dm_from, DateMidnight dm_to) {
+
+        // da wir bei to den Tag auch inklusive haben wollen
+        // und mysql das so selektiert zählen wir 1 dazu damit wir
+        // einfach den nächsten Tag um 00:00 und machen
+        // den getPeriodStmtExl aufruf, damit wir keine Einträge für
+        // 00:00 bekommen, aber alle davor :-)
+
+        return getPeriodExclStmt(column,
+                DBDateTime.getStdString(dm_from),
+                DBDateTime.getStdString(dm_to.plusDays(1)));
+    }
+
+    @Override
+    public String getPeriodStmt(String column, LocalDate dm_from, LocalDate dm_to) {
 
         // da wir bei to den Tag auch inklusive haben wollen
         // und mysql das so selektiert zählen wir 1 dazu damit wir
@@ -180,8 +200,46 @@ public class MySQLTransaction extends Transaction {
         return str.toString();
     }
 
+
+    @Override
+    public String getPeriodStmt(String column1, String column2, LocalDate date) {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append("( ");
+        str.append(markColumn(column1));
+        str.append(" >= '");
+        str.append(str_date);
+        str.append("' AND '");
+        str.append(str_date);
+        str.append("' < ");
+        str.append(markColumn(column2));
+        str.append(") ");
+
+        return str.toString();
+    }
+
+
     @Override
     public String getHigherDate(String column, DateMidnight date)
+    {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column));
+        str.append(" >= '");
+        str.append(str_date);
+        str.append("'");
+
+        return str.toString();
+    }
+
+    @Override
+    public String getHigherDate(String column, LocalDate date)
     {
         StringBuilder str = new StringBuilder();
 
@@ -213,6 +271,22 @@ public class MySQLTransaction extends Transaction {
     }
 
     @Override
+    public String getLowerDate(String column, LocalDate date)
+    {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column));
+        str.append(" <= '");
+        str.append(str_date);
+        str.append("'");
+
+        return str.toString();
+    }
+
+    @Override
     public String getHigherDateExl(String column, DateMidnight date)
     {
         StringBuilder str = new StringBuilder();
@@ -229,7 +303,40 @@ public class MySQLTransaction extends Transaction {
     }
 
     @Override
+    public String getHigherDateExl(String column, LocalDate date)
+    {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column));
+        str.append(" > '");
+        str.append(str_date);
+        str.append("'");
+
+        return str.toString();
+    }
+
+
+    @Override
     public String getLowerDateExl(String column, DateMidnight date)
+    {
+        StringBuilder str = new StringBuilder();
+
+
+        String str_date = DBDateTime.getStdString(date);
+
+        str.append(markColumn(column));
+        str.append(" < '");
+        str.append(str_date);
+        str.append("'");
+
+        return str.toString();
+    }
+
+    @Override
+    public String getLowerDateExl(String column, LocalDate date)
     {
         StringBuilder str = new StringBuilder();
 
