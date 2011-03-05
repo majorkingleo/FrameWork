@@ -932,7 +932,7 @@ public class TableManipulator {
                     continue;
                 }
 
-                if (index >= 0 && index != i) {
+                if (index >= 0 && index != i && index < table.getColumnCount()) {
                     //System.out.println("i " + i + " = " + index );
 
                     table.getColumnModel().moveColumn(i, index);
