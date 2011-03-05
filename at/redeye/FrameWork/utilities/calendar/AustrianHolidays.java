@@ -23,9 +23,11 @@ public class AustrianHolidays extends BaseHolidays implements Holidays {
     {
         super(myCountryCode);
 
-        root.loadMlM4Class(this, "de");
+        if( root != null )
+            root.loadMlM4Class(this, "de");
     }
 
+    @Override
     public Collection<HolidayInfo> getHolidays(int year) {
         
         // siehe http://de.wikipedia.org/wiki/Feiertage_in_Österreich
@@ -85,6 +87,7 @@ public class AustrianHolidays extends BaseHolidays implements Holidays {
         return res;        
     }
 
+    @Override
     public String getPrimaryCountryCode() {
         return myCountryCode;
     }

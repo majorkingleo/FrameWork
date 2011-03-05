@@ -11,6 +11,7 @@ import java.util.Calendar;
 
 import java.util.Collection;
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeConstants;
 
 /**
  *
@@ -48,13 +49,11 @@ public abstract class BaseHolidays {
         return message;
     }
     
-    public DateMidnight getEaster( int year )
+    public static DateMidnight getEaster( int year )
     {
         Easterformular easter_formular = new Easterformular(year);
                 
-        int day = easter_formular.easterday();
-                
-        DateMidnight easter;
+        int day = easter_formular.easterday();                        
         
         if( day < 31 )
         {
@@ -85,7 +84,7 @@ public abstract class BaseHolidays {
        
         while( true )
         {
-            if( dm.getDayOfWeek() == 7 )
+            if( dm.getDayOfWeek() == DateTimeConstants.SUNDAY )
                 return dm;
             
             dm = dm.minusDays(1);
