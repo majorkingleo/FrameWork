@@ -148,4 +148,9 @@ public class HMSTime {
     {
         return millis;
     }
+
+    public void minusMillis( long millis )
+    {
+        this.millis -= millis;
+    }
 }
