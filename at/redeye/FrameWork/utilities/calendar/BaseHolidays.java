@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -33,6 +34,11 @@ public abstract class BaseHolidays {
     
     public HolidayInfo create( DateMidnight date, boolean floating, boolean official, String name )
     {
+        return new HolidayInfo( date.toLocalDate(), floating, official, MlM(name), CountryCode );
+    }
+
+    public HolidayInfo create( LocalDate date, boolean floating, boolean official, String name )
+    {
         return new HolidayInfo( date, floating, official, MlM(name), CountryCode );
     }
 
@@ -49,17 +55,17 @@ public abstract class BaseHolidays {
         return message;
     }
     
-    public static DateMidnight getEaster( int year )
+    public static LocalDate getEaster( int year )
     {
         Easterformular easter_formular = new Easterformular(year);
                 
         int day = easter_formular.easterday();                        
         
-        if( day < 31 )
+        if( day <= 31 )
         {
-            return new DateMidnight( year, 3, day );            
+            return new LocalDate( year, 3, day );
         } else {
-            return new DateMidnight( year, 4, day - 31 );            
+            return new LocalDate( year, 4, day - 31 );
         }
     }
     
@@ -68,19 +74,19 @@ public abstract class BaseHolidays {
         return 1;
     }
     
-    public DateMidnight getEuropeanSummerTimeBegin( int year )
+    public LocalDate getEuropeanSummerTimeBegin( int year )
     {
         return getLastSundayOf( year, 3 );
     }
     
-    public DateMidnight getEuropeanSummerTimeEnd( int year )
+    public LocalDate getEuropeanSummerTimeEnd( int year )
     {
         return getLastSundayOf( year, 10 );
     }
     
-    public DateMidnight getLastSundayOf( int year, int month )
+    public LocalDate getLastSundayOf( int year, int month )
     {
-        DateMidnight dm = new DateMidnight( year, month, 31 );
+        LocalDate dm = new LocalDate( year, month, 31 );
        
         while( true )
         {
@@ -118,6 +124,11 @@ public abstract class BaseHolidays {
 
     public HolidayInfo getHolidayForDay( DateMidnight date )
     {
+        return getHolidayForDay(date.toLocalDate());
+    }
+
+    public HolidayInfo getHolidayForDay( LocalDate date )
+    {
         if( last_used_year != date.getYear() ||
                 last_used_holidays == null )
         {
@@ -132,7 +143,7 @@ public abstract class BaseHolidays {
                 hi.date.getDayOfMonth()  == date.getDayOfMonth() )
             {
                 return hi;
-            }            
+            }
         }
 
         return null;

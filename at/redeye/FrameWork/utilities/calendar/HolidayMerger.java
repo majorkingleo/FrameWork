@@ -11,6 +11,7 @@ import java.util.Vector;
 import at.redeye.FrameWork.utilities.calendar.Holidays.HolidayInfo;
 import java.util.Calendar;
 import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -67,6 +68,7 @@ public class HolidayMerger implements Holidays {
         }
     }
     
+    @Override
     public Collection<HolidayInfo> getHolidays(int year) {
         
         Collection<HolidayInfo> all = null;
@@ -146,6 +148,7 @@ public class HolidayMerger implements Holidays {
         return all;
     }
 
+    @Override
     public int getNumberOfCountryCodes() {
         return numCountryCodes;
     }
@@ -157,15 +160,23 @@ public class HolidayMerger implements Holidays {
         add(holidays);
     }
         
+    @Override
     public String getPrimaryCountryCode() {
         return primaryCountry;
     }
 
+    @Override
     public HolidayInfo getHolidayForDay(DateMidnight date) {
+
+        return getHolidayForDay(date.toLocalDate());
+    }
+
+    @Override
+    public HolidayInfo getHolidayForDay(LocalDate date) {
 
         if( primHolidays != null ) {
             HolidayInfo hi = primHolidays.getHolidayForDay(date);
-            
+
             if( hi == null && extraHolidays != null )
             {
                 return extraHolidays.getHolidayForDay(date);
@@ -177,6 +188,7 @@ public class HolidayMerger implements Holidays {
         return null;
     }
 
+    @Override
     public HolidayInfo getHolidayForDay(Calendar date) {
         return getHolidayForDay(new DateMidnight(date));
     }

@@ -8,6 +8,7 @@ package at.redeye.FrameWork.utilities.calendar;
 import java.util.Calendar;
 import java.util.Collection;
 import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -17,7 +18,7 @@ public interface Holidays {
     
     public static class HolidayInfo
     {
-        public DateMidnight date;
+        public LocalDate date;
         
         public boolean floating_holiday;
         public boolean official_holiday;
@@ -27,7 +28,7 @@ public interface Holidays {
         public String CountryCode;
 
         public HolidayInfo(HolidayInfo hi) {
-            date = new DateMidnight( hi.date );
+            date = new LocalDate( hi.date );
             floating_holiday = hi.floating_holiday;
             official_holiday = hi.official_holiday;
             merge_to_primary = hi.merge_to_primary;
@@ -38,7 +39,7 @@ public interface Holidays {
         private HolidayInfo()
         {}
         
-        public HolidayInfo( DateMidnight date, boolean floating, boolean official, String name, String CountryCode )
+        public HolidayInfo( LocalDate date, boolean floating, boolean official, String name, String CountryCode )
         {
             this.date = date;
             floating_holiday = floating;
@@ -47,7 +48,7 @@ public interface Holidays {
             this.CountryCode = CountryCode;
         }
         
-        public HolidayInfo( DateMidnight date, boolean floating, boolean official, String name, String CountryCode, boolean merge_to_primary )
+        public HolidayInfo( LocalDate date, boolean floating, boolean official, String name, String CountryCode, boolean merge_to_primary )
         {
             this.date = date;
             floating_holiday = floating;
@@ -59,7 +60,7 @@ public interface Holidays {
         
         public HolidayInfo( int year, int month, int day, boolean floating, boolean official, String name, String CountryCode )
         {            
-            date = new DateMidnight( year, month, day );
+            date = new LocalDate( year, month, day );
             floating_holiday = floating;
             official_holiday = official;
             this.name = name;
@@ -82,6 +83,13 @@ public interface Holidays {
      * @date date for the holiday we are looking for
      */
     public HolidayInfo getHolidayForDay( DateMidnight date );
+
+/*
+     * @return returns a list of holidays a specific date.
+     * @date date for the holiday we are looking for
+     */
+    public HolidayInfo getHolidayForDay( LocalDate date );
+    
 
     public HolidayInfo getHolidayForDay(Calendar cal);
 }

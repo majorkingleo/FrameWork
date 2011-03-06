@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -435,7 +436,7 @@ public class CalendarComponent extends javax.swing.JPanel implements DisplayMont
             
             for( HolidayInfo hinfo : hdays )
             {        
-                    DateMidnight d = hinfo.date;
+                    LocalDate d = hinfo.date;
                 
                     if( d.getMonthOfYear() == Month )
                     {

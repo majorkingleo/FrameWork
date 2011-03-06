@@ -7,7 +7,7 @@ package at.redeye.FrameWork.utilities.calendar;
 
 import java.util.Collection;
 import java.util.Vector;
-import org.joda.time.DateMidnight;
+import org.joda.time.LocalDate;
 
 
 /**
@@ -25,6 +25,7 @@ public class SwitzerlandHolidays extends BaseHolidays implements Holidays {
         root.loadMlM4Class(this, "de");
     }
     
+    @Override
     public Collection<HolidayInfo> getHolidays(int year) {
         
         // siehe http://de.wikipedia.org/wiki/Feiertage_in_der_Schweiz
@@ -34,7 +35,7 @@ public class SwitzerlandHolidays extends BaseHolidays implements Holidays {
                 
         int day = easter_formular.easterday();
                 
-        DateMidnight easter = getEaster(year);
+        LocalDate easter = getEaster(year);
                 
         res.add( create( easter, true, true, "Ostersonntag" ) );
               
@@ -43,36 +44,36 @@ public class SwitzerlandHolidays extends BaseHolidays implements Holidays {
         res.add( create( year, 1, 2, false, false, "Berchtoldstag" ) );
         res.add( create( year, 1, 6, false, false, "Dreikönigstag" ) );
 
-        DateMidnight gruendonnerstag = easter.minusDays(3);
+        LocalDate gruendonnerstag = easter.minusDays(3);
         res.add( create( gruendonnerstag, true, false, "Gründonnerstag"));
 
-        DateMidnight karfreitag = easter.minusDays(2);
+        LocalDate karfreitag = easter.minusDays(2);
         res.add( create( karfreitag, true, true, "Karfreitag"));                
         
-        DateMidnight ostermontag = easter.plusDays(1);
+        LocalDate ostermontag = easter.plusDays(1);
         res.add( create( ostermontag, true, true, "Ostermontag"));
         
         res.add( create( year, 5, 1, false, false, "Tag der Arbeit" ) );        
 
-        DateMidnight christihimmelfahrt = easter.plusDays(39);
+        LocalDate christihimmelfahrt = easter.plusDays(39);
         res.add( create( christihimmelfahrt, true, true, "Auffahrt"));
 
-        DateMidnight aschermittwoch = easter.minusDays(46);
+        LocalDate aschermittwoch = easter.minusDays(46);
         res.add( create( aschermittwoch, true, false, "Aschermittwoch"));
 
-        DateMidnight faschingdienstag = easter.minusDays(47);
+        LocalDate faschingdienstag = easter.minusDays(47);
         res.add( create( faschingdienstag, true, false, "Faschingdienstag"));        
 
-        DateMidnight rosenmontag = easter.minusDays(48);
+        LocalDate rosenmontag = easter.minusDays(48);
         res.add( create( rosenmontag, true, false, "Rosenmontag"));        
         
-        DateMidnight pfingsten = easter.plusDays(49);
+        LocalDate pfingsten = easter.plusDays(49);
         res.add( create( pfingsten, true, false, "Pfingsten"));
 
-        DateMidnight pfingstmontag = easter.plusDays(50);
+        LocalDate pfingstmontag = easter.plusDays(50);
         res.add( create( pfingstmontag, true, true, "Pfingstmontag"));        
         
-        DateMidnight fronleichnam = easter.plusDays(60);
+        LocalDate fronleichnam = easter.plusDays(60);
         res.add( create( fronleichnam, true, true, "Fronleichnam"));
         
         res.add( create( year, 8, 1, false, true, "Bundesfeier" ) );
@@ -90,6 +91,7 @@ public class SwitzerlandHolidays extends BaseHolidays implements Holidays {
         return res;        
     }
 
+    @Override
     public String getPrimaryCountryCode() {
         return myCountryCode;
     }
