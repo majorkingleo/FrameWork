@@ -20,8 +20,12 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -162,7 +166,12 @@ public class BaseDialogBaseHelper implements BindVarInterface
         int w = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowWidth), "0"));
         int h = Integer.parseInt(root.getSetup().getLocalConfig(id.concat(Setup.WindowHeight), "0"));
 
-        Dimension dim = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        // Dimension dim = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension dim = getVirtualScreenSize();
+        //java.awt.Toolkit.getDefaultToolkit()
+        // java.awt.GraphicsDevice
+
+
 
         Point mouse_point  = MouseInfo.getPointerInfo().getLocation();
                
@@ -194,16 +203,27 @@ public class BaseDialogBaseHelper implements BindVarInterface
         if( y < 0 )
             y = 100;
 
-        parent.setBounds(x, y, 0, 0);
+        logger.info("setting bounds to: " + x + "x" + y);
+        parent.setBounds(x, y, 0, 0);        
+        logger.info("position now: " + parent.getX() + "x" + parent.getY());
 
         if( w > 0 && h > 0 && parent.openWithLastWidthAndHeight() )
         {
-            if( x + w > dim.getWidth() )
+            logger.info(String.format("x (%d) + w (%d) = %d dim.Width: %d", x,w,x+w,(int)dim.getWidth()) );
+
+            if( x + w > dim.getWidth() ) {
+                logger.info("reducing with");
                 w = (int)dim.getWidth() - x;
+            }
 
-            if( y + h > dim.getHeight() )
+            logger.info(String.format("y (%d) + h (%d) = %d dim.Height: %d", y,h,y+h,(int)dim.getHeight()) );
+
+            if( y + h > dim.getHeight() ) {
+                logger.info("reducing height");
                 h = (int)dim.getHeight() - y;
+            }
 
+            logger.info("set size to: " + w + "x" + h );
             parent.setPreferredSize(new Dimension(w,h));
         }
 
@@ -234,6 +254,29 @@ public class BaseDialogBaseHelper implements BindVarInterface
         HelpWinRunnable = runnable;
 
         registerActionKeyListener(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0),runnable );
+    }
+
+    /**
+     * returns the virtual screensize in a multimonitor system
+     * @return
+     */
+    public static Dimension getVirtualScreenSize()
+    {
+      Rectangle virtualBounds = new Rectangle();
+      GraphicsEnvironment ge = GraphicsEnvironment.
+              getLocalGraphicsEnvironment();
+      GraphicsDevice[] gs =
+              ge.getScreenDevices();
+      for (int j = 0; j < gs.length; j++) {
+          GraphicsDevice gd = gs[j];
+          GraphicsConfiguration[] gc =
+              gd.getConfigurations();
+          for (int i=0; i < gc.length; i++) {
+              virtualBounds =
+                  virtualBounds.union(gc[i].getBounds());
+          }
+      }
+      return virtualBounds.getSize();
     }
 
     /**
@@ -643,6 +686,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
 
         String id_xy = parent.getUniqueDialogIdentifier("SaveLastXYPos");
         String id_wh = parent.getUniqueDialogIdentifier("SaveWidthHeight");
+
+        logger.info("store size to: " + parent.getWidth() + "x" +parent.getHeight() );
 
         root.getSetup().setLocalConfig(id_xy.concat(Setup.WindowX), Integer.toString(parent.getX()));
         root.getSetup().setLocalConfig(id_xy.concat(Setup.WindowY), Integer.toString(parent.getY()));

@@ -72,6 +72,13 @@ public class BaseDialogDialog extends javax.swing.JDialog implements BindVarInte
      */
     public boolean openWithLastWidthAndHeight()
     {
+        if( Setup.is_win_system() )
+        {
+            // weil unter Windows wird das Fenster immer im Zentrum vom
+            // Parentfenster geöffnet und nicht inder nähe der Maus
+            return false;
+        }
+
         return true;
     }
 
