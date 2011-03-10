@@ -181,7 +181,7 @@ public class UserDataHandling implements UserManagementInterface {
 		throw new InvalidLoginException(MESSAGE_EMPTY_DATABASE);
 	}
 
-	protected String getEncryptedPwd(String input) {
+	public static String getEncryptedPwd(String input) {
 		MD5Calc md5 = new MD5Calc("MD5");
 		return md5.calcChecksum(input);
 	}
