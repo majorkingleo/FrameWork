@@ -153,4 +153,28 @@ public class HMSTime {
     {
         this.millis -= millis;
     }
+
+    @Override
+    public boolean equals( Object other )
+    {
+        if (this == other)
+            return true;
+
+        if (other == null)
+            return false;
+
+        if (other.getClass() != getClass())
+            return false;
+
+        HMSTime other_time = (HMSTime) other;
+
+        return millis == other_time.millis;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (int) (this.millis ^ (this.millis >>> 32));
+        return hash;
+    }
 }
