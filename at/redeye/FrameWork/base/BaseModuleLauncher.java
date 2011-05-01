@@ -260,6 +260,9 @@ public abstract class BaseModuleLauncher {
      * @param level Logging Level
      */
     public static void BaseConfigureLogging(Level level) {
+        
+        logger.removeAllAppenders();
+        
         PatternLayout layout = new PatternLayout(
                 "%d{ISO8601} %-5p (%F:%L): %m%n");
 
