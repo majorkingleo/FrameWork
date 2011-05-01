@@ -118,7 +118,8 @@ public abstract class BaseModuleLauncher {
                         if( sdev == null )
                             sdev = "(null)";
 
-                        System.out.println(envname + "=" +  sdev + " (default)" );
+                        if( logger.isTraceEnabled() )
+                            logger.trace(envname + "=" +  sdev + " (default)" );
 			return default_value;
 		}
 
@@ -244,17 +245,29 @@ public abstract class BaseModuleLauncher {
     {
 
     }
+    
+    /**
+     * configures logger for the first usage
+     * The default logging level is Leve.ALL
+     */
+    public static void BaseConfigureLogging()
+    {
+        BaseConfigureLogging(Level.ALL);        
+    }
 
-        public static void BaseConfigureLogging()
-        {
-            PatternLayout layout = new PatternLayout(
-                    "%d{ISO8601} %-5p (%F:%L): %m%n");
+    /**
+     * configures logger for the first usage
+     * @param level Logging Level
+     */
+    public static void BaseConfigureLogging(Level level) {
+        PatternLayout layout = new PatternLayout(
+                "%d{ISO8601} %-5p (%F:%L): %m%n");
 
-            ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+        ConsoleAppender consoleAppender = new ConsoleAppender(layout);
 
-            logger.setLevel(Level.ALL);
-            logger.addAppender(consoleAppender);
-        }
+        logger.setLevel(level);
+        logger.addAppender(consoleAppender);
+    }
 
 	public void configureLogging() {
 
