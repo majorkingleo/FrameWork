@@ -182,6 +182,12 @@ public class DesktopLauncher2 extends DesktopLauncher
 
         for( String jar : parser.getJars() )
         {
+            /**
+             * neuerdings muß im jar file lib/ bei den libs vorne dabei stehen
+             */
+            if( jar.startsWith("lib/") )
+                jar = jar.substring(4);
+            
             if( online.get(jar) == null )
             {
                 logger.error("cannot find jar " + jar + " in online md5sum");
@@ -346,6 +352,13 @@ public class DesktopLauncher2 extends DesktopLauncher
 
         for( String jar : parser.getJars() )
         {
+            /**
+             * neuerdings muß im jar file lib/ bei den libs vorne dabei stehen
+             */
+            if( jar.startsWith("lib/") )
+                jar = jar.substring(4);
+                        
+            
             String jar_location;
 
             if( jar.equals(main_jar) )
