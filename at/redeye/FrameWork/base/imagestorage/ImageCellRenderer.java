@@ -18,6 +18,7 @@ public class ImageCellRenderer implements ListCellRenderer {
 
     private static Color highlightColor = new Color(184,207,229);
     
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Component component = (Component) value;
         component.setBackground(isSelected ? highlightColor : Color.white);
