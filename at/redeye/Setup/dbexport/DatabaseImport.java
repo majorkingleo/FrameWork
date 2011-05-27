@@ -23,7 +23,7 @@ import at.redeye.FrameWork.base.transaction.DerbyTransaction;
 import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.utilities.DeleteDir;
 import at.redeye.FrameWork.utilities.StringUtils;
-import at.redeye.FrameWork.utilities.UnZip;
+import at.redeye.FrameWork.utilities.zip.UnZip;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.ConnectionDefinition;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.MissingConnectionParamException;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;

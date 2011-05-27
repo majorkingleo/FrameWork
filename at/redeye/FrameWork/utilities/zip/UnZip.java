@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package at.redeye.FrameWork.utilities;
+package at.redeye.FrameWork.utilities.zip;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
