@@ -42,7 +42,21 @@ public class DesktopLauncher
 
         root.addDllExtractorToCache(new JShortcutDLL());
     }
+    
+    /**     
+     * Set the name of the desktop icon.
+     * must be set before calling createDesktopIcon()
+     */
+    public void setAppTitle( String app_title )
+    {
+        this.app_title = app_title;
+    }
 
+    /**     
+     * returns true if a desktop icon can be created.
+     * currently desktop icons for Windows and Linux/KDE are
+     * tested. Other Linux systems can work.
+     */
     public static boolean canCreateDesktopIcon()
     {
        return CreateDesktopIcon.isDesktopIconCreatingSupportedByOs();
@@ -58,6 +72,9 @@ public class DesktopLauncher
         return CreateDesktopIcon.getInstance(png, ico, gif,app_name, jnlp_name, app_title);
     }
 
+    /**
+     * creates the deskop icon
+     */
     public boolean createDesktopIcon()
     {
 
@@ -85,6 +102,9 @@ public class DesktopLauncher
         return true;
     }
 
+    /**     
+     * @return true, if the jnlp file exists on local disk
+     */
     public boolean has_jnlp()
     {
         File file = new File( jnlp_name );
@@ -92,16 +112,26 @@ public class DesktopLauncher
         return file.exists();
     }
 
+    /**
+     * downloads the jnlp file
+     * @return true on success
+     */
     public boolean download_jnlp()
     {
         return DownloadUrl.downloadUrl(web_start_url, jnlp_name);
     }
 
+    /**     
+     * @return the filename of the jnlp file
+     */
     public String getJnlpName()
     {
         return jnlp_name;
     }
 
+    /**     
+     * @return Application name
+     */
     public String getAppName()
     {
         return app_name;
