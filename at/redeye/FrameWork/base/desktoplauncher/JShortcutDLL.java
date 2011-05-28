@@ -24,10 +24,12 @@ public class JShortcutDLL implements DLLExtractor
     public static final String LIB_NAME_BASE = "jshortcut_";
     public static final String PROPERTY_NAME = "JSHORTCUT_HOME";
 
+    @Override
     public String getPropertyNameForDllDir() {
         return PROPERTY_NAME;
     }
 
+    @Override
     public void extractDlls() throws IOException
     {
         String envdir = System.getProperty(PROPERTY_NAME);
@@ -54,6 +56,7 @@ public class JShortcutDLL implements DLLExtractor
         }
     }
 
+    @Override
     public List<String> getNames() {
 
         List<String> res = new ArrayList<String>();
