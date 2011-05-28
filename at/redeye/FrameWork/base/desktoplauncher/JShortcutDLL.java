@@ -41,6 +41,9 @@ public class JShortcutDLL implements DLLExtractor
         {
             InputStream source = this.getClass().getResourceAsStream("/" + lib);
 
+            if( source == null )
+                continue;
+
             File tempFile = new File( envdir + "/"  + lib );
 
             FileOutputStream fout = new FileOutputStream(tempFile);

@@ -37,6 +37,9 @@ public class ProxyVoleDLL implements DLLExtractor
         {
             InputStream source = this.getClass().getResourceAsStream("/lib/" + lib);
 
+            if( source == null )
+                continue;
+
             File tempFile = new File( envdir + "/"  + lib );
 
             FileOutputStream fout = new FileOutputStream(tempFile);
