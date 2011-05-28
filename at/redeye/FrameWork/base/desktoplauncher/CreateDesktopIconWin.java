@@ -20,7 +20,7 @@ public class CreateDesktopIconWin extends CreateDesktopIcon
     {
         super( png, ico, gif, app_name, url, app_title );
 
-         setCommand( "javaws " +  app_url + "\"" );
+         setCommand( "javaws \"" +  app_url + "\"" );
     }
     
     private String findExeOfCommand()
