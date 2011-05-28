@@ -36,6 +36,7 @@ public class DLLCache
         {
             String env = extractor.getPropertyNameForDllDir();
 
+            logger.debug(env + "=" + cache_dir);
             System.setProperty(env, cache_dir);
         }
     }
