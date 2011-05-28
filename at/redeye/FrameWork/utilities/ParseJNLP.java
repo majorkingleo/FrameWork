@@ -72,8 +72,14 @@ public class ParseJNLP {
 
     private void findRedeyeContentJars(Document document)
     {
+         findRedeyeContentJars(document,"jar");
+         findRedeyeContentJars(document,"nativelib");
+    }
+    
+    private void findRedeyeContentJars(Document document, String tagname)
+    {
         // property values
-        NodeList props = document.getElementsByTagName("jar");
+        NodeList props = document.getElementsByTagName(tagname);
 
         for (int i = 0; i < props.getLength(); i++) {
             Node node = props.item(i);
