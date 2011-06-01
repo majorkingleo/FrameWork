@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import net.jimmc.jshortcut.JShellLink;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -21,6 +22,8 @@ import net.jimmc.jshortcut.JShellLink;
  */
 public class JShortcutDLL implements DLLExtractor
 {
+    private static final Logger logger = Logger.getLogger(JShortcutDLL.class);
+    
     public static final String LIB_NAME_BASE = "jshortcut_";
     public static final String PROPERTY_NAME = "JSHORTCUT_HOME";
 
@@ -41,8 +44,10 @@ public class JShortcutDLL implements DLLExtractor
         {
             InputStream source = this.getClass().getResourceAsStream("/" + lib);
 
-            if( source == null )
-                continue;
+            if( source == null ) {
+                logger.error("cannot load " + "/" + lib);
+                continue;                
+            }
 
             File tempFile = new File( envdir + "/"  + lib );
 
