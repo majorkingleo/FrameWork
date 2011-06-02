@@ -5,12 +5,6 @@
 
 package at.redeye.FrameWork.base;
 
-import at.redeye.FrameWork.utilities.StringUtils;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
-
-import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
 /**
@@ -36,30 +30,9 @@ public abstract class AutoLogger {
     {
         try {
             do_stuff();
-            failed = false;
-        } catch (SQLException ex) {               
-            logger.error("Exception: " + ex );
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;            
-        } catch (TableBindingNotRegisteredException ex) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;
-        } catch (UnsupportedDBDataTypeException ex) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;
-        } catch (WrongBindFileFormatException ex) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;            
-        } catch (CloneNotSupportedException ex) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;            
+            failed = false;         
         } catch ( Exception ex ) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
+            logger.error("Exception: " + ex, ex);            
             thrown_ex = ex;            
         }
     }

@@ -9,10 +9,6 @@ import org.apache.log4j.Logger;
 
 import at.redeye.FrameWork.utilities.StringUtils;
 
-import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
-import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
-import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
@@ -45,32 +41,9 @@ public abstract class AutoMBox
     {
         try {
             do_stuff();
-            failed = false;
-        } catch (SQLException ex) {               
-            logger.error("Exception: " + ex.toString());
-            logger.error("Exception: " + ex.getMessage());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;
-        } catch (TableBindingNotRegisteredException ex) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;
-        } catch (UnsupportedDBDataTypeException ex) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;
-        } catch (WrongBindFileFormatException ex) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;
-        } catch (CloneNotSupportedException ex) {
-            logger.error("Exception: " + ex.toString());
-            logger.error(StringUtils.exceptionToString(ex));
-            thrown_ex = ex;            
+            failed = false;                  
         } catch (Exception ex) {
-            logger.error("Exception: " + ex.toString() + "\n" + ex.getLocalizedMessage() );
-            logger.error(StringUtils.exceptionToString(ex));
-            
+            logger.error("Exception: " + ex.toString() + "\n" + ex.getLocalizedMessage(), ex );                        
             thrown_ex = ex;            
         }
         
