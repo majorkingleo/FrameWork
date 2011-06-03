@@ -4,8 +4,8 @@
 package at.redeye.FrameWork.base.dbmanager.impl;
 
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import java.util.Collection;
 
-import java.util.Vector;
 
 /**
  * @author mmattl
@@ -37,6 +37,7 @@ public class CreateSqlOracle extends BaseCreateSql {
 		return "\"" + col + "\"";
 	}
 
+    @Override
 	protected String createSqlForRow(ColumnAttribute attr) {
 
 		switch (attr.getDatatype()) {
@@ -60,7 +61,7 @@ public class CreateSqlOracle extends BaseCreateSql {
 	}
 
     @Override
-    protected String createIndexKeys( String table, Vector<String> indexKeys )
+    protected String createIndexKeys( String table, Collection<String> indexKeys )
     {
         StringBuilder res = new StringBuilder();
         

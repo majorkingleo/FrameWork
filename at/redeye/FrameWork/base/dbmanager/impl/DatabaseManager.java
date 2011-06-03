@@ -440,6 +440,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return (Boolean) al.result;
 	}
 
+    @Override
 	public boolean check_table_versions() {
 		AutoLogger al = new AutoLogger(DatabaseManager.class.getName()) {
 
@@ -492,6 +493,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return true;
 	}
 
+    @Override
     public boolean check_table_versions_with_message(final int Permissionlevel) {
         if (!check_table_versions()) {
 
@@ -515,6 +517,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
         return true;
     }
 
+    @Override
 	public boolean is_dbms_driver_loaded(SupportedDBMSTypes dbmstype) {
 		String name;
 
@@ -543,10 +546,12 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		return true;
 	}
 
+    @Override
 	public Vector<DBStrukt> getRegisteredTables() {
 		return tables;
 	}
 
+    @Override
 	public boolean drop_table(DBStrukt strukt) throws SQLException {
 
 		table_list = null; // cache leeren

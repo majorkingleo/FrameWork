@@ -7,7 +7,7 @@ package at.redeye.FrameWork.base.dbmanager.impl;
 
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
-import java.util.Vector;
+import java.util.Collection;
 
 /**
  *
@@ -56,7 +56,7 @@ public class CreateSqlSqlite extends BaseCreateSql {
     }
     
     @Override
-    protected String createPrimKeys( String table, Vector<String> primKeys )
+    protected String createPrimKeys( String table, Collection<String> primKeys )
     {
         // nothing todo, is implemented in createSqlForRow
         // since sqlite does not supprt that stuff :(

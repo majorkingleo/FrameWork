@@ -7,6 +7,8 @@ package at.redeye.FrameWork.base.dbmanager.impl;
 
 import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,22 +68,26 @@ public abstract class BaseCreateSql implements BackupTableInterface {
         return res;
     }
 
-    protected String createPrimKeys( String table, Vector<String> primKeys )
+    protected String createPrimKeys( String table, Collection<String> primKeys )
     {
         String res = "ALTER TABLE " + markColumn(table) + " ADD PRIMARY KEY (";
                         
-        for( int i = 0; i < primKeys.size(); i++ )
+        boolean first = true;
+        
+        for( String key : primKeys )
         {
-            if( i > 0 )
+            if( !first )
                 res += ",";
             
-            res += markColumn(primKeys.get(i));                        
-        }                
+            first = false;
+            
+            res += markColumn(key);
+        }
         
         return res + ");\n";
     }
     
-    protected String createIndexKeys( String table, Vector<String> indexKeys )
+    protected String createIndexKeys( String table, Collection<String> indexKeys )
     {
         StringBuilder res = new StringBuilder();
         
@@ -125,8 +131,8 @@ public abstract class BaseCreateSql implements BackupTableInterface {
     {
         String res = new String();
         
-        Vector<String> primKeys = new Vector<String>();
-        Vector<String> indexKeys = new Vector<String>();                
+        ArrayList<String> primKeys = new ArrayList<String>();
+        ArrayList<String> indexKeys = new ArrayList<String>();                
         
         HashMap<String, ColumnAttribute> colls = strukt.getHashMapForVersion(Version);
         

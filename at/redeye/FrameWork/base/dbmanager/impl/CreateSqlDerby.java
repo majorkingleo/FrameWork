@@ -1,9 +1,8 @@
 package at.redeye.FrameWork.base.dbmanager.impl;
 
-import java.util.Vector;
-
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
+import java.util.Collection;
 
 public class CreateSqlDerby extends BaseCreateSql {
 
@@ -19,7 +18,7 @@ public class CreateSqlDerby extends BaseCreateSql {
 	}
 
 	@Override
-	protected String createIndexKeys(String table, Vector<String> indexKeys) {
+	protected String createIndexKeys(String table, Collection<String> indexKeys) {
 		StringBuilder res = new StringBuilder();
 
 		for (String key : indexKeys) {
@@ -79,6 +78,8 @@ public class CreateSqlDerby extends BaseCreateSql {
         {
             // nut null geht nicht und mit default Werten befüllen leider auch nicht.
             //return " default "+ getDefaultValueVarChar(attr.getWidth());
+            return "";
+        } else if (  attr.getDatatype() ==  DBDataType.DB_TYPE_BLOB ) {
             return "";
         }
 

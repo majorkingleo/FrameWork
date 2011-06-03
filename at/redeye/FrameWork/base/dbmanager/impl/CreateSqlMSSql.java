@@ -3,9 +3,9 @@
  */
 package at.redeye.FrameWork.base.dbmanager.impl;
 
-import java.util.Vector;
 
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import java.util.Collection;
 
 /**
  * @author mmattl
@@ -25,7 +25,7 @@ public class CreateSqlMSSql extends BaseCreateSql {
 	}
 
 	@Override
-	protected String createIndexKeys(String table, Vector<String> indexKeys) {
+	protected String createIndexKeys(String table, Collection<String> indexKeys) {
 		StringBuilder res = new StringBuilder();
 
 		for (String key : indexKeys) {
