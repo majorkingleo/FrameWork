@@ -6,413 +6,326 @@
 
  */
 
-
-
 package at.redeye.FrameWork.base.bindtypes;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import at.redeye.FrameWork.utilities.Pair;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 
-
-
 /**
-
- *
-
  * @author martin
-
  */
 
 public abstract class DBStrukt {
-   
-    protected String strukt_name;
-    protected String title;
-    public Vector<DBValue> elements = new Vector<DBValue>();
-    public HashMap<String,DBValue> element_by_name = new HashMap<String,DBValue>();
-    public Vector<DBStrukt> sub_strukts = new Vector<DBStrukt>();
-    protected Integer version = null;
-    protected Vector<Pair<Integer,DBValue>>  elements_with_version = new Vector<Pair<Integer,DBValue>>();    
 
-    public DBStrukt( String name )
-    {
-        this.strukt_name = name;
-        title = new String();
-    }
+	protected String strukt_name;
+	protected String title;
+	public Vector<DBValue> elements = new Vector<DBValue>();
+	public HashMap<String, DBValue> element_by_name = new HashMap<String, DBValue>();
+	public Vector<DBStrukt> sub_strukts = new Vector<DBStrukt>();
+	protected Integer version = null;
+	protected Vector<Entry<Integer, DBValue>> elements_with_version = new Vector<Entry<Integer, DBValue>>();
 
-    
+	public DBStrukt(String name) {
+		this.strukt_name = name;
+		title = new String();
+	}
 
-    public DBStrukt( String name, String title )
-    {
-        this.strukt_name = name;
-        this.title = title;
-    }
+	public DBStrukt(String name, String title) {
+		this.strukt_name = name;
+		this.title = title;
+	}
 
-    
+	public void add(DBValue value) {
+		elements.add(value);
+		element_by_name.put(value.getName().toUpperCase(), value);
+	}
 
-    public void add( DBValue value )
-    {
-        elements.add( value );
-        element_by_name.put(value.getName().toUpperCase(), value);
-    }
+	public void remove(DBValue value) {
+		elements.remove(value);
+		element_by_name.remove(value.getName().toUpperCase());
+	}
 
-    public void remove( DBValue value )
-    {
-        elements.remove(value);
-        element_by_name.remove(value.getName().toUpperCase());
-    }
-    
-    public void add( DBValue value, Integer version )
-    {
-        elements.add( value );
-        element_by_name.put(value.getName().toUpperCase(), value);
-        elements_with_version.add(new Pair(version,value));
+	public void add(DBValue value, Integer version) {
+		elements.add(value);
+		element_by_name.put(value.getName().toUpperCase(), value);
+		elements_with_version.add(new SimpleEntry<Integer, DBValue>(version,
+				value));
 
-        if( this.version == null )
-            this.version = version;
-        else if( version > this.version )
-            this.version = version;
-    }
-    
+		if (this.version == null)
+			this.version = version;
+		else if (version > this.version)
+			this.version = version;
+	}
 
-    public void add( DBStrukt substrukt )
-    {
-        sub_strukts.add(substrukt);
-    }
+	public void add(DBStrukt substrukt) {
+		sub_strukts.add(substrukt);
+	}
 
-    
+	public void consume(HashMap<String, Object> map) {
+		consume(map, null);
+	}
 
-    public void consume(HashMap<String, Object> map ) 
-    {
-        consume( map, null );
-    }
+	public void consume(HashMap<String, Object> map, String prefix) {
+		Set<String> keys = map.keySet();
 
-    
+		for (String key : keys) {
+			if (prefix != null && key.length() <= prefix.length())
+				continue;
 
-    public void consume(HashMap<String, Object> map, String prefix ) 
-    {        
-        Set<String> keys = map.keySet();
-        
-        for( String key : keys )
-        {
-            if( prefix != null && key.length() <= prefix.length() )
-                continue;            
-            
-            String k;
-            
-            if( prefix != null )
-                k = key.substring(prefix.length());
-            else
-                k = key;
-            
-            DBValue val = getValueByName( k );
-            
-            if( val != null )
-            {
-                val.loadFromDB(map.get(key));
-                continue;
-            }
-            
-            for( int i = 0; i < sub_strukts.size(); i++ )
-            {
-                DBStrukt strukt =  sub_strukts.get(i);                
+			String k;
 
-                if( k.startsWith( strukt.getName() + "_" ) )
-                {
-                    if( prefix != null )
-                        strukt.consume( map, prefix + strukt.getName() + "_" );
-                    else
-                        strukt.consume( map, strukt.getName() + "_" );
-                    
-                    break;
-                }
-            }
+			if (prefix != null)
+				k = key.substring(prefix.length());
+			else
+				k = key;
 
-        }
-    }
+			DBValue val = getValueByName(k);
 
-    
+			if (val != null) {
+				val.loadFromDB(map.get(key));
+				continue;
+			}
 
-    public String getName()
-    {
-        return strukt_name;
-    }
+			for (int i = 0; i < sub_strukts.size(); i++) {
+				DBStrukt strukt = sub_strukts.get(i);
 
-    
+				if (k.startsWith(strukt.getName() + "_")) {
+					if (prefix != null)
+						strukt.consume(map, prefix + strukt.getName() + "_");
+					else
+						strukt.consume(map, strukt.getName() + "_");
 
-    public DBValue getValue( int idx )
-    {
-        return elements.get(idx);
-    }
+					break;
+				}
+			}
 
-    public DBValue getValue( DBValue val )
-    {
-        return getValue(val.getName());
-    }
+		}
+	}
 
-    public DBValue getValue( String name )
-    {
-        for( DBValue val : elements )
-        {
-            if( val.getName().equals(name) )
-                return val;
-        }
+	public String getName() {
+		return strukt_name;
+	}
 
-        return null;
-    }
+	public DBValue getValue(int idx) {
+		return elements.get(idx);
+	}
 
-    public int countValues()
-    {
-        return elements.size();
-    }
+	public DBValue getValue(DBValue val) {
+		return getValue(val.getName());
+	}
 
-    
+	public DBValue getValue(String name) {
+		for (DBValue val : elements) {
+			if (val.getName().equals(name))
+				return val;
+		}
+		return null;
+	}
 
-    public int countSubStrukts()
-    {
-        return sub_strukts.size();
-    }
+	public int countValues() {
+		return elements.size();
+	}
 
-    
+	public int countSubStrukts() {
+		return sub_strukts.size();
+	}
 
-    public DBStrukt getSubStrukt( int idx )
-    {
-        return sub_strukts.get(idx);
-    }
+	public DBStrukt getSubStrukt(int idx) {
+		return sub_strukts.get(idx);
+	}
 
-    
+	public HashMap<String, ColumnAttribute> getHashMap() {
+		return getHashMap("");
+	}
 
-    public HashMap<String, ColumnAttribute> getHashMap()
-    {
-        return getHashMap( "" );
-    }    
+	protected HashMap<String, ColumnAttribute> getHashMap(String prefix) {
+		return getHashMap(prefix, null);
+	}
 
-    protected HashMap<String, ColumnAttribute> getHashMap( String prefix )
-    {
-        return getHashMap( prefix, null );
-    }
-        
-    protected boolean VersionExists( DBValue val, Integer Version )
-    {
-        for( Pair<Integer,DBValue> pair : elements_with_version )
-        {
-            if( (int)pair.getFirst() == (int)Version )
-            {
-                if( pair.getSecond() == val )
-                    return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    public HashMap<String, ColumnAttribute> getHashMapForVersion( Integer Version )
-    {
-        return getHashMap("", Version);
-    }
-    
-    protected HashMap<String, ColumnAttribute> getHashMap( String prefix , Integer Version )
-    {
-        HashMap<String, ColumnAttribute> colls = new HashMap<String, ColumnAttribute>();      
+	protected boolean VersionExists(DBValue val, Integer Version) {
+		for (Entry<Integer, DBValue> pair : elements_with_version) {
+			if ((int) pair.getKey() == (int) Version) {
+				if (pair.getValue() == val)
+					return true;
+			}
+		}
 
-        for( int i = 0; i < elements.size(); i++ )   
-        {
-            DBValue val = elements.get(i);
-            
-            if( Version != null )
-            {
-                if( !VersionExists( val, Version ) )
-                    continue;
-            }
-            
-            ColumnAttribute attr = new ColumnAttribute( val.getDBType() );
-            
-            attr.setPrimaryKey(val.isPrimaryKey());
-            attr.setHasIndex(val.shouldHaveIndex());
-            
-            if( DBString.class.isInstance(val) ) {
-                attr.setWidth( ((DBString)val).getMaxLen() );
-            } else if( val instanceof DBEnum ) {
-                attr.setWidth( ((DBEnum)val).getMaxLen() );
-            }
-            
-            colls.put( prefix + val.getName(), attr );
-        }               
+		return false;
+	}
 
-        for( int i = 0; i < sub_strukts.size(); i++ )
-        {
-            DBStrukt strukt = sub_strukts.get(i);
-            
-            HashMap<String, ColumnAttribute> sub_colls = strukt.getHashMap( prefix + strukt.getName() + "_", Version );
-            
-            Set<String> keys = sub_colls.keySet();
-            
-            for( String s : keys )
-            {
-                colls.put( s, sub_colls.get(s) );
-            }
-        }
-        
-        return colls;
-    }
+	public HashMap<String, ColumnAttribute> getHashMapForVersion(Integer Version) {
+		return getHashMap("", Version);
+	}
 
-    public HashMap<String, Object> getHashMapAndData()
-    {
-        return getHashMapAndData( "" );
-    }
-    
-    protected HashMap<String, Object> getHashMapAndData( String prefix )
-    {
-        HashMap<String, Object> colls = new HashMap<String, Object>();      
+	protected HashMap<String, ColumnAttribute> getHashMap(String prefix,
+			Integer Version) {
+		HashMap<String, ColumnAttribute> colls = new HashMap<String, ColumnAttribute>();
 
-        for( int i = 0; i < elements.size(); i++ )   
-        {
-            DBValue val = elements.get(i);                        
-            colls.put( prefix + val.getName(), val.getValue() );
-        }
-        
-        for( int i = 0; i < sub_strukts.size(); i++ )
-        {
-            DBStrukt strukt = sub_strukts.get(i);
-            
-            HashMap<String, Object> sub_colls = strukt.getHashMapAndData( prefix + strukt.getName() + "_" );
-            
-            Set<String> keys = sub_colls.keySet();
-            
-            for( String s : keys )
-            {
-                colls.put( s, sub_colls.get(s) );
-            }
-        }
-        
-        return colls;
-    }
+		for (int i = 0; i < elements.size(); i++) {
+			DBValue val = elements.get(i);
 
-    public Vector<DBValue> getAllValues() 
-    {
-        Vector<DBValue> values = new Vector<DBValue>();
-        
-        for( int i = 0; i < elements.size(); i++ )   
-        {
-            DBValue val = elements.get(i);
-            
-            values.add(val);
-        }
-        
-        for( int i = 0; i < sub_strukts.size(); i++ )
-        {
-            DBStrukt strukt = sub_strukts.get(i);
-           
-            values.addAll( strukt.getAllValues() );
-        }
-        
-        return values;
-    }
-    
-    public Vector<String> getAllNames() 
-    {
-        return getAllNames( "" );
-    }
-    
-    protected Vector<String> getAllNames( String prefix ) 
-    {
-        Vector<String> values = new Vector<String>();
-        
-        for( int i = 0; i < elements.size(); i++ )   
-        {
-            DBValue val = elements.get(i);            
+			if (Version != null) {
+				if (!VersionExists(val, Version))
+					continue;
+			}
 
-            if( val.getTitle().isEmpty() )
-                values.add( prefix + val.getName() );
-            else
-                values.add( prefix + val.getTitle() );
-        }
-        
-        for( int i = 0; i < sub_strukts.size(); i++ )
-        {
-            DBStrukt strukt = sub_strukts.get(i);
-            
-            if( strukt.getTitle().isEmpty() )                
-                values.addAll( strukt.getAllNames( strukt.getName() + " " ) );
-            else
-                values.addAll( strukt.getAllNames( strukt.getTitle() + " " ) );    
-        }
-       
-        return values;
-    }
+			ColumnAttribute attr = new ColumnAttribute(val.getDBType());
 
-    
+			attr.setPrimaryKey(val.isPrimaryKey());
+			attr.setHasIndex(val.shouldHaveIndex());
 
-    public abstract DBStrukt getNewOne();
+			if (DBString.class.isInstance(val)) {
+				attr.setWidth(((DBString) val).getMaxLen());
+			} else if (val instanceof DBEnum) {
+				attr.setWidth(((DBEnum) val).getMaxLen());
+			}
 
+			colls.put(prefix + val.getName(), attr);
+		}
 
+		for (int i = 0; i < sub_strukts.size(); i++) {
+			DBStrukt strukt = sub_strukts.get(i);
 
-    private String getTitle() {
-        return title;
-    }
+			HashMap<String, ColumnAttribute> sub_colls = strukt.getHashMap(
+					prefix + strukt.getName() + "_", Version);
 
-    
+			Set<String> keys = sub_colls.keySet();
 
+			for (String s : keys) {
+				colls.put(s, sub_colls.get(s));
+			}
+		}
 
+		return colls;
+	}
 
-    private DBValue getValueByName(String key) 
-    {
-        return element_by_name.get(key.toUpperCase());
+	public HashMap<String, Object> getHashMapAndData() {
+		return getHashMapAndData("");
+	}
 
-        /*
+	protected HashMap<String, Object> getHashMapAndData(String prefix) {
+		HashMap<String, Object> colls = new HashMap<String, Object>();
 
-        for( int i  = 0; i < elements.size(); i++ )
-        {
-            if( key.equalsIgnoreCase(elements.get(i).getName()) )
-                return elements.get(i);
-        }
+		for (int i = 0; i < elements.size(); i++) {
+			DBValue val = elements.get(i);
+			colls.put(prefix + val.getName(), val.getValue());
+		}
 
-        return null;
-         */
-    }
+		for (int i = 0; i < sub_strukts.size(); i++) {
+			DBStrukt strukt = sub_strukts.get(i);
 
+			HashMap<String, Object> sub_colls = strukt.getHashMapAndData(prefix
+					+ strukt.getName() + "_");
 
-    public void loadFromCopy( DBStrukt s )
-    {               
-        for( int i = 0; i < s.elements.size(); i++ )
-        {
-            DBValue val = s.elements.get(i);           
+			Set<String> keys = sub_colls.keySet();
 
-            elements.get(i).loadFromCopy(val.getValue());
-        }
-        
-        for( int i = 0; i < s.sub_strukts.size(); i++ )
-        {
-            sub_strukts.get(i).loadFromCopy(s.sub_strukts.get(i));
-        }
-    }
+			for (String s : keys) {
+				colls.put(s, sub_colls.get(s));
+			}
+		}
 
-    
+		return colls;
+	}
 
-    public DBStrukt getCopy()
-    {
-        DBStrukt s = getNewOne();
+	public Vector<DBValue> getAllValues() {
+		Vector<DBValue> values = new Vector<DBValue>();
 
-        s.loadFromCopy(this);
+		for (int i = 0; i < elements.size(); i++) {
+			DBValue val = elements.get(i);
 
-        return s;
-    }
+			values.add(val);
+		}
 
-    public void setVersion( Integer version )
-    {
-        this.version = version;
-    }
-    
-    public Integer getVersion()
-    {
-        if( version == null )
-            return 1;
-        
-        return version;
-    }
+		for (int i = 0; i < sub_strukts.size(); i++) {
+			DBStrukt strukt = sub_strukts.get(i);
+
+			values.addAll(strukt.getAllValues());
+		}
+
+		return values;
+	}
+
+	public Vector<String> getAllNames() {
+		return getAllNames("");
+	}
+
+	protected Vector<String> getAllNames(String prefix) {
+		Vector<String> values = new Vector<String>();
+
+		for (int i = 0; i < elements.size(); i++) {
+			DBValue val = elements.get(i);
+
+			if (val.getTitle().isEmpty())
+				values.add(prefix + val.getName());
+			else
+				values.add(prefix + val.getTitle());
+		}
+
+		for (int i = 0; i < sub_strukts.size(); i++) {
+			DBStrukt strukt = sub_strukts.get(i);
+
+			if (strukt.getTitle().isEmpty())
+				values.addAll(strukt.getAllNames(strukt.getName() + " "));
+			else
+				values.addAll(strukt.getAllNames(strukt.getTitle() + " "));
+		}
+
+		return values;
+	}
+
+	public abstract DBStrukt getNewOne();
+
+	public String getTitle() {
+		return title;
+	}
+
+	private DBValue getValueByName(String key) {
+		return element_by_name.get(key.toUpperCase());
+
+		/*
+		 * 
+		 * for( int i = 0; i < elements.size(); i++ ) { if(
+		 * key.equalsIgnoreCase(elements.get(i).getName()) ) return
+		 * elements.get(i); }
+		 * 
+		 * return null;
+		 */
+	}
+
+	public void loadFromCopy(DBStrukt s) {
+		for (int i = 0; i < s.elements.size(); i++) {
+			DBValue val = s.elements.get(i);
+
+			elements.get(i).loadFromCopy(val.getValue());
+		}
+
+		for (int i = 0; i < s.sub_strukts.size(); i++) {
+			sub_strukts.get(i).loadFromCopy(s.sub_strukts.get(i));
+		}
+	}
+
+	public DBStrukt getCopy() {
+		DBStrukt s = getNewOne();
+
+		s.loadFromCopy(this);
+
+		return s;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	public Integer getVersion() {
+		if (version == null)
+			return 1;
+
+		return version;
+	}
 
 }
-
