@@ -465,7 +465,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	protected void setLastStmt(String lastStmt) {
 		AbstractStmtExecuter.lastStmt = lastStmt;
 	}
-
+    
 	protected PreparedStatement handleStatement(String stmt,
 			HashMap<String, Object> values) throws SQLException, IOException {
 
@@ -485,7 +485,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			}
 			if (data == null) {
 				throw new SQLException(
-						"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing!");
+						"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing! Column: '" + currcol + "' is null");
 			}
 			setPreparedStatementTypes(ps, index + 1, data);
 
