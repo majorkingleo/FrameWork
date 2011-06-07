@@ -164,7 +164,7 @@ public abstract class Transaction {
 		List<HashMap<String, Object>> result = executer.fetchTableValue(
 				tablenames, where);
 
-		List<T> res = new ArrayList<T>();
+		List<T> res = new ArrayList<T>(result.size());
 
 		for (int i = 0; i < result.size(); i++) {
 			DBStrukt strukt = binddesc.getNewOne();
