@@ -684,6 +684,8 @@ public class BaseDialogBaseHelper implements BindVarInterface
      */
     public void close() {
 
+        cancelAutoRefreshTimer();
+        
         String id_xy = parent.getUniqueDialogIdentifier("SaveLastXYPos");
         String id_wh = parent.getUniqueDialogIdentifier("SaveWidthHeight");
 
@@ -994,5 +996,18 @@ public class BaseDialogBaseHelper implements BindVarInterface
         }
 
         return autoRefreshTimer;
+    }
+    
+    public void cancelAutoRefreshTimer() {
+        
+        if( autoRefreshTask != null ) {       
+            autoRefreshTask.cancel();
+            autoRefreshTask = null;
+        }
+        
+        if (autoRefreshTimer != null) {
+             autoRefreshTimer.cancel();
+             autoRefreshTimer = null;   
+        }                                        
     }
 }

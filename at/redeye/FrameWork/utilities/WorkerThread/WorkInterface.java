@@ -10,7 +10,19 @@ package at.redeye.FrameWork.utilities.WorkerThread;
  */
 public interface WorkInterface 
 {
+    /**
+     * function called by the worker thread, where all the stuff should be done
+     */
     public void work();
+    
+    /**
+     * function called in java.awt.eventQueue Thread when the working is finished
+     */
     public void workDone();
     
+    
+    /**
+     * called from the WorkerThread when from the working thread itself stopWorking() is called
+     */
+    public void pleaseStopWorking();
 }

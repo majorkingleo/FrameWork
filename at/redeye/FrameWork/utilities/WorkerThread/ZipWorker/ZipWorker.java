@@ -4,6 +4,7 @@
  */
 package at.redeye.FrameWork.utilities.WorkerThread.ZipWorker;
 
+import at.redeye.FrameWork.utilities.WorkerThread.OperationCanceledException;
 import at.redeye.FrameWork.utilities.zip.ProgressListener;
 import at.redeye.FrameWork.utilities.zip.Zip;
 import at.redeye.FrameWork.utilities.WorkerThread.WorkInterface;
@@ -30,6 +31,7 @@ public class ZipWorker
         File tempfile;
         private long started_at = 0;
         private long lastInfo = 0;
+        boolean should_stop = false;
         
         public ZipDirectory( File dir )
         {
@@ -84,6 +86,9 @@ public class ZipWorker
         @Override
         public void setProgress(final long lCountBytes, final long lCountFiles) {
             
+            if( should_stop )
+                throw new OperationCanceledException();
+            
             long now = System.currentTimeMillis();
             
             if( now - lastInfo < 300 )
@@ -98,6 +103,11 @@ public class ZipWorker
                     parent.setZipProgress( dir, lCountBytes, lCountFiles,started_at);
                 }
             });            
+        }
+
+        @Override
+        public void pleaseStopWorking() {
+            should_stop = true;            
         }
     }
     

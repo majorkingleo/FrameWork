@@ -18,6 +18,11 @@ public class WorkerThread extends Thread
     private boolean should_stop = false;
     private boolean current_working = false;
     
+    /**
+     * current working package
+     */
+    WorkInterface work = null;
+    
     public WorkerThread( String name ) {
         super( name );
     }
@@ -30,9 +35,7 @@ public class WorkerThread extends Thread
     public void run()
     {
         do
-        {
-            WorkInterface work = null;
-            
+        {                        
             while( ( work = queue_to_work.poll() ) != null && !should_stop)
             {
                 current_working = true;
@@ -61,7 +64,13 @@ public class WorkerThread extends Thread
     
     public void stopWorking()
     {
-        should_stop = true;
+        should_stop = true;   
+                
+        if (work == null) {
+            return;
+        }
+
+        work.pleaseStopWorking();
     }
     
     /**
