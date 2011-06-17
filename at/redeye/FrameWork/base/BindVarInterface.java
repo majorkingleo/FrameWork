@@ -4,160 +4,199 @@
  */
 package at.redeye.FrameWork.base;
 
-import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
-import at.redeye.FrameWork.base.bindtypes.DBValue;
 import java.util.Collection;
+
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
+import at.redeye.FrameWork.base.bindtypes.DBValue;
+
 /**
- *
+ * 
  * @author martin
  */
 public interface BindVarInterface {
 
-    static public abstract class Pair {
+	static public abstract class Pair {
 
-        public abstract void gui_to_var();
+		public abstract void gui_to_var();
 
-        public abstract void var_to_gui();
+		public abstract void var_to_gui();
 
-        public abstract Object get_first();
-        public abstract Object get_second();
-    };
+		public abstract Object get_first();
 
-    static class TextStringPair extends Pair {
+		public abstract Object get_second();
+	};
 
-        JTextField textfield;
-        StringBuffer value;
+	static class TextStringPair extends Pair {
 
-        public TextStringPair(JTextField textfield, StringBuffer value) {
-            this.textfield = textfield;
-            this.value = value;
-        }
+		JTextField textfield;
+		StringBuffer value;
 
-        public void gui_to_var() {
-            value.delete(0, value.length());
-            value.append(textfield.getText());
-        }
+		public TextStringPair(JTextField textfield, StringBuffer value) {
+			this.textfield = textfield;
+			this.value = value;
+		}
 
-        public void var_to_gui() {
-            textfield.setText(value.toString());
-        }
+		public void gui_to_var() {
+			value.delete(0, value.length());
+			value.append(textfield.getText());
+		}
 
-        @Override
-        public JTextField get_first() {
-            return textfield;
-        }
+		public void var_to_gui() {
+			textfield.setText(value.toString());
+		}
 
-        @Override
-        public StringBuffer get_second() {
-            return value;
-        }
-    }
+		@Override
+		public JTextField get_first() {
+			return textfield;
+		}
 
-     static class PasswdStringPair extends Pair
-     {
-        JPasswordField textfield;
-        StringBuffer value;
+		@Override
+		public StringBuffer get_second() {
+			return value;
+		}
+	}
 
-        public PasswdStringPair(JPasswordField textfield, StringBuffer value) {
-            this.textfield = textfield;
-            this.value = value;
-        }
+	static class ComboStringPair extends Pair {
 
-        public void gui_to_var() {
-            value.delete(0, value.length());
-            value.append(textfield.getPassword());
-        }
+		JComboBox combo;
+		DBValue value;
 
-        public void var_to_gui() {
-            textfield.setText(value.toString());
-        }
+		public ComboStringPair(JComboBox combo, DBValue value) {
+			this.combo = combo;
+			this.value = value;
+		}
 
-        @Override
-        public JTextField get_first() {
-            return textfield;
-        }
+		public void gui_to_var() {
+			Object o = combo.getSelectedItem();
+			value.loadFromString((o != null ? o.toString() : ""));
+		}
 
-        @Override
-        public StringBuffer get_second() {
-            return value;
-        }
-    }
+		public void var_to_gui() {
+			combo.setSelectedItem(value.toString());
+		}
 
+		@Override
+		public JComboBox get_first() {
+			return combo;
+		}
 
-    static class TextDBStringPair extends Pair {
+		@Override
+		public DBValue get_second() {
+			return value;
+		}
+	}
 
-        JTextField textfield;
-        DBValue value;
+	static class PasswdStringPair extends Pair {
+		JPasswordField textfield;
+		StringBuffer value;
 
-        public TextDBStringPair(JTextField textfield, DBValue value) {
-            this.textfield = textfield;
-            this.value = value;
-        }
+		public PasswdStringPair(JPasswordField textfield, StringBuffer value) {
+			this.textfield = textfield;
+			this.value = value;
+		}
 
-        public void gui_to_var() {
-            value.loadFromString(textfield.getText());
-        }
+		public void gui_to_var() {
+			value.delete(0, value.length());
+			value.append(textfield.getPassword());
+		}
 
-        public void var_to_gui() {
-            textfield.setText(value.toString());
-        }
+		public void var_to_gui() {
+			textfield.setText(value.toString());
+		}
 
-        @Override
-        public JTextField get_first() {
-            return textfield;
-        }
+		@Override
+		public JTextField get_first() {
+			return textfield;
+		}
 
-        @Override
-        public DBValue get_second() {
-            return value;
-        }
-    }
-    
-    static class FlagCheckboxPair extends Pair {
+		@Override
+		public StringBuffer get_second() {
+			return value;
+		}
+	}
 
-        JCheckBox checkbox;
-        DBFlagInteger value;
+	static class TextDBStringPair extends Pair {
 
-        public FlagCheckboxPair(JCheckBox checkbox, DBFlagInteger value) {
-            this.checkbox = checkbox;
-            this.value = value;
-        }
+		JTextField textfield;
+		DBValue value;
 
-        public void gui_to_var() {
-            if( checkbox.isSelected() )
-                value.loadFromString("X");
-            else
-                value.loadFromString(" ");
-        }
+		public TextDBStringPair(JTextField textfield, DBValue value) {
+			this.textfield = textfield;
+			this.value = value;
+		}
 
-        public void var_to_gui() {
-            if( value.getValue() != 0 )
-                checkbox.setSelected(true);
-            else
-                checkbox.setSelected(false);
-        }
+		public void gui_to_var() {
+			value.loadFromString(textfield.getText());
+		}
 
-        @Override
-        public JCheckBox get_first() {
-            return checkbox;
-        }
+		public void var_to_gui() {
+			textfield.setText(value.toString());
+		}
 
-        @Override
-        public DBFlagInteger get_second() {
-            return value;
-        }
-    }
-    
-    public void bindVar(JTextField jtext, StringBuffer var);
-    public void bindVar(JTextField jtext, DBValue var);
-    public void bindVar(JCheckBox jCDefault, DBFlagInteger _default);
-    public void var_to_gui();
-    public void gui_to_var();
+		@Override
+		public JTextField get_first() {
+			return textfield;
+		}
 
-    Collection<Pair> getBindVarPairs();
-    void addBindVarPair( Pair pair );
+		@Override
+		public DBValue get_second() {
+			return value;
+		}
+	}
+
+	static class FlagCheckboxPair extends Pair {
+
+		JCheckBox checkbox;
+		DBFlagInteger value;
+
+		public FlagCheckboxPair(JCheckBox checkbox, DBFlagInteger value) {
+			this.checkbox = checkbox;
+			this.value = value;
+		}
+
+		public void gui_to_var() {
+			if (checkbox.isSelected())
+				value.loadFromString("X");
+			else
+				value.loadFromString(" ");
+		}
+
+		public void var_to_gui() {
+			if (value.getValue() != 0)
+				checkbox.setSelected(true);
+			else
+				checkbox.setSelected(false);
+		}
+
+		@Override
+		public JCheckBox get_first() {
+			return checkbox;
+		}
+
+		@Override
+		public DBFlagInteger get_second() {
+			return value;
+		}
+	}
+
+	public void bindVar(JTextField jtext, StringBuffer var);
+
+	public void bindVar(JTextField jtext, DBValue var);
+
+	public void bindVar(JComboBox jComboBox, DBValue var);
+
+	public void bindVar(JCheckBox jCDefault, DBFlagInteger _default);
+
+	public void var_to_gui();
+
+	public void gui_to_var();
+
+	Collection<Pair> getBindVarPairs();
+
+	void addBindVarPair(Pair pair);
 }
