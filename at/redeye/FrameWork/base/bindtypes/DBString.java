@@ -64,13 +64,13 @@ public class DBString extends DBValue {
     @Override
     public DBString getCopy() {
         DBString s = new DBString( name, title, max_len );
-        s.value = new String(value);
+        s.value = value;
         return s;
     }
 
     @Override
     public void loadFromCopy(Object obj) {
-        value = new String( (String)obj );
+        value = (String)obj;
     }
     
     public int getMaxLen()
