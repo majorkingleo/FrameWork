@@ -13,7 +13,6 @@ package at.redeye.FrameWork.base.translation;
 
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
-import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
 import at.redeye.FrameWork.widgets.GridLayout2;
@@ -30,13 +29,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -52,7 +51,7 @@ public class TranslationDialog extends BaseDialog {
     public static String TRANS_LAST_LEFT_COLCOUNT = "trans_last_right_colcount";
     public static String TRANS_LAST_RIGHT_COLCOUNT = "trans_last_left_colcount";
 
-    Vector<at.redeye.FrameWork.utilities.Pair<String,StringBuffer>> data = new Vector<at.redeye.FrameWork.utilities.Pair<String,StringBuffer>>();
+    Vector<SimpleEntry<String,StringBuffer>> data = new Vector<SimpleEntry<String,StringBuffer>>();
     Vector<NoticeIfChangedTextField> fields = new Vector<NoticeIfChangedTextField>();
 
     String ClassName;
@@ -209,9 +208,9 @@ public class TranslationDialog extends BaseDialog {
 
                 panel.add( editField );
 
-                at.redeye.FrameWork.utilities.Pair<String,StringBuffer> pair = new at.redeye.FrameWork.utilities.Pair<String,StringBuffer>(s,new StringBuffer());
+                SimpleEntry<String,StringBuffer> pair = new SimpleEntry<String,StringBuffer>(s,new StringBuffer());
 
-                this.bindVar( editField, pair.getSecond() );
+                this.bindVar( editField, pair.getValue() );
 
                 fields.add(editField);
 
@@ -576,11 +575,11 @@ public class TranslationDialog extends BaseDialog {
 
                 Properties props = new Properties();
 
-                for( at.redeye.FrameWork.utilities.Pair<String,StringBuffer> pair : data )
+                for( SimpleEntry<String,StringBuffer> pair : data )
                 {
-                    if( pair.getSecond().length() > 0 )
+                    if( pair.getValue().length() > 0 )
                     {
-                        props.setProperty(pair.getFirst(), pair.getSecond().toString());
+                        props.setProperty(pair.getKey(), pair.getValue().toString());
                     }
                 }
 
@@ -739,11 +738,11 @@ public class TranslationDialog extends BaseDialog {
             in.close();
          }
 
-         for(at.redeye.FrameWork.utilities.Pair<String,StringBuffer> p : data )
+         for(SimpleEntry<String,StringBuffer> p : data )
          {
-             String trans = props.getProperty(p.getFirst());
+             String trans = props.getProperty(p.getKey());
 
-             StringBuffer buf = p.getSecond();
+             StringBuffer buf = p.getValue();
              buf.setLength(0);
 
              if( trans != null )
