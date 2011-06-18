@@ -92,4 +92,46 @@ public class ColumnAttribute {
 		hasIndex = value;
 	}
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.primaryKey ? 1 : 0);
+        hash = 67 * hash + (this.hasIndex ? 1 : 0);
+        hash = 67 * hash + (this.datatype != null ? this.datatype.hashCode() : 0);
+        hash = 67 * hash + this.width;
+        return hash;
+    }
+    
+    @Override
+    public boolean equals( Object other )
+    {
+        if( other == null )
+            return false;
+        
+        if( other == this )
+            return true;
+        
+        if( other instanceof ColumnAttribute )
+        {
+            ColumnAttribute attr = (ColumnAttribute)other;
+            
+            if( this.hasIndex != attr.hasIndex )
+                return false;
+            
+            if( this.primaryKey != attr.primaryKey )
+                return false;            
+            
+            if( this.width != attr.width )
+                return false;            
+            
+            if( this.datatype != attr.datatype )
+                return false;
+            
+            return true;            
+            
+        } 
+            
+        return false;
+    }
+
 }
