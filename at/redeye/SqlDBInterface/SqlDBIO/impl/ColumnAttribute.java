@@ -30,6 +30,22 @@ public class ColumnAttribute {
 
 	}
 
+	public ColumnAttribute(boolean primaryKey, DBDataType datatype, int width) {	
+
+		this.primaryKey = primaryKey;
+		this.datatype = datatype;        
+        this.width = width;
+
+	}    
+    
+    public ColumnAttribute( DBDataType datatype, int width) {	
+		
+		this.datatype = datatype;        
+        this.width = width;
+
+	}    
+    
+    
 	/**
 	 * 
 	 * @return the primaryKey
@@ -132,6 +148,28 @@ public class ColumnAttribute {
         } 
             
         return false;
+    }
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append(datatype);
+        
+        if( width > 0 ) {
+            sb.append("(");
+            sb.append(width);
+            sb.append(")");
+        }
+        
+        if( this.primaryKey  )
+            sb.append( " Primary");
+        
+        if( this.hasIndex )
+            sb.append( " Index");               
+        
+        return sb.toString();
     }
 
 }
