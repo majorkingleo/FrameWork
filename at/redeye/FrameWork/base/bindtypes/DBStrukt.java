@@ -45,6 +45,11 @@ public abstract class DBStrukt {
 		element_by_name.put(value.getName().toUpperCase(), value);
 	}
 
+        /**
+         * removes an element. The DBValue has to be from the same instance
+         * as this object
+         * @param value 
+         */
 	public void remove(DBValue value) {
 		elements.remove(value);
 		element_by_name.remove(value.getName().toUpperCase());
@@ -111,10 +116,22 @@ public abstract class DBStrukt {
 		return strukt_name;
 	}
 
+        /**
+         * Get DBValue by its index. Each member that is added to DBStrukt by using the add()
+         * method is stored in a vector. So the elements can also be accessed by the idx of this
+         * vector.
+         * @param idx
+         * @return DBValue 
+         */
 	public DBValue getValue(int idx) {
 		return elements.get(idx);
 	}
 
+        /**
+         * retuns the DBValue by searching the element by its name by using DBValue.getName() function
+         * @param val
+         * @return
+         */
 	public DBValue getValue(DBValue val) {
 		return getValue(val.getName());
 	}
