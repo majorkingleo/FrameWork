@@ -211,4 +211,29 @@ public interface BaseDialogBase
     public String MlM( String message );
 
     public Timer getAutoRefreshTimer();
+    
+    
+    /**
+     * Returns the minimum size of this container.  If the minimum size has
+     * not been set explicitly by {@link Component#setMinimumSize(Dimension)}
+     * and this {@code Container} has a {@code non-null} {@link LayoutManager},
+     * then {@link LayoutManager#minimumLayoutSize(Container)}
+     * is used to calculate the minimum size.
+     *
+     * <p>Note: some implementations may cache the value returned from the
+     * {@code LayoutManager}.  Implementations that cache need not invoke
+     * {@code minimumLayoutSize} on the {@code LayoutManager} every time
+     * this method is invoked, rather the {@code LayoutManager} will only
+     * be queried after the {@code Container} becomes invalid.
+     *
+     * @return    an instance of <code>Dimension</code> that represents
+     *                the minimum size of this container.
+     * @see       #getPreferredSize
+     * @see       #getMaximumSize
+     * @see       #getLayout
+     * @see       LayoutManager#minimumLayoutSize(Container)
+     * @see       Component#getMinimumSize
+     * @since     JDK1.1
+     */
+    public Dimension getMinimumSize();
 }
