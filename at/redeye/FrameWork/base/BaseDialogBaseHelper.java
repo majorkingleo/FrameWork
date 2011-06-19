@@ -229,6 +229,7 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 		registerActionKeyListener(
 				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), new Runnable() {
 
+            @Override
 					public void run() {
 						if (parent.canClose()) {
 							parent.close();
@@ -831,6 +832,7 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 	 *            dann der demenstprechende Inhalt entweder vom GUI zu
 	 *            Variablen, oder umgekehrt übertragen.
 	 */
+    @Override
 	public void bindVar(JTextField jtext, StringBuffer var) {
 
 		checkBindVars();
@@ -869,6 +871,7 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 	 *            dann der demenstprechende Inhalt entweder vom GUI zu
 	 *            Variablen, oder umgekehrt übertragen.
 	 */
+    @Override
 	public void bindVar(JTextField jtext, DBValue var) {
 
 		checkBindVars();
@@ -888,6 +891,7 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 	 *            dann der demenstprechende Inhalt entweder vom GUI zu
 	 *            Variablen, oder umgekehrt übertragen.
 	 */
+    @Override
 	public void bindVar(JComboBox jcombo, DBValue var) {
 
 		checkBindVars();
@@ -959,6 +963,7 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 		this.bind_vars = bind_vars;
 	}
 
+    @Override
 	public Collection<Pair> getBindVarPairs() {
 
 		checkBindVars();
@@ -966,6 +971,7 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 		return bind_vars.getBindVarPairs();
 	}
 
+    @Override
 	public void addBindVarPair(Pair pair) {
 		checkBindVars();
 
