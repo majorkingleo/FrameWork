@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -51,35 +52,34 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 	}
 
-	protected Object processTypeValue(ResultSet rs, DBDataType sourceType,
-			int index) throws UnsupportedDBDataTypeException, SQLException {
-
-		String result = null;
+	protected static Object processTypeValue(ResultSet rs, DBDataType sourceType,
+			int index) throws UnsupportedDBDataTypeException, SQLException {		
 
 		switch (sourceType) {
 
 		case DB_TYPE_DOUBLE:
-			return (new Double(rs.getDouble(index)));
+			return (Double)rs.getDouble(index);
 
 		case DB_TYPE_FLOAT:
-			return (new Float(rs.getFloat(index)));
+			return (Float)rs.getFloat(index);
 
 		case DB_TYPE_INTEGER:
-			return (new Integer(rs.getInt(index)));
+			return (Integer)rs.getInt(index);
 
 		case DB_TYPE_LONG:
-			return (new Long(rs.getLong(index)));
+			return (Long)rs.getLong(index);
 
-		case DB_TYPE_STRING:
-			result = rs.getString(index);
+		case DB_TYPE_STRING: {
+			String result = rs.getString(index);
 			return (result == null ? "" : result.trim());
+        }
 
 		case DB_TYPE_SHORT:
-			return (new Short(rs.getShort(index)));
+			return (Short)rs.getShort(index);
 
 		case DB_TYPE_BOOLEAN:
 		case DB_TYPE_BIT:
-			return (rs.getBoolean(index));
+			return (Boolean)rs.getBoolean(index);
 
 		case DB_TYPE_DATE: // FT
 		case DB_TYPE_TIME: // FT
@@ -87,9 +87,10 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 			return new Date(rs.getTimestamp(index).getTime());
 
-		case DB_TYPE_BLOB:
+		case DB_TYPE_BLOB: {
 			byte[] bytes = rs.getBytes(index);
 			return bytes;
+        }
 
 		default:
 			throw new UnsupportedDBDataTypeException("DataType "
@@ -190,20 +191,22 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 		s = conn.prepareStatement(stmt);
 		ResultSet rs = s.executeQuery();
-
-		Set<String> keys = typelist.keySet();
+        
+        // Set<String> keys = typelist.keySet();
+        
+        Set<Entry<String, ColumnAttribute>> keys_and_types = typelist.entrySet();
 
 		while (rs.next()) {
 
 			wholeRow = new HashMap<String, Object>();
 
-			Iterator<String> iter = keys.iterator();
+			// Iterator<String> iter = keys.iterator();
 			int counter = 1;
-			while (iter.hasNext()) {
-				String currkey = iter.next();
+			for (Entry<String,ColumnAttribute> entry : keys_and_types) {
+				
 				wholeRow.put(
-						currkey,
-						processTypeValue(rs, typelist.get(currkey)
+						entry.getKey(),
+						processTypeValue(rs, entry.getValue()
 								.getDatatype(), counter));
 				counter++;
 

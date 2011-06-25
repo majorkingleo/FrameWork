@@ -42,7 +42,7 @@ public abstract class DBStrukt {
 
 	public void add(DBValue value) {
 		elements.add(value);
-		element_by_name.put(value.getName().toUpperCase(), value);
+		element_by_name.put(value.getName().toLowerCase(), value);
 	}
 
         /**
@@ -52,12 +52,12 @@ public abstract class DBStrukt {
          */
 	public void remove(DBValue value) {
 		elements.remove(value);
-		element_by_name.remove(value.getName().toUpperCase());
+		element_by_name.remove(value.getName().toLowerCase());
 	}
 
 	public void add(DBValue value, Integer version) {
 		elements.add(value);
-		element_by_name.put(value.getName().toUpperCase(), value);
+		element_by_name.put(value.getName().toLowerCase(), value);
 		elements_with_version.add(new SimpleEntry<Integer, DBValue>(version,
 				value));
 
@@ -76,30 +76,31 @@ public abstract class DBStrukt {
 	}
 
 	public void consume(HashMap<String, Object> map, String prefix) {
-		Set<String> keys = map.keySet();
-
-		for (String key : keys) {
-			if (prefix != null && key.length() <= prefix.length())
-				continue;
-
-			String k;
+		// Set<String> keys = map.keySet();
+        
+        Set<Entry<String, Object>> entries = map.entrySet();
+        String k;
+        
+		for (Entry<String, Object> entry : entries) {
+			if (prefix != null && entry.getKey().length() <= prefix.length())
+				continue;			
 
 			if (prefix != null)
-				k = key.substring(prefix.length());
+				k = entry.getKey().substring(prefix.length());
 			else
-				k = key;
+				k = entry.getKey();
 
 			DBValue val = getValueByName(k);
 
 			if (val != null) {
-				val.loadFromDB(map.get(key));
+				val.loadFromDB(entry.getValue());
 				continue;
 			}
 
 			for (int i = 0; i < sub_strukts.size(); i++) {
 				DBStrukt strukt = sub_strukts.get(i);
 
-				if (k.startsWith(strukt.getName() + "_")) {
+				if (k.startsWith(strukt.getName()) && (k.charAt(strukt.getName().length()) == '_')) {                    
 					if (prefix != null)
 						strukt.consume(map, prefix + strukt.getName() + "_");
 					else
@@ -108,7 +109,6 @@ public abstract class DBStrukt {
 					break;
 				}
 			}
-
 		}
 	}
 
@@ -302,7 +302,7 @@ public abstract class DBStrukt {
 	}
 
 	private DBValue getValueByName(String key) {
-		return element_by_name.get(key.toUpperCase());
+		return element_by_name.get(key.toLowerCase());
 
 		/*
 		 * 
