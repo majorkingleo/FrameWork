@@ -164,6 +164,10 @@ public class LocalRoot extends Root {
 
 		try {
 			if (enc == null) {
+                            if( loader_encryption == null ) {
+                                return passwd;
+                            }
+                            
 				long start = System.currentTimeMillis();
 
 				loader_encryption.join();
