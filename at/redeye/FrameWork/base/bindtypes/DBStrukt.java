@@ -12,9 +12,8 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Vector;
-
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import java.util.ArrayList;
 
 /**
  * @author martin
@@ -24,11 +23,11 @@ public abstract class DBStrukt {
 
 	protected String strukt_name;
 	protected String title;
-	public Vector<DBValue> elements = new Vector<DBValue>();
-	public HashMap<String, DBValue> element_by_name = new HashMap<String, DBValue>();
-	public Vector<DBStrukt> sub_strukts = new Vector<DBStrukt>();
+	protected ArrayList<DBValue> elements = new ArrayList<DBValue>();
+	protected HashMap<String, DBValue> element_by_name = new HashMap<String, DBValue>();
+	protected ArrayList<DBStrukt> sub_strukts = new ArrayList<DBStrukt>();
 	protected Integer version = null;
-	protected Vector<Entry<Integer, DBValue>> elements_with_version = new Vector<Entry<Integer, DBValue>>();
+	protected ArrayList<Entry<Integer, DBValue>> elements_with_version = new ArrayList<Entry<Integer, DBValue>>();
 
 	public DBStrukt(String name) {
 		this.strukt_name = name;
@@ -249,8 +248,8 @@ public abstract class DBStrukt {
 		return colls;
 	}
 
-	public Vector<DBValue> getAllValues() {
-		Vector<DBValue> values = new Vector<DBValue>();
+	public ArrayList<DBValue> getAllValues() {
+		ArrayList<DBValue> values = new ArrayList<DBValue>();
 
 		for (int i = 0; i < elements.size(); i++) {
 			DBValue val = elements.get(i);
@@ -267,12 +266,12 @@ public abstract class DBStrukt {
 		return values;
 	}
 
-	public Vector<String> getAllNames() {
+	public ArrayList<String> getAllNames() {
 		return getAllNames("");
 	}
 
-	protected Vector<String> getAllNames(String prefix) {
-		Vector<String> values = new Vector<String>();
+	protected ArrayList<String> getAllNames(String prefix) {
+		ArrayList<String> values = new ArrayList<String>();
 
 		for (int i = 0; i < elements.size(); i++) {
 			DBValue val = elements.get(i);

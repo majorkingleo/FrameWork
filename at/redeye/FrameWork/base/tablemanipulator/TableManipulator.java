@@ -144,8 +144,8 @@ public class TableManipulator {
         
         Vector<TableDesign.Coll> vec = new Vector<TableDesign.Coll>();
         
-        Vector<String> names = binddesc.getAllNames();        
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<String> names = binddesc.getAllNames();        
+        ArrayList<DBValue> values = binddesc.getAllValues();
         
         for( int i = 0; i < names.size(); i++ )
         {
@@ -301,7 +301,7 @@ public class TableManipulator {
 
     public void add(DBStrukt binddesc) 
     {
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
         
         addRow( values );        
     }
@@ -318,7 +318,7 @@ public class TableManipulator {
     {
         for( DBStrukt s : col )
         {
-            Vector<DBValue> values = s.getAllValues();        
+            ArrayList<DBValue> values = s.getAllValues();        
             
             addRow( values, false );
         }
@@ -356,13 +356,13 @@ public class TableManipulator {
         }                       
     }
 
-    public void addRow( Vector<?> data )
+    public void addRow( Collection<?> data )
     {
         addRow(data,true);
     }
 
     
-    private void addRow( Vector<?> data, boolean update_ui )
+    private void addRow( Collection<?> data, boolean update_ui )
     {
         /* Wir müssen hier einen 2. Vector anlegen,
          * da der eine an die Tabelle angebunden wird
@@ -380,14 +380,15 @@ public class TableManipulator {
         Vector<Object> table_copy = new Vector<Object>();
         Vector<Object> db_copy = new Vector<Object>();
         
-        for( int i = 0; i < data.size(); i++ )
+        int i = 0;
+        for( Object d : data )
         {
             if( !hidden_values.contains(i) ) {
-                table_copy.add( data.get(i) );
-                db_copy.add( data.get(i) );
+                table_copy.add( d );
+                db_copy.add( d );
             }
-            // else
-            //    System.out.println( "ignored" );
+            i++;
+
         }
         
         model.addRow(table_copy);
@@ -482,7 +483,7 @@ public class TableManipulator {
     
     public void setEditable( DBValue column, boolean isEditable )
     {
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
         
         for( int i = 0, col=0; i < values.size(); i++ )
         {
@@ -506,7 +507,7 @@ public class TableManipulator {
      * @param doAutocomplete
      */
     public void setAutoCompleteForAllOfThisColl(DBValue column, boolean doAutocomplete) {
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
 
         for (int i = 0, col = 0; i < values.size(); i++) {
             if (isHidden(i)) {
@@ -528,7 +529,7 @@ public class TableManipulator {
      * @param doAutocomplete
      */
     public void setAutoCompleteForCollAtAll(DBValue column, boolean doAutocomplete) {
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
 
         for (int i = 0, col = 0; i < values.size(); i++) {
             if (isHidden(i)) {
@@ -547,7 +548,7 @@ public class TableManipulator {
 
     public void setValidator(DBValue column,TableValidator validator) 
     {
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
         
         for( int i = 0, col=0; i < values.size(); i++ )
         {
@@ -566,7 +567,7 @@ public class TableManipulator {
      
     public void setAdditionalAutocompleteData( DBValue column, Vector<Object> data )
     {
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
 
         for( int i = 0, col=0; i < values.size(); i++ )
         {
@@ -590,7 +591,7 @@ public class TableManipulator {
             if( column == null )
                 continue;
 
-            Vector<DBValue> values = binddesc.getAllValues();
+            ArrayList<DBValue> values = binddesc.getAllValues();
 
             boolean found = false;
 
@@ -623,7 +624,7 @@ public class TableManipulator {
 
     public void setCellColor (DBValue column, int row, Color color) {
 
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
 
 
         for( int i = 0, col=0; i < values.size(); i++ )
@@ -644,7 +645,7 @@ public class TableManipulator {
 
     public void setToolTip (DBValue column, int row, String tooltip) {
 
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
 
 
         for( int i = 0, col=0; i < values.size(); i++ )
@@ -665,7 +666,7 @@ public class TableManipulator {
 
     public void updateValue( DBValue value, int row )
     {
-        Vector<DBValue> values = binddesc.getAllValues();
+        ArrayList<DBValue> values = binddesc.getAllValues();
 
         for( int i = 0, col=0; i < values.size(); i++ )
         {
