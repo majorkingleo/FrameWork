@@ -26,6 +26,12 @@ public class DBString extends DBValue {
         super( name, title );
         this.max_len = max_len;
     }         
+
+    public DBString( String name, String title, int max_len, boolean is_already_lowercase )
+    {
+        super( name, title, is_already_lowercase );
+        this.max_len = max_len;
+    }    
     
     @Override
     public DBDataType getDBType() {

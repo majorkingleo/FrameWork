@@ -22,6 +22,7 @@ import java.util.ArrayList;
 public abstract class DBStrukt {
 
 	protected String strukt_name;
+        protected String strukt_name_lower_case;
 	protected String title;
 	protected ArrayList<DBValue> elements = new ArrayList<DBValue>();
 	protected HashMap<String, DBValue> element_by_name = new HashMap<String, DBValue>();
@@ -31,17 +32,19 @@ public abstract class DBStrukt {
 
 	public DBStrukt(String name) {
 		this.strukt_name = name;
+                strukt_name_lower_case = strukt_name.toLowerCase();
 		title = new String();
 	}
 
 	public DBStrukt(String name, String title) {
 		this.strukt_name = name;
+                strukt_name_lower_case = strukt_name.toLowerCase();
 		this.title = title;
 	}
 
 	public void add(DBValue value) {
 		elements.add(value);
-		element_by_name.put(value.getName().toLowerCase(), value);
+		element_by_name.put(value.getName(), value);
 	}
 
         /**
@@ -56,7 +59,7 @@ public abstract class DBStrukt {
 
 	public void add(DBValue value, Integer version) {
 		elements.add(value);
-		element_by_name.put(value.getName().toLowerCase(), value);
+		element_by_name.put(value.getName(), value);
 		elements_with_version.add(new SimpleEntry<Integer, DBValue>(version,
 				value));
 
@@ -110,10 +113,66 @@ public abstract class DBStrukt {
 			}
 		}
 	}
+        
+        /**
+         * Same as consume(), but all column names has to be lower case 
+         * @param map
+         */
+	public void consumeFast(HashMap<String, Object> map) {
+		consumeFast(map, null);
+	}        
+        
+        /**
+         * Same as consume(), but all column names and the prefix has to be lower case 
+         * @param map
+         * @param prefix 
+         */
+	public void consumeFast(HashMap<String, Object> map, String prefix) {        
+
+        Set<Entry<String, Object>> entries = map.entrySet();
+        String k;
+
+        for (Entry<String, Object> entry : entries) {
+            if (prefix != null && entry.getKey().length() <= prefix.length()) {
+                continue;
+            }
+
+            if (prefix != null) {
+                k = entry.getKey().substring(prefix.length());
+            } else {
+                k = entry.getKey();
+            }
+
+            DBValue val = getValueByNameLowerCase(k);
+
+            if (val != null) {
+                val.loadFromDB(entry.getValue());
+                continue;
+            }
+
+            for (int i = 0; i < sub_strukts.size(); i++) {
+                DBStrukt strukt = sub_strukts.get(i);
+
+                if (k.startsWith(strukt.getName()) && (k.charAt(strukt.getName().length()) == '_')) {
+                    if (prefix != null) {
+                        strukt.consumeFast(map, prefix + strukt.getNameLowerCase() + "_");
+                    } else {
+                        strukt.consumeFast(map, strukt.getNameLowerCase() + "_");
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
 
 	public String getName() {
 		return strukt_name;
 	}
+        
+	public String getNameLowerCase() {
+		return strukt_name_lower_case;
+	}        
 
         /**
          * Get DBValue by its index. Each member that is added to DBStrukt by using the add()
@@ -302,6 +361,24 @@ public abstract class DBStrukt {
 
 	private DBValue getValueByName(String key) {
 		return element_by_name.get(key.toLowerCase());
+
+		/*
+		 * 
+		 * for( int i = 0; i < elements.size(); i++ ) { if(
+		 * key.equalsIgnoreCase(elements.get(i).getName()) ) return
+		 * elements.get(i); }
+		 * 
+		 * return null;
+		 */
+	}
+        
+        /**
+         * find Value by name without converting the name to lower case
+         * @param key has to be lower case 
+         * @return 
+         */
+        private DBValue getValueByNameLowerCase(String key) {
+		return element_by_name.get(key);
 
 		/*
 		 * 

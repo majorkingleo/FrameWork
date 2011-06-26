@@ -140,7 +140,7 @@ public abstract class Transaction {
 
 		for (int i = 0; i < result.size(); i++) {
 			DBStrukt strukt = binddesc.getNewOne();
-			strukt.consume(result.get(i));
+			strukt.consumeFast(result.get(i));
 			res.add(strukt);
 		}
 
@@ -168,7 +168,7 @@ public abstract class Transaction {
 
 		for (int i = 0; i < result.size(); i++) {
 			DBStrukt strukt = binddesc.getNewOne();
-			strukt.consume(result.get(i));
+			strukt.consumeFast(result.get(i));
 			res.add((T) strukt);
 		}
 
@@ -197,7 +197,7 @@ public abstract class Transaction {
 
 		for (int i = 0; i < result.size(); i++) {
 			DBStrukt strukt = binddesc.getNewOne();
-			strukt.consume(result.get(i));
+			strukt.consumeFast(result.get(i));
 			res.add(i, (T) strukt);
 		}
 
@@ -241,7 +241,7 @@ public abstract class Transaction {
 		if (res == null)
 			return false;
 
-		binddesc.consume(res);
+		binddesc.consumeFast(res);
 
 		return true;
 	}

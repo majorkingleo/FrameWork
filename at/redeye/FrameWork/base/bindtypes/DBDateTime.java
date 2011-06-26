@@ -28,15 +28,17 @@ public class DBDateTime extends DBValue {
 	protected Date value = new Date(0);
 
 	public DBDateTime(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
+		super(name);	
 	}
 
 	public DBDateTime(String name, String title) {
-		super(name, title);
-		// TODO Auto-generated constructor stub
+		super(name, title);		
 	}
 
+	public DBDateTime(String name, String title, boolean name_is_already_lowercase) {
+		super(name, title, name_is_already_lowercase);		
+        }        
+        
 	@Override
 	public boolean acceptString(String s) {
 		return false;

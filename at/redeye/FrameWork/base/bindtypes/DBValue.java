@@ -17,14 +17,15 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
  */
 public abstract class DBValue {
     
-    protected String name = new String();
-    protected String title = new String();
+    protected String name;
+    protected String title;
     protected boolean is_primary_key = false;
     protected boolean create_index = false;
     
     public DBValue( String name )
     {
         this.name = name.toLowerCase();
+        this.title = "";
     }
     
     public DBValue( String name, String title )
@@ -32,15 +33,28 @@ public abstract class DBValue {
         this.name = name.toLowerCase();
         this.title = title;
     }
-   
+
+    public DBValue( String name, String title, boolean name_is_already_lowercase )
+    {
+        if( name_is_already_lowercase )
+            this.name = name;
+        else 
+            this.name = name.toLowerCase();
+        
+        this.title = title;
+    }
+    
     public abstract DBDataType getDBType();
     public abstract void loadFromDB( Object obj );
     public abstract void loadFromString( String s );
     public abstract boolean acceptString( String s );
     public abstract void loadFromCopy( Object obj );
     
+    /**     
+     * @return the name of this value in lower case letters. 
+     */
     public String getName() {
-        return name.toLowerCase();
+        return name;
     }
     
     public void setName( String name )

@@ -12,12 +12,12 @@ import java.util.Date;
  * @author martin
  */
 public class DBHistory extends DBStrukt {
-    public DBDateTime  an_zeit = new DBDateTime( "anzeit", "Anlegezeit" );
-    public DBDateTime  lo_zeit = new DBDateTime( "lozeit", "L\u00f6schzeit" );
-    public DBDateTime  ae_zeit = new DBDateTime( "aezeit", "\u00c4nderungszeit" );
-    public DBString  an_user = new DBString( "anuser", "Anlegebenutzer", 30 );
-    public DBString  lo_user = new DBString( "louser", "L\u00f6schbenutzer", 30 );
-    public DBString  ae_user = new DBString( "aeuser", "\u00c4nderungsbenutzer", 30 );
+    public DBDateTime  an_zeit = new DBDateTime( "anzeit", "Anlegezeit", true );
+    public DBDateTime  lo_zeit = new DBDateTime( "lozeit", "L\u00f6schzeit", true );
+    public DBDateTime  ae_zeit = new DBDateTime( "aezeit", "\u00c4nderungszeit", true  );
+    public DBString  an_user = new DBString( "anuser", "Anlegebenutzer", 30, true );
+    public DBString  lo_user = new DBString( "louser", "L\u00f6schbenutzer", 30, true );
+    public DBString  ae_user = new DBString( "aeuser", "\u00c4nderungsbenutzer", 30, true );
     
     public DBHistory( String name )
     {
