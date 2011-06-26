@@ -24,27 +24,23 @@ public abstract class DBStrukt {
 	protected String strukt_name;
         protected String strukt_name_lower_case;
 	protected String title;
-	protected ArrayList<DBValue> elements = new ArrayList<DBValue>();
 	protected HashMap<String, DBValue> element_by_name = new HashMap<String, DBValue>();
 	protected ArrayList<DBStrukt> sub_strukts = new ArrayList<DBStrukt>();
 	protected Integer version = null;
 	protected ArrayList<Entry<Integer, DBValue>> elements_with_version = new ArrayList<Entry<Integer, DBValue>>();
 
 	public DBStrukt(String name) {
-		this.strukt_name = name;
-                strukt_name_lower_case = strukt_name.toLowerCase();
+		this.strukt_name = name;                
 		title = new String();
 	}
 
 	public DBStrukt(String name, String title) {
-		this.strukt_name = name;
-                strukt_name_lower_case = strukt_name.toLowerCase();
+		this.strukt_name = name;                
 		this.title = title;
 	}
 
 	public void add(DBValue value) {
-		elements.add(value);
-		element_by_name.put(value.getName(), value);
+		add(value,1);		
 	}
 
         /**
@@ -52,13 +48,20 @@ public abstract class DBStrukt {
          * as this object
          * @param value 
          */
-	public void remove(DBValue value) {
-		elements.remove(value);
-		element_by_name.remove(value.getName().toLowerCase());
+	public void remove(DBValue value) {		
+		element_by_name.remove(value.getName());
+                
+                for( Entry<Integer, DBValue> entry : elements_with_version ) 
+                {
+                    if( entry.getValue().getName().equals(value.getName()) )
+                    {
+                        elements_with_version.remove(entry);
+                        break;
+                    }
+                }
 	}
 
-	public void add(DBValue value, Integer version) {
-		elements.add(value);
+	public void add(DBValue value, Integer version) {		
 		element_by_name.put(value.getName(), value);
 		elements_with_version.add(new SimpleEntry<Integer, DBValue>(version,
 				value));
@@ -121,18 +124,39 @@ public abstract class DBStrukt {
 	public void consumeFast(HashMap<String, Object> map) {
 		consumeFast(map, null);
 	}        
+
+        /**
+         * Same as consume(), but all column names and the prefix has to be lower case 
+         * @param map
+         * @param prefix 
+         */
+	public void consumeFast(HashMap<String, Object> map, String prefix) {
+            
+            ArrayList<String> consumed = null;
+            
+            if( !sub_strukts.isEmpty() )
+                consumed = new ArrayList<String>(map.size());
+            
+            consumeFast(map, prefix, consumed);
+        }        
         
         /**
          * Same as consume(), but all column names and the prefix has to be lower case 
          * @param map
          * @param prefix 
          */
-	public void consumeFast(HashMap<String, Object> map, String prefix) {        
+	private void consumeFast(HashMap<String, Object> map, String prefix, ArrayList<String> consumed) {        
 
         Set<Entry<String, Object>> entries = map.entrySet();
         String k;
 
         for (Entry<String, Object> entry : entries) {
+            
+            // bereits geladene Einträge überspringen
+            if( consumed != null && consumed.contains(entry.getKey()) ) {
+                    continue;
+             }
+            
             if (prefix != null && entry.getKey().length() <= prefix.length()) {
                 continue;
             }
@@ -146,7 +170,10 @@ public abstract class DBStrukt {
             DBValue val = getValueByNameLowerCase(k);
 
             if (val != null) {
-                val.loadFromDB(entry.getValue());
+                val.loadFromDB(entry.getValue()); 
+                
+                if( consumed != null )
+                    consumed.add(entry.getKey());
                 continue;
             }
 
@@ -155,9 +182,9 @@ public abstract class DBStrukt {
 
                 if (k.startsWith(strukt.getName()) && (k.charAt(strukt.getName().length()) == '_')) {
                     if (prefix != null) {
-                        strukt.consumeFast(map, prefix + strukt.getNameLowerCase() + "_");
+                        strukt.consumeFast(map, prefix + strukt.getNameLowerCase() + "_", consumed);
                     } else {
-                        strukt.consumeFast(map, strukt.getNameLowerCase() + "_");
+                        strukt.consumeFast(map, strukt.getNameLowerCase() + "_", consumed);
                     }
 
                     break;
@@ -171,7 +198,10 @@ public abstract class DBStrukt {
 	}
         
 	public String getNameLowerCase() {
-		return strukt_name_lower_case;
+            if( strukt_name_lower_case == null )
+                strukt_name_lower_case = strukt_name.toLowerCase();
+            
+            return strukt_name_lower_case;
 	}        
 
         /**
@@ -182,7 +212,7 @@ public abstract class DBStrukt {
          * @return DBValue 
          */
 	public DBValue getValue(int idx) {
-		return elements.get(idx);
+		return elements_with_version.get(idx).getValue();
 	}
 
         /**
@@ -195,15 +225,11 @@ public abstract class DBStrukt {
 	}
 
 	public DBValue getValue(String name) {
-		for (DBValue val : elements) {
-			if (val.getName().equals(name))
-				return val;
-		}
-		return null;
+		return getValueByName(name);       
 	}
 
 	public int countValues() {
-		return elements.size();
+		return elements_with_version.size();
 	}
 
 	public int countSubStrukts() {
@@ -241,8 +267,8 @@ public abstract class DBStrukt {
 			Integer Version) {
 		HashMap<String, ColumnAttribute> colls = new HashMap<String, ColumnAttribute>();
 
-		for (int i = 0; i < elements.size(); i++) {
-			DBValue val = elements.get(i);
+		for (int i = 0; i < elements_with_version.size(); i++) {
+			DBValue val = elements_with_version.get(i).getValue();
 
 			if (Version != null) {
 				if (!VersionExists(val, Version))
@@ -286,8 +312,8 @@ public abstract class DBStrukt {
 	protected HashMap<String, Object> getHashMapAndData(String prefix) {
 		HashMap<String, Object> colls = new HashMap<String, Object>();
 
-		for (int i = 0; i < elements.size(); i++) {
-			DBValue val = elements.get(i);
+		for (int i = 0; i < elements_with_version.size(); i++) {
+			DBValue val = elements_with_version.get(i).getValue();
 			colls.put(prefix + val.getName(), val.getValue());
 		}
 
@@ -310,8 +336,8 @@ public abstract class DBStrukt {
 	public ArrayList<DBValue> getAllValues() {
 		ArrayList<DBValue> values = new ArrayList<DBValue>();
 
-		for (int i = 0; i < elements.size(); i++) {
-			DBValue val = elements.get(i);
+		for (int i = 0; i < elements_with_version.size(); i++) {
+			DBValue val = elements_with_version.get(i).getValue();
 
 			values.add(val);
 		}
@@ -332,8 +358,8 @@ public abstract class DBStrukt {
 	protected ArrayList<String> getAllNames(String prefix) {
 		ArrayList<String> values = new ArrayList<String>();
 
-		for (int i = 0; i < elements.size(); i++) {
-			DBValue val = elements.get(i);
+		for (int i = 0; i < elements_with_version.size(); i++) {
+			DBValue val = elements_with_version.get(i).getValue();
 
 			if (val.getTitle().isEmpty())
 				values.add(prefix + val.getName());
@@ -391,10 +417,10 @@ public abstract class DBStrukt {
 	}
 
 	public void loadFromCopy(DBStrukt s) {
-		for (int i = 0; i < s.elements.size(); i++) {
-			DBValue val = s.elements.get(i);
+		for (int i = 0; i < s.elements_with_version.size(); i++) {
+			DBValue val = s.elements_with_version.get(i).getValue();
 
-			elements.get(i).loadFromCopy(val.getValue());
+			elements_with_version.get(i).getValue().loadFromCopy(val.getValue());
 		}
 
 		for (int i = 0; i < s.sub_strukts.size(); i++) {
