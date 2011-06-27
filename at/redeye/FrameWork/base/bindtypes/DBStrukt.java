@@ -131,21 +131,55 @@ public abstract class DBStrukt {
          * @param prefix 
          */
 	public void consumeFast(HashMap<String, Object> map, String prefix) {
+
+            FastArray consumed = null;
             
-            ArrayList<String> consumed = null;
-            
-            if( !sub_strukts.isEmpty() )
-                consumed = new ArrayList<String>(map.size());
+             if( !sub_strukts.isEmpty() )
+                consumed = new FastArray(map.size());
             
             consumeFast(map, prefix, consumed);
         }        
         
-        /**
-         * Same as consume(), but all column names and the prefix has to be lower case 
-         * @param map
-         * @param prefix 
+    /**
+     * Simple array wrapper of an initial fixed size
+     * This is much more simplier than ArrayList but it's
+     * compare method is faster, because does not call the euqal method
+     */
+    private static class FastArray
+    {
+        Object[] data;
+        int idx;
+        
+        FastArray( int capacity )
+        {
+            data = new Object[capacity];
+            idx = 0;
+        }
+        
+        void add( Object o )
+        {
+            data[idx] = o;
+            idx++;
+        }
+        
+        /**         
+         * @param o
+         * @return true if the same object was found in the array
          */
-	private void consumeFast(HashMap<String, Object> map, String prefix, ArrayList<String> consumed) {        
+        boolean contains( Object o )
+        {
+            for( int i = 0; i < idx; i++ )
+            {
+                if( data[i] == o )
+                    return true;
+            }
+            
+            return false;
+        }
+    }
+    
+
+	private void consumeFast(HashMap<String, Object> map, String prefix, FastArray consumed) {        
 
         Set<Entry<String, Object>> entries = map.entrySet();
         String k;
@@ -192,7 +226,7 @@ public abstract class DBStrukt {
             }
         }
     }
-
+    
 	public String getName() {
 		return strukt_name;
 	}
