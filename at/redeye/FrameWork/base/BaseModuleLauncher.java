@@ -66,7 +66,8 @@ public abstract class BaseModuleLauncher {
 			try {
 				arg_url = new URL(value);
 
-				System.out.println("webstarturl: " + value + " is a valid url");
+                                logger.trace("webstarturl: " + value + " is a valid url");
+				// System.out.println("webstarturl: " + value + " is a valid url");
 
 				return value;
 			} catch (MalformedURLException ex) {

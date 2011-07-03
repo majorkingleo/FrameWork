@@ -196,7 +196,7 @@ public class AutoProxyHandler
         try {
             long start = System.currentTimeMillis();
             ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
-            System.out.println("                       waited for proxy search "
+            logger.trace("                       waited for proxy search "
                     + (System.currentTimeMillis() - start));
 
             return proxySearch;
