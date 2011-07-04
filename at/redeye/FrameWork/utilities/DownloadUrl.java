@@ -107,9 +107,14 @@ public class DownloadUrl
 
         } finally {
             try {
-                stream.close();
-                out.close();
-                bis.close();
+                if( stream != null )
+                    stream.close();
+                
+                if( out != null )
+                    out.close();
+                
+                if( bis != null )
+                    bis.close();
             } catch( IOException ex ) {
                 logger.error(ex);
             }
