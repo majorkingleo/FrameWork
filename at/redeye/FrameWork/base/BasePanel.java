@@ -11,8 +11,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
+import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.widgets.datetime.IDateTimeComponent;
 
 /**
  * 
@@ -44,6 +46,11 @@ public class BasePanel extends javax.swing.JPanel implements BindVarInterface {
 	@Override
 	public void bindVar(JComboBox jComboBox, DBValue var) {
 		bind_vars.bindVar(jComboBox, var);
+	}
+
+	@Override
+	public void bindVar(IDateTimeComponent comp, DBDateTime dateTime) {
+		bind_vars.bindVar(comp, dateTime);
 	}
 
 	@Override

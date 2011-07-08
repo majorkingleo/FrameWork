@@ -11,8 +11,10 @@ import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.widgets.datetime.IDateTimeComponent;
 
 /**
  * 
@@ -83,6 +85,35 @@ public interface BindVarInterface {
 		@Override
 		public JComboBox get_first() {
 			return combo;
+		}
+
+		@Override
+		public DBValue get_second() {
+			return value;
+		}
+	}
+
+	static class DateComponentPair extends Pair {
+
+		IDateTimeComponent comp;
+		DBDateTime value;
+
+		public DateComponentPair(IDateTimeComponent comp, DBDateTime value) {
+			this.comp = comp;
+			this.value = value;
+		}
+
+		public void gui_to_var() {
+			value.loadFromString(comp.getDate());
+		}
+
+		public void var_to_gui() {
+			comp.setDate(DBDateTime.getStdString(value.getValue()));
+		}
+
+		@Override
+		public IDateTimeComponent get_first() {
+			return comp;
 		}
 
 		@Override
@@ -189,6 +220,8 @@ public interface BindVarInterface {
 	public void bindVar(JTextField jtext, DBValue var);
 
 	public void bindVar(JComboBox jComboBox, DBValue var);
+
+	public void bindVar(IDateTimeComponent comp, DBDateTime var);
 
 	public void bindVar(JCheckBox jCDefault, DBFlagInteger _default);
 

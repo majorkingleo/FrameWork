@@ -42,6 +42,7 @@ import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 
+import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
@@ -50,6 +51,7 @@ import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.FrameWork.base.translation.TranslationHelper;
 import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.NoticeIfChangedTextField;
+import at.redeye.FrameWork.widgets.datetime.IDateTimeComponent;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
@@ -897,6 +899,26 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 		checkBindVars();
 
 		bind_vars.bindVar(jcombo, var);
+	}
+
+	/**
+	 * Eine {@link IDateTimeComponent} an eine {@link DBDateTime} Variable
+	 * anbinden
+	 * 
+	 * @param comp
+	 *            die DateTime Komponente
+	 * @param dateTime
+	 *            die Datenbankvariable
+	 * 
+	 *            Bei einem Aufruf von var_to_gui(), oder gui_to_var(), wird
+	 *            dann der demenstprechende Inhalt entweder vom GUI zu
+	 *            Variablen, oder umgekehrt übertragen.
+	 */
+	public void bindVar(IDateTimeComponent comp, DBDateTime dateTime) {
+
+		checkBindVars();
+
+		bind_vars.bindVar(comp, dateTime);
 	}
 
 	/**

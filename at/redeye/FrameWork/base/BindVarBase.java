@@ -13,8 +13,10 @@ import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.widgets.datetime.IDateTimeComponent;
 
 /**
  * 
@@ -36,6 +38,11 @@ public class BindVarBase implements BindVarInterface {
 	@Override
 	public void bindVar(JCheckBox jCDefault, DBFlagInteger _default) {
 		pairs.add(new FlagCheckboxPair(jCDefault, _default));
+	}
+
+	@Override
+	public void bindVar(IDateTimeComponent comp, DBDateTime dateTime) {
+		pairs.add(new DateComponentPair(comp, dateTime));
 	}
 
 	public void bindVar(JPasswordField jtext, StringBuffer var) {

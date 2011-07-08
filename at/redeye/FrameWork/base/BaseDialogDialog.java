@@ -22,10 +22,12 @@ import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 
+import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.widgets.datetime.IDateTimeComponent;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
@@ -369,6 +371,24 @@ public class BaseDialogDialog extends javax.swing.JDialog implements
 	@Override
 	public void bindVar(JComboBox jComboBox, DBValue var) {
 		helper.bindVar(jComboBox, var);
+	}
+
+	/**
+	 * Eine {@link IDateTimeComponent} an eine {@link DBDateTime} Variable
+	 * anbinden
+	 * 
+	 * @param comp
+	 *            die DateTime-Komponente
+	 * @param dateTime
+	 *            die Datebanvariable
+	 * 
+	 *            Bei einem Aufruf von var_to_gui(), oder gui_to_var(), wird
+	 *            dann der demenstprechende Inhalt entweder vom GUI zu
+	 *            Variablen, oder umgekehrt übertragen.
+	 */
+	@Override
+	public void bindVar(IDateTimeComponent comp, DBDateTime dateTime) {
+		helper.bindVar(comp, dateTime);
 	}
 
 	/**
