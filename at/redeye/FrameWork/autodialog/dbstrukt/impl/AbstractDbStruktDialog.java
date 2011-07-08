@@ -144,7 +144,7 @@ public abstract class AbstractDbStruktDialog<T extends DBStrukt> extends
 
 	private void setHistFields() {
 
-		Vector<DBStrukt> subs = dbStrukt.sub_strukts;
+		Collection<DBStrukt> subs = dbStrukt.getSubStrukts();
 		// search Hist
 		for (DBStrukt s : subs) {
 			if (s.getName().equalsIgnoreCase("hist")) {

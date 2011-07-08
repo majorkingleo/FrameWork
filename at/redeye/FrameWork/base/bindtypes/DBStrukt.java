@@ -270,6 +270,10 @@ public abstract class DBStrukt {
 		return sub_strukts.size();
 	}
 
+        public ArrayList<DBStrukt> getSubStrukts() {
+		return sub_strukts;
+	}
+        
 	public DBStrukt getSubStrukt(int idx) {
 		return sub_strukts.get(idx);
 	}
