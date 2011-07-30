@@ -34,7 +34,7 @@ public static String read_file_string(String file_name)
     FileReader fis = null;
     BufferedReader bis = null;
 
-    String res = "";
+    StringBuilder res = new StringBuilder();
 
     try {
       fis = new FileReader(file);
@@ -50,7 +50,7 @@ public static String read_file_string(String file_name)
       while (bis.ready()) {
         len = bis.read(buff);
 
-        res += new String(buff);
+        res.append(buff,0,len);
         //System.out.println(dis.readLine());
       }
 
@@ -65,7 +65,7 @@ public static String read_file_string(String file_name)
       // e.printStackTrace();
     }
 
-    return res;
+    return res.toString();
   }
 
   public static StringBuilder read_file_builder(String file_name) 
