@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.base.desktoplauncher;
 
+import at.redeye.FrameWork.base.Root;
 import java.io.File;
 
 import net.jimmc.jshortcut.JShellLink;
@@ -16,9 +17,9 @@ import net.jimmc.jshortcut.JShellLink;
  */
 public class CreateDesktopIconWin extends CreateDesktopIcon
 {
-    public CreateDesktopIconWin( String png, String ico, String gif, String app_name, String url, String app_title )
+    public CreateDesktopIconWin( Root root, String png, String ico, String gif, String app_name, String url, String app_title )
     {
-        super( png, ico, gif, app_name, url, app_title );
+        super( root, png, ico, gif, app_name, url, app_title );
 
          setCommand( "javaws \"" +  app_url + "\"" );
     }

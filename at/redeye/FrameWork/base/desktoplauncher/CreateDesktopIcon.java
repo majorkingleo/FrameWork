@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.base.desktoplauncher;
 
+import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
@@ -25,10 +26,11 @@ public abstract class CreateDesktopIcon
     String app_url;
     String app_title;
     String command;
+    Root root;
 
     protected static Logger logger = Logger.getLogger(CreateDesktopIcon.class.getName());
 
-    public CreateDesktopIcon( String icon_png, String icon_ico, String icon_gif, String app_name, String url, String app_title )
+    public CreateDesktopIcon( Root root, String icon_png, String icon_ico, String icon_gif, String app_name, String url, String app_title )
     {
         this.icon_png = icon_png;
         this.icon_ico = icon_ico;
@@ -36,6 +38,7 @@ public abstract class CreateDesktopIcon
         this.app_name = app_name;
         this.app_url = url;
         this.app_title = app_title;
+        this.root = root;
     }
 
     abstract public boolean createIcon();
@@ -50,9 +53,10 @@ public abstract class CreateDesktopIcon
         command = cmd;
     }
 
-    public static CreateDesktopIcon getInstance( String app_name, String url, String app_title )
+    public static CreateDesktopIcon getInstance( Root root, String app_name, String url, String app_title )
     {
-        return getInstance("/at/redeye/FrameWork/base/resources/icons/icon.png",
+        return getInstance(root, 
+                           "/at/redeye/FrameWork/base/resources/icons/icon.png",
                            "/at/redeye/FrameWork/base/resources/icons/icon.ico",
                            "/at/redeye/FrameWork/base/resources/icons/icon.gif",
                            app_name,
@@ -116,20 +120,20 @@ public abstract class CreateDesktopIcon
         return export_path_name;
     }
 
-    public static CreateDesktopIcon getInstance(  String icon_png, String icon_ico, String icon_gif,
+    public static CreateDesktopIcon getInstance(  Root root, String icon_png, String icon_ico, String icon_gif,
                                                   String app_name, String url, String app_title )
     {
         if( Setup.is_win_system() )
-            return new CreateDesktopIconWin(icon_png, icon_ico, icon_gif, app_name, url, app_title);
+            return new CreateDesktopIconWin(root, icon_png, icon_ico, icon_gif, app_name, url, app_title);
         else if( Setup.is_linux_system() )
-            return new CreateDesktopIconKDE(icon_png, icon_ico, icon_gif, app_name, url, app_title);
+            return new CreateDesktopIconKDE(root, icon_png, icon_ico, icon_gif, app_name, url, app_title);
 
         return null;
     }
 
     public static boolean isDesktopIconCreatingSupportedByOs()
     {
-        if( getInstance("foo", "bar", "klo")  != null )
+        if( getInstance(null, "foo", "bar", "klo")  != null )
             return true;
 
         return false;

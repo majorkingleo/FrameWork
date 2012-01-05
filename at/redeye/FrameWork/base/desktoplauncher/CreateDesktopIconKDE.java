@@ -5,9 +5,12 @@
 
 package at.redeye.FrameWork.base.desktoplauncher;
 
+import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.translation.MLHelper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  *
@@ -15,24 +18,29 @@ import java.io.IOException;
  */
 public class CreateDesktopIconKDE extends CreateDesktopIcon
 {
+    
+    MLHelper ml;
 
-    public CreateDesktopIconKDE( String png, String ico, String gif, String app_name, String url, String app_title )
+    public CreateDesktopIconKDE( Root root, String png, String ico, String gif, String app_name, String url, String app_title )
     {
-        super( png, ico, gif, app_name, url, app_title );
-
+        super( root, png, ico, gif, app_name, url, app_title );
+        
+        if( root != null )
+        {
+            ml = new MLHelper(root);
+            ml.autoLoadFile4Class(this, root.getDisplayLanguage(), "en" );
+        }
         setCommand( "javaws '" +  app_url + "'" );
     }
-
+    
     @Override
     public boolean createIcon()
     {
-        String desktop_dir = System.getProperty("user.home") + File.separator + "Desktop";
+        File file = getDesktopDir();
 
-        File file = new File( desktop_dir );
-
-        if( !file.isDirectory() )
+        if( file == null || !file.isDirectory() )
         {
-            logger.error("Directory " + file.getAbsolutePath() + " not existing. Seems not to be a KDE Desktop");
+            logger.error("Cannot find a Desktop dir. Seems not to be a KDE Desktop");
             return false;
         }
 
@@ -48,7 +56,7 @@ public class CreateDesktopIconKDE extends CreateDesktopIcon
         if( icon_name == null )
             return false;
 
-        String ini_file_name = desktop_dir + File.separator + app_name + ".desktop";
+        String ini_file_name = file.toString() + File.separator + app_name + ".desktop";
 
         File ini_file = new File(ini_file_name);
 
@@ -92,4 +100,42 @@ public class CreateDesktopIconKDE extends CreateDesktopIcon
         return true;
     }
 
+    boolean hasKDE()
+    {
+        String kde_versions[] = { ".kde", ".kde2", ".kde3", ".kde4" , ".kde5"};
+        
+        for( String kde_version : kde_versions ) {
+            File file = new File(System.getProperty("user.home") + File.separator + kde_version);
+        
+            if( file.isDirectory() )
+                return true;
+        }
+        
+        return false;
+    }
+    
+    File getDesktopDir()
+    {
+        if( !hasKDE() )
+            return null;
+
+        ArrayList<String> desktop_dirs = new ArrayList();
+
+        desktop_dirs.add(System.getProperty("user.home") + File.separator + "Desktop");
+        desktop_dirs.add(System.getProperty("user.home") + File.separator + ml.MlM("Desktop"));
+
+        for (String desktop_dir : desktop_dirs) {
+            File file = new File(desktop_dir);
+
+            if (file.isDirectory()) {                
+                return file;
+            }
+            else
+            {
+                logger.error("Directory " + file.getAbsolutePath() + " not existing. Seems not to be a KDE Desktop");
+            }
+        }
+        
+        return null;
+    }
 }

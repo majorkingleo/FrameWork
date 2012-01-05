@@ -64,12 +64,12 @@ public class DesktopLauncher
 
     public CreateDesktopIcon getInstanceForCreateDesktopIcon( String app_name, String jnlp_name, String app_title )
     {
-        return CreateDesktopIcon.getInstance(app_name, jnlp_name, app_title);
+        return CreateDesktopIcon.getInstance(root, app_name, jnlp_name, app_title);
     }
 
     public CreateDesktopIcon getInstanceForCreateDesktopIcon( String png, String ico, String gif, String app_name, String jnlp_name, String app_title )
     {
-        return CreateDesktopIcon.getInstance(png, ico, gif,app_name, jnlp_name, app_title);
+        return CreateDesktopIcon.getInstance(root, png, ico, gif,app_name, jnlp_name, app_title);
     }
 
     /**
