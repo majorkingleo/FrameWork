@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 /**
  *
@@ -159,6 +161,38 @@ public static String read_file_string(String file_name)
         // Close the input stream and return bytes
         is.close();
         return bytes;
+    }
+
+    public static byte[] getBytesResource(Class loader, String resource) throws IOException {
+        
+        InputStream stream = loader.getResourceAsStream(resource);        
+
+        if (stream == null) {
+            System.out.println("Failed loading resource:" + resource);
+            return null;
+        }
+        
+        ByteBuffer out_buffer = ByteBuffer.allocate(10);
+        
+        int c;
+        byte buffer[] = new byte[5];
+        
+        while ((c = stream.read(buffer)) != -1) {
+            
+            // enlarge if required
+            while( out_buffer.remaining() < c )
+            {
+                ByteBuffer out2_buffer = ByteBuffer.allocate(out_buffer.capacity()*2);
+                out2_buffer.put(out_buffer.array());
+                out_buffer = out2_buffer;
+            }
+            
+            out_buffer.put(buffer, 0, c);
+        }
+
+        stream.close();
+                        
+        return out_buffer.array();
     }
 
 }
