@@ -69,6 +69,8 @@ public class FrameWorkConfigDefinitions {
 
         if( Setup.is_win_system() )
             OpenCommand.value.loadFromCopy((String)"explorer");
+        else if( Setup.is_mac_system() )
+            OpenCommand.value.loadFromCopy((String)"open");
 
         addLocal(OpenCommand);
         

@@ -42,6 +42,8 @@ public abstract class Setup {
     private static final boolean b_is_win_7_system  = System.getProperty("os.name").matches("Windows 7");
     private static final boolean b_is_linux_system = System.getProperty("os.name").equals("Linux");
     private static final boolean b_is_65bit_system = System.getProperty("os.arch").contains("64");
+    private static final boolean b_is_mac = System.getProperty("os.name").toLowerCase().contains("mac");
+    private static final boolean b_is_sun = System.getProperty("os.name").toLowerCase().contains("sunos");
 
     public static boolean is_win_system()
     {
@@ -62,6 +64,16 @@ public abstract class Setup {
     {
         return b_is_65bit_system;
     }    
+    
+    public static boolean is_mac_system()
+    {
+        return b_is_mac;
+    }
+    
+    public static boolean is_sun_system()
+    {
+        return b_is_sun;
+    }
 
     public static String getHiddenUserHomeFileName( String name )
     {
