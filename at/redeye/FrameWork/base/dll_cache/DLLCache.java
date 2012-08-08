@@ -10,7 +10,9 @@ import at.redeye.FrameWork.base.Setup;
 import at.redeye.FrameWork.utilities.StringUtils;
 import java.io.File;
 import java.io.IOException;
+import java.security.AccessControlException;
 import java.util.ArrayList;
+import javax.xml.bind.PropertyException;
 import org.apache.log4j.Logger;
 
 /**
@@ -37,7 +39,12 @@ public class DLLCache
             String env = extractor.getPropertyNameForDllDir();
 
             logger.debug(env + "=" + cache_dir);
-            System.setProperty(env, cache_dir);
+            
+            try {                
+                System.setProperty(env, cache_dir);
+            } catch( AccessControlException ex ) {                
+                logger.debug("System.setProperty now allowed",ex);
+            }
         }
     }
 
@@ -68,6 +75,8 @@ public class DLLCache
                     {
                         extractor.extractDlls();
                         break;
+                    } catch( AccessControlException ex ) {
+                        logger.error(StringUtils.exceptionToString(ex));                                      
                     } catch( IOException ex ) {
                         logger.error(StringUtils.exceptionToString(ex));
                     }

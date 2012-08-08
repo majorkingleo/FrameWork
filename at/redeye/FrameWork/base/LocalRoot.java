@@ -28,6 +28,7 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseException;
 import at.redeye.UserManagement.UserManagementInterface;
 import at.redeye.UserManagement.bindtypes.DBPb;
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -395,9 +396,13 @@ public class LocalRoot extends Root {
         }
 
         if( plugin.isAvailable() )
-        {
-            plugins.add(plugin);
-            plugin.initPlugin(this);
+        {   
+            try {
+                plugin.initPlugin(this);
+                plugins.add(plugin);
+            } catch( AccessControlException ex ) {
+                logger.error(ex,ex);                
+            }            
         }
     }
 
