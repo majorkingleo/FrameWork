@@ -28,6 +28,7 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.UserManagement.UserManagementInterface;
+import org.apache.log4j.Logger;
 
 /**
  * 
@@ -35,6 +36,8 @@ import at.redeye.UserManagement.UserManagementInterface;
  */
 public class DatabaseManager implements DBManager, DBBindtypeManager {
 
+        static final Logger logger = Logger.getLogger(BaseCreateSql.class.getName());  
+    
 	protected Transaction trans = null;
 	protected BaseCreateSql createSql = null;
 	protected SupportedDBMSTypes dbmstype = null;
@@ -109,7 +112,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 
 		switch (dbmstype) {
 		case DB_MYSQL:
-			createSql = new CreateSqlMySql();
+			createSql = new CreateSqlMySql(trans);
 			break;
 
 		case DB_JAVADB:
@@ -269,6 +272,11 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 			String s1 = s.trim();
 
 			if (!s1.isEmpty()) {
+                            
+                            if( logger.isDebugEnabled()) {
+                                logger.debug("sql: " + s1);
+                            }
+                            
 				if (trans.updateValues(s1) < 0) {
 					System.out.println("SqlStatement failed: " + s1);
 					return false;

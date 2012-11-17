@@ -24,6 +24,8 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
  */
 public class ShowTablesMySql implements ShowTables {
 
+        String dbversion;
+    
 	public Collection<String> showTables(Transaction trans) throws SQLException {
 
 		String sql = "show tables";
@@ -53,6 +55,87 @@ public class ShowTablesMySql implements ShowTables {
 		return ret;
 
 	}
+        
+        public static boolean isVersionNewerThan( String dbversion, int requested_major, int requested_minor, int requestet_mminor )
+        {
+            String parts[] = dbversion.split("\\.");
+            
+            int major = 0;
+            int minor = 0;
+            int mminor = 0;
+            
+            for( int i = 0; i < parts.length; i++ )
+            {
+                if( parts[i].matches("[0-9]+") )
+                {
+                    if( i == 0 ) {
+                        major = Integer.valueOf(parts[i]);
+                    }
+                    else if( i == 1 ) {
+                        minor = Integer.valueOf(parts[i]);
+                    }
+                    else if( i == 2 ) {
+                        mminor = Integer.valueOf(parts[i]);
+                    }                  
+                } else {
+                    
+                    String s = parts[i].replaceAll("[^0-9]", "");
+                    
+                    if( s.isEmpty() )
+                        s = "0";
+                    
+                    if( i == 0 ) {
+                        major = Integer.valueOf(s);
+                    }
+                    else if( i == 1 ) {
+                        minor = Integer.valueOf(s);
+                    } else if( i == 2 ) {
+                        mminor = Integer.valueOf(s);
+                    }                    
+                }
+            }
+            
+            if( major < requested_major )
+                return false;
+            
+            if( minor < requested_minor )
+                return false;
+            
+            if( mminor < requestet_mminor )
+                return false;
+            
+            return true;
+        }
+        
+        public String getDBVersion( Transaction trans) throws SQLException
+        {
+                String sql = "SHOW VARIABLES LIKE 'version'";
+
+		List<DBDataType> args = new Vector<DBDataType>();
+		args.add(DBDataType.DB_TYPE_STRING);
+		args.add(DBDataType.DB_TYPE_STRING);
+		List<List<?>> res;
+
+		/*
+		 * Eine UnsupportedDBDataTypeException Exception sollte hier ja eher
+		 * nicht geworfen werden, weil wir sollten schon wissen, was wir tun.
+		 */
+		try {
+			res = trans.getStmtExecInterface().fetchColumnValue(sql, args);
+		} catch (UnsupportedDBDataTypeException ex) {
+			System.out.println("XXX: " + ex);
+			Logger.getLogger(ShowTablesMySql.class.getName()).log(Level.SEVERE,
+					null, ex);
+			return null;
+		}
+
+		for (int i = 0; i < res.size(); i++) {
+			String val = (String) res.get(i).get(1);
+			return val;
+		}            
+                
+                return null;
+        }
 
 	public boolean db_supports_all_requested_features(Transaction trans)
 			throws SQLException {

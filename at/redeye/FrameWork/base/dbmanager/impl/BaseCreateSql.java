@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -21,7 +22,8 @@ import java.util.Vector;
  */
 public abstract class BaseCreateSql implements BackupTableInterface {
     
-        
+    static final Logger logger = Logger.getLogger(BaseCreateSql.class.getName());        
+    
     public String createSqlforTable( DBStrukt strukt )
     {
         String res = new String();

@@ -5,14 +5,52 @@
 
 package at.redeye.FrameWork.base.dbmanager.impl;
 
+import at.redeye.FrameWork.base.bindtypes.DBStrukt;
+import at.redeye.FrameWork.base.transaction.Transaction;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
+import java.sql.SQLException;
 
 /**
  *
  * @author martin
  */
 public class CreateSqlMySql extends BaseCreateSql {
-    /* nothing todo */
+    /* nothing todo */        
+    
+    private Transaction trans;
+    private String dbversion;
+    int max_varchar_length = 255;
+    
+    public CreateSqlMySql( Transaction trans )
+    {
+        this.trans = trans;
+    }
+    
+    public CreateSqlMySql()
+    {
+        
+    }    
+    
+    @Override
+    public String createSqlforTable( DBStrukt strukt )
+    {
+        if( trans != null ) {
+            try {
+                ShowTablesMySql show_tables = new ShowTablesMySql();
+                dbversion = show_tables.getDBVersion(trans);
+                
+                if( show_tables.isVersionNewerThan(dbversion,5,0,3) ) {
+                    max_varchar_length = 65535;
+                }
+                
+            } catch( SQLException ex ) {
+                logger.error(ex,ex);
+                throw new RuntimeException(ex);
+            }
+        }
+        
+        return super.createSqlforTable(strukt);
+    }
     
     @Override
     protected String addStorageInfo()
@@ -20,18 +58,22 @@ public class CreateSqlMySql extends BaseCreateSql {
         return " ENGINE='InnoDB' DEFAULT CHARSET='utf8' COLLATE='utf8_general_ci'";
     }
 
-	@Override
-	public String markColumn(String col) {
-		
-		return "`"+col+"`";
-	}
+    @Override
+    public String markColumn(String col) {
+
+        return "`" + col + "`";
+    }
     
     @Override
     protected String createSqlForRow( ColumnAttribute attr ) {
         
         switch( attr.getDatatype() )
         {
-            case DB_TYPE_STRING: return "VARCHAR(" + attr.getWidth() + ")";
+            case DB_TYPE_STRING:
+                if( attr.getWidth() > max_varchar_length && !attr.isPrimaryKey() ) {
+                    return "TEXT";
+                }
+                return "VARCHAR(" + attr.getWidth() + ")";
             case DB_TYPE_DATETIME: return "DATETIME";
             case DB_TYPE_DATE: return "DATE";            
             
