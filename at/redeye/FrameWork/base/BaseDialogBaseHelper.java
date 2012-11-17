@@ -56,6 +56,7 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.TableBindingNotRegisteredException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
+import javax.swing.*;
 
 /**
  * 
@@ -834,7 +835,7 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 	 *            dann der demenstprechende Inhalt entweder vom GUI zu
 	 *            Variablen, oder umgekehrt übertragen.
 	 */
-    @Override
+        @Override
 	public void bindVar(JTextField jtext, StringBuffer var) {
 
 		checkBindVars();
@@ -861,6 +862,38 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 		bind_vars.bindVar(jtext, var);
 	}
 
+    /**
+     * in jTextArea an eine StringBuffer anbinden
+     *
+     * @param jtext das Textfeld
+     * @param var der StringBuffer
+     *
+     * Bei einem Aufruf von var_to_gui(), oder gui_to_var(), wird dann der
+     * demenstprechende Inhalt entweder vom GUI zu Variablen, oder umgekehrt
+     * übertragen.
+     */
+    @Override
+    public void bindVar(JTextArea jtext, StringBuffer var) {
+        checkBindVars();
+        bind_vars.bindVar(jtext, var);
+    }
+
+    /**
+     * in jTextArea an eine DBValue anbinden
+     *
+     * @param jtext das Textfeld
+     * @param var der DBValue
+     *
+     * Bei einem Aufruf von var_to_gui(), oder gui_to_var(), wird dann der
+     * demenstprechende Inhalt entweder vom GUI zu Variablen, oder umgekehrt
+     * übertragen.
+     */
+    @Override
+    public void bindVar(JTextArea jtext, DBValue var) {
+        checkBindVars();
+        bind_vars.bindVar(jtext, var);
+    }  
+        
 	/**
 	 * Ein jTextField an eine DBValue anbinden
 	 * 

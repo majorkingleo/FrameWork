@@ -15,6 +15,7 @@ import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.widgets.datetime.IDateTimeComponent;
+import javax.swing.*;
 
 /**
  * 
@@ -214,8 +215,76 @@ public interface BindVarInterface {
 			return value;
 		}
 	}
+        
+    static class TextAreaDBValuePair extends Pair {
 
+        JTextArea textarea;
+        DBValue value;
+
+        public TextAreaDBValuePair(JTextArea textarea, DBValue value) {
+            this.textarea = textarea;
+            this.value = value;
+        }
+
+        @Override
+        public void gui_to_var() {
+            value.loadFromString(textarea.getText());
+        }
+
+        @Override
+        public void var_to_gui() {
+            textarea.setText(value.toString());
+        }
+
+        @Override
+        public JTextArea get_first() {
+            return textarea;
+        }
+
+        @Override
+        public DBValue get_second() {
+            return value;
+        }
+    }   
+
+    
+    static class TextAreaStringBufferPair extends Pair {
+
+        JTextArea textarea;
+        StringBuffer value;
+
+        public TextAreaStringBufferPair(JTextArea textarea, StringBuffer value) {
+            this.textarea = textarea;
+            this.value = value;
+        }
+
+        @Override
+        public void gui_to_var() {
+            value.setLength(0);
+            value.append(textarea.getText());
+        }
+
+        @Override
+        public void var_to_gui() {
+            textarea.setText(value.toString());
+        }
+
+        @Override
+        public JTextArea get_first() {
+            return textarea;
+        }
+
+        @Override
+        public StringBuffer get_second() {
+            return value;
+        }
+    }   
+    
 	public void bindVar(JTextField jtext, StringBuffer var);
+        
+        public void bindVar(JTextArea jtext, StringBuffer var);
+        
+        public void bindVar(JTextArea jtext, DBValue var);
 
 	public void bindVar(JTextField jtext, DBValue var);
 
