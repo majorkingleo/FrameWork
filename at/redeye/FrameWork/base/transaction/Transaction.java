@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 
@@ -38,6 +37,8 @@ import at.redeye.SqlDBInterface.SqlDBIO.impl.TypeRegistration;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.UnsupportedDBDataTypeException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.WrongBindFileFormatException;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.executor.DefaultStmtExecuter;
+import java.util.Map.Entry;
+import org.apache.log4j.Logger;
 import org.joda.time.LocalDate;
 
 /**
@@ -46,11 +47,13 @@ import org.joda.time.LocalDate;
  */
 public abstract class Transaction {
 
+        protected static final Logger logger = Logger.getLogger(Transaction.class.getName());
+    
 	protected DbConnectionInterface iface;
 	protected StmtExecInterface executer;
 	protected Connection conn;
 	protected ConnectionDefinition definition;
-	TypeRegistrationInterface regi;
+	protected TypeRegistrationInterface regi;
 	protected Sequence sequence;
 
 	protected Transaction() {
@@ -245,6 +248,67 @@ public abstract class Transaction {
 
 		return true;
 	}
+        
+        /**
+         * Deletes a entry using the binddescs primary key
+         * @param binddesc
+         * @return true on success, false when not found
+         * @throws UnsupportedDBDataTypeException
+         * @throws WrongBindFileFormatException
+         * @throws SQLException
+         * @throws TableBindingNotRegisteredException
+         * @throws IOException 
+         */
+	public boolean deleteWithPrimarayKey(DBStrukt binddesc)
+			throws UnsupportedDBDataTypeException,
+			WrongBindFileFormatException, SQLException,
+			TableBindingNotRegisteredException, IOException {
+		registerTable(binddesc);
+
+		String sql = "delete from " + markTable(binddesc) + " where ";
+                
+                 HashMap<String, ColumnAttribute> data = binddesc.getHashMap();
+                 
+                 int count = 0;
+                 
+                 for( Entry<String,ColumnAttribute> e : data.entrySet() )
+                 {                     
+                     if( e.getValue().isPrimaryKey() )
+                     {
+                         if( count > 0 ) {
+                             sql += ", ";
+                         }
+                     
+                        sql += markColumn(e.getKey()) + " = ";
+                        
+                        switch( e.getValue().getDatatype() )
+                        {
+                            case DB_TYPE_DOUBLE:
+                            case DB_TYPE_FLOAT:
+                            case DB_TYPE_INTEGER:
+                            case DB_TYPE_LONG:
+                            case DB_TYPE_BIT:
+                                sql += binddesc.getValue(e.getKey());
+                                break;
+                                
+                            default:
+                                sql += "'" + binddesc.getValue(e.getKey()) + "'";
+                                break;
+                        }
+                                          
+                        count++;
+                     }
+                 }
+                 
+                logger.debug(sql);
+                 
+                if( updateValues(sql) == 1 )
+                {
+                    return true;
+                }
+
+		return false;
+	}        
 
 	public int insertValues(DBStrukt binddesc)
 			throws UnsupportedDBDataTypeException,
@@ -314,26 +378,42 @@ public abstract class Transaction {
             return getPeriodStmt( column.getName(), dm_from, dm_to);
         }
 
+        /**
+         * 
+         * @param column
+         * @param dm_from
+         * @param dm_to
+         * @return
+         */
         public String getPeriodStmt(DBValue column, LocalDate dm_from,
 			LocalDate dm_to)
         {
             return getPeriodStmt( column.getName(), dm_from, dm_to);
         }
 
-	/*
-	 * return: column1 >= date && column2 < date
+	/**
+	 * @return: column1 &gt;= date && column2 &lt; date
 	 */
 	public abstract String getPeriodStmt(String column1, String column2,
 			DateMidnight date);
 
+	/**
+	 * @return: column1 &gt;= date && column2 &lt; date
+	 */        
 	public abstract String getPeriodStmt(String column1, String column2,
 			LocalDate date);
 
+	/**
+	 * @return: column1 &gt;= date && column2 &lt; date
+	 */        
 	public String getPeriodStmt(DBValue column1, DBValue column2,
 			DateMidnight dm) {
 		return getPeriodStmt(column1.getName(), column2.getName(), dm);
 	}
-
+        
+	/**         
+	 * @return: column1 &gt;= date && column2 &lt; date
+	 */
 	public String getPeriodStmt(DBValue column1, DBValue column2,
 			LocalDate dm) {
 		return getPeriodStmt(column1.getName(), column2.getName(), dm);
@@ -348,9 +428,7 @@ public abstract class Transaction {
 			WrongBindFileFormatException, TableBindingNotRegisteredException,
 			IOException {
 		if (magic != 1234567) {
-			Logger logger = Logger.getLogger(Transaction.class
-					.getCanonicalName());
-			logger.warning("Unqualified access to Sequence Value!");
+			logger.error("Unqualified access to Sequence Value!");
 		}
 
 		return sequence.getNewSequenceValue(seqName, this);
@@ -361,9 +439,7 @@ public abstract class Transaction {
 			WrongBindFileFormatException, TableBindingNotRegisteredException,
 			IOException {
 		if (magic != 1234567) {
-			Logger logger = Logger.getLogger(Transaction.class
-					.getCanonicalName());
-			logger.warning("Unqualified access to Sequence Value!");
+			logger.error("Unqualified access to Sequence Value!");
 		}
 
 		return sequence.getNewSequenceValues(seqName, number, this);
