@@ -274,11 +274,12 @@ public class MLHelper
         {
             String msg = props.getProperty(message);
 
-            if( msg == null )
+            if( msg == null ||
+                msg.trim().isEmpty() )
             {
                 addMissing( message );
                 return message;
-            }
+            } 
 
             return msg;
         }
