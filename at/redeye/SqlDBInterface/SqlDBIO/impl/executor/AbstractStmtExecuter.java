@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,45 +53,47 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 	}
 
-	protected static Object processTypeValue(ResultSet rs, DBDataType sourceType,
-			int index) throws UnsupportedDBDataTypeException, SQLException {		
+	protected static Object processTypeValue(ResultSet rs,
+			DBDataType sourceType, int index)
+			throws UnsupportedDBDataTypeException, SQLException {
 
 		switch (sourceType) {
 
 		case DB_TYPE_DOUBLE:
-			return (Double)rs.getDouble(index);
+			return (Double) rs.getDouble(index);
 
 		case DB_TYPE_FLOAT:
-			return (Float)rs.getFloat(index);
+			return (Float) rs.getFloat(index);
 
 		case DB_TYPE_INTEGER:
-			return (Integer)rs.getInt(index);
+			return (Integer) rs.getInt(index);
 
 		case DB_TYPE_LONG:
-			return (Long)rs.getLong(index);
+			return (Long) rs.getLong(index);
 
 		case DB_TYPE_STRING: {
 			String result = rs.getString(index);
 			return (result == null ? "" : result.trim());
-        }
+		}
 
 		case DB_TYPE_SHORT:
-			return (Short)rs.getShort(index);
+			return (Short) rs.getShort(index);
 
 		case DB_TYPE_BOOLEAN:
 		case DB_TYPE_BIT:
-			return (Boolean)rs.getBoolean(index);
+			return (Boolean) rs.getBoolean(index);
 
 		case DB_TYPE_DATE: // FT
 		case DB_TYPE_TIME: // FT
 		case DB_TYPE_DATETIME:
 
-			return new Date(rs.getTimestamp(index).getTime());
+			final Timestamp ts = rs.getTimestamp(index);
+			return new Date(ts == null ? 0 : ts.getTime());
 
 		case DB_TYPE_BLOB: {
 			byte[] bytes = rs.getBytes(index);
 			return bytes;
-        }
+		}
 
 		default:
 			throw new UnsupportedDBDataTypeException("DataType "
@@ -191,10 +194,11 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 		s = conn.prepareStatement(stmt);
 		ResultSet rs = s.executeQuery();
-        
-        // Set<String> keys = typelist.keySet();
-        
-        Set<Entry<String, ColumnAttribute>> keys_and_types = typelist.entrySet();
+
+		// Set<String> keys = typelist.keySet();
+
+		Set<Entry<String, ColumnAttribute>> keys_and_types = typelist
+				.entrySet();
 
 		while (rs.next()) {
 
@@ -202,12 +206,12 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 			// Iterator<String> iter = keys.iterator();
 			int counter = 1;
-			for (Entry<String,ColumnAttribute> entry : keys_and_types) {
-				
+			for (Entry<String, ColumnAttribute> entry : keys_and_types) {
+
 				wholeRow.put(
 						entry.getKey(),
-						processTypeValue(rs, entry.getValue()
-								.getDatatype(), counter));
+						processTypeValue(rs, entry.getValue().getDatatype(),
+								counter));
 				counter++;
 
 			}
@@ -468,7 +472,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	protected void setLastStmt(String lastStmt) {
 		AbstractStmtExecuter.lastStmt = lastStmt;
 	}
-    
+
 	protected PreparedStatement handleStatement(String stmt,
 			HashMap<String, Object> values) throws SQLException, IOException {
 
@@ -488,7 +492,8 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			}
 			if (data == null) {
 				throw new SQLException(
-						"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing! Column: '" + currcol + "' is null");
+						"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing! Column: '"
+								+ currcol + "' is null");
 			}
 			setPreparedStatementTypes(ps, index + 1, data);
 
