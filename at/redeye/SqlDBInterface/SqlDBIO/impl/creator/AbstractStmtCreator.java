@@ -63,7 +63,9 @@ public abstract class AbstractStmtCreator implements StmtCreatorInterface {
 		if (whereStmt != null && whereStmt.isEmpty() == false) {
 			str.append(" ").append(whereStmt);
 		}
-		logger.trace("simple select");
+		if (logger.isTraceEnabled()) {
+			logger.trace("simple select");
+		}
 		return str.toString();
 
 	}
@@ -133,7 +135,9 @@ public abstract class AbstractStmtCreator implements StmtCreatorInterface {
 				str.append(markColumnName(currcol)).append("= ?");
 			}
 		}
-		logger.trace("PK select");
+		if (logger.isTraceEnabled()) {
+			logger.trace("PK select");
+		}
 		return str.toString();
 	}
 

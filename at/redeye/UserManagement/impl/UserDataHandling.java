@@ -28,7 +28,6 @@ import at.redeye.UserManagement.bindtypes.DBPb;
 
 public class UserDataHandling implements UserManagementInterface {
 
-	private static final long serialVersionUID = 1L;
 	private static final String setUpPwd = "4ad5361a939701c0fb174f7b9e1aca43"; // initial09
 	private static final String setUpUser = "admin";
 	private static Logger logger = Logger.getLogger(UserDataHandling.class
@@ -38,23 +37,22 @@ public class UserDataHandling implements UserManagementInterface {
 	private Vector<UserManagementListener> registeredListener;
 	private boolean auto_login_feature_activated = true;
 
-        public static String MESSAGE_EMPTY_DATABASE;
-        public static String MESSAGE_USER_LOCKED;
-        public static String MESSAGE_WRONG_USERDATA;
+	public static String MESSAGE_EMPTY_DATABASE;
+	public static String MESSAGE_USER_LOCKED;
+	public static String MESSAGE_WRONG_USERDATA;
 
 	public UserDataHandling(Root root) {
 		super();
 		this.root = root;
 		registeredListener = new Vector<UserManagementListener>();
 
-                root.loadMlM4Class(this, "de");
+		root.loadMlM4Class(this, "de");
 
-                if( MESSAGE_EMPTY_DATABASE == null )
-                {
-                    MESSAGE_EMPTY_DATABASE = MlM("Keine Benutzer gefunden (Leere Datenbank!)");
-                    MESSAGE_USER_LOCKED = MlM( "Benutzer ist gesperrt!" );
-                    MESSAGE_WRONG_USERDATA = MlM( "Falsche Benutzerdaten" );
-                }
+		if (MESSAGE_EMPTY_DATABASE == null) {
+			MESSAGE_EMPTY_DATABASE = MlM("Keine Benutzer gefunden (Leere Datenbank!)");
+			MESSAGE_USER_LOCKED = MlM("Benutzer ist gesperrt!");
+			MESSAGE_WRONG_USERDATA = MlM("Falsche Benutzerdaten");
+		}
 	}
 
 	public DBPb checkUserData(String login, String pwd,
@@ -65,10 +63,9 @@ public class UserDataHandling implements UserManagementInterface {
 		return checkUserData(login, pwd, autoLoginRequested, null);
 	}
 
-        private String MlM( String message )
-        {
-            return root.MlM(message);
-        }
+	private String MlM(String message) {
+		return root.MlM(message);
+	}
 
 	/**
 	 * Checks if username and password are ok
@@ -98,8 +95,7 @@ public class UserDataHandling implements UserManagementInterface {
 				&& getEncryptedPwd(pwd).equalsIgnoreCase(setUpPwd)) {
 
 			Object[] options = { MlM("Datenbank einrichten"),
-                                             MlM("Benutzer warten"),
-                                             MlM("Abbrechen") };
+					MlM("Benutzer warten"), MlM("Abbrechen") };
 
 			int n = JOptionPane.showOptionDialog(null,
 					MlM("Möchten Sie die Datenbank einrichten,\n"

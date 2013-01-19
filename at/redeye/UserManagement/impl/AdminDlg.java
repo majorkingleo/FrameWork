@@ -18,7 +18,6 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.tablemanipulator.TableManipulator;
 import at.redeye.FrameWork.base.wizards.WizardClientActionInterface;
 import at.redeye.FrameWork.utilities.MD5Calc;
-import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.FrameWork.widgets.helpwindow.HelpWin;
 import at.redeye.SqlDBInterface.SqlDBIO.TypeRegistrationInterface;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
@@ -94,13 +93,13 @@ public class AdminDlg extends BaseDialog {
 		feed_table();
 		tm.autoResize();
 
-            registerHelpWin(new Runnable() {
+		registerHelpWin(new Runnable() {
 
-                public void run() {
-                    invokeDialog(new HelpWin(root,
-				"/at/redeye/UserManagement/resources/Help/", "AdminDlg"));
-                }
-            });            
+			public void run() {
+				invokeDialog(new HelpWin(root,
+						"/at/redeye/UserManagement/resources/Help/", "AdminDlg"));
+			}
+		});
 	}
 
 	public void feed_table() {
@@ -443,20 +442,8 @@ public class AdminDlg extends BaseDialog {
 			pbEntries.add(newPb);
 			oldPbs.add(newPb.getCopy());
 
-		} catch (SQLException ex) {
-
-			logger.error(ex);
-			logger.error(StringUtils.exceptionToString(ex));
-
-		} catch (UnsupportedDBDataTypeException ex) {
-
-			logger.error(ex);
-		} catch (WrongBindFileFormatException ex) {
-			logger.error(ex);
-		} catch (TableBindingNotRegisteredException ex) {
-			logger.error(ex);
-		} catch (IOException ex) {
-			logger.error(ex);
+		} catch (Exception ex) {
+			logger.error("Exception caught", ex);
 		}
 
 	}

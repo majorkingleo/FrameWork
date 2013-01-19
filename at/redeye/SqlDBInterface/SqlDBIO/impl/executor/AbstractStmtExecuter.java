@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import at.redeye.FrameWork.utilities.StringUtils;
 import at.redeye.SqlDBInterface.SqlDBConnection.impl.SupportedDBMSTypes;
 import at.redeye.SqlDBInterface.SqlDBIO.StmtCreatorInterface;
 import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
@@ -275,8 +274,9 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 		setLastStmt(buildTimeSuffix(stmt,
 				(System.currentTimeMillis() - fetchStartTime)));
-
-		logger.trace(lastStmt);
+		if (logger.isTraceEnabled()) {
+			logger.trace(lastStmt);
+		}
 		return wholeRow;
 	}
 
@@ -404,9 +404,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 			setLastStmt(buildTimeSuffix(stmt,
 					(System.currentTimeMillis() - fetchStartTime)));
-			logger.error(lastStmt);
-			logger.error(StringUtils.exceptionToString(ex));
-
+			logger.error(lastStmt, ex);
 			throw ex;
 		}
 
@@ -443,9 +441,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 			setLastStmt(buildTimeSuffix(stmt,
 					(System.currentTimeMillis() - fetchStartTime)));
-			logger.error(lastStmt);
-			logger.error(StringUtils.exceptionToString(ex));
-
+			logger.error(lastStmt, ex);
 			throw ex;
 		}
 

@@ -54,6 +54,8 @@ public class TypeRegistration implements TypeRegistrationInterface {
 			typeMatchTable.put("bit", DBDataType.DB_TYPE_BIT);
 
 			break;
+		default:
+			break;
 
 		}
 		typeMatchTable_ = typeMatchTable;
@@ -65,8 +67,8 @@ public class TypeRegistration implements TypeRegistrationInterface {
 	 * @param ident
 	 *            A string that defines the data type of column
 	 * @return DBDataType: The real DB_TYPE
-	 * @throws UnsupportedDBDataTypeException ,
-	 *             if type from file cannot be converted
+	 * @throws UnsupportedDBDataTypeException
+	 *             , if type from file cannot be converted
 	 */
 	public DBDataType getRealDBType(String ident)
 			throws UnsupportedDBDataTypeException {
