@@ -155,7 +155,11 @@ public class DownloadUrl
         return null;
    }
 
-    public boolean download(StringBuffer buffer) {
+   public boolean download(StringBuffer buffer) {
+           return download(buffer, null);
+   }
+   
+    public boolean download(StringBuffer buffer, String encoding) {
         BufferedReader bis = null;
         InputStream stream = null;
 
@@ -164,7 +168,14 @@ public class DownloadUrl
         try {
             stream = from.openStream();
 
-            bis = new BufferedReader(new InputStreamReader(stream));
+            if( encoding != null )
+            {
+                bis = new BufferedReader(new InputStreamReader(stream, encoding));
+            }
+            else
+            {
+                bis = new BufferedReader(new InputStreamReader(stream));
+            }
 
             int len;
 
