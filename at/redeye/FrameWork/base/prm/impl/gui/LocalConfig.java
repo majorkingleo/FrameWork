@@ -61,7 +61,7 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
         // Register all local PRM
         Set<String> keys = LocalConfigDefinitions.entries.keySet();
         for (String key : keys) {
-            LocalConfigDefinitions.get(key).addPrmListener(this);
+            LocalConfigDefinitions.get(key).addPrmListener(this);           
         }
     }
 
@@ -81,7 +81,7 @@ public class LocalConfig extends BaseDialog implements CanCloseInterface, PrmLis
         for (String key : keys) {
 
             DBConfig c = (DBConfig) vals.get(key).getCopy();
-
+            
             String val = root.getSetup().getLocalConfig(c.getConfigName(), c.getConfigValue());
 
             c.descr.loadFromCopy(MlM(c.descr.getValue()));
