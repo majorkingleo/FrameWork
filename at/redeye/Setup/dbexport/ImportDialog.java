@@ -102,9 +102,7 @@ public class ImportDialog extends BaseDialogDialog implements ProgressListener {
 
         };
 
-        importer.start();
-
-        return;
+        importer.start();       
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -174,7 +172,7 @@ public class ImportDialog extends BaseDialogDialog implements ProgressListener {
                 importer = null;
                 db_import = null;
             } catch( InterruptedException ex ) {
-                logger.error( StringUtils.exceptionToString(ex));
+                logger.error(ex,ex);
             }
         }
 
@@ -188,18 +186,22 @@ public class ImportDialog extends BaseDialogDialog implements ProgressListener {
     private javax.swing.JProgressBar jProgress;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     synchronized public void setStage(String stage) {
         jLTable.setText(stage);
     }
 
+    @Override
     synchronized public void setOverallCounter(int count) {
         jProgress.setMaximum(count);
     }
 
+    @Override
     synchronized public void setCounter(int val) {
         jProgress.setValue(val);
     }
 
+    @Override
     synchronized public boolean canContinue() {
         return !do_abort;
     }
@@ -207,6 +209,7 @@ public class ImportDialog extends BaseDialogDialog implements ProgressListener {
     private void close_later() {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 close();
                 
