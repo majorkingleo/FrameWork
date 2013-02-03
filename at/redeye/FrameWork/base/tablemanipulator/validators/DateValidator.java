@@ -28,6 +28,11 @@ public class DateValidator extends TableValidator {
 
         Date time = (Date) val.getValue();
 
+        if( time.getTime() == 0 )
+        {
+            return "";
+        }
+        
         String res = formater_time.format(time.getTime());
 
         return res;
@@ -40,7 +45,12 @@ public class DateValidator extends TableValidator {
 
     @Override
     public boolean loadToValue(DBValue val, String s, int row) {
-       
+               
+        if( s.isEmpty() ) {
+            val.loadFromDB(new Date(0));
+            return true;
+        }
+        
     	Date time = (Date) val.getValue();
         //Add dummy time for parsing
         s += " 00:00:00";
@@ -53,7 +63,10 @@ public class DateValidator extends TableValidator {
     public boolean acceptData(String data) {
         if (data.matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]") == true) {
             return true;
+        } else if( data.isEmpty() ) {
+            return true;
         }
+        
         return false;
     }
 }
