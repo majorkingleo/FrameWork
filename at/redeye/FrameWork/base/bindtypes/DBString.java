@@ -88,4 +88,8 @@ public class DBString extends DBValue {
     {
         return value.isEmpty();
     }
+
+    public boolean isEmptyTrimmed() {
+        return value.trim().isEmpty();
+    }
 }
