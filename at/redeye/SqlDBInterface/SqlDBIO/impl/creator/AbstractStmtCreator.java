@@ -114,7 +114,7 @@ public abstract class AbstractStmtCreator implements StmtCreatorInterface {
 		}
 		if (boundColumns.isEmpty()) {
 			throw new SQLException(
-					"Select is impossible:\nNo PrimaryKey columns found!");
+					"Select is impossible:\nNo PrimaryKey columns found in table " + markTableName(tablename.toUpperCase()) );
 		}
 
 		String[] tokens;
