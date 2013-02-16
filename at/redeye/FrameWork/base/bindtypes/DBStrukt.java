@@ -484,5 +484,10 @@ public abstract class DBStrukt {
 
 		return version;
 	}
+        
+        public void setTitle( String title )
+        {
+            this.title = title;
+        }
 
 }
