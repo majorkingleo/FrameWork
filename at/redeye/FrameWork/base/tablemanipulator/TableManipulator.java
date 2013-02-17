@@ -32,9 +32,11 @@ import at.redeye.FrameWork.utilities.StringUtils;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableColumnModel;
@@ -885,7 +887,7 @@ public class TableManipulator {
 
         // remember the position of each column
         // in this array
-        List<Integer> positions = new ArrayList<Integer>();
+        List<Entry<String,Integer>> positions = new ArrayList();
 
         for (int i = 0; i < table.getColumnCount(); i++) {
             DefaultTableColumnModel colModel  = (DefaultTableColumnModel) table.getColumnModel();
@@ -898,6 +900,8 @@ public class TableManipulator {
             String col_uid = uid + "_" + col.dbval.getName();
 
             String val = setup.getLocalConfig(col_uid,"");
+            
+            logger.debug(col_uid + "=" + val);
 
             if( val.isEmpty() )
                 continue;
@@ -909,11 +913,11 @@ public class TableManipulator {
                 width = Integer.parseInt(values[0]);
 
                 if( values.length > 1 )
-                    positions.add(Integer.parseInt(values[1]));
+                    positions.add( new AbstractMap.SimpleEntry<String, Integer>(col_uid,Integer.parseInt(values[1])));
 
             } catch( NumberFormatException ex ) {
                 logger.error(StringUtils.exceptionToString(ex));
-                positions.add(-1);
+                positions.add(new AbstractMap.SimpleEntry<String, Integer>(col_uid,-1));
             }
 
             if( width > 5 )
@@ -923,7 +927,17 @@ public class TableManipulator {
         if (allowReordering) {
             // Wiederherstellen der Spalten, so wie es das letzte mal
             // abgespeichert war
-
+            
+            ColumnOrder orderer = new ColumnOrder(table);
+            
+            for (int i = 0; i < positions.size(); i++) 
+            {
+                Entry<String,Integer> entry = positions.get(i);
+                orderer.addColumn(entry.getKey(), i, entry.getValue()); 
+            }
+            
+            orderer.moveColumns();
+/*
             List<Integer> dont_move_anymore = new ArrayList<Integer>();
 
             for (int i = 0; i < positions.size(); i++) {
@@ -940,6 +954,8 @@ public class TableManipulator {
                     dont_move_anymore.add(index);
                 }
             }
+            * 
+            */
         }
     }
 
