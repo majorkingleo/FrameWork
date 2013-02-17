@@ -111,14 +111,14 @@ public class ColumnOrder implements Comparator
                     model.moveColumn(order.position_now, order.position_wanted);
                     
                     // alle Spalten, die dahinter liegen eine position runterzählen
-                    for( int i = order.position_now + 1; i < columns; i++ )
+                    for( int i = order.position_now + 1; i < columns && i < order_list.size(); i++ )
                     {
                         Order o = order_list.get(i);                            
                         o.position_now--;                        
                     }
                     
                     // und jetzt alle Spalten die hinter der Einfügepositin liegen eine Spalte hinaufzählen
-                    for( int i = order.position_wanted + 1; i < columns; i++ )
+                    for( int i = order.position_wanted + 1; i < columns && i < order_list.size(); i++ )
                     {
                         Order o = order_list.get(i);                            
                         o.position_now++;                        
