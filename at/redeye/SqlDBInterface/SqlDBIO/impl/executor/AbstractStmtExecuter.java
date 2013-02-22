@@ -191,6 +191,8 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		String stmt = stmtCreator.buildStmtForTable(tablenames, whereStmt,
 				typelist);
 
+                logger.trace(stmt);
+                
 		s = conn.prepareStatement(stmt);
 		ResultSet rs = s.executeQuery();
 
