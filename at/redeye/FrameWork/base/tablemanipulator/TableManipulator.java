@@ -466,6 +466,12 @@ public class TableManipulator {
         for( int i = 0; i < tabledesign.rows.size(); i++ )
             tabledesign.edited_rows.add(i);
     }
+    
+    public void setEdited( int row) 
+    {       
+        tabledesign.edited_rows.add(row);
+    }
+    
 
     public boolean isEdited()
     {
