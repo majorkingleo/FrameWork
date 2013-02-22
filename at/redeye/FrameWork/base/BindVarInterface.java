@@ -44,11 +44,13 @@ public interface BindVarInterface {
 			this.value = value;
 		}
 
+                @Override
 		public void gui_to_var() {
 			value.delete(0, value.length());
 			value.append(textfield.getText());
 		}
 
+                @Override
 		public void var_to_gui() {
 			textfield.setText(value.toString());
 		}
@@ -74,11 +76,13 @@ public interface BindVarInterface {
 			this.value = value;
 		}
 
+                @Override
 		public void gui_to_var() {
 			Object o = combo.getSelectedItem();
 			value.loadFromString((o != null ? o.toString() : ""));
 		}
 
+                @Override
 		public void var_to_gui() {
 			combo.setSelectedItem(value.toString());
 		}
@@ -104,10 +108,12 @@ public interface BindVarInterface {
 			this.value = value;
 		}
 
+                @Override
 		public void gui_to_var() {
 			value.loadFromString(comp.getDate());
 		}
 
+                @Override
 		public void var_to_gui() {
 			comp.setDate(DBDateTime.getStdString(value.getValue()));
 		}
@@ -132,11 +138,13 @@ public interface BindVarInterface {
 			this.value = value;
 		}
 
+                @Override
 		public void gui_to_var() {
 			value.delete(0, value.length());
 			value.append(textfield.getPassword());
 		}
 
+                @Override
 		public void var_to_gui() {
 			textfield.setText(value.toString());
 		}
@@ -162,10 +170,12 @@ public interface BindVarInterface {
 			this.value = value;
 		}
 
+                @Override
 		public void gui_to_var() {
 			value.loadFromString(textfield.getText());
 		}
 
+                @Override
 		public void var_to_gui() {
 			textfield.setText(value.toString());
 		}
@@ -191,6 +201,7 @@ public interface BindVarInterface {
 			this.value = value;
 		}
 
+                @Override
 		public void gui_to_var() {
 			if (checkbox.isSelected())
 				value.loadFromString("X");
@@ -198,6 +209,7 @@ public interface BindVarInterface {
 				value.loadFromString(" ");
 		}
 
+                @Override
 		public void var_to_gui() {
 			if (value.getValue() != 0)
 				checkbox.setSelected(true);
