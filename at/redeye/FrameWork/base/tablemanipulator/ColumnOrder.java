@@ -102,32 +102,68 @@ public class ColumnOrder implements Comparator
             needs_sorting = false;
             
             sort();
-                        
+                
+            Order min_order = null;
+            
+            // suche jenen Eintrag der am weitesten nach vorne will
             for( Order order : order_list )
             {
-                if( !order.isOnWantedPosition() )
-                {                                       
-                    logger.debug( " => " + order );
-                    model.moveColumn(order.position_now, order.position_wanted);
-                    
-                    // alle Spalten, die dahinter liegen eine position runterzählen
-                    for( int i = order.position_now + 1; i < columns && i < order_list.size(); i++ )
+                if( min_order == null && !order.isOnWantedPosition() ) {
+                    min_order = order;
+                }
+                
+                if( min_order != null && !order.isOnWantedPosition() )
+                {                    
+                    if( min_order.position_wanted > order.position_wanted )
                     {
-                        Order o = order_list.get(i);                            
-                        o.position_now--;                        
+                        logger.debug(min_order.position_wanted +  " > " + order.position_wanted);
+                        min_order = order;
                     }
-                    
-                    // und jetzt alle Spalten die hinter der Einfügepositin liegen eine Spalte hinaufzählen
-                    for( int i = order.position_wanted + 1; i < columns && i < order_list.size(); i++ )
-                    {
-                        Order o = order_list.get(i);                            
-                        o.position_now++;                        
-                    }
-                    
-                    order.position_now = order.position_wanted;
-                    break;
-                }                
+                } 
             }
+            
+            {
+                Order order = null;
+
+                if (min_order == null) {
+                    // order = order_list.get(0);
+                    // finde ersten unzufriedenen
+                    for (Order o : order_list) {
+                        if (!o.isOnWantedPosition()) {
+                            order = o;
+                            break;
+                        }
+                    }
+                } else {
+                    order = min_order;
+                }
+
+                if (order != null && !order.isOnWantedPosition()) {
+                    logger.debug(" => " + order);
+                    model.moveColumn(order.position_now, order.position_wanted);
+
+                    // alle Spalten, die dahinter liegen eine position runterzählen
+                    for (int i = order.position_now + 1; i < columns && i < order_list.size(); i++) {
+                        Order o = order_list.get(i);
+                        o.position_now--;
+                    }
+
+                    // und jetzt alle Spalten die hinter der Einfügepositin liegen eine Spalte hinaufzählen
+                    for (int i = order.position_wanted; i < columns && i < order_list.size(); i++) {
+                        
+                        // mich selbst nicht hinaufzählen
+                        if( i == order.position_now )
+                            continue;
+                        
+                        Order o = order_list.get(i);
+                        o.position_now++;
+                    }
+
+                    order.position_now = order.position_wanted;
+                    //   break;
+                }      
+            }
+            
 
             
             for( Order order : order_list )
