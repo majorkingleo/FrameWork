@@ -25,7 +25,7 @@ public class ShowTablesDerby implements ShowTables {
 
 	public Collection<String> showTables(Transaction trans) throws SQLException {
 
-		String sql = "select tablename from sys.systables";
+		String sql = "select tablename from sys.systables where tabletype != 'S'"; // ohne systemtabellen
 		List<DBDataType> args = new Vector<DBDataType>();
 		args.add(DBDataType.DB_TYPE_STRING);
 		List<List<?>> res;
