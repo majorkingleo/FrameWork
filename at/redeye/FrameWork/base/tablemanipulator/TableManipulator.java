@@ -30,15 +30,13 @@ import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.utilities.StringUtils;
 
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
@@ -316,6 +314,12 @@ public class TableManipulator {
             tabledesign.edited_rows.add(tabledesign.rows.size()-1);
     }
     
+    public void add(DBStrukt strukt, boolean set_edited, boolean scrool_to_last_row ) 
+    {
+        add( strukt, set_edited);
+        scrollToLastRow();
+    }    
+    
     public <T extends DBStrukt> void addAll( Collection<T> col)
     {
         for( DBStrukt s : col )
@@ -398,9 +402,43 @@ public class TableManipulator {
 
         if( update_ui ) {
             checkRowHeaderLimit();
-            row_header.updateUI();
+            row_header.updateUI();            
         }
     }
+    
+    public void scrollToLastRow() 
+    {
+        scrollToVisible(table,model.getRowCount()-1,0);
+    }
+    
+    public void scrollToRow( int row )
+    {
+        scrollToVisible(table,row,0);
+    }
+    
+    public static void scrollToVisible(JTable table, int rowIndex, int vColIndex) {
+        if (!(table.getParent() instanceof JViewport)) {
+            return;
+        }
+        JViewport viewport = (JViewport)table.getParent();
+
+        // This rectangle is relative to the table where the
+        // northwest corner of cell (0,0) is always (0,0).
+        Rectangle rect = table.getCellRect(rowIndex, vColIndex, true);
+
+        // The location of the viewport relative to the table
+        Point pt = viewport.getViewPosition();
+
+        // Translate the cell location so that it is relative
+        // to the view, assuming the northwest corner of the
+        // view is (0,0)
+        rect.setLocation(rect.x-pt.x, rect.y-pt.y + table.getRowHeight());
+
+        table.scrollRectToVisible(rect);
+
+        // Scroll the area into view
+        viewport.scrollRectToVisible(rect);
+    }    
     
     public void clear()
     {
