@@ -28,8 +28,10 @@ public class DateValidator extends TableValidator {
 
         Date time = (Date) val.getValue();
 
-        if( time.getTime() == 0 )
-        {
+        System.out.println(time + " " + time.getTime());
+        
+        if( time.getTime() < 55000000 )
+        {            
             return "";
         }
         
