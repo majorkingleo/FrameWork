@@ -15,6 +15,7 @@ import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBFlagInteger;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.widgets.datetime.IDateTimeComponent;
+import java.util.Date;
 import javax.swing.*;
 
 /**
@@ -110,7 +111,12 @@ public interface BindVarInterface {
 
                 @Override
 		public void gui_to_var() {
-			value.loadFromString(comp.getDate());
+                    String date_str = comp.getDate();
+                    
+                    if( date_str.trim().isEmpty() )
+                        value.loadFromCopy(new Date(0));
+                    else
+                        value.loadFromString(date_str);
 		}
 
                 @Override
