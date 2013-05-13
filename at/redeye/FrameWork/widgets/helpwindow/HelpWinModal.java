@@ -7,7 +7,7 @@
 package at.redeye.FrameWork.widgets.helpwindow;
 
 import at.redeye.FrameWork.base.AutoMBox;
-import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.translation.MLUtil;
 
@@ -15,7 +15,7 @@ import at.redeye.FrameWork.base.translation.MLUtil;
  * 
  * @author martin
  */
-public class HelpWin extends BaseDialog {
+public class HelpWinModal extends BaseDialogDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -23,7 +23,7 @@ public class HelpWin extends BaseDialog {
 	HelpWinHook hook = null;
 
 	/** Creates new form HelpWin */
-	public HelpWin(Root root, String Base, String ModuleName) {
+	public HelpWinModal(Root root, String Base, String ModuleName) {
 		super(root, "Hilfe");
 
 		base = Base;
@@ -35,7 +35,7 @@ public class HelpWin extends BaseDialog {
 		loadHelp(ModuleName);
 	}
 
-	public HelpWin(Root root, String Base, String ModuleName, HelpWinHook hook) {
+	public HelpWinModal(Root root, String Base, String ModuleName, HelpWinHook hook) {
 		super(root, "Hilfe");
 
 		this.hook = hook;
@@ -96,59 +96,50 @@ public class HelpWin extends BaseDialog {
 		};
 	}
 
-	//<editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-	private void initComponents() {
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-		jScrollPane1 = new javax.swing.JScrollPane();
-		jHelp = new javax.swing.JEditorPane();
-		jBClose = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jHelp = new javax.swing.JEditorPane();
+        jBClose = new javax.swing.JButton();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-		jHelp.setContentType("text/html");
-		jHelp.setEditable(false);
-		jScrollPane1.setViewportView(jHelp);
+        jHelp.setContentType("text/html");
+        jHelp.setEditable(false);
+        jScrollPane1.setViewportView(jHelp);
 
-		jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
-		jBClose.setText("Schließen");
-		jBClose.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jBCloseActionPerformed(evt);
-			}
-		});
+        jBClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/at/redeye/FrameWork/base/resources/icons/fileclose.gif"))); // NOI18N
+        jBClose.setText("Schließen");
+        jBClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBCloseActionPerformed(evt);
+            }
+        });
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(
-														jScrollPane1,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														721, Short.MAX_VALUE)
-												.addComponent(
-														jBClose,
-														javax.swing.GroupLayout.Alignment.TRAILING))
-								.addContainerGap()));
-		layout.setVerticalGroup(layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				javax.swing.GroupLayout.Alignment.TRAILING,
-				layout.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(jScrollPane1,
-								javax.swing.GroupLayout.DEFAULT_SIZE, 469,
-								Short.MAX_VALUE).addGap(12, 12, 12)
-						.addComponent(jBClose).addContainerGap()));
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 721, Short.MAX_VALUE)
+                    .addComponent(jBClose, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addComponent(jBClose)
+                .addContainerGap())
+        );
 
-		pack();
-	}//</editor-fold>//GEN-END:initComponents
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void jBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCloseActionPerformed
 
@@ -156,11 +147,11 @@ public class HelpWin extends BaseDialog {
 
 	}//GEN-LAST:event_jBCloseActionPerformed
 
-	//Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JButton jBClose;
-	private javax.swing.JEditorPane jHelp;
-	private javax.swing.JScrollPane jScrollPane1;
-	//End of variables declaration//GEN-END:variables
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBClose;
+    private javax.swing.JEditorPane jHelp;
+    private javax.swing.JScrollPane jScrollPane1;
+    // End of variables declaration//GEN-END:variables
 
 
     
