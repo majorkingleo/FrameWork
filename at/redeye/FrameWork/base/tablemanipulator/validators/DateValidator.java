@@ -12,6 +12,7 @@ import at.redeye.FrameWork.base.bindtypes.DBDateTime;
 import at.redeye.FrameWork.base.bindtypes.DBValue;
 import at.redeye.FrameWork.base.tablemanipulator.TableValidator;
 import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -19,6 +20,8 @@ import at.redeye.SqlDBInterface.SqlDBIO.StmtExecInterface;
  */
 public class DateValidator extends TableValidator {
 
+    public static long MIN_YEAR_IN_MILLIS = new GregorianCalendar(1970,1,5).getTimeInMillis();
+    
     @Override
     public String formatData(Object data) {
         // System.out.println("HERE");
@@ -30,7 +33,7 @@ public class DateValidator extends TableValidator {
 
         System.out.println(time + " " + time.getTime());
         
-        if( time.getTime() < 55000000 )
+        if( time.getTime() < MIN_YEAR_IN_MILLIS )
         {            
             return "";
         }
