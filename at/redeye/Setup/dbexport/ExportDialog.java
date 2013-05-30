@@ -65,6 +65,9 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
             close();
             return;
         }
+        
+        if( !file.getName().toLowerCase().endsWith(".zip") )
+            file = new File( file.getPath() + ".zip" );
 
         if( factory == null )
             factory = new DBExImpFactory();
