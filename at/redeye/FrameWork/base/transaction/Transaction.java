@@ -341,6 +341,16 @@ public abstract class Transaction {
 	public String markColumn(DBValue val) {
 		return executer.getStmtCreator().markColumnName(val.getName());
 	}
+        
+        /**
+         * Erzeugt TABELLE.name paar zb: PB.login, korrekt hervorgehoben für das DBMS
+         * @param table
+         * @param column
+         * @return 
+         */
+        public String markColumn( DBStrukt table, DBValue column ) {
+            return markTable( table ) + "." + markColumn( column );
+        }
 
 	public abstract String getDayStmt(String column, DBDateTime day);
 
