@@ -23,11 +23,7 @@ import javax.swing.table.TableColumn;
 
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.base.Setup;
-import at.redeye.FrameWork.base.bindtypes.DBEnum;
-import at.redeye.FrameWork.base.bindtypes.DBEnumAsInteger;
-import at.redeye.FrameWork.base.bindtypes.DBSqlAsInteger;
-import at.redeye.FrameWork.base.bindtypes.DBStrukt;
-import at.redeye.FrameWork.base.bindtypes.DBValue;
+import at.redeye.FrameWork.base.bindtypes.*;
 import at.redeye.FrameWork.utilities.StringUtils;
 
 import java.awt.*;
@@ -632,7 +628,24 @@ public class TableManipulator {
     
     public void hide( DBValue ... columns )
     {
+        ArrayList<DBValue> col_list = new ArrayList();                
+        
         for (DBValue column : columns)
+        {
+            col_list.add(column);
+        }
+        
+        hide( col_list );                
+    }
+
+    public void hide( DBStrukt hist ) 
+    {    
+        hide( hist.getAllValues() );
+    }    
+    
+    public void hide( List<DBValue> columns ) 
+    {        
+        for (DBValue column : columns )
         {
             if( column == null )
                 continue;
@@ -655,9 +668,9 @@ public class TableManipulator {
             }
         }
         
-        configure( table, binddesc, allEditable );
-    }
-        
+        configure( table, binddesc, allEditable );                        
+    }    
+    
     
     public void stopEditing()
     {
