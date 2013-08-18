@@ -13,6 +13,7 @@ package at.redeye.Setup.dbexport;
 
 import at.redeye.FrameWork.base.AutoMBox;
 import at.redeye.FrameWork.base.BaseDialog;
+import at.redeye.FrameWork.base.BaseDialogDialog;
 import at.redeye.FrameWork.base.Root;
 import at.redeye.FrameWork.utilities.StringUtils;
 import java.io.File;
@@ -23,7 +24,7 @@ import javax.swing.JOptionPane;
  *
  * @author martin
  */
-public class ExportDialog extends BaseDialog implements ProgressListener {
+public class ExportDialog extends BaseDialogDialog implements ProgressListener {
 
     /** Creates new form ExportDialog */
 
@@ -31,20 +32,86 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
     boolean do_abort = false;
     DatabaseExport export;
     DBExImpFactory factory;
+    boolean was_successful = false;
 
     public ExportDialog( Root root ) {
-        super( root, "Datenbankexport" );
+        this( root, "Datenbankexport" );        
+    }
+    
+    public ExportDialog( Root root, String title ) {
+        super( root, title );
         initComponents();
 
         setBaseLanguage("de");
-
-    }
+    }    
 
     public void setExImportFactory(DBExImpFactory factory)
     {
         this.factory = factory;
     }
 
+    /**
+     * export Database direct to a file
+     * @param file 
+     */    
+    public void doExport( File file )
+    {
+        doExport(file, true);
+    }
+    
+    /**
+     * export Database direct to a file
+     * @param file 
+     */
+    public void doExport( File file, final boolean success_message )
+    {
+        if( !file.getName().toLowerCase().endsWith(".zip") )
+            file = new File( file.getPath() + ".zip" );
+
+        if( factory == null )
+            factory = new DBExImpFactory();
+
+        export = factory.getNewExporter(root, file.getPath() );
+
+        export.setProgressListener(this);
+        
+        was_successful = false;
+
+        final BaseDialogDialog dialog = this;
+
+        exporter = new Thread() {
+
+            @Override
+            public void run()
+            {
+                AutoMBox mb = new AutoMBox(ExportDialog.class.getName())
+                {
+
+                    @Override
+                    public void do_stuff() throws Exception {
+
+                        export.doExport();
+
+                        export.close();
+
+                        if( !do_abort ) {
+                            if( success_message )
+                            {
+                                JOptionPane.showMessageDialog(dialog, MlM("Die Datenbank wurde erfolgreich exportiert!"));
+                            }
+                            was_successful = true;
+                        }
+                    }
+                };
+
+                close();
+            }
+
+        };
+
+        exporter.start();
+    }
+    
     public void doExport()
     {
         JFileChooser fc = new JFileChooser();
@@ -66,44 +133,7 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
             return;
         }
         
-        if( !file.getName().toLowerCase().endsWith(".zip") )
-            file = new File( file.getPath() + ".zip" );
-
-        if( factory == null )
-            factory = new DBExImpFactory();
-
-        export = factory.getNewExporter(root, file.getPath() );
-
-        export.setProgressListener(this);
-
-        final BaseDialog dialog = this;
-
-        exporter = new Thread() {
-
-            @Override
-            public void run()
-            {
-                AutoMBox mb = new AutoMBox(ExportDialog.class.getName())
-                {
-
-                    @Override
-                    public void do_stuff() throws Exception {
-
-                        export.doExport();
-
-                        export.close();
-
-                        if( !do_abort )
-                            JOptionPane.showMessageDialog(dialog, MlM("Die Datenbank wurde erfolgreich exportiert!"));
-                    }
-                };
-
-                close();
-            }
-
-        };
-
-        exporter.start();
+        doExport( file );
     }
 
     /** This method is called from within the constructor to
@@ -192,20 +222,28 @@ public class ExportDialog extends BaseDialog implements ProgressListener {
     private javax.swing.JProgressBar jProgress;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     synchronized public void setStage(String stage) {
         jLTable.setText(stage);
     }
 
+    @Override
     synchronized public void setOverallCounter(int count) {
         jProgress.setMaximum(count);
     }
 
+    @Override
     synchronized public void setCounter(int val) {
         jProgress.setValue(val);
     }
 
+    @Override
     synchronized public boolean canContinue() {
         return !do_abort;
+    }
+
+    public boolean wasSuccessful() {
+        return was_successful;        
     }
 
 }
