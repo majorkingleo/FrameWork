@@ -46,6 +46,11 @@ public class ImportDialog extends BaseDialogDialog implements ProgressListener {
     {
         finnished_listener = listener;
     }
+    
+    @Override
+    public boolean openWithLastWidthAndHeight() {
+        return false;
+    }    
 
     private void doImport()
     {

@@ -43,7 +43,12 @@ public class ExportDialog extends BaseDialogDialog implements ProgressListener {
         initComponents();
 
         setBaseLanguage("de");
-    }    
+    }            
+
+    @Override
+    public boolean openWithLastWidthAndHeight() {
+        return false;
+    }
 
     public void setExImportFactory(DBExImpFactory factory)
     {
