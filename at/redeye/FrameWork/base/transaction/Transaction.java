@@ -108,7 +108,38 @@ public abstract class Transaction {
 			throws SQLException, UnsupportedDBDataTypeException {
 		return executer.fetchColumnValue(stmt, typelist);
 	}
+        
+	public List<List<?>> fetchColumnValue(String stmt, DBDataType ... typelist)
+			throws SQLException, UnsupportedDBDataTypeException {
+            
+                ArrayList<DBDataType> list = new ArrayList();
+                
+                for( DBDataType type : typelist )
+                    list.add(type);
+            
+		return executer.fetchColumnValue(stmt, list);
+	}        
 
+	public List<?> fetchOneColumnValue(String stmt, DBDataType type )
+			throws SQLException, UnsupportedDBDataTypeException {
+            
+                ArrayList<DBDataType> list = new ArrayList();
+                
+                list.add(type);
+                
+                List<List<?>> ergliste = executer.fetchColumnValue(stmt, list);
+                
+                ArrayList res = new ArrayList();
+                
+                for( List<?> e : ergliste )
+                {           
+                    Object o = e.get(0);
+                    res.add(o);
+                }
+                
+                return res;
+	}                
+        
 	public List<DBStrukt> fetchTable(DBStrukt binddesc) throws SQLException,
 			TableBindingNotRegisteredException, UnsupportedDBDataTypeException,
 			WrongBindFileFormatException {
