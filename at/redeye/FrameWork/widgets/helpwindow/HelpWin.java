@@ -58,11 +58,11 @@ public class HelpWin extends BaseDialog {
                             
                             String module_name = null;
                                     
-                            if( MLUtil.haveResource(HelpFileLoader.getResourceName(base, ModuleName + "_" + locale) ) )
+                            if( haveResource( HelpFileLoader.getResourceName(base, ModuleName + "_" + locale) ) )
                             {
                                 module_name = ModuleName + "_" + locale;
                             }
-                            else if( MLUtil.haveResource(HelpFileLoader.getResourceName(base, ModuleName + "_" +  MLUtil.getLanguageOnly(locale)) ) )
+                            else if( haveResource(HelpFileLoader.getResourceName(base, ModuleName + "_" +  MLUtil.getLanguageOnly(locale)) ) )
                             {
                                 module_name = ModuleName + "_" +  MLUtil.getLanguageOnly(locale);
                             }
@@ -70,7 +70,7 @@ public class HelpWin extends BaseDialog {
                             {
                                 if( !MLUtil.compareLanguagesOnly(root.getBaseLanguage(), root.getDisplayLanguage() ) )
                                 {
-                                    if( MLUtil.haveResource(HelpFileLoader.getResourceName(base, ModuleName + "_" +  MLUtil.getLanguageOnly(root.getDefaultLanguage()) ) ) )
+                                    if( haveResource(HelpFileLoader.getResourceName(base, ModuleName + "_" +  MLUtil.getLanguageOnly(root.getDefaultLanguage()) ) ) )
                                         module_name = ModuleName + "_" +  MLUtil.getLanguageOnly(root.getDefaultLanguage());
                                 }
                             }
@@ -95,6 +95,20 @@ public class HelpWin extends BaseDialog {
 			}
 		};
 	}
+        
+        boolean haveResource( String resource_name )
+        {            
+            boolean result = MLUtil.haveResource( resource_name );
+            
+            if( logger.isDebugEnabled() ) {
+                if( result )
+                    logger.debug( "loaded: "  + resource_name );
+                else
+                    logger.debug( "failed loading: "  + resource_name );
+            }
+            
+            return result;
+        }
 
 	//<editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
