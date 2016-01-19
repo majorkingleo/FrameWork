@@ -137,7 +137,22 @@ public class ShowTablesMySql implements ShowTables {
                 return null;
         }
 
+        @Override
 	public boolean db_supports_all_requested_features(Transaction trans)
+			throws SQLException {        
+            
+           if( innodb_is_available_check1(trans) ){
+                return true;
+            }            
+            
+            if( innodb_is_available_check2(trans) ){
+                return true;
+            }
+            
+            return false;
+        }
+                
+	private boolean innodb_is_available_check1(Transaction trans)
 			throws SQLException {
 
 		String sql = "SHOW VARIABLES LIKE 'have_innodb'";
@@ -168,5 +183,43 @@ public class ShowTablesMySql implements ShowTables {
 
 		return false;
 	}
+        
+        private boolean innodb_is_available_check2(Transaction trans)
+			throws SQLException {
+
+		String sql = "SHOW ENGINES";
+
+		List<DBDataType> args = new Vector<DBDataType>();
+		args.add(DBDataType.DB_TYPE_STRING);
+		args.add(DBDataType.DB_TYPE_STRING);
+		List<List<?>> res;
+
+		/*
+		 * Eine UnsupportedDBDataTypeException Exception sollte hier ja eher
+		 * nicht geworfen werden, weil wir sollten schon wissen, was wir tun.
+		 */
+		try {
+			res = trans.getStmtExecInterface().fetchColumnValue(sql, args);
+		} catch (UnsupportedDBDataTypeException ex) {
+			System.out.println("XXX: " + ex);
+			Logger.getLogger(ShowTablesMySql.class.getName()).log(Level.SEVERE,
+					null, ex);
+			return false;
+		}
+
+		for (int i = 0; i < res.size(); i++) {
+                        String database = (String) res.get(i).get(0);
+                        
+                    if (database.equalsIgnoreCase("InnoDB")) {
+                        String val = (String) res.get(i).get(1);
+                        if (val.equalsIgnoreCase("YES") || val.equalsIgnoreCase("DEFAULT")) {
+                            return true;
+                        }
+                        break;
+                    }
+		}
+
+		return false;
+	}        
 
 }
