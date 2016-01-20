@@ -40,7 +40,7 @@ public class AustrianHolidays extends BaseHolidays implements Holidays {
         res.add( create( year, 10, 26, false, true, "Nationalfeiertag" ) );
         res.add( create( year, 11, 1, false, true, "Allerheiligen" ) );
         res.add( create( year, 11, 2, false, false, "Allerseelen" ) );
-        res.add( create( year, 12, 8, false, false, "Maria Empfängnis" ) );
+        res.add( create( year, 12, 8, false, true, "Maria Empfängnis" ) );
         res.add( create( year, 12, 25, false, true, "1. Weihnachtsfeiertag" ) );
         res.add( create( year, 12, 26, false, true, "2. Weihnachtsfeiertag" ) );        
         
