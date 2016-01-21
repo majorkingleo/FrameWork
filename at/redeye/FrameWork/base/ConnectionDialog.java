@@ -39,7 +39,7 @@ import at.redeye.SqlDBInterface.SqlDBConnection.impl.UnSupportedDatabaseExceptio
  *
  * @author  martin
  */
-public class ConnectionDialog extends BaseDialog {
+public class ConnectionDialog extends BaseDialogDialog {
     
     private static final long serialVersionUID = 1L;
     
@@ -733,5 +733,5 @@ public void setBindtypeManager( DBBindtypeManager bindtypeManager )
     private javax.swing.JLabel jLabel1;
     private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
-
+    
 }
