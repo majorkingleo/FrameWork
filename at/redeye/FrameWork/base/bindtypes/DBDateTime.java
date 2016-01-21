@@ -170,6 +170,10 @@ public class DBDateTime extends DBValue {
 		return false;
 	}
 
+    /**
+     * returns time in milliseconds of the day
+     * @return 
+     */
     public long getTime()
     {
         DateTime datetime = new DateTime(value);
