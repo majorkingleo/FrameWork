@@ -5,16 +5,8 @@
 
 package at.redeye.FrameWork.base;
 
-import at.redeye.FrameWork.base.bindtypes.DBStrukt;
-import at.redeye.FrameWork.base.dbmanager.DBBindtypeManager;
-import at.redeye.FrameWork.base.dbmanager.DBManager;
-import at.redeye.FrameWork.base.dll_cache.DLLExtractor;
 import at.redeye.FrameWork.Plugin.Plugin;
-import at.redeye.FrameWork.base.prm.impl.gui.GlobalConfig;
-import at.redeye.FrameWork.utilities.calendar.Holidays;
-import at.redeye.UserManagement.UserManagementInterface;
 import java.util.List;
-import java.util.Locale;
 
 /**
  *
@@ -80,25 +72,18 @@ public abstract class Root {
     
     public abstract boolean saveSetup();
     
-    public abstract void setDBConnection( DBConnection con );
-    public abstract DBConnection getDBConnection();
+
     public abstract boolean loadDBConnectionFromSetup();
-    
-    public void informWindowOpened( BaseDialogBase dlg ) {}
-    public void informWindowClosed( BaseDialogBase dlg ) {}
-    public void closeAllWindowsExceptThisOne( BaseDialogBase dlg ) {}
+
     public void closeAllWindowsNoAppExit() {}
 
     public void appExit() {}
     
-    public void setAktivUser( DBStrukt pb )
-    { 
-    
-    }
+
     
     public int getUserPermissionLevel()
     {
-        return UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN;
+        return 0;
     }
     
     public String getUserName()
@@ -111,16 +96,6 @@ public abstract class Root {
         return "";
     }
 
-    public DBBindtypeManager getBindtypeManager()
-    {
-        return null;
-    }        
-    
-    public DBManager getDBManager()
-    {
-        return null;
-    }
-    
     public int getUserId()
     {
         return 0;
@@ -156,10 +131,6 @@ public abstract class Root {
         
     }
 
-    public void addDllExtractorToCache( DLLExtractor extractor )
-    {
-
-    }
 
     public void updateDllCache()
     {
@@ -182,14 +153,9 @@ public abstract class Root {
         return null;
     }
 
-    public Holidays getHolidays() {
-        return null;
-    }
 
-    public void setHolidays( Holidays  holidays )
-    {
 
-    }
+
 
     /**
      * language most of the aplication is programmed in
@@ -264,33 +230,7 @@ public abstract class Root {
         language_resource_path = path;
     }
 
-    /**     
-     * @return language that should be used for translations
-     * can be Locale.getDefault() or something userdefined
-     */
-    public String getDisplayLanguage()
-    {
-        if (display_language == null)
-        {
-            Setup setup = getSetup();
 
-            display_language = Locale.getDefault().toString();
-
-            if (setup == null) {
-                return display_language;
-            }
-
-            String lang = setup.getLocalConfig(BaseAppConfigDefinitions.DisplayLanguage);
-
-            if (lang != null && lang.trim().isEmpty()) {
-                return display_language;
-            }
-
-            display_language = lang;
-        }
-
-        return display_language;
-    }
 
     /**
      * @return path to transaltion files as resource view

@@ -9,8 +9,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 /**
  * 
  * @author martin
@@ -99,8 +97,8 @@ public class StringUtils {
 		int start = skip_char(s, what, 0);
 		int end = skip_char_reverse(s, what, s.length() - 1);
 
-		if (start > end)
-			return s.substring(start);
+                if( start > end )
+                    return s.substring(start);
 
 		return s.substring(start, end + 1);
 	}
@@ -113,13 +111,13 @@ public class StringUtils {
 
 	public static String strip_post(String str, String what) {
 
-		if (str == null) {
-			throw new NullPointerException();
-		}
+            if (str == null) {
+                throw new NullPointerException();
+            }
 
-		StringBuilder s = new StringBuilder();
-		s.append(str);
-		return strip_post(s, what);
+            StringBuilder s = new StringBuilder();
+            s.append(str);
+            return strip_post(s, what);
 	}
 
 	public static String strip(String s, String what) {
@@ -146,24 +144,26 @@ public class StringUtils {
 		return autoLineBreak(what.toString(), defaultAutoLineLength);
 	}
 
-	public static String autoLineBreak(String what, int length) {
-		/**
-		 * Diese Funktion löscht noch überschüssige Leerzeichen weg.
-		 */
+        public static String autoLineBreak(String what, int length)
+        {
+            /**
+             * Diese Funktion löscht noch überschüssige Leerzeichen weg.
+             */
 
-		String res[] = autoLineBreak_int(what, length).split("\n");
+            String res[] = autoLineBreak_int(what, length).split("\n");
 
-		StringBuilder stripped_string = new StringBuilder();
+            StringBuilder stripped_string = new StringBuilder();
 
-		for (String line : res) {
-			if (stripped_string.length() > 0)
-				stripped_string.append('\n');
+            for( String line : res )
+            {
+                if( stripped_string.length() > 0 )
+                    stripped_string.append('\n');
 
-			stripped_string.append(line.trim());
-		}
+                stripped_string.append(line.trim());
+            }
 
-		return stripped_string.toString();
-	}
+            return stripped_string.toString();
+        }
 
 	private static String autoLineBreak_int(String what, int length) {
 
@@ -311,24 +311,6 @@ public class StringUtils {
 	 * </ul>
 	 * 
 	 * @param d
-	 * @param rouding
-	 *            precision
-	 * @return
-	 */
-	public static String formatDouble(double d, int rounding) {
-		return formatDouble(Rounding.rndDouble(d, rounding));
-	}
-
-	/**
-	 * converts a double into a string, by removing useless zeros from the end
-	 * of the string eg:
-	 * <ul>
-	 * <li>12.2340000 => 12.234</li>
-	 * <li>0.03 => 0.03</li>
-	 * <li>12.000 => 12</li>
-	 * </ul>
-	 * 
-	 * @param d
 	 *            the number
 	 * @return
 	 */
@@ -384,9 +366,7 @@ public class StringUtils {
 	 * 
 	 * @param ex
 	 * @return Backtrace of the Exception
-	 * @deprecated Use {@link Logger#error(Object, Throwable)} instead
 	 */
-	@Deprecated
 	public static String exceptionToString(Exception ex) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -409,8 +389,8 @@ public class StringUtils {
 	 */
 	public static String skipLeadingLines(String sourceString, int lines) {
 
-		if (lines <= 0)
-			return sourceString;
+            if( lines <= 0 )
+                return sourceString;
 
 		String truncatedString;
 		int lbCounter = 0;
@@ -450,27 +430,28 @@ public class StringUtils {
 		return str.toString();
 	}
 
-	/**
-	 * Adds Line numbers as prefix to the text
-	 * 
-	 * @param text
-	 * @return Line numbered String
-	 */
-	public static String addLineNumbers(String text) {
-		final String lines[] = text.split("\n");
+        /**
+         * Adds Line numbers as prefix to the text
+         * @param text
+         * @return Line numbered String
+         */
+        public static String addLineNumbers(String text)
+        {
+            final String lines[] = text.split("\n");
 
-		final String max_num = String.valueOf(lines.length);
+            final String max_num = String.valueOf(lines.length);
 
-		final String format = "%0" + max_num.length() + "d: ";
+            final String format = "%0" + max_num.length() + "d: ";
 
-		final StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < lines.length; i++) {
-			sb.append(String.format(format, i + 1));
-			sb.append(lines[i]);
-			sb.append('\n');
-		}
+            for( int i = 0; i < lines.length; i++ )
+            {
+                sb.append(String.format(format, i+1));
+                sb.append(lines[i]);
+                sb.append('\n');
+            }
 
-		return sb.toString();
-	}
+            return sb.toString();
+        }
 }

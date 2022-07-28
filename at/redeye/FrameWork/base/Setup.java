@@ -5,7 +5,6 @@
 
 package at.redeye.FrameWork.base;
 
-import at.redeye.FrameWork.base.prm.bindtypes.DBConfig;
 import java.io.File;
 import org.apache.log4j.Logger;
 
@@ -42,8 +41,6 @@ public abstract class Setup {
     private static final boolean b_is_win_7_system  = System.getProperty("os.name").matches("Windows 7");
     private static final boolean b_is_linux_system = System.getProperty("os.name").equals("Linux");
     private static final boolean b_is_65bit_system = System.getProperty("os.arch").contains("64");
-    private static final boolean b_is_mac = System.getProperty("os.name").toLowerCase().contains("mac");
-    private static final boolean b_is_sun = System.getProperty("os.name").toLowerCase().contains("sunos");
 
     public static boolean is_win_system()
     {
@@ -64,16 +61,6 @@ public abstract class Setup {
     {
         return b_is_65bit_system;
     }    
-    
-    public static boolean is_mac_system()
-    {
-        return b_is_mac;
-    }
-    
-    public static boolean is_sun_system()
-    {
-        return b_is_sun;
-    }
 
     public static String getHiddenUserHomeFileName( String name )
     {
@@ -114,21 +101,12 @@ public abstract class Setup {
         return file_abs_name;
     }
 
-    public String getConfig(DBConfig config) {
-        return getConfig( config.getConfigName(), config.getConfigValue() );
-    }
-    
-    public String getLocalConfig(DBConfig config) {
-        return getLocalConfig( config.getConfigName(), new String(config.getConfigValue()) );
-    }
+ 
     
     public abstract String getLocalConfig( String key, String default_value );
     
     public abstract String getConfig( String key, String default_value );
 
-    public abstract DBConfig getConfig( String key);
-
-    public abstract DBConfig getLocalConfig(String key);
 
     /**
      * set a local parameter in the config file
