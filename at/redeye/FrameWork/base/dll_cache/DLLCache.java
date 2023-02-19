@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.AccessControlException;
 import java.util.ArrayList;
-import javax.xml.bind.PropertyException;
 import org.apache.log4j.Logger;
 
 /**
