@@ -111,6 +111,10 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 		dbmstype = trans.getDBMSType();
 
 		switch (dbmstype) {
+                case DB_MARIADB:
+                        createSql = new CreateSqlMariaDB(trans);
+			break;
+                        
 		case DB_MYSQL:
 			createSql = new CreateSqlMySql(trans);
 			break;
@@ -145,6 +149,7 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 			showTables = new ShowTablesDerby();
 			break;
 
+                case DB_MARIADB:
 		case DB_MYSQL:
 			showTables = new ShowTablesMySql();
 			break;

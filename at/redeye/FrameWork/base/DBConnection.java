@@ -55,9 +55,10 @@ public class DBConnection {
 		case DB_MSSQL:
 			trans = new MSSQLTransaction(definition);
 			break;
+                case DB_MARIADB:
 		case DB_MYSQL:
 			trans = new MySQLTransaction(definition);
-			break;
+			break;					                       
 		case DB_JAVADB:
 			trans = new DerbyTransaction(definition);
 			break;
@@ -140,6 +141,7 @@ public class DBConnection {
 			case DB_JAVADB:
 				trans = new DerbyTransaction(definition);
 				break;
+                        case DB_MARIADB:
 			case DB_MYSQL:
 				trans = new MySQLTransaction(definition);
 				break;

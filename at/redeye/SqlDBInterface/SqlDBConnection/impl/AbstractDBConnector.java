@@ -69,6 +69,24 @@ public abstract class AbstractDBConnector implements
 			str.append(":").append(conndef_.getPort() == 0 ? 3306 : conndef_.getPort());
 			str.append("/").append(conndef_.getInstance());
 			str.append("?zeroDateTimeBehavior=convertToNull");
+                        
+		case DB_MARIADB:
+			if (conndef_.getUsername().isEmpty()) {
+				throw new MissingConnectionParamException(
+						"The username must be specified!");
+			}
+			if (conndef_.getInstance().isEmpty()) {
+				throw new MissingConnectionParamException(
+						"The database must be specified!");
+			}
+			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
+			str.append("jdbc:mariadb://");
+			str.append((conndef_.getHostname().isEmpty() ? "localhost"
+					: conndef_.getHostname()));
+			str.append(":").append(conndef_.getPort() == 0 ? 3306 : conndef_.getPort());
+			str.append("/").append(conndef_.getInstance());
+			str.append("?zeroDateTimeBehavior=convertToNull");                        
+                        //str.append("&sessionVariables=character_set_client=utf8mb4,character_set_results=utf8mb4,character_set_connection=utf8mb4,collation_connection=utf8mb4_bin");
 			break;
 
 		case DB_ORACLE:

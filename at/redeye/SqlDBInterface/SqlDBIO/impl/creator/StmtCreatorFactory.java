@@ -17,6 +17,9 @@ public class StmtCreatorFactory {
 		case DB_MYSQL:
 			return new StmtCreatorMYSQL(typeRegistration);
 
+		case DB_MARIADB:
+			return new StmtCreatorMYSQL(typeRegistration);                        
+                        
 		case DB_ORACLE:
 			return new StmtCreatorOracle(typeRegistration);
 

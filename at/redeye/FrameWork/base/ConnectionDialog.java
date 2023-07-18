@@ -595,6 +595,7 @@ private boolean setupDatabase( boolean success_message )
 			case DB_MSSQL:
 				t = new MSSQLTransaction(connparams);
 				break;
+                        case DB_MARIADB:
 			case DB_MYSQL:
 				t = new MySQLTransaction(connparams);
 				break;

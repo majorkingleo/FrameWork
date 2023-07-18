@@ -8,4 +8,6 @@ public enum SupportedDBMSTypes {
 	DB_MSSQL,
 	DB_ORACLE,
 	DB_SQLITE,
-	DB_JAVADB}
+	DB_JAVADB,
+        DB_MARIADB
+}
