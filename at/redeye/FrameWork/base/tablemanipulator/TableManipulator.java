@@ -762,6 +762,24 @@ public class TableManipulator {
 
         return TableDesign.getModelRow(table, row);
     }
+    
+    /**
+     * @return null if no row is selected
+     */
+    public Set<Integer> getSelectedRows()
+    {
+        int[] rows = table.getSelectedRows();
+        Set<Integer> ret = new HashSet<Integer>();
+
+        if( rows.length == 0 )
+            return null;
+
+        for( int row : rows ) {
+         ret.add(TableDesign.getModelRow(table, row));
+        }
+        
+        return ret;
+    }
 
     public TableDesign getTabledesign() {
         return tabledesign;
