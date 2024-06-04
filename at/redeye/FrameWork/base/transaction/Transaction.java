@@ -290,7 +290,7 @@ public abstract class Transaction {
          * @throws TableBindingNotRegisteredException
          * @throws IOException 
          */
-	public boolean deleteWithPrimarayKey(DBStrukt binddesc)
+	public boolean deleteWithPrimaryKey(DBStrukt binddesc)
 			throws UnsupportedDBDataTypeException,
 			WrongBindFileFormatException, SQLException,
 			TableBindingNotRegisteredException, IOException {
