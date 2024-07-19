@@ -48,7 +48,21 @@ public class TableDesign {
         cell.color = color;
         coloredCells.add (cell);
     }
+    
+    public void removeColoredCell (int row, int col) {
+        
+        for( ColoredCell cc : coloredCells ) {
+            if( cc.row == row && cc.col == col ) {
+                coloredCells.remove(cc);
+                return;
+            }
+        }
+    }    
 
+    public void resetColoredCells () {
+        coloredCells.clear();
+    } 
+    
     void addToolTipCell(int row, int col, String tooltip)
     {
         ToolTipCell cell = new ToolTipCell();

@@ -702,6 +702,32 @@ public class TableManipulator {
         }
     }
 
+    
+    public void resetCellColor (DBValue column, int row) {
+
+        ArrayList<DBValue> values = binddesc.getAllValues();
+
+
+        for( int i = 0, col=0; i < values.size(); i++ )
+        {
+            if( isHidden( i ) )
+                continue;
+
+
+            if( values.get(i).getName().equals(column.getName()) )
+            {
+                tabledesign.removeColoredCell(row, col);
+                return;
+            }
+
+            col++;
+        }
+    }
+    
+    public void resetAllCellColors () {
+        tabledesign.resetColoredCells();
+    }
+    
     public void setToolTip (DBValue column, int row, String tooltip) {
 
         ArrayList<DBValue> values = binddesc.getAllValues();
