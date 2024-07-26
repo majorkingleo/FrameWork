@@ -181,12 +181,33 @@ public abstract class Transaction {
 		return res;
 	}
 
+        /**
+         * 
+         * @param <T>
+         * @param binddesc
+         * @return an empty list if nothing was found
+         * @throws SQLException
+         * @throws TableBindingNotRegisteredException
+         * @throws UnsupportedDBDataTypeException
+         * @throws WrongBindFileFormatException 
+         */
 	public <T extends DBStrukt> List<T> fetchTable2(T binddesc)
 			throws SQLException, TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException {
 		return fetchTable2(binddesc, "");
 	}
 
+        /**
+         * 
+         * @param <T>
+         * @param binddesc
+         * @param where
+         * @return an empty list if nothing was found
+         * @throws SQLException
+         * @throws TableBindingNotRegisteredException
+         * @throws UnsupportedDBDataTypeException
+         * @throws WrongBindFileFormatException 
+         */
 	public <T extends DBStrukt> List<T> fetchTable2(T binddesc, String where)
 			throws SQLException, TableBindingNotRegisteredException,
 			UnsupportedDBDataTypeException, WrongBindFileFormatException {
