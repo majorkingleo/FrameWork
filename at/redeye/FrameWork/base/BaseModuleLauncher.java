@@ -452,16 +452,16 @@ public abstract class BaseModuleLauncher {
 	}
 
 	public static String getLookAndFeelStrByName(String name) {
-
-            if (name.equalsIgnoreCase("motif")) {
-                return "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
-            } else if (name.equalsIgnoreCase("metal")) {
-                return "javax.swing.plaf.metal.MetalLookAndFeel";
-            } else if (name.equalsIgnoreCase("nimbus")) {
-                return "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
-            } else {
-                return UIManager.getSystemLookAndFeelClassName();
+            
+            UIManager.LookAndFeelInfo[] lafInfo = UIManager.getInstalledLookAndFeels();
+        
+            for( UIManager.LookAndFeelInfo info : lafInfo ) {
+                if( info.getName().equals(name) ) {
+                    return info.getClassName();
+                }
             }
+
+            return UIManager.getSystemLookAndFeelClassName();            
 	}
 
     /**
