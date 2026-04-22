@@ -69,6 +69,7 @@ public abstract class AbstractDBConnector implements
 			str.append(":").append(conndef_.getPort() == 0 ? 3306 : conndef_.getPort());
 			str.append("/").append(conndef_.getInstance());
 			str.append("?zeroDateTimeBehavior=convertToNull");
+                        break;
                         
 		case DB_MARIADB:
 			if (conndef_.getUsername().isEmpty()) {
