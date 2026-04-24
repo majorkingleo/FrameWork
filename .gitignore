@@ -21,3 +21,6 @@ nbproject/private/
 
 # Test results
 build/test/
+
+# Temporary nested git backup folders
+**/.git.bak/
