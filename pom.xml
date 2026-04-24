@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>at.redeye</groupId>
+    <artifactId>framework</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>FrameWork</name>
+    <description>RedEye Application Framework</description>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <ext.dir>${project.basedir}/src/at/redeye/FrameWork/ext_resources</ext.dir>
+        <opt.dir>${ext.dir}/optional</opt.dir>
+        <db.dir>${project.basedir}/src/at/redeye/SqlDBInterface/jdbc_driver</db.dir>
+    </properties>
+
+    <build>
+        <sourceDirectory>${project.basedir}/src</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
+
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.form</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <archive>
+                        <compress>true</compress>
+                    </archive>
+                    <finalName>FrameWork</finalName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <!-- ===== Maven Central dependencies ===== -->
+
+        <!-- JFreeChart (1.0.x uses groupId 'jfree') -->
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>1.0.16</version>
+        </dependency>
+
+        <!-- Date/Time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.12.7</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>2.0.7</version>
+        </dependency>
+
+        <!-- Commons -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.1</version>
+        </dependency>
+
+        <!-- HTML parsing -->
+        <dependency>
+            <groupId>net.htmlparser.jericho</groupId>
+            <artifactId>jericho-html</artifactId>
+            <version>3.1</version>
+        </dependency>
+
+        <!-- JavaScript engine (Rhino) -->
+        <dependency>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
+            <version>1.7.14</version>
+        </dependency>
+
+        <!-- CSV -->
+        <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>2.3</version>
+        </dependency>
+
+        <!-- Proxy detection (using bundled JAR - API differs from Maven Central versions) -->
+        <dependency>
+            <groupId>com.github.markusbernhardt</groupId>
+            <artifactId>proxy-vole</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${ext.dir}/proxy-vole.jar</systemPath>
+        </dependency>
+
+        <!-- JNA -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.13.0</version>
+        </dependency>
+
+        <!-- Caffeine cache -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>2.9.3</version>
+        </dependency>
+
+        <!-- Checker Framework annotations -->
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <version>3.32.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+
+        <!-- Database drivers -->
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.49</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.14.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.42.0.0</version>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ===== System-scope (proprietary / no Maven Central equivalent) ===== -->
+
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/AbsoluteLayout.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.mjtoolbox</groupId>
+            <artifactId>jshortcut</artifactId>
+            <version>0.4</version>
+            <scope>system</scope>
+            <systemPath>${ext.dir}/jshortcut-0_4_repacked.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc14</artifactId>
+            <version>10.2.0.4</version>
+            <scope>system</scope>
+            <systemPath>${db.dir}/oracle/ojdbc14.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.redeye.plugin</groupId>
+            <artifactId>CommonsLangPlugin</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/CommonsLangPlugin.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.redeye.plugin</groupId>
+            <artifactId>JerichoHtmlPlugin</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/JerichoHtmlPlugin.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.redeye.plugin</groupId>
+            <artifactId>DetectDomainPlugin</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/DetectDomainPlugin.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.redeye</groupId>
+            <artifactId>Dongle-full-multi</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/Dongle-full-multi.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.redeye</groupId>
+            <artifactId>Dongle-full-single</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/Dongle-full-single.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.redeye</groupId>
+            <artifactId>Dongle-demo-multi</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/Dongle-demo-multi.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>at.redeye</groupId>
+            <artifactId>Dongle-demo-single</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/Dongle-demo-single.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.jdatepicker</groupId>
+            <artifactId>JDatePicker</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/JDatePicker.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.jdatepicker</groupId>
+            <artifactId>JDatePickerPlugin</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/JDatePickerPlugin.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.jezhumble</groupId>
+            <artifactId>ShellExec</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${opt.dir}/ShellExec.jar</systemPath>
+        </dependency>
+
+    </dependencies>
+
+</project>

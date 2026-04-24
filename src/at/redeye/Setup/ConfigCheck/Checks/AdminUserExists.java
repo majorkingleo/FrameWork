@@ -1,0 +1,53 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package at.redeye.Setup.ConfigCheck.Checks;
+
+import java.util.List;
+
+import at.redeye.FrameWork.base.Root;
+import at.redeye.FrameWork.base.transaction.Transaction;
+import at.redeye.FrameWork.utilities.StringUtils;
+import at.redeye.Setup.ConfigCheck.ConfigCheck;
+import at.redeye.UserManagement.UserManagementInterface;
+import at.redeye.UserManagement.bindtypes.DBPb;
+
+/**
+ * 
+ * @author martin
+ */
+public class AdminUserExists extends ConfigCheck {
+	public AdminUserExists(Root root) {
+		super(root, "is there already a admin user in the database");
+	}
+
+	@Override
+	public boolean doIHaveRequiredFeature() {
+		Transaction trans = root.getDBConnection().getDefaultTransaction();
+
+		DBPb pb = new DBPb();
+
+		try {
+			final List<DBPb> res = trans.fetchTable2(
+					pb,
+					"where " + trans.markColumn(pb.locked) + "=0 and "
+							+ trans.markColumn(pb.plevel) + "="
+							+ UserManagementInterface.UM_PERMISSIONLEVEL_ADMIN);
+			trans.rollback();
+
+			System.out.println(trans.getSql());
+
+			if (res.isEmpty())
+				return false;
+
+			return true;
+
+		} catch (Exception ex) {
+			logger.error(StringUtils.exceptionToString(ex));
+			return false;
+		}
+	}
+
+}

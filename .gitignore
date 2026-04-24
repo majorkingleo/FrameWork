@@ -1,0 +1,23 @@
+# Build output
+build/
+dist/
+target/
+
+# NetBeans private settings
+nbproject/private/
+
+# Maven
+*.class
+
+# Generated JAR
+*.jar
+!src/**/jdbc_driver/**/*.jar
+!src/**/ext_resources/**/*.jar
+
+# OS / IDE
+.DS_Store
+*.swp
+*.~
+
+# Test results
+build/test/

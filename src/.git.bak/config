@@ -1,0 +1,13 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = git@github.com:majorkingleo/FrameWork.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "ant"]
+	remote = origin
+	merge = refs/heads/ant
+	vscode-merge-base = origin/ant
+	vscode-merge-base = origin/main
