@@ -252,8 +252,11 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 			break;
 		}
 
-		if (!backupTable(strukt.getName(), table_name))
+		if (!backupTable(strukt.getName(), table_name)) {
+			logger.error("Failed to backup table " + strukt.getName() + " to "
+					+ table_name);
 			return false;
+		}
 
 		// new table in the DB add it to the Cache
 		if (table_list != null)
@@ -265,7 +268,13 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 			sql += createSql.createSqlForNewRows(strukt, i + 1) + ";";
 		}
 
-		return execSql(sql);
+		if( !execSql(sql) ) {
+			logger.error("Failed to migrate table " + strukt.getName() + " from version " + fromVersion + " to version " + strukt.getVersion());
+			logger.error("Executed sql: " + sql);
+			return false;
+		}
+
+		return true;
 	}
 
 	protected boolean execSql(String sql) throws SQLException {
