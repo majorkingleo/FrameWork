@@ -25,9 +25,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <ext.dir>${project.basedir}/src/at/redeye/FrameWork/ext_resources</ext.dir>
-        <opt.dir>${ext.dir}/optional</opt.dir>
-        <db.dir>${project.basedir}/src/at/redeye/SqlDBInterface/jdbc_driver</db.dir>
     </properties>
 
     <build>
@@ -142,13 +139,11 @@
             <version>2.3</version>
         </dependency>
 
-        <!-- Proxy detection (using bundled JAR - API differs from Maven Central versions) -->
+        <!-- Proxy detection (bundled JAR installed via scripts/install_local_jars.sh) -->
         <dependency>
             <groupId>com.github.markusbernhardt</groupId>
             <artifactId>proxy-vole</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${ext.dir}/proxy-vole.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
 
         <!-- JNA -->
@@ -223,98 +218,72 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ===== System-scope (proprietary / no Maven Central equivalent) ===== -->
+        <!-- ===== Locally installed JARs (see scripts/install_local_jars.sh) ===== -->
 
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/AbsoluteLayout.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>com.mjtoolbox</groupId>
             <artifactId>jshortcut</artifactId>
-            <version>0.4</version>
-            <scope>system</scope>
-            <systemPath>${ext.dir}/jshortcut-0_4_repacked.jar</systemPath>
+            <version>0.4-local</version>
         </dependency>
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc14</artifactId>
             <version>10.2.0.4</version>
-            <scope>system</scope>
-            <systemPath>${db.dir}/oracle/ojdbc14.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>at.redeye.plugin</groupId>
             <artifactId>CommonsLangPlugin</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/CommonsLangPlugin.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>at.redeye.plugin</groupId>
             <artifactId>JerichoHtmlPlugin</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/JerichoHtmlPlugin.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>at.redeye.plugin</groupId>
             <artifactId>DetectDomainPlugin</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/DetectDomainPlugin.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>at.redeye</groupId>
             <artifactId>Dongle-full-multi</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/Dongle-full-multi.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>at.redeye</groupId>
             <artifactId>Dongle-full-single</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/Dongle-full-single.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>at.redeye</groupId>
             <artifactId>Dongle-demo-multi</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/Dongle-demo-multi.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>at.redeye</groupId>
             <artifactId>Dongle-demo-single</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/Dongle-demo-single.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>org.jdatepicker</groupId>
             <artifactId>JDatePicker</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/JDatePicker.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>org.jdatepicker</groupId>
             <artifactId>JDatePickerPlugin</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/JDatePickerPlugin.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
         <dependency>
             <groupId>com.jezhumble</groupId>
             <artifactId>ShellExec</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${opt.dir}/ShellExec.jar</systemPath>
+            <version>1.0-local</version>
         </dependency>
 
     </dependencies>
