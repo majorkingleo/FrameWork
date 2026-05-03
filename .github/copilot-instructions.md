@@ -1,0 +1,44 @@
+# FrameWork Project Instructions
+
+## Project Nature
+- This repository contains a Java application framework named FrameWork (`at.redeye`, artifact `framework`).
+- It is a reusable desktop-oriented foundation for business applications, not a standalone end-user app.
+- The framework is UI-centric (Swing forms/dialogs) and includes infrastructure for database access, user management, plugin integration, setup/configuration, and communication/network helpers.
+- The codebase appears to be a long-lived NetBeans-era project that is now Maven-buildable.
+
+## Primary Domains
+- `at/redeye/FrameWork/`: Core framework code (dialogs, base classes, DB manager, widgets, reports, plugins, resources, utilities).
+- `at/redeye/SqlDBInterface/`: SQL abstraction and DB connectivity/drivers.
+- `at/redeye/UserManagement/`: User and permission management interfaces/implementations.
+- `at/redeye/Communication/`: Communication/network-related abstractions.
+- `at/redeye/Setup/`: Setup, configuration checks, export, and wizard support.
+
+## Build and Runtime Context
+- Language level: Java 21 (`maven.compiler.source/target=21`).
+- Packaging: Maven JAR (`FrameWork.jar` final name).
+- Legacy NetBeans build files (`build.xml`, `nbproject/`) are present and still relevant for IDE workflows.
+- Source layout is customized in Maven:
+  - Main sources: `src/`
+  - Tests: `test/`
+  - Resources are loaded from `src/` excluding `*.java` and `*.form`.
+
+## Key Characteristics
+- Heavy use of Swing (`JFrame`, dialogs, `.form` files) and framework base classes such as `BaseDialog` and `Root`.
+- DB support spans multiple engines/drivers (MariaDB, MySQL, Derby, JTDS, SQLite).
+- Includes plugin hooks and configuration infrastructure intended for extension by consuming applications.
+- Includes older dependencies (for example Log4j 1.x and legacy JDBC artifacts), so compatibility concerns can be as important as modernization.
+
+## Practical Contributor Guidance
+- Preserve public behavior and API signatures unless explicitly changing framework contracts.
+- Assume compatibility with existing downstream apps is critical.
+- Prefer targeted, low-risk changes over broad refactors.
+- Validate changes with Maven where possible.
+
+## Useful Commands
+- Build JAR: `mvn clean package -DskipTests`
+- Install locally: `mvn clean install -DskipTests`
+- Run tests: `mvn test`
+
+## Notes
+- Local helper scripts exist under `scripts/`, including local JAR setup (`install_local_jars.sh`).
+- Some third-party driver/readme content is vendored in-source; do not treat those folders as framework source to refactor.
