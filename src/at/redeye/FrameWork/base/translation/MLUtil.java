@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
@@ -154,37 +155,59 @@ public class MLUtil {
 
         String resource_name = "/" + name.replaceAll("\\.", "/") + extra + lang + prop;
 
-        String alt1_resource_name = "/" + MLUtil.getAltResourcePath(name.replaceAll("\\.", "/"), "translations") + extra + lang + prop;
-        String alt2_resource_name = "/" + MLUtil.getAltResourcePath(name.replaceAll("\\.", "/"), "resources/translations") + extra + lang + prop;
+        ArrayList<String> alt_resource_names = new ArrayList<>();
+
+        alt_resource_names.add(resource_name);
+        
+        {
+            String p = root.getLanguageTranslationResourcePath();
+            if( p != null ) {
+                // at.redeye.FrameWork.base.translation.MLUtil -> MLUtil
+                int idx = name.lastIndexOf('.', name.length() - 1);
+                if( idx != -1 ) {
+                    p += '/' + name.substring(idx + 1, name.length());
+                }
+
+                alt_resource_names.add(p + extra + lang + prop);
+            }
+        }
+
+        {
+            String alt1_resource_name = "/" + MLUtil.getAltResourcePath(name.replaceAll("\\.", "/"), "translations") + extra + lang + prop;
+            alt_resource_names.add(alt1_resource_name);
+        }
+
+        {
+            String alt2_resource_name = "/" + MLUtil.getAltResourcePath(name.replaceAll("\\.", "/"), "resources/translations") + extra + lang + prop;
+            alt_resource_names.add(alt2_resource_name);
+        }
 
         Properties local_props = new Properties();
 
-         boolean not_found = false;
+        boolean found = false;
 
         if( dir_exact.isFile() )
         {
             FileInputStream in = new FileInputStream(dir_exact);
             local_props.load(in);
             in.close();
+            found = true;
+        } else 
+            
+        if( !found ) {
+            for( String alt_resource_name : alt_resource_names ) {
+                if( haveResource( alt_resource_name ) ) {
 
-        } else if( haveResource( resource_name ) ) {
+                    InputStream in = root.getClass().getResourceAsStream( alt_resource_name );
+                    local_props.load( in );
+                    in.close();
+                    found = true;
+                    break;
+                }
+            }
+        }
 
-            InputStream in = root.getClass().getResourceAsStream( resource_name );
-            local_props.load( in );
-            in.close();
-
-        } else if( haveResource( alt1_resource_name ) ) {
-
-            InputStream in = root.getClass().getResourceAsStream( alt1_resource_name );
-            local_props.load( in );
-            in.close();
-
-        } else if( haveResource( alt2_resource_name ) ) {
-
-            InputStream in = root.getClass().getResourceAsStream( alt2_resource_name );
-            local_props.load( in );
-            in.close();
-        } else {
+        if( !found ) {
              local_props = null;
         }
 

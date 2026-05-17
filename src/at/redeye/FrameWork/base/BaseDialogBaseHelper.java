@@ -143,7 +143,7 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 		translation_helper = new TranslationHelper(root, parent, this);
 		parent.setTitle(MlM(title));
 
-		root.loadMlM4Class(this, "de");
+		root.loadMlM4Class(parent, "de");
 
 		if (!do_not_inform_root)
 			root.informWindowOpened(parent);
