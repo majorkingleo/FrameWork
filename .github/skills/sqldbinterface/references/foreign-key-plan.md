@@ -386,6 +386,15 @@ No changes to `SqlDBInterface` (ColumnAttribute, TypeRegistration, StmtCreatorIn
 ```java
 public class OrderLine extends DBStrukt {
 
+    // FK definitions — static final, allocated once per class, not per instance.
+    // The static field has name=null; addForeignKey() stores a withName() copy internally.
+    public static final ForeignKeyDefinition FK_ORDER =
+        new ForeignKeyDefinition("order_id",   "ORDERS",  "id",
+                                  FKAction.CASCADE,  FKAction.NO_ACTION);
+    public static final ForeignKeyDefinition FK_PRODUCT =
+        new ForeignKeyDefinition("product_id", "PRODUCT", "id",
+                                  FKAction.RESTRICT, FKAction.NO_ACTION);
+
     public DBString  id          = new DBString("id", 36);
     public DBInteger orderId     = new DBInteger("order_id");
     public DBInteger productId   = new DBInteger("product_id");
@@ -399,11 +408,8 @@ public class OrderLine extends DBStrukt {
         add(productId,   1);
         add(description, 2);   // column added at version 2
 
-        // FKs — auto-named FK_ORDER_LINE_ORDER_ID and FK_ORDER_LINE_PRODUCT_ID
-        addForeignKey(new ForeignKeyDefinition("order_id",   "ORDERS",  "id",
-                          FKAction.CASCADE,   FKAction.NO_ACTION), 1);
-        addForeignKey(new ForeignKeyDefinition("product_id", "PRODUCT", "id",
-                          FKAction.RESTRICT,  FKAction.NO_ACTION), 1);
+        addForeignKey(FK_ORDER,   1);   // auto-named FK_ORDER_LINE_ORDER_ID
+        addForeignKey(FK_PRODUCT, 1);   // auto-named FK_ORDER_LINE_PRODUCT_ID
     }
 
     @Override public DBStrukt getNewOne() { return new OrderLine(); }
