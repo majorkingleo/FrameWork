@@ -175,7 +175,8 @@ when going through the executor's high-level API.
 
 | Method | Returns | Notes |
 |--------|---------|-------|
-| `fetchTableValue(String[] tables, String where)` | `List<HashMap<String,Object>>` | All registered columns; requires prior `registerTableBindings` on the `TypeRegistration` inside the executer — **not** directly accessible; use the overload below instead |
+| `fetchTableValue(String[] tables, String where)` | `List<HashMap<String,Object>>` | All registered columns; requires prior `registerTableBindings` |
+| `fetchTableValue(String[] tables, String where, List<Object> params)` | `List<HashMap<String,Object>>` | Same as above but binds `?` placeholders via `PreparedStatement.setObject` — use with `Condition.renderWhere()` |
 | `fetchTableValue(String table, HashMap pkValues)` | `HashMap<String,Object>` | Single row by PK |
 | `insertTableValues(String table, HashMap values)` | `int` rows affected | Uses PreparedStatement |
 | `updateTableValues(String table, HashMap values, String where)` | `int` rows affected | where=null → PK-based |
@@ -261,12 +262,17 @@ table creation, versioned migration, and type-safe DML via strongly-typed `DBStr
 ```
 FrameWork/base/
 ├── bindtypes/
-│   ├── DBValue.java          # abstract column descriptor (name, type, PK flag, index flag)
-│   ├── DBStrukt.java         # table descriptor — holds DBValue objects with version numbers
-│   ├── DBString.java         # concrete DBValue for VARCHAR
-│   ├── DBInteger.java        # concrete DBValue for INTEGER
-│   ├── DBDateTime.java       # concrete DBValue for DATETIME
-│   └── ...                   # one subclass per SQL type
+│   ├── DBValue.java                  # abstract column descriptor (name, type, PK flag, index flag)
+│   ├── DBStrukt.java                 # table descriptor — holds DBValue objects + FK list
+│   ├── DBString.java                 # concrete DBValue for VARCHAR
+│   ├── DBInteger.java                # concrete DBValue for INTEGER
+│   ├── DBDateTime.java               # concrete DBValue for DATETIME
+│   ├── ...                           # one subclass per SQL type
+│   ├── FKAction.java                 # enum: NO_ACTION, CASCADE, SET_NULL, RESTRICT
+│   ├── ForeignKeyDefinition.java     # immutable FK descriptor (ownerCol, refTable, refCol, onDelete, onUpdate)
+│   ├── ForeignKeyNotFoundException.java  # thrown when FK lookup fails in Transaction
+│   ├── Condition.java                # fluent typed WHERE builder (value-bound ?-params)
+│   └── ConditionStep.java            # transient step returned by Condition.where/and/or
 │
 ├── transaction/
 │   └── Transaction.java      # abstract bridge: opens Connection + StmtExecInterface,
@@ -305,6 +311,9 @@ UI display. Key flags on `DBValue`:
 
 - `isPrimaryKey()` / `setAsPrimaryKey()` — marks the column as a PK.
 - `shouldHaveIndex()` / `setShouldHaveIndex()` — requests a secondary index.
+- `getCopy()` — returns a fresh typed instance with the same column name and default value.
+  Use to derive mutable instance fields from `static final` metadata so the column name
+  string is written only once (see **Single-source column name pattern** below).
 
 `DBStrukt` is a named collection of `DBValue` objects representing one table.
 Columns are added with an integer **version number**:
@@ -318,23 +327,59 @@ The strukt's own version is the maximum version of any of its columns.
 `getHashMap()` returns all columns; `getHashMapForVersion(v)` returns only columns
 introduced **at** version `v` (used during migration).
 
-**Typical subclass:**
+#### FK support on `DBStrukt`
 
 ```java
-public class Customer extends DBStrukt {
-    public DBString  name    = new DBString("name", 100);
-    public DBString  email   = new DBString("email", 200);
-    public DBInteger active  = new DBInteger("active");
+public void addForeignKey(ForeignKeyDefinition fk)                   // version defaults to 1
+public void addForeignKey(ForeignKeyDefinition fk, int version)      // versioned
+public ArrayList<ForeignKeyDefinition> getForeignKeys()              // all FKs in order
+public ArrayList<ForeignKeyDefinition> getForeignKeysForVersion(int) // FKs added at exactly that version
+```
 
-    public Customer() {
-        super("CUSTOMER");
-        name.setAsPrimaryKey();
-        add(name,   1);
-        add(email,  1);
-        add(active, 2);   // added in schema version 2
+`addForeignKey` auto-generates the constraint name (`FK_<TABLE>_<COL>`) if the
+`ForeignKeyDefinition` was constructed without one; updates `strukt.getVersion()` just like `add()`.
+
+#### Single-source column name pattern
+
+`DBValue.getCopy()` creates a fresh typed instance with the same column name. Declare columns
+as `static final` fields (for compile-time reference safety in `Condition.where()`) and derive
+the mutable instance fields from them — the name string appears exactly once:
+
+```java
+// Name written once in the static final declaration
+public static final DBInteger ORDER_ID = new DBInteger("order_id");
+
+// Instance field derives name via getCopy() — no second string literal
+public DBInteger order_id = ORDER_ID.getCopy();
+```
+
+Renaming the column requires changing only the `static final` declaration.
+
+**Typical subclass (with single-source column names and FK):**
+
+```java
+public class OrderLine extends DBStrukt {
+    // Static finals = type-safe column references (compile error on typo)
+    public static final DBInteger ORDER_ID  = new DBInteger("order_id");
+    public static final DBString  ITEM_CODE = new DBString("item_code");
+
+    // Instance fields derived via getCopy() — column name string written once
+    public DBInteger order_id  = ORDER_ID.getCopy();
+    public DBString  item_code = ITEM_CODE.getCopy();
+
+    // FK declared as static final — usable in fetchChildren(strukt, FK_ORDER, value)
+    public static final ForeignKeyDefinition FK_ORDER =
+        new ForeignKeyDefinition(ORDER_ID.getName(), "ORDERS", "id");
+
+    public OrderLine() {
+        super("ORDER_LINE");
+        order_id.setAsPrimaryKey();
+        add(order_id,  1);
+        add(item_code, 1);
+        addForeignKey(FK_ORDER, 1);
     }
 
-    @Override public DBStrukt getNewOne() { return new Customer(); }
+    @Override public DBStrukt getNewOne() { return new OrderLine(); }
 }
 ```
 
@@ -356,17 +401,40 @@ Convenience methods on `Transaction` bridge `DBStrukt` ↔ `SqlDBInterface`:
 
 | Method | Description |
 |--------|-------------|
-| `fetchTable(DBStrukt, whereStmt)` | SELECT all registered columns; returns `Vector<DBStrukt>` |
+| `fetchTable(DBStrukt, whereStmt)` | SELECT all registered columns; returns `List<DBStrukt>` |
+| `fetchTable2(T, whereStmt)` | Generic typed SELECT; returns `List<T>` |
+| `fetchTable2(T, Condition)` | **Typed, value-bound SELECT** — builds `WHERE col = ?` from `Condition`; no SQL injection risk |
+| `fetchTableList(T, whereStmt)` | Same as `fetchTable2` but returns `ArrayList<T>` |
 | `fetchTableWithPrimkey(DBStrukt)` | SELECT single row by PK values already set on the strukt |
+| `fetchChildren(T child, DBStrukt parent, String fkCol)` | Finds FK on child matching column + parent table, reads parent's ref-col value, delegates to `fetchTable2` |
+| `fetchChildren(T child, ForeignKeyDefinition fk, Object value)` | Direct FK-based lookup by raw value — pass the `static final` FK field |
+| `fetchParent(DBStrukt child, String fkCol, P parent)` | Reads FK value from child, fetches the matching parent row; returns `null` if not found |
 | `insertValues(DBStrukt)` | INSERT using current field values |
 | `updateValues(DBStrukt)` | UPDATE by PK |
 | `updateValues(String sql)` | Raw SQL UPDATE/INSERT/DDL |
+| `deleteWithPrimaryKey(DBStrukt)` | DELETE single row by PK |
 | `getSql()` | Returns last executed SQL (for diagnostics) |
 | `getDBMSType()` | Returns the active `SupportedDBMSTypes` |
 | `markTable(DBStrukt)` | Returns dialect-quoted table name |
 
-`Transaction` also auto-registers all `DBStrukt` bindings into `TypeRegistration`
-so that `StmtExecInterface` can marshall result sets back to Java types.
+`Transaction` auto-registers all `DBStrukt` bindings into `TypeRegistration` so that
+`StmtExecInterface` can marshall result sets back to Java types.
+
+#### `Condition` — typed WHERE builder
+
+Build type-safe, value-bound WHERE clauses using `static final DBValue` column references:
+
+```java
+// Compile error if ORDER_ID is mistyped; value bound via ? — never interpolated
+List<OrderLine> rows = fetchTable2(new OrderLine(),
+    Condition.where(OrderLine.ORDER_ID).eq(42)
+             .and(OrderLine.ITEM_CODE).like("A%"));
+```
+
+Operators: `eq`, `ne`, `gt`, `lt`, `gte`, `lte`, `like`, `isNull`, `isNotNull`.
+Combinators: `.and(col)`, `.or(col)`.
+`Condition.renderWhere(creator, tableName)` produces `WHERE t.col = ?`;
+`Condition.getBindValues()` returns the parallel `List<Object>` for `setObject`.
 
 ---
 
@@ -389,13 +457,26 @@ Each dialect subclass overrides:
 `createSqlForNewRows(DBStrukt, Integer version)` generates `ALTER TABLE ADD` statements
 for all columns introduced **at** that version — used during migration.
 
+#### FK DDL methods
+
+| Method | Description |
+|--------|-------------|
+| `createFKSql(DBStrukt)` | Returns `ALTER TABLE t ADD CONSTRAINT name FOREIGN KEY …` for all FKs declared on the strukt |
+| `dropFKSql(DBStrukt)` | Returns drop statements for all FK constraints; calls `dropFKStatement` per FK |
+| `dropFKStatement(String table, String name)` | Protected, overridable; default: `ALTER TABLE t DROP CONSTRAINT name` |
+| `fkActionSql(FKAction)` | Converts `NO_ACTION` → `"NO ACTION"` etc. |
+
+Dialect overrides for `dropFKStatement`:
+- **MySQL / MariaDB**: `ALTER TABLE t DROP FOREIGN KEY name`
+- **SQLite**: returns `""` (SQLite cannot drop FK constraints; method is a no-op)
+
 | Dialect subclass | Notable differences |
 |---|---|
-| `CreateSqlMySql` | Detects MySQL version; uses `TEXT` for large `VARCHAR`; `InnoDB` engine |
-| `CreateSqlMariaDB` | Extends MySQL; `utf32_bin` collation |
+| `CreateSqlMySql` | Detects MySQL version; uses `TEXT` for large `VARCHAR`; `InnoDB` engine; overrides `dropFKStatement` |
+| `CreateSqlMariaDB` | Extends MySQL; `utf32_bin` collation; inherits `dropFKStatement` override |
 | `CreateSqlMSSql` | `[bracket]` quoting |
 | `CreateSqlOracle` | `"double-quote"` quoting; `NUMBER`/`VARCHAR2` types |
-| `CreateSqlSqlite` | Backtick quoting; `NOT NULL` omitted in `ALTER TABLE ADD` |
+| `CreateSqlSqlite` | Backtick quoting; `NOT NULL` omitted in `ALTER TABLE ADD`; `dropFKStatement` → `""` |
 | `CreateSqlDerby` | Derby-specific quoting and types |
 
 ---
@@ -437,11 +518,16 @@ tableExists("TABLEVERSION")?
 
 #### `migrateTable(DBStrukt strukt, Integer fromVersion)` — non-destructive migration
 
-1. Finds a free backup name (e.g. `CUSTOMER_01_01`, `CUSTOMER_01_02`, …).
-2. `backupTable(origin, backupName)` — `CREATE TABLE backup AS SELECT * FROM origin`.
-3. For each version step from `fromVersion` to `strukt.getVersion()`:
+1. `dropAllForeignKeys(strukt)` — drops all FK constraints first (safe to fail on fresh install).
+2. Finds a free backup name (e.g. `CUSTOMER_01_01`, `CUSTOMER_01_02`, …).
+3. `backupTable(origin, backupName)` — `CREATE TABLE backup AS SELECT * FROM origin`.
+4. For each version step from `fromVersion` to `strukt.getVersion()`:
    - `createSqlForNewRows(strukt, i+1)` → `ALTER TABLE ADD` for new columns at that step.
-4. Executes the combined SQL; updates `TABLEVERSION`.
+5. Executes the combined SQL.
+6. `applyForeignKeys(strukt)` — re-creates all FK constraints (non-fatal on error).
+7. Updates `TABLEVERSION`.
+
+`createTable(DBStrukt)` also calls `applyForeignKeys` after the initial `CREATE TABLE`.
 
 #### `check_table_versions()` — detects out-of-date tables without migrating
 
@@ -476,4 +562,6 @@ A single special table (`DBTableVersion` strukt) with columns `table` (PK) and `
 
 ### See Also
 
-- [Foreign Key Implementation Plan](./references/foreign-key-plan.md) — planned extension to add FK constraint support via `ALTER TABLE ADD CONSTRAINT`, versioned alongside table columns.
+- [Foreign Key Implementation Plan](./references/foreign-key-plan.md) — FK DDL design (all 4 phases implemented: `FKAction`, `ForeignKeyDefinition`, `DBStrukt` FK list, `BaseCreateSql` DDL, `DatabaseManager` lifecycle).
+- [FK-Based Fetch Plan](./references/fetch-via-fk-plan.md) — `fetchChildren` / `fetchParent` on `Transaction` (implemented).
+- [Typed Condition Plan](./references/typed-condition-plan.md) — `Condition` / `ConditionStep` fluent WHERE builder with `?` binding; `getCopy()` single-source column name pattern (implemented).
