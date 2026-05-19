@@ -247,3 +247,233 @@ Unknown types throw `SQLException`.
 - `AbstractStmtExecuter.lastStmt` is also **static** — the last-executed SQL string is shared state.
 - `fetchTableValue(String[], where)` looks up table bindings internally via the executer's own `TypeRegistration`, which starts empty. The caller must populate it via `new TypeRegistration(dbmstype)` separately **and** pass the same data, or use the overload that accepts a pre-built `TypeRegistration`. (The test application demonstrates registering through the separate `reg` object and relying on the shared static map.)
 - Date values serialised to `PreparedStatement` are converted to a formatted string (`toDateString`), not via `ps.setDate()`. DBMS-specific creators may override `toDateString` for correct dialect formatting.
+
+---
+
+## DBManager Layer (`at.redeye.FrameWork.base.dbmanager`)
+
+The DBManager layer sits **above** `SqlDBInterface` and provides schema lifecycle management:
+table creation, versioned migration, and type-safe DML via strongly-typed `DBStrukt` objects.
+`SqlDBInterface` handles raw SQL; `DBManager` handles the schema and the object model.
+
+### Package Map
+
+```
+FrameWork/base/
+├── bindtypes/
+│   ├── DBValue.java          # abstract column descriptor (name, type, PK flag, index flag)
+│   ├── DBStrukt.java         # table descriptor — holds DBValue objects with version numbers
+│   ├── DBString.java         # concrete DBValue for VARCHAR
+│   ├── DBInteger.java        # concrete DBValue for INTEGER
+│   ├── DBDateTime.java       # concrete DBValue for DATETIME
+│   └── ...                   # one subclass per SQL type
+│
+├── transaction/
+│   └── Transaction.java      # abstract bridge: opens Connection + StmtExecInterface,
+│                             # registers DBStrukt bindings, provides fetchTable / updateValues
+│
+└── dbmanager/
+    ├── DBManager.java         # interface: createTable, autoCreateTable, migrateTable, …
+    ├── DBBindtypeManager.java # interface: register, autocreate, check_table_versions, …
+    ├── ShowTables.java        # interface: showTables, db_supports_all_requested_features
+    ├── CreateSql.java         # interface (thin): createSqlforTable(strukt, dbmstype)
+    └── impl/
+        ├── BaseCreateSql.java         # generates DDL strings from DBStrukt
+        ├── CreateSqlMySql.java        # MySQL dialect (type mapping + storage engine)
+        ├── CreateSqlMariaDB.java      # MariaDB dialect (extends MySQL, utf32 collation)
+        ├── CreateSqlMSSql.java        # MSSQL dialect
+        ├── CreateSqlOracle.java       # Oracle dialect
+        ├── CreateSqlSqlite.java       # SQLite dialect
+        ├── CreateSqlDerby.java        # Derby/JavaDB dialect
+        ├── ShowTablesMySql.java       # MySQL SHOW TABLES + version detection
+        ├── ShowTablesMSSql.java       # MSSQL information_schema query
+        ├── ShowTablesOracle.java      # Oracle user_tables query
+        ├── ShowTablesSqlite.java      # SQLite sqlite_master query
+        ├── ShowTablesDerby.java       # Derby system tables query
+        ├── DatabaseManager.java       # implements DBManager + DBBindtypeManager
+        └── bindtypes/
+            └── DBTableVersion.java    # DBStrukt for the TABLEVERSION tracking table
+```
+
+---
+
+### `DBValue` and `DBStrukt` — The Object Model
+
+`DBValue` is the abstract base for a typed column. Concrete subclasses (`DBString`, `DBInteger`,
+`DBDateTime`, …) know their `DBDataType`, can load from DB result sets, and carry a title for
+UI display. Key flags on `DBValue`:
+
+- `isPrimaryKey()` / `setAsPrimaryKey()` — marks the column as a PK.
+- `shouldHaveIndex()` / `setShouldHaveIndex()` — requests a secondary index.
+
+`DBStrukt` is a named collection of `DBValue` objects representing one table.
+Columns are added with an integer **version number**:
+
+```java
+public void add(DBValue value)                    // version defaults to 1
+public void add(DBValue value, Integer version)   // explicitly versioned
+```
+
+The strukt's own version is the maximum version of any of its columns.
+`getHashMap()` returns all columns; `getHashMapForVersion(v)` returns only columns
+introduced **at** version `v` (used during migration).
+
+**Typical subclass:**
+
+```java
+public class Customer extends DBStrukt {
+    public DBString  name    = new DBString("name", 100);
+    public DBString  email   = new DBString("email", 200);
+    public DBInteger active  = new DBInteger("active");
+
+    public Customer() {
+        super("CUSTOMER");
+        name.setAsPrimaryKey();
+        add(name,   1);
+        add(email,  1);
+        add(active, 2);   // added in schema version 2
+    }
+
+    @Override public DBStrukt getNewOne() { return new Customer(); }
+}
+```
+
+---
+
+### `Transaction` — The Bridge
+
+`Transaction` (abstract) combines a `SqlDBInterface` connection + executor with
+`DBStrukt`-aware DML:
+
+```
+new ConnectionDefinition(...)
+    → new DBConnector(def).connectToDatabase()    (SqlDBInterface layer)
+    → new DefaultStmtExecuter(conn, dbmstype)
+    → new TypeRegistration(dbmstype)
+```
+
+Convenience methods on `Transaction` bridge `DBStrukt` ↔ `SqlDBInterface`:
+
+| Method | Description |
+|--------|-------------|
+| `fetchTable(DBStrukt, whereStmt)` | SELECT all registered columns; returns `Vector<DBStrukt>` |
+| `fetchTableWithPrimkey(DBStrukt)` | SELECT single row by PK values already set on the strukt |
+| `insertValues(DBStrukt)` | INSERT using current field values |
+| `updateValues(DBStrukt)` | UPDATE by PK |
+| `updateValues(String sql)` | Raw SQL UPDATE/INSERT/DDL |
+| `getSql()` | Returns last executed SQL (for diagnostics) |
+| `getDBMSType()` | Returns the active `SupportedDBMSTypes` |
+| `markTable(DBStrukt)` | Returns dialect-quoted table name |
+
+`Transaction` also auto-registers all `DBStrukt` bindings into `TypeRegistration`
+so that `StmtExecInterface` can marshall result sets back to Java types.
+
+---
+
+### `BaseCreateSql` — DDL Generation
+
+`BaseCreateSql.createSqlforTable(DBStrukt)` produces a multi-statement DDL string:
+
+```
+CREATE TABLE <t> (col1 TYPE NOT NULL, col2 TYPE NOT NULL, ...);
+ALTER TABLE <t> ADD PRIMARY KEY (pk_col);
+ALTER TABLE <t> ADD INDEX IDX_<T>_<COL>(col);
+```
+
+Each dialect subclass overrides:
+- `createSqlForRow(ColumnAttribute)` → maps `DBDataType` to the DBMS SQL type token.
+- `markColumn(String)` → dialect-appropriate identifier quoting.
+- `addStorageInfo()` → appended after `CREATE TABLE (...)`, e.g. `ENGINE='InnoDB'`.
+- `appendNotNullIfSupportedbyNewRows(ColumnAttribute)` → some DBMS cannot add `NOT NULL` columns via `ALTER TABLE ADD`.
+
+`createSqlForNewRows(DBStrukt, Integer version)` generates `ALTER TABLE ADD` statements
+for all columns introduced **at** that version — used during migration.
+
+| Dialect subclass | Notable differences |
+|---|---|
+| `CreateSqlMySql` | Detects MySQL version; uses `TEXT` for large `VARCHAR`; `InnoDB` engine |
+| `CreateSqlMariaDB` | Extends MySQL; `utf32_bin` collation |
+| `CreateSqlMSSql` | `[bracket]` quoting |
+| `CreateSqlOracle` | `"double-quote"` quoting; `NUMBER`/`VARCHAR2` types |
+| `CreateSqlSqlite` | Backtick quoting; `NOT NULL` omitted in `ALTER TABLE ADD` |
+| `CreateSqlDerby` | Derby-specific quoting and types |
+
+---
+
+### `DatabaseManager` — Schema Lifecycle
+
+`DatabaseManager` implements both `DBManager` and `DBBindtypeManager`.
+It is initialised with a `Root` and optionally a `Transaction`:
+
+```java
+DatabaseManager mgr = new DatabaseManager(root);
+mgr.setTransaction(trans);   // picks correct CreateSql* and ShowTables* by DBMS type
+```
+
+#### Registration
+
+```java
+mgr.register(new Customer());   // adds to internal Vector<DBStrukt>
+mgr.register(new Order());
+```
+
+#### `autocreate()` — creates or migrates all registered tables
+
+Calls `autoCreateTable(strukt)` for each registered strukt. Returns `false` on first failure.
+
+#### `autoCreateTable(DBStrukt strukt)` — per-table lifecycle
+
+```
+tableExists("TABLEVERSION")?
+  No  → createTable(DBTableVersion)  → recurse
+  Yes →
+    tableExists(strukt.getName())?
+      No  → createTable(strukt) → setTableVersion(name, version)
+      Yes →
+        getTableVersion(strukt.getName()) == strukt.getVersion()?
+          Yes → nothing to do
+          No  → migrateTable(strukt, currentVersion) → setTableVersion(name, version)
+```
+
+#### `migrateTable(DBStrukt strukt, Integer fromVersion)` — non-destructive migration
+
+1. Finds a free backup name (e.g. `CUSTOMER_01_01`, `CUSTOMER_01_02`, …).
+2. `backupTable(origin, backupName)` — `CREATE TABLE backup AS SELECT * FROM origin`.
+3. For each version step from `fromVersion` to `strukt.getVersion()`:
+   - `createSqlForNewRows(strukt, i+1)` → `ALTER TABLE ADD` for new columns at that step.
+4. Executes the combined SQL; updates `TABLEVERSION`.
+
+#### `check_table_versions()` — detects out-of-date tables without migrating
+
+Returns `false` if any registered table's DB version differs from the strukt's declared version.
+Used at startup to show a warning dialog (`check_table_versions_with_message(permLevel)`).
+
+#### `TABLEVERSION` — the version tracking table
+
+A single special table (`DBTableVersion` strukt) with columns `table` (PK) and `version`.
+`getTableVersion(name)` reads from it (result cached in `table_versions` HashMap).
+`setTableVersion(name, version)` upserts into it.
+
+---
+
+### Typical Application Startup Flow
+
+```
+1. App creates ConnectionDefinition + Transaction (subclass)
+2. mgr.setTransaction(trans)
+3. mgr.register(new Customer())      // register all app tables
+   mgr.register(new Order())
+   mgr.register(new OrderLine())
+4. mgr.check_table_versions_with_message(permLevel)
+     → if out-of-date and user is admin → prompt to run autocreate
+5. mgr.autocreate()
+     → autoCreateTable per strukt
+     → create new tables / migrate existing ones
+6. App proceeds; DML via trans.fetchTable() / trans.insertValues() / trans.updateValues()
+```
+
+---
+
+### See Also
+
+- [Foreign Key Implementation Plan](./references/foreign-key-plan.md) — planned extension to add FK constraint support via `ALTER TABLE ADD CONSTRAINT`, versioned alongside table columns.
