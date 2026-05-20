@@ -87,8 +87,11 @@ public class DBFlagInteger extends DBEnumAsInteger
         super( name, title, new FlagIntegerHandler() );
     }
     
-    public DBFlagInteger getNewOne()
+    @Override
+    public DBFlagInteger getCopy()
     {
-        return new DBFlagInteger(name, title);
+        DBFlagInteger copy = new DBFlagInteger(name, title );
+        copy.handler.setValue(handler.getValue());
+        return copy;
     }
 }
