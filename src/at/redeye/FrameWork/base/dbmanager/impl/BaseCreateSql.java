@@ -177,7 +177,51 @@ public abstract class BaseCreateSql implements BackupTableInterface {
     }
 
     protected String appendNotNullIfSupportedbyNewRows(ColumnAttribute attr) {
-        return " NOT NULL";
+        // Respect the canBeNull flag: only add NOT NULL if the column cannot be null
+        // Primary keys are always NOT NULL regardless of canBeNull setting
+        if (!attr.canBeNull() || attr.isPrimaryKey()) {
+            return " NOT NULL";
+        }
+        return "";
+    }
+
+    /**
+     * Generates ALTER TABLE MODIFY COLUMN statements for columns that need their
+     * NULL constraint modified. This is used during migration when columns change
+     * from NOT NULL to NULL (or vice versa).
+     * 
+     * Since the framework doesn't track historical property values, this method
+     * generates MODIFY COLUMN statements for all columns that are currently marked
+     * as nullable (canBeNull = true) and are not primary keys. This ensures that during
+     * migration, any columns that should allow NULL will have their constraints updated.
+     * 
+     * @param strukt the table structure
+     * @param oldVersion the version to migrate from (currently unused but kept for API compatibility)
+     * @return SQL statements to modify column constraints
+     */
+    public String createSqlForModifiedConstraints(DBStrukt strukt, Integer oldVersion) {
+        StringBuilder res = new StringBuilder();
+        
+        // Get all columns (pass null to getHashMapForVersion to include all columns regardless of version)
+        HashMap<String, ColumnAttribute> currentColls = strukt.getHashMapForVersion(null);
+        
+        // For each column that should be nullable and is not a primary key,
+        // generate a MODIFY COLUMN statement to ensure it allows NULL
+        for (String name : currentColls.keySet()) {
+            ColumnAttribute attr = currentColls.get(name);
+            
+            // Only modify if column can be null and is not a primary key
+            // Primary keys are always NOT NULL, so we skip them
+            if (attr.canBeNull() && !attr.isPrimaryKey()) {
+                res.append("ALTER TABLE ").append(markColumn(strukt.getName()))
+                   .append(" MODIFY COLUMN ").append(markColumn(name))
+                   .append(" ").append(createSqlForRow(attr))
+                   .append(" ").append(appendNotNullIfSupportedbyNewRows(attr))
+                   .append(";\n");
+            }
+        }
+        
+        return res.toString();
     }
 
     protected String getDefaultValueVarChar(int length) {

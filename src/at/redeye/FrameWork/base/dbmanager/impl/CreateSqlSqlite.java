@@ -5,6 +5,7 @@
 
 package at.redeye.FrameWork.base.dbmanager.impl;
 
+import at.redeye.FrameWork.base.bindtypes.DBStrukt;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.ColumnAttribute;
 import at.redeye.SqlDBInterface.SqlDBIO.impl.DBDataType;
 import java.util.Collection;
@@ -83,6 +84,13 @@ public class CreateSqlSqlite extends BaseCreateSql {
         }
 
         return " NOT NULL";
+    }
+
+    @Override
+    public String createSqlForModifiedConstraints(DBStrukt strukt, Integer oldVersion) {
+        // SQLite does not support ALTER TABLE MODIFY COLUMN
+        // Return empty string to skip constraint modifications
+        return "";
     }
 
 }

@@ -273,6 +273,13 @@ public class DatabaseManager implements DBManager, DBBindtypeManager {
 			sql += createSql.createSqlForNewRows(strukt, i + 1) + ";";
 		}
 
+		// Handle constraint modifications (e.g., changing NOT NULL to NULL)
+		// This must be done after adding new columns but before recreating FKs
+		String constraintSql = createSql.createSqlForModifiedConstraints(strukt, fromVersion);
+		if (constraintSql != null && !constraintSql.isEmpty()) {
+			sql += constraintSql;
+		}
+
 		// When a version bump adds only FK constraints and no new columns,
 		// createSqlForNewRows returns an empty string. Skip execSql in that case
 		// (execSql returns false for empty input, which would wrongly abort the migration).
