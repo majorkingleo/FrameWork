@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +43,40 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 
 	protected static Logger logger = Logger
 			.getLogger(AbstractStmtExecuter.class.getSimpleName());
+
+	/**
+	 * Maps DBDataType to java.sql.Types constants for PreparedStatement.setNull()
+	 */
+	protected int getSqlTypeFromDBDataType(DBDataType dbType) {
+		switch (dbType) {
+		case DB_TYPE_STRING:
+			return Types.VARCHAR;
+		case DB_TYPE_LONG:
+			return Types.BIGINT;
+		case DB_TYPE_FLOAT:
+			return Types.FLOAT;
+		case DB_TYPE_DOUBLE:
+			return Types.DOUBLE;
+		case DB_TYPE_INTEGER:
+			return Types.INTEGER;
+		case DB_TYPE_BOOLEAN:
+			return Types.BOOLEAN;
+		case DB_TYPE_BIT:
+			return Types.BIT;
+		case DB_TYPE_SHORT:
+			return Types.SMALLINT;
+		case DB_TYPE_DATE:
+			return Types.DATE;
+		case DB_TYPE_TIME:
+			return Types.TIME;
+		case DB_TYPE_DATETIME:
+			return Types.TIMESTAMP;
+		case DB_TYPE_BLOB:
+			return Types.BLOB;
+		default:
+			return Types.OTHER;
+		}
+	}
 
 	public AbstractStmtExecuter(Connection conn, SupportedDBMSTypes dbmstype) {
 		super();
@@ -556,12 +591,10 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 			} else {
 				data = values.get(currcol);
 			}
-			if (data == null) {
-				throw new SQLException(
-						"Select is impossible:\nNo whereStmt given and (a part of) PrimaryKey data is missing! Column: '"
-								+ currcol + "' is null");
-			}
-			setPreparedStatementTypes(ps, index + 1, data);
+			// Allow NULL values for INSERT/UPDATE; only check for SELECT by PK
+			// The setPreparedStatementTypes will handle NULL properly
+			String columnName = currcol.contains(".") ? tokens[1] : currcol;
+			setPreparedStatementTypes(ps, index + 1, columnName, data);
 
 		}
 		return ps;
@@ -582,12 +615,17 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 	}
 
 	protected void setPreparedStatementTypes(PreparedStatement ps, int index,
-			Object data) throws SQLException, IOException {
+			String columnName, Object data) throws SQLException, IOException {
 
 		if (logger.isTraceEnabled())
-			logger.trace("Start index " + index + " / " + data);
+			logger.trace("Start index " + index + " / " + columnName + " = " + data);
 
-		if (data instanceof String) {
+		if( data == null ) {
+			// Look up the column type to get the correct SQL type
+			DBDataType colType = getColumnType(columnName);
+			int sqlType = getSqlTypeFromDBDataType(colType);
+			ps.setNull(index, sqlType);
+		} else if (data instanceof String) {
 			ps.setString(index, (String) data);
 		} else if (data instanceof Date) {
 			ps.setString(index, (String) stmtCreator.toDateString((Date) data));
@@ -616,6 +654,28 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 							+ " / " + data);
 		}
 
+	}
+
+	/**
+	 * Gets the DBDataType for a column by looking it up in the type registration
+	 */
+	private DBDataType getColumnType(String columnName) {
+		// Try to find the column in any registered table
+		HashMap<String, HashMap<String, ColumnAttribute>> registeredTables = treg.getAllRegisteredTables();
+		for (HashMap<String, ColumnAttribute> table : registeredTables.values()) {
+			ColumnAttribute colAttr = table.get(columnName);
+			if (colAttr != null) {
+				return colAttr.getDatatype();
+			}
+			// Also try with table prefix (table.column format)
+			for (String fullColName : table.keySet()) {
+				if (fullColName.endsWith("." + columnName)) {
+					return table.get(fullColName).getDatatype();
+				}
+			}
+		}
+		// Default to INTEGER if not found (common case for FK columns)
+		return DBDataType.DB_TYPE_INTEGER;
 	}
 
 }
