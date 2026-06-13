@@ -6,7 +6,7 @@ public class ColumnAttribute {
 
 	private boolean hasIndex = false;
 	
-	private boolean canBeNull = true;  // Default: nullable
+	private boolean canBeNull = false;  // Default: NOT NULL (matches DBValue default)
 
 	private DBDataType datatype;
 

@@ -21,7 +21,7 @@ public abstract class DBValue {
     protected String title;
     protected boolean is_primary_key = false;
     protected boolean create_index = false;
-    protected boolean can_be_null = true;  // Default: columns can be null
+    protected boolean can_be_null = false;  // Default: columns cannot be null (NOT NULL in DB)
     
     public DBValue( String name )
     {
