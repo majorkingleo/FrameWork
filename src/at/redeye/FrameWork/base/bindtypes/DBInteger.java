@@ -66,13 +66,20 @@ public class DBInteger extends DBValue {
     @Override
     public DBInteger getCopy() {
         DBInteger i = new DBInteger(name);
-        i.value = new Integer( value );
+
+        if( value != null ) {
+            i.value = new Integer( value );
+        }
         return i;
     }
 
     @Override
     public void loadFromCopy(Object obj) {
-        value = new Integer( (Integer) obj );
+        if( obj == null ) {
+            value = null;
+        } else {
+            value = new Integer( (Integer) obj );
+        }
     }
 
 }

@@ -21,6 +21,7 @@ public abstract class DBValue {
     protected String title;
     protected boolean is_primary_key = false;
     protected boolean create_index = false;
+    protected boolean can_be_null = true;  // Default: columns can be null
     
     public DBValue( String name )
     {
@@ -100,5 +101,20 @@ public abstract class DBValue {
     public boolean shouldHaveIndex()
     {
         return create_index;
+    }
+
+    public boolean canBeNull()
+    {
+        return can_be_null;
+    }
+
+    public void setCanBeNull(boolean canBeNull)
+    {
+        this.can_be_null = canBeNull;
+    }
+
+    public void setCannotBeNull()
+    {
+        this.can_be_null = false;
     }
 }

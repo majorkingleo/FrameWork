@@ -45,7 +45,11 @@ public abstract class BaseCreateSql implements BackupTableInterface {
             
             ColumnAttribute attr = colls.get( name );
             
-            res +=   markColumn(name) + " " + createSqlForRow( attr ) + " NOT NULL";
+            res +=   markColumn(name) + " " + createSqlForRow( attr );
+				// Add NOT NULL if: column cannot be null OR it's a primary key (PKs are always NOT NULL)
+				if (!attr.canBeNull() || attr.isPrimaryKey()) {
+					res += " NOT NULL";
+				}
             
             if( it.hasNext() )
                 res = res + ",\n";

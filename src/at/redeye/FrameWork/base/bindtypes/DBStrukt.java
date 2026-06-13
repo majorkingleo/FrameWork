@@ -319,6 +319,7 @@ public abstract class DBStrukt {
 
 			attr.setPrimaryKey(val.isPrimaryKey());
 			attr.setHasIndex(val.shouldHaveIndex());
+			attr.setCanBeNull(val.canBeNull());
 
 			if (DBString.class.isInstance(val)) {
 				attr.setWidth(((DBString) val).getMaxLen());

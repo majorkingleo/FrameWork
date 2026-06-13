@@ -5,6 +5,8 @@ public class ColumnAttribute {
 	private boolean primaryKey = false;
 
 	private boolean hasIndex = false;
+	
+	private boolean canBeNull = true;  // Default: nullable
 
 	private DBDataType datatype;
 
@@ -106,6 +108,14 @@ public class ColumnAttribute {
 
 	public void setHasIndex(boolean value) {
 		hasIndex = value;
+	}
+
+	public boolean canBeNull() {
+		return canBeNull;
+	}
+
+	public void setCanBeNull(boolean canBeNull) {
+		this.canBeNull = canBeNull;
 	}
 
     @Override
