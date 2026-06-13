@@ -581,7 +581,7 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		List<String> whereCols = stmtCreator.getCols2Handle();
 
 		String currcol;
-		String[] tokens;
+		String[] tokens = null;
 		for (int index = 0; index < whereCols.size(); index++) {
 			currcol = whereCols.get(index);
 			Object data = null;
