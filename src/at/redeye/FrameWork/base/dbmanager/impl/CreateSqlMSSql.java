@@ -51,15 +51,15 @@ public class CreateSqlMSSql extends BaseCreateSql {
 		case DB_TYPE_DATE:
 			return "DATE";
 		case DB_TYPE_FLOAT:
-			return "float default 0";
+			return "float";
 		case DB_TYPE_DOUBLE:
-			return "real default 0";
+			return "real";
 		case DB_TYPE_LONG:
 		case DB_TYPE_INTEGER:
 		case DB_TYPE_BOOLEAN:
 		case DB_TYPE_BIT:
 		case DB_TYPE_SHORT:
-			return "int default '0'";
+			return "int";
         case DB_TYPE_BLOB:
             return "varbinary (max)";
 

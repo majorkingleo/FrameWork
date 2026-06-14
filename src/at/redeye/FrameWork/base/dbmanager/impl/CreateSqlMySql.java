@@ -90,14 +90,14 @@ public class CreateSqlMySql extends BaseCreateSql {
             
             case DB_TYPE_FLOAT:
             case DB_TYPE_DOUBLE:
-                return "double default 0";
+                return "double";
             
             case DB_TYPE_LONG:             
             case DB_TYPE_INTEGER:
             case DB_TYPE_BOOLEAN:
             case DB_TYPE_BIT:
             case DB_TYPE_SHORT:
-                return "int default '0'";
+                return "int";
                 
             case DB_TYPE_BLOB:
                 return "MEDIUMBLOB";

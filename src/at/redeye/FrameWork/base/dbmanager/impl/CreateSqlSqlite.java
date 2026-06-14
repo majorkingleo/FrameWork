@@ -44,13 +44,13 @@ public class CreateSqlSqlite extends BaseCreateSql {
            
             case DB_TYPE_FLOAT:
             case DB_TYPE_DOUBLE:
-            	return "double default 0" + extra;
+            	return "double" + extra;
             case DB_TYPE_INTEGER:
             case DB_TYPE_LONG:
             case DB_TYPE_BOOLEAN:
             case DB_TYPE_BIT:
             case DB_TYPE_SHORT:
-                return "int default '0'" + extra;
+                return "int" + extra;
         }
         
         return null;
@@ -77,13 +77,15 @@ public class CreateSqlSqlite extends BaseCreateSql {
 
     @Override
     protected String appendNotNullIfSupportedbyNewRows(ColumnAttribute attr) {
-
-        if( attr.getDatatype() == DBDataType.DB_TYPE_STRING )
-        {
-            return " default "+ getDefaultValueVarChar(attr.getWidth()) + " NOT NULL ";
+        // SQLite handles NULL differently - nullable columns should not have NOT NULL
+        if (!attr.canBeNull() || attr.isPrimaryKey()) {
+            if( attr.getDatatype() == DBDataType.DB_TYPE_STRING )
+            {
+                return " default "+ getDefaultValueVarChar(attr.getWidth()) + " NOT NULL ";
+            }
+            return " NOT NULL";
         }
-
-        return " NOT NULL";
+        return "";
     }
 
     @Override

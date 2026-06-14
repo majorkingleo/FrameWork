@@ -44,15 +44,15 @@ public class CreateSqlDerby extends BaseCreateSql {
 		case DB_TYPE_DATE:
 			return "DATE";
 		case DB_TYPE_FLOAT:
-			return "float default 0";
+			return "float";
 		case DB_TYPE_DOUBLE:
-			return "double default 0";
+			return "double";
 		case DB_TYPE_LONG:
 		case DB_TYPE_INTEGER:
 		case DB_TYPE_BOOLEAN:
 		case DB_TYPE_BIT:
 		case DB_TYPE_SHORT:
-			return "int default 0";
+			return "int";
         case DB_TYPE_BLOB:
             return "blob";
 
@@ -73,17 +73,19 @@ public class CreateSqlDerby extends BaseCreateSql {
 
     @Override
     protected String appendNotNullIfSupportedbyNewRows(ColumnAttribute attr) {
-
-        if( attr.getDatatype() == DBDataType.DB_TYPE_STRING )
-        {
-            // nut null geht nicht und mit default Werten befüllen leider auch nicht.
-            //return " default "+ getDefaultValueVarChar(attr.getWidth());
-            return "";
-        } else if (  attr.getDatatype() ==  DBDataType.DB_TYPE_BLOB ) {
-            return "";
+        // Respect the canBeNull flag
+        if (!attr.canBeNull() || attr.isPrimaryKey()) {
+            if( attr.getDatatype() == DBDataType.DB_TYPE_STRING )
+            {
+                // nut null geht nicht und mit default Werten befüllen leider auch nicht.
+                //return " default "+ getDefaultValueVarChar(attr.getWidth());
+                return "";
+            } else if (  attr.getDatatype() ==  DBDataType.DB_TYPE_BLOB ) {
+                return "";
+            }
+            return " NOT NULL";
         }
-
-        return " NOT NULL";
+        return "";
     }
 
 }

@@ -179,6 +179,7 @@ public abstract class BaseCreateSql implements BackupTableInterface {
     protected String appendNotNullIfSupportedbyNewRows(ColumnAttribute attr) {
         // Respect the canBeNull flag: only add NOT NULL if the column cannot be null
         // Primary keys are always NOT NULL regardless of canBeNull setting
+        // For nullable columns, return empty string - the column type alone (e.g., "int") allows NULL
         if (!attr.canBeNull() || attr.isPrimaryKey()) {
             return " NOT NULL";
         }
