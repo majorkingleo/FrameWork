@@ -94,16 +94,16 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		switch (sourceType) {
 
 		case DB_TYPE_DOUBLE:
-			return (Double) rs.getDouble(index);
+			return toDouble(rs.getObject(index));
 
 		case DB_TYPE_FLOAT:
-			return (Float) rs.getFloat(index);
+			return toFloat(rs.getObject(index));
 
 		case DB_TYPE_INTEGER:
-			return (Integer) rs.getInt(index);
+			return toInteger(rs.getObject(index));
 
 		case DB_TYPE_LONG:
-			return (Long) rs.getLong(index);
+			return toLong(rs.getObject(index));
 
 		case DB_TYPE_STRING: {
 			String result = rs.getString(index);
@@ -111,11 +111,11 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		}
 
 		case DB_TYPE_SHORT:
-			return (Short) rs.getShort(index);
+			return toShort(rs.getObject(index));
 
 		case DB_TYPE_BOOLEAN:
 		case DB_TYPE_BIT:
-			return (Boolean) rs.getBoolean(index);
+			return rs.getObject(index);
 
 		case DB_TYPE_DATE: // FT
 		case DB_TYPE_TIME: // FT
@@ -676,6 +676,86 @@ public abstract class AbstractStmtExecuter implements StmtExecInterface {
 		}
 		// Default to INTEGER if not found (common case for FK columns)
 		return DBDataType.DB_TYPE_INTEGER;
+	}
+
+	/**
+	 * Converts a Number object to Integer, handling null and Long->Integer conversion.
+	 */
+	protected static Integer toInteger(Object obj) {
+		if (obj == null) {
+			return null;
+		}
+		if (obj instanceof Integer) {
+			return (Integer) obj;
+		}
+		if (obj instanceof Number) {
+			return ((Number) obj).intValue();
+		}
+		return null;
+	}
+
+	/**
+	 * Converts a Number object to Long, handling null and Integer->Long conversion.
+	 */
+	protected static Long toLong(Object obj) {
+		if (obj == null) {
+			return null;
+		}
+		if (obj instanceof Long) {
+			return (Long) obj;
+		}
+		if (obj instanceof Number) {
+			return ((Number) obj).longValue();
+		}
+		return null;
+	}
+
+	/**
+	 * Converts a Number object to Short, handling null and conversion.
+	 */
+	protected static Short toShort(Object obj) {
+		if (obj == null) {
+			return null;
+		}
+		if (obj instanceof Short) {
+			return (Short) obj;
+		}
+		if (obj instanceof Number) {
+			return ((Number) obj).shortValue();
+		}
+		return null;
+	}
+
+	/**
+	 * Converts a Number object to Float, handling null and conversion.
+	 */
+	protected static Float toFloat(Object obj) {
+		if (obj == null) {
+			return null;
+		}
+		if (obj instanceof Float) {
+			return (Float) obj;
+		}
+		if (obj instanceof Number) {
+			return ((Number) obj).floatValue();
+		}
+		return null;
+	}
+
+	/**
+	 * Converts a Number object to Double, handling null and conversion.
+	 */
+	protected static Double toDouble(Object obj) {
+		if (obj == null) {
+			return null;
+		}
+		if (obj instanceof Double) {
+			return (Double) obj;
+		}
+		if (obj instanceof Number) {
+			return ((Number) obj).doubleValue();
+		}
+		return null;
 	}
 
 }
