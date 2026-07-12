@@ -55,6 +55,16 @@ public abstract class Root {
      */
     String language_resource_path;
 
+    // AI modification start (GitHub Copilot / DeepSeek V4 Pro)
+    /**
+     * path to the application icon as resource view
+     * eg: /at/redeye/Zeiterfassung/resources/icons/logo.png
+     * Set by the application at startup; used by BaseDialogBaseHelper
+     * to set the window icon on dialogs.
+     */
+    String app_icon_path;
+    // AI modification end
+
     /**
      * language used in messages, can differ from
      * Locale.getDefault()
@@ -145,6 +155,26 @@ public abstract class Root {
     {
         return app_title;
     }
+
+    // AI modification start (GitHub Copilot / DeepSeek V4 Pro)
+    /**
+     * @return the resource path to the application icon (e.g. "/.../logo.png"),
+     *         or null if not set
+     */
+    public String getAppIconPath()
+    {
+        return app_icon_path;
+    }
+
+    /**
+     * Set the resource path to the application icon.
+     * @param iconPath resource path, e.g. "/at/redeye/myapp/resources/icons/logo.png"
+     */
+    public void setAppIconPath(String iconPath)
+    {
+        app_icon_path = iconPath;
+    }
+    // AI modification end
 
     public void waitUntilNetworkIsReady()
     {

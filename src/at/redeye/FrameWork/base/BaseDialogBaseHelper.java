@@ -143,6 +143,23 @@ public class BaseDialogBaseHelper implements BindVarInterface {
 		translation_helper = new TranslationHelper(root, parent, this);
 		parent.setTitle(MlM(title));
 
+		// AI modification start (GitHub Copilot / DeepSeek V4 Pro)
+		// Set the application window icon, using the icon path configured
+		// on Root by the application at startup.
+		try {
+			String iconPath = root.getAppIconPath();
+			if (iconPath != null) {
+				java.net.URL iconUrl = getClass().getResource(iconPath);
+				if (iconUrl != null && parent instanceof java.awt.Window) {
+					((java.awt.Window) parent).setIconImage(
+						new javax.swing.ImageIcon(iconUrl).getImage());
+				}
+			}
+		} catch (Exception e) {
+			// icon loading is optional – skip if resource is not available
+		}
+		// AI modification end
+
 		root.loadMlM4Class(parent, "de");
 
 		if (!do_not_inform_root)
