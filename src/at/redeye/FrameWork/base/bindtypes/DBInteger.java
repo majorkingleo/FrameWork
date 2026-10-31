@@ -43,7 +43,10 @@ public class DBInteger extends DBValue {
     @Override
     public String toString()
     {
-        return value.toString();
+        // AI modification start (GitHub Copilot / DeepSeek V4 Pro)
+        // Nullable integer columns (e.g. BILLS.event_idx) must not crash table rendering.
+        return value == null ? "" : value.toString();
+        // AI modification end
     }
 
     @Override

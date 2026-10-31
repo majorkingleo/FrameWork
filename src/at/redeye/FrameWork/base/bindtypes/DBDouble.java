@@ -43,7 +43,10 @@ public class DBDouble extends DBValue {
     @Override
     public String toString()
     {
-        return value.toString();
+        // AI modification start (GitHub Copilot / DeepSeek V4 Pro)
+        // Nullable double columns must not crash table rendering.
+        return value == null ? "" : value.toString();
+        // AI modification end
     }
 
     @Override
